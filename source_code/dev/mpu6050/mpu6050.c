@@ -50,6 +50,7 @@ static void mpu6050_delay()
 
 uint8_t mpu6050_get_zero()
 {
+	/*
 	uint8_t i;
 	int32_t temp1[3] = {0};
 	
@@ -63,7 +64,7 @@ uint8_t mpu6050_get_zero()
 	
 	
 	   
-	/*for (i = 0; i < GYRO_ZERO_COUNT; i++)
+	for (i = 0; i < GYRO_ZERO_COUNT; i++)
 	{     
 		mpu6050_delay();
 		mpu6050_get_gyro(&Mpu6050_Gyro);	// 读取陀螺仪数据
