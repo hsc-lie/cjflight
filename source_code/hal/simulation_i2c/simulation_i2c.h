@@ -1,9 +1,8 @@
 #ifndef __MY_I2C_H
 #define __MY_I2C_H
 
-#include "at32f4xx.h"
 
-
+#include "common.h"
 
 #if 1
 
@@ -31,26 +30,41 @@
 
 
 
+typedef enum
+{
+	E_SIMULATION_I2C_ERROR_OK,
+	E_SIMULATION_I2C_ERROR_NULL,
+	E_SIMULATION_I2C_ERROR_NACK,
+	
+}E_SIMULATION_I2C_ERROR;
 
 
-#define i2c_scl_1()                GPIO_SetBits(I2C_GPIO_SCL_PROT, I2C_SCL_PIN)
-#define i2c_scl_0()                GPIO_ResetBits(I2C_GPIO_SCL_PROT, I2C_SCL_PIN)
-
-#define i2c_sda_1()                GPIO_SetBits(I2C_GPIO_SDA_PROT, I2C_SDA_PIN)
-#define i2c_sda_0()                GPIO_ResetBits(I2C_GPIO_SDA_PROT, I2C_SDA_PIN)
-
-
-#define i2c_sda_read()             GPIO_ReadInputDataBit(I2C_GPIO_SDA_PROT, I2C_SDA_PIN)
+typedef enum
+{
+	E_SIMULATION_I2C_SDA_RX,
+	E_SIMULATION_I2C_SDA_TX,
+}E_SIMULATION_I2C_SDA_DIR;
 
 
 
+typedef struct
+{
+	uint32_t DelayCount;
+
+	void (*SCLSet)(uint8_t value);
+	void (*SDASet)(uint8_t value);
+
+	void (*SDADirSet)(E_SIMULATION_I2C_SDA_DIR dir);
+	uint8_t (*SDARead)(void);
+
+}SimulationI2C_t;
 
 
 
-void simulation_i2c_init(void);
-int simulation_i2c_writereg(uint8_t addr, uint8_t reg ,uint8_t data);
-int simulation_i2c_writeregs(uint8_t addr, uint8_t reg ,uint8_t len,uint8_t *data);
-int simulation_i2c_readregs(uint8_t addr, uint8_t reg ,uint8_t len,uint8_t *data);
+
+extern E_SIMULATION_I2C_ERROR SimulationI2C_TransferDatas(SimulationI2C_t * i2c, uint8_t addr, uint8_t *data, uint8_t len, uint8_t isSendStop);
+extern E_SIMULATION_I2C_ERROR SimulationI2C_ReadDatas(SimulationI2C_t * i2c, uint8_t addr, uint8_t len, uint8_t *data);
+
 
 #endif
 
