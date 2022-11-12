@@ -1,0 +1,38 @@
+#include "mpu6050_config.h"
+
+#include "i2c_hal_config.h"
+
+static void MPU6050_I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
+{
+	
+	I2C_HalSendData(&I2C_Dev1, addr, &reg, );
+}
+
+
+
+MPU6050_t MPU6050 = 
+{
+	.DevAddr = MPU6050_DEV_ADDR1,
+	
+	.GyroRange = E_MPU6050_GYRO_RANGE_2000,
+	.AccRange = E_MPU6050_ACC_RANGE_8G;
+
+	.GyroZero = 
+	{
+		.X = 0,
+		.Y = 0,
+		.Z = 0,
+	}
+
+	void (* I2CWriteReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
+	void (* I2CReadReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
+	.I2CWriteReg = ,
+	.I2CReadReg = ,
+};
+
+
+
+
+
+
+

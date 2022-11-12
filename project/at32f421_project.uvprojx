@@ -694,16 +694,6 @@
               <FileType>1</FileType>
               <FilePath>..\source_code\dev\mpu6050\mpu6050.c</FilePath>
             </File>
-            <File>
-              <FileName>bmp280.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\dev\bmp280\bmp280.c</FilePath>
-            </File>
-            <File>
-              <FileName>spl06.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\dev\spl06\spl06.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

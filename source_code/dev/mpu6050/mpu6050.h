@@ -2,70 +2,69 @@
 #define __MPU6050_H
 
 
-#include "at32f4xx.h"
+#include "common.h"
 
-#include "quaternion.h"
-#include "filter.h"
-
-
+#define MPU6050_DEV_ADDR1                0x68
+#define MPU6050_DEV_ADDR2                0x69   
 
 
 
-#define MPU6050_ID                0x68       //MPU6050的id
+typedef enum
+{
+	E_MPU6050_ERROR_OK,
+	E_MPU6050_ERROR_NULL,
+	E_MPU6050_ERROR_NOT_FIND_DEV,
+}E_MPU6050_ERROR;
 
-#define SAMPLE_RATE_DIVIDER               0x19        //陀螺仪采样频率寄存器地址
-#define CONFIGURATION                     0x1a        //低通滤波频率
-#define GYROSCOPE_CONFIGURATION           0x1b        //陀螺仪量程  0<<3 250度/s  1<<3 500度/s 2<<3 1000度/s 3<<3 2000度/s
-#define ACCELEROMETER_CONFIGURATION       0x1c        //加速度量程 0<<3 2g   1<<3 4g   2<<3 8g   3<<3 16g
-#define	ACCEL_XOUT_H	        0x3B
-#define	ACCEL_XOUT_L	        0x3C
-#define	ACCEL_YOUT_H	        0x3D
-#define	ACCEL_YOUT_L	        0x3E
-#define	ACCEL_ZOUT_H	        0x3F
-#define	ACCEL_ZOUT_L	        0x40
-#define	GYRO_XOUT_H				0x43
-#define	GYRO_XOUT_L				0x44	
-#define	GYRO_YOUT_H				0x45
-#define	GYRO_YOUT_L				0x46
-#define	GYRO_ZOUT_H				0x47
-#define	GYRO_ZOUT_L				0x48
-#define TEMP_OUT_H      0x41
-#define TEMP_OUT_L      0x42
-#define POWER_MANAGEMENT1       0x6b         //电源管理1
-#define WHO_AM_I                0x75         //我是谁
+
+//单位 度/s
+typedef enum
+{
+	E_MPU6050_GYRO_RANGE_250 = 0,
+	E_MPU6050_GYRO_RANGE_500,
+	E_MPU6050_GYRO_RANGE_1000,
+	E_MPU6050_GYRO_RANGE_2000,
+}E_MPU6050_GYRO_RANGE;
+
+//单位 g
+typedef enum
+{
+	E_MPU6050_ACC_RANGE_2G = 0,
+	E_MPU6050_ACC_RANGE_4G,
+	E_MPU6050_ACC_RANGE_8G,
+	E_MPU6050_ACC_RANGE_16G,
+}E_MPU6050_ACC_RANGE;
+
+
+typedef struct
+{
+	int16_t X;
+	int16_t Y;
+	int16_t Z;
+	
+}MPU6050_BaseData_t;
+
+typedef struct
+{
+	float X;
+	float Y;
+	float Z;
+}MPU6050_ConvertData_t;
 
 
 
 typedef struct
 {
-	int16_t x;
-	int16_t y;
-	int16_t z;
+	uint8_t DevAddr;
+
+	E_MPU6050_GYRO_RANGE GyroRange;
+	E_MPU6050_ACC_RANGE AccRange;
 	
-}Mpu6050_Data_t;
+	void (*I2CSendData)(uint8_t addr, uint8_t *data, uint32_t len, uint8_t isSendStop);
+	void (*I2CReadData)(uint8_t addr, uint8_t *data, uint32_t len);
 
-
-
-typedef struct 
-{
-	float a1;
-	float a2;
-	float b0;
-	float b1;
-	float b2;
-	float delay_element_1;
-	float delay_element_2;
-} low_pass_filter2_parameter_t;
-
-
-
-extern Attitude_Data_t Angle;
-
-extern Mpu6050_Data_t Mpu6050_Acc;
-extern Mpu6050_Data_t Mpu6050_Gyro;
-
-extern Triaxial_Data_t Gyro;
-extern Triaxial_Data_t Acc;
+	MPU6050_BaseData_t GyroZero;
+}MPU6050_t;
 
 
 

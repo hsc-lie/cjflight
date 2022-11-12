@@ -1,160 +1,100 @@
 #include "mpu6050.h"
-#include "math.h"
-#include "simulation_i2c.h"
 
 
 
-#include "filter.h"
+#define SAMPLE_RATE_DIVIDER               0x19        //陀螺仪采样频率寄存器地址
+#define CONFIGURATION                     0x1a        //低通滤波频率
+#define GYROSCOPE_CONFIGURATION           0x1b        //陀螺仪量程  0<<3 250度/s  1<<3 500度/s 2<<3 1000度/s 3<<3 2000度/s
+#define ACCELEROMETER_CONFIGURATION       0x1c        //加速度量程 0<<3 2g   1<<3 4g   2<<3 8g   3<<3 16g
+#define	ACCEL_XOUT_H	        0x3B
+#define	ACCEL_XOUT_L	        0x3C
+#define	ACCEL_YOUT_H	        0x3D
+#define	ACCEL_YOUT_L	        0x3E
+#define	ACCEL_ZOUT_H	        0x3F
+#define	ACCEL_ZOUT_L	        0x40
+#define	GYRO_XOUT_H				0x43
+#define	GYRO_XOUT_L				0x44	
+#define	GYRO_YOUT_H				0x45
+#define	GYRO_YOUT_L				0x46
+#define	GYRO_ZOUT_H				0x47
+#define	GYRO_ZOUT_L				0x48
+#define TEMP_OUT_H      0x41
+#define TEMP_OUT_L      0x42
+#define POWER_MANAGEMENT1       0x6b         //电源管理1
+#define WHO_AM_I                0x75         //我是谁
 
 
 
-#define GYRO_ZERO_COUNT  20        //陀螺仪采集零偏次数
-
-								
-		
-
-/**************陀螺仪原始值**************/
-Mpu6050_Data_t Mpu6050_Gyro;
-
-/**************陀螺仪单位转换后的值**************/
-Triaxial_Data_t Gyro;
-
-
-/********陀螺仪零偏*********/
-Mpu6050_Data_t Mpu6050_Gyro_Zero;
-
-/***************加速度计原始值*************/
-Mpu6050_Data_t Mpu6050_Acc;
-										   
-/***************加速度计单位转换后的值*************/
-Triaxial_Data_t Acc;
-
-
-
-Attitude_Data_t Angle;
-
-
-biquadFilter_t gyro_biquad_parameter[3];
-biquadFilter_t acc_biquad_parameter[3];
-
-
-
-
-
-static void mpu6050_delay()
+static void MPU6050_WriteReg(MPU6050_t * mpu6050, uint8_t reg, uint8_t data)
 {
-	uint32_t i = 100000;
-	while(--i);
+	uint8_t temp[2];
+
+	temp[0] = reg;
+	temp[1] = data;
+	
+	mpu6050->I2CSendData(mpu6050->DevAddr, &temp, 2, TRUE);
+}
+
+static void MPU6050_ReadReg(MPU6050_t * mpu6050, uint8_t reg, uint8_t * data, uint8_t len)
+{
+	uint8_t 
+
+	mpu6050->I2CSendData(mpu6050->DevAddr, &reg, 1, re);
+	mpu6050->I2CReadData(mpu6050->DevAddr, &data, len);
 }
 
 
-uint8_t mpu6050_get_zero()
+E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 {
-	/*
-	uint8_t i;
-	int32_t temp1[3] = {0};
-	
-	int16_t x_min = 30000;
-	int16_t x_max = -30000;
-	int16_t y_min = 30000;
-	int16_t y_max = -30000;
-	int16_t z_min = 30000;
-	int16_t z_max = -30000;
-	
-	
-	
-	   
-	for (i = 0; i < GYRO_ZERO_COUNT; i++)
-	{     
-		mpu6050_delay();
-		mpu6050_get_gyro(&Mpu6050_Gyro);	// 读取陀螺仪数据
-		
-		if(x_min > Mpu6050_Gyro.x)
-		{
-			x_min = Mpu6050_Gyro.x;
-		}
-		if(x_max < Mpu6050_Gyro.x)
-		{
-			x_max = Mpu6050_Gyro.x;
-		}
-		
-		if(y_min > Mpu6050_Gyro.y)
-		{
-			y_min = Mpu6050_Gyro.y;
-		}
-		if(y_max < Mpu6050_Gyro.y)
-		{
-			y_max = Mpu6050_Gyro.y;
-		}
-		
-		if(z_min > Mpu6050_Gyro.z)
-		{
-			z_min = Mpu6050_Gyro.z;
-		}
-		if(z_max < Mpu6050_Gyro.z)
-		{
-			z_max = Mpu6050_Gyro.z;
-		}
-		
-		temp1[0] += Mpu6050_Gyro.x;
-		temp1[1] += Mpu6050_Gyro.y;
-		temp1[2] += Mpu6050_Gyro.z;
-	}
-	
-	if(((x_max - x_min) > 3) || ((y_max - y_min) > 3) || ((z_max - z_min) > 3))
+	uint32_t count = 0;
+	uint8_t writeData;
+	uint8_t readData = 0xff;
+
+	if((NULL == mpu6050)
+		|| (NULL == mpu6050->I2CReadReg)
+		|| (NULL == mpu6050->I2CWriteReg)
+	)
 	{
-		return 1;
+		return E_MPU6050_ERROR_NULL;
 	}
-	
-	Mpu6050_Gyro_Zero.x = temp1[0] / GYRO_ZERO_COUNT;
-	Mpu6050_Gyro_Zero.y = temp1[1] / GYRO_ZERO_COUNT;
-	Mpu6050_Gyro_Zero.z = temp1[2] / GYRO_ZERO_COUNT;*/
-	
-	Mpu6050_Gyro_Zero.x = 0;
-	Mpu6050_Gyro_Zero.y = -44;
-	Mpu6050_Gyro_Zero.z = 15;
-	
-	return 0;
-	
-}
 
+	//寻找设备设置
+	do
+	{
+		writeData = 0xa5;
+		mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管理
+		mpu6050->I2CReadReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &readData, 1);
 
-void mpu6050_init()
-{
-	uint8_t id = 0;
-	mpu6050_delay();  //上电延时
-	//i2c_config();
-	
-	
-	while(id != 0x98)
-	{			
-		//检测陀螺仪		
-		simulation_i2c_readregs(MPU6050_ID, WHO_AM_I,1,&id);
-		mpu6050_delay();
+		count++;
+		if(count > 5)
+		{
+			return E_MPU6050_ERROR_NOT_FIND_DEV;
+		}
 	}
+	while (readData != 0xa5);
 	
-	simulation_i2c_writereg(MPU6050_ID,POWER_MANAGEMENT1,0x00);      //MPU6050电源管理
-		
-	simulation_i2c_writereg(MPU6050_ID,SAMPLE_RATE_DIVIDER,0x00);   //陀螺仪采样频率
-		
-	simulation_i2c_writereg(MPU6050_ID,CONFIGURATION,0x03);         //低通滤波 
+
+	writeData = 0x00;
+	mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管理
+
+	writeData = 0x00;
+	mpu6050->I2CWriteReg(MPU6050_ID, SAMPLE_RATE_DIVIDER, &writeData, 1);   //陀螺仪采样频率
+
+	writeData = 0x03;
+	mpu6050->I2CWriteReg(MPU6050_ID, CONFIGURATION, &writeData, 1);         //低通滤波 
 		
 	//陀螺仪量程  0<<3 250度/s  1<<3 500度/s 2<<3 1000度/s 3<<3 2000度/s
-	simulation_i2c_writereg(MPU6050_ID,GYROSCOPE_CONFIGURATION,3 << 3);
+	writeData = mpu6050->GyroRange << 3;
+	mpu6050->I2CWriteReg(MPU6050_ID,GYROSCOPE_CONFIGURATION, &writeData, 1);
 	
 	//加速度量程 0<<3 2g   1<<3 4g   2<<3 8g   3<<3 16g
-	simulation_i2c_writereg(MPU6050_ID,ACCELEROMETER_CONFIGURATION,2 << 3);
-		
-	
-	
-	
-	
+	writeData = mpu6050->AccRange << 3;
+	mpu6050->I2CWriteReg(MPU6050_ID,ACCELEROMETER_CONFIGURATION, &writeData, 1);
 }
-
-
 
 
 //获得所有轴的角速度
+/*
 void mpu6050_get_gyro(Mpu6050_Data_t * Gyro)
 {
 	uint8_t dat[6] = {0};
@@ -168,24 +108,93 @@ void mpu6050_get_gyro(Mpu6050_Data_t * Gyro)
 	Gyro->y = -Gyro->y;
 	Gyro->z = -Gyro->z;
 }
+*/
 
-//获得所有轴的加速度
-void mpu6050_get_acc(Mpu6050_Data_t * Acc)
+E_MPU6050_ERROR MPU6050_GetBaseGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * gyro)
 {
-	uint8_t dat[6] = {0};
-	simulation_i2c_readregs(MPU6050_ID,ACCEL_XOUT_H,6,dat);
+	uint8_t data[6] = {0};
 
-	Acc->x = (int16_t)((dat[0] << 8) | dat[1]);
-	Acc->y = (int16_t)((dat[2] << 8) | dat[3]);
-	Acc->z = (int16_t)((dat[4] << 8) | dat[5]);
+	if((NULL == mpu6050)
+		|| (NULL == mpu6050->I2CReadReg)
+	)
+	{
+		return E_MPU6050_ERROR_NULL;
+	}
 
-	//Acc->x = -Acc->x;
-	Acc->y = -Acc->y;
-	Acc->z = -Acc->z;
+	
+	mpu6050->I2CReadReg(mpu6050->DevAddr, GYRO_XOUT_H, 6, data);
+
+	gyro->x = (int16_t)((uint16_t)(data[0] << 8) | data[1]) - mpu6050->GyroZero.X;
+	gyro->y = (int16_t)((uint16_t)(data[2] << 8) | data[3]) - mpu6050->GyroZero.Y;
+	gyro->z = (int16_t)((uint16_t)(data[4] << 8) | data[5]) - mpu6050->GyroZero.Z;
+
+	return E_MPU6050_ERROR_OK;
 }
 
 
+//获得所有轴的加速度
+E_MPU6050_ERROR MPU6050_GetBaseAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * acc)
+{
+	uint8_t data[6] = {0};
 
+	if((NULL == mpu6050)
+		|| (NULL == mpu6050->I2CReadReg)
+	)
+	{
+		return E_MPU6050_ERROR_NULL;
+	}
+
+	
+	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, 6, data);
+
+	acc->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]);
+	acc->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]);
+	acc->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]);
+
+	return E_MPU6050_ERROR_OK;
+}
+
+
+E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_ConvertData_t * out)
+{
+	float gyroConvertBase;
+
+	if(NULL == mpu6050)
+	{
+		return E_MPU6050_ERROR_NULL;
+	}
+
+	gyroConvertBase = (float)(32768f / (250u << (mpu6050->GyroRange + 1)));
+
+	out->X = (float)in->X/gyroConvertBase;
+	out->Y = (float)in->Y/gyroConvertBase;
+	out->Z = (float)in->Z/gyroConvertBase;
+
+	return E_MPU6050_ERROR_OK;
+}
+
+
+E_MPU6050_ERROR MPU6050_ConvertDataAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_ConvertData_t * out)
+{
+	float accConvertBase;
+
+
+	if(NULL == mpu6050)
+	{
+		return E_MPU6050_ERROR_NULL;
+	}
+
+	accConvertBase = (float)(32768u >> (mpu6050->AccRange + 1);
+
+	out->X = (float)in->X/accConvertBase;
+	out->Y = (float)in->Y/accConvertBase;
+	out->Z = (float)in->Z/accConvertBase;
+
+	return E_MPU6050_ERROR_OK;
+}
+
+
+/*
 void mpu6050_biquad_fiter_parameter_init()
 {
 	uint32_t i;
@@ -196,11 +205,11 @@ void mpu6050_biquad_fiter_parameter_init()
 	}
 
 
-}
+}*/
 
 
 
-
+/*
 void gyro_data_change()
 {
 	
@@ -227,7 +236,7 @@ void gyro_data_change()
 
 	
 }
-
+*/
 
 
 

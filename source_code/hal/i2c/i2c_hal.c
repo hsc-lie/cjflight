@@ -1,7 +1,7 @@
 #include "i2c_hal.h"
 
 
-void I2C_HalInit(I2C_HAL_t * i2c)
+E_I2C_ERROR I2C_HalInit(I2C_HAL_t * i2c)
 {
 	if(NULL != i2c->Init)
 	{
@@ -9,7 +9,7 @@ void I2C_HalInit(I2C_HAL_t * i2c)
 	}
 }
 
-int I2C_HalSendData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * data, uint32_t len, uint8_t isSendStop)
+E_I2C_ERROR I2C_HalSendData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * data, uint32_t len, uint8_t isSendStop)
 {
 	if(NULL != i2c->SendData)
 	{
@@ -22,7 +22,7 @@ int I2C_HalSendData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * data, uint32_t len,
 	
 }
 
-int I2C_HalReadData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * data, uint32_t len)
+E_I2C_ERROR I2C_HalReadData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * data, uint32_t len)
 {
 	if(NULL != i2c->ReadData)
 	{
@@ -36,7 +36,7 @@ int I2C_HalReadData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * data, uint32_t len)
 }
 
 
-int I2C_HalReadRegData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen,uint8_t * data, uint32_t dataLen)
+E_I2C_ERROR I2C_HalReadRegData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen,uint8_t * data, uint32_t dataLen)
 {
 	if((NULL == i2c->SendData)
 		|| (NULL == i2c->ReadData)

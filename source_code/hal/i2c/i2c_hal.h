@@ -9,14 +9,17 @@ typedef enum
 	E_I2C_ERROR_OK = 0,
 	E_I2C_ERROR_NULL,
 	E_I2C_ERROR_TIMEOUT,
-}E_I2C_ERROR_T;
+}E_I2C_ERROR;
 
 
 
 typedef struct
 {
 	void (*Init)();
-	int (*SendData)(uint8_t, uint8_t *, uint32_t, uint8_t);
+
+	
+	
+	int (*SendData)(uint8_t , uint8_t *, uint32_t, uint8_t);
 	int (*ReadData)(uint8_t, uint8_t *, uint32_t);
 }I2C_HAL_t;
 
