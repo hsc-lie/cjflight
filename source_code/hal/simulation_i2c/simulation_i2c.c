@@ -163,7 +163,7 @@ static uint8_t SimulationI2C_ReadByte(SimulationI2C_t * i2c, uint8_t ack)
 
 
 
-E_SIMULATION_I2C_ERROR SimulationI2C_TransferDatas(SimulationI2C_t * i2c, uint8_t addr, uint8_t *data, uint8_t len, uint8_t isSendStop)
+E_SIMULATION_I2C_ERROR SimulationI2C_SendData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen, uint8_t *data, uint8_t dataLen)
 {
 	uint32_t i;
 	uint8_t ack;
@@ -184,8 +184,24 @@ E_SIMULATION_I2C_ERROR SimulationI2C_TransferDatas(SimulationI2C_t * i2c, uint8_
 	{
 		return E_SIMULATION_I2C_ERROR_NACK;
 	}
+
+
+
+	for(i = 0;i < regLen;++i)
+	{
+		SimulationI2C_SendByte(i2c, *reg);
+		
+		ack = SimulationI2C_ReadAck(i2c);
+		if(1 == ack)
+		{
+			return E_SIMULATION_I2C_ERROR_NACK;
+		}
+
+		reg++;
+	}
 	
-	for(i = 0;i < len;++i)
+	
+	for(i = 0;i < dataLen;++i)
 	{
 		SimulationI2C_SendByte(i2c, *data);
 		
@@ -198,16 +214,14 @@ E_SIMULATION_I2C_ERROR SimulationI2C_TransferDatas(SimulationI2C_t * i2c, uint8_
 		data++;
 	}
 
-	if(TRUE == isSendStop)
-	{
-		SimulationI2C_Stop(i2c);
-	}
+
+	SimulationI2C_Stop(i2c);
 	
 	return E_SIMULATION_I2C_ERROR_OK;
 }
 
 
-E_SIMULATION_I2C_ERROR SimulationI2C_ReadDatas(SimulationI2C_t * i2c, uint8_t addr, uint8_t len, uint8_t *data)
+E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint8_t regLen, uint8_t *data, uint8_t dataLen)
 {
 	uint32_t i;
 	uint8_t ack;
@@ -221,6 +235,26 @@ E_SIMULATION_I2C_ERROR SimulationI2C_ReadDatas(SimulationI2C_t * i2c, uint8_t ad
 	{
 		return E_SIMULATION_I2C_ERROR_NULL;
 	}
+
+	if(0 != regLen)
+	{
+		SimulationI2C_Start(i2c);
+		SimulationI2C_SendByte((addr << 1) | 0x00);
+
+		for(i = 0;i < regLen;++i)
+		{
+			SimulationI2C_SendByte(i2c, *reg);
+			
+			ack = SimulationI2C_ReadAck(i2c);
+			if(1 == ack)
+			{
+				return E_SIMULATION_I2C_ERROR_NACK;
+			}
+			reg++;
+		}
+	
+	}
+	
 	
 	SimulationI2C_Start(i2c);
 	SimulationI2C_SendByte((addr << 1) | 0x01);
@@ -230,6 +264,7 @@ E_SIMULATION_I2C_ERROR SimulationI2C_ReadDatas(SimulationI2C_t * i2c, uint8_t ad
 	{
 		return E_SIMULATION_I2C_ERROR_NACK;
 	}
+
 		
 	for(i = 0;i < (len - 1);++i)
 	{

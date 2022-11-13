@@ -61,9 +61,9 @@ typedef struct
 
 
 
+extern E_SIMULATION_I2C_ERROR SimulationI2C_SendData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen, uint8_t *data, uint8_t dataLen);
+extern E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint8_t regLen, uint8_t *data, uint8_t dataLen);
 
-extern E_SIMULATION_I2C_ERROR SimulationI2C_TransferDatas(SimulationI2C_t * i2c, uint8_t addr, uint8_t *data, uint8_t len, uint8_t isSendStop);
-extern E_SIMULATION_I2C_ERROR SimulationI2C_ReadDatas(SimulationI2C_t * i2c, uint8_t addr, uint8_t len, uint8_t *data);
 
 
 #endif

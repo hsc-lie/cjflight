@@ -60,25 +60,16 @@ typedef struct
 	E_MPU6050_GYRO_RANGE GyroRange;
 	E_MPU6050_ACC_RANGE AccRange;
 	
-	void (*I2CSendData)(uint8_t addr, uint8_t *data, uint32_t len, uint8_t isSendStop);
-	void (*I2CReadData)(uint8_t addr, uint8_t *data, uint32_t len);
+	void (*I2CWriteReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
+	void (*I2CReadReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
 
 	MPU6050_BaseData_t GyroZero;
 }MPU6050_t;
 
-
-
-void i2c_config(void);
-
-void mpu6050_init(void);
-void mpu6050_biquad_fiter_parameter_init(void);
-
-uint8_t mpu6050_get_zero(void);
-void gyro_data_change(void);
-void mpu6050_get_gyro(Mpu6050_Data_t * Gyro);
-void mpu6050_get_acc(Mpu6050_Data_t * Acc);
-
-void biquad_fiter_parameter_init(void);
-
+extern E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050);
+extern E_MPU6050_ERROR MPU6050_GetBaseGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * gyro);
+extern E_MPU6050_ERROR MPU6050_GetBaseAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * acc);
+extern E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_ConvertData_t * out);
+extern E_MPU6050_ERROR MPU6050_ConvertDataAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_ConvertData_t * out);
 
 #endif /*__MPU6050_H_*/

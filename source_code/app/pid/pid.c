@@ -1,75 +1,99 @@
 #include "pid.h"
 
 
-
-float PD_control(PID_t *pid, float error)
+static PID_Base_t PID_Limit(PID_Base_t value, PID_Base_t min, PID_Base_t max)
 {
-	float out;
-	pid->last_error = pid->now_error;
-	pid->now_error = error;
-	out = pid->p * pid->now_error + pid->d * (pid->now_error - pid->last_error);
+	if(value < min)
+	{
+		return min;
+	}
+	else if(value > max)
+	{
+		return max;
+	}
+	else
+	{
+		return value;
+	}
+}
+
+
+
+
+PID_Base_t PD_Control(PID_t *pid, PID_Base_t deviation)
+{
+	PID_Base_t out;
+	PID_Base_t dItem;
+
+	if(NULL == pid)
+	{
+		return 0;
+	}
+
+	dItem = deviation - pid->LastDeviation;
+
+	if(NULL != pid->DFilterFunc)
+	{
+		dItem = pid->DFilterFunc(dItem);
+	}
 	
-	out = float_range(out, pid->out_min, pid->out_max);
+	out = pid->P * error + pid->D * dItem;
+	
+	out = PID_Limit(out, pid->out_min, pid->out_max);
+
+	pid->LastDeviation = deviation;
 	
 	return out;
 }
 
-float PI_control(PID_t *pid, float error)
+PID_Base_t PI_control(PID_t *pid, PID_Base_t deviation)
 {
-	float out;
+	PID_Base_t out;
+
+	if(NULL == pid)
+	{
+		return 0;
+	}
 	
-	pid->now_error = error;
-	pid->i_sum += pid->i * pid->now_error;
-	pid->i_sum = float_range(pid->i_sum, pid->i_sum_min, pid->i_sum_max);
+	pid->ISum += pid->I * deviation;
+	pid->ISum = float_range(pid->ISum, pid->ISumMin, pid->ISumMax);
 	
-	out = pid->p * pid->now_error + pid->i_sum;
-	out = float_range(out, pid->out_min, pid->out_max);
+	out = pid->P * deviation + pid->ISum;
+	out = PID_Limit(out, pid->OutMin, pid->OutMax);
 
 	return out;
 }
 
-float PID_control(PID_t *pid, float error)
+PID_Base_t PID_control(PID_t *pid, PID_Base_t deviation)
 {
-	float out;
+	PID_Base_t out;
+	PID_Base_t dItem;
 	
-	pid->last_error = pid->now_error;
-	pid->now_error = error;
-	
-	pid->i_sum += pid->i * pid->now_error;
-	pid->i_sum = float_range(pid->i_sum, pid->i_sum_min, pid->i_sum_max);
-	
-	out = pid->p * pid->now_error + pid->i_sum + pid->d * (pid->now_error - pid->last_error);
-	out = float_range(out, pid->out_min, pid->out_max);
+	pid->ISum += pid->I * deviation;
+	pid->ISum = PID_Limit(pid->ISum, pid->ISumMin, pid->ISumMax);
 
-	return out;
-}
+	dItem = deviation - pid->LastDeviation;
 
-
-/*d项带双二阶低通滤波*/
-float PID_control_biquad(PID_t *pid, float error, biquadFilter_t *filter)
-{
-	float out;
-	float d_ltem;
+	if(NULL != pid->DFilterFunc)
+	{
+		dItem = pid->DFilterFunc(dItem);
+	}
 	
-	pid->last_error = pid->now_error;
-	pid->now_error = error;
+	out = pid->P * deviation + pid->i_sum + pid->D * dItem;
+	out = PID_Limit(out, pid->OutMin, pid->OutMax);
 
-	d_ltem = (pid->now_error - pid->last_error);
-
-	d_ltem = biquad_filter(filter, d_ltem);
-	
-	pid->i_sum += pid->i * pid->now_error;
-	pid->i_sum = float_range(pid->i_sum, pid->i_sum_min, pid->i_sum_max);
-	
-	out = pid->p * pid->now_error + pid->i_sum + pid->d * d_ltem;
-	out = float_range(out, pid->out_min, pid->out_max);
+	pid->LastDeviation = deviation;
 
 	return out;
 }
 
 
-void PID_i_sum_clean(PID_t * pid)
+
+void PID_ISumClean(PID_t * pid)
 {
-	pid->i_sum = 0;
+	if(NULL != pid)
+	{
+		pid->ISum = 0;
+	}
 }
 

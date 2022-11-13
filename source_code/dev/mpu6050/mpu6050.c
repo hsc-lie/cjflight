@@ -25,23 +25,6 @@
 
 
 
-static void MPU6050_WriteReg(MPU6050_t * mpu6050, uint8_t reg, uint8_t data)
-{
-	uint8_t temp[2];
-
-	temp[0] = reg;
-	temp[1] = data;
-	
-	mpu6050->I2CSendData(mpu6050->DevAddr, &temp, 2, TRUE);
-}
-
-static void MPU6050_ReadReg(MPU6050_t * mpu6050, uint8_t reg, uint8_t * data, uint8_t len)
-{
-	uint8_t 
-
-	mpu6050->I2CSendData(mpu6050->DevAddr, &reg, 1, re);
-	mpu6050->I2CReadData(mpu6050->DevAddr, &data, len);
-}
 
 
 E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)

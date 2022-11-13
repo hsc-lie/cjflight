@@ -2,21 +2,15 @@
 #include "math.h"
 
 
-static float q0=1.0f,q1=0.0f,q2=0.0f,q3=0.0f;
 
-static float rMat[3][3]; //旋转矩阵
-static float Kp = 0.4f;	     //0.4f	
-static float Ki = 0.001f;		  //0.001f
-static float exInt = 0.0f;
-static float eyInt = 0.0f;
-static float ezInt = 0.0f;	
 
-#define DEG2RAD		0.017453293f	//度转弧
-#define RAD2DEG		57.29578f		//弧转度
+#define DEG_TO_RAD(deg)		((deg) * 0.017453293f)	//度转弧
+#define RAD_TO_DEG(rad)		((rad) * 57.29578f)		//弧转度
+
 
 
 //快速开平方求导
-float invSqrt(float x)	
+static float InvSqrt(float x)	
 {
 	float halfx = 0.5f * x;
 	float y = x;
@@ -29,58 +23,117 @@ float invSqrt(float x)
 
 
 //更新旋转矩阵
-void imuComputeRotationMatrix(void)
+void Quaternion_ComputeRotationMatrix(Quaternion_t * quaternion)
 {
-    float q1q1 = q1 * q1;
-    float q2q2 = q2 * q2;
-    float q3q3 = q3 * q3;
+    float q1q1 = quaternion->q1 * quaternion->q1;
+    float q2q2 = quaternion->q2 * quaternion->q2;
+    float q3q3 = quaternion->q3 * quaternion->q3;
 
-    float q0q1 = q0 * q1;
-    float q0q2 = q0 * q2;
-    float q0q3 = q0 * q3;
-    float q1q2 = q1 * q2;
-    float q1q3 = q1 * q3;
-    float q2q3 = q2 * q3;
+    float q0q1 = quaternion->q0 * quaternion->q1;
+    float q0q2 = quaternion->q0 * quaternion->q2;
+    float q0q3 = quaternion->q0 * quaternion->q3;
+    float q1q2 = quaternion->q1 * quaternion->q2;
+    float q1q3 = quaternion->q1 * quaternion->q3;
+    float q2q3 = quaternion->q2 * quaternion->q3;
 
-    rMat[0][0] = 1.0f - 2.0f * q2q2 - 2.0f * q3q3;
-    rMat[0][1] = 2.0f * (q1q2 + -q0q3);
-    rMat[0][2] = 2.0f * (q1q3 - -q0q2);
+    quaternion->RotationMatrix[0][0] = 1.0f - 2.0f * q2q2 - 2.0f * q3q3;
+    quaternion->RotationMatrix[0][1] = 2.0f * (q1q2 + -q0q3);
+    quaternion->RotationMatrix[0][2] = 2.0f * (q1q3 - -q0q2);
 
-    rMat[1][0] = 2.0f * (q1q2 - -q0q3);
-    rMat[1][1] = 1.0f - 2.0f * q1q1 - 2.0f * q3q3;
-    rMat[1][2] = 2.0f * (q2q3 + -q0q1);
+    quaternion->RotationMatrix[1][0] = 2.0f * (q1q2 - -q0q3);
+    quaternion->RotationMatrix[1][1] = 1.0f - 2.0f * q1q1 - 2.0f * q3q3;
+    quaternion->RotationMatrix[1][2] = 2.0f * (q2q3 + -q0q1);
 
-    rMat[2][0] = 2.0f * (q1q3 + -q0q2);
-    rMat[2][1] = 2.0f * (q2q3 - -q0q1);
-    rMat[2][2] = 1.0f - 2.0f * q1q1 - 2.0f * q2q2;
+    quaternion->RotationMatrix[2][0] = 2.0f * (q1q3 + -q0q2);
+    quaternion->RotationMatrix[2][1] = 2.0f * (q2q3 - -q0q1);
+    quaternion->RotationMatrix[2][2] = 1.0f - 2.0f * q1q1 - 2.0f * q2q2;
 }
 
 
+void Quaternion_Update(Quaternion_t quaternion, Triaxial_Data_t * Gyro)
+{
+	
+
+}
 
 
-void imuUpdate(Triaxial_Data_t * Acc, Triaxial_Data_t * Gyro, Attitude_Data_t * Angle , float dt)
+void Quaternion_GetPIOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * offset, float dt)
+{
+	float ex; 
+	float ey; 
+	float ez;
+	float normalise;
+
+	if(NULL == quaternion)
+		|| (NULL == pi)
+		|| (NULL == acc)
+		|| (NULL == offset)
+	{
+		return;	
+	}
+	
+
+	if((acc->X != 0.0f) || (acc->Y != 0.0f) || (acc->Z != 0.0f))
+	{
+
+		
+		normalise = InvSqrt(acc->X * acc->X + acc->Y * acc->Y + acc->Z * acc->Z);
+		acc->X *= normalise;
+		acc->Y *= normalise;
+		acc->Z *= normalise;
+
+		
+		ex = (acc->Y * quaternion->RotationMatrix[2][2] - acc->Z * quaternion->RotationMatrix[2][1]);
+		ey = (acc->Z * quaternion->RotationMatrix[2][0] - acc->X * quaternion->RotationMatrix[2][2]);
+		ez = (acc->X * quaternion->RotationMatrix[2][1] - acc->Y * quaternion->RotationMatrix[2][0]);
+		
+	
+		pi->exInt += pi->I * ex * dt;  
+		pi->eyInt += pi->I * ey * dt;
+		pi->ezInt += pi->I * ez * dt;
+		
+		
+		offset->X += pi->P * ex + pi->exInt;
+		offset->Y += pi->P * ey + pi->eyInt;
+		offset->Z += pi->P * ez + pi->ezInt;
+	}
+
+}
+
+
+void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
+
+
+void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
 {
 	float normalise;
 	float ex, ey, ez;
 	float halfT = 0.5f * dt;
 
-	
-	Gyro->x = Gyro->x * DEG2RAD;	
-	Gyro->y = Gyro->y * DEG2RAD;
-	Gyro->z = Gyro->z * DEG2RAD;
 
-	if((Acc->x != 0.0f) || (Acc->y != 0.0f) || (Acc->z != 0.0f))
+
+	float q0 = quaternion->q0;
+	float q1 = quaternion->q1;
+	float q2 = quaternion->q2;
+	float q3 = quaternion->q3;
+
+	
+	gyro->X = gyro->X * DEG2RAD;	
+	gyro->Y = gyro->Y * DEG2RAD;
+	gyro->Z = gyro->Z * DEG2RAD;
+
+	if((acc->X != 0.0f) || (acc->Y != 0.0f) || (acc->Z != 0.0f))
 	{
 		
-		normalise = invSqrt(Acc->x * Acc->x + Acc->y * Acc->y + Acc->z * Acc->z);
-		Acc->x *= normalise;
-		Acc->y *= normalise;
-		Acc->z *= normalise;
+		normalise = invSqrt(acc->X * acc->X + acc->Y * acc->Y + acc->Z * acc->Z);
+		acc->x *= normalise;
+		acc->y *= normalise;
+		acc->z *= normalise;
 
 		
-		ex = (Acc->y * rMat[2][2] - Acc->z * rMat[2][1]);
-		ey = (Acc->z * rMat[2][0] - Acc->x * rMat[2][2]);
-		ez = (Acc->x * rMat[2][1] - Acc->y * rMat[2][0]);
+		ex = (acc->Y * quaternion->RotationMatrix[2][2] - acc->Z * quaternion->RotationMatrix[2][1]);
+		ey = (acc->Z * quaternion->RotationMatrix[2][0] - acc->X * quaternion->RotationMatrix[2][2]);
+		ez = (acc->X * quaternion->RotationMatrix[2][1] - acc->Y * quaternion->RotationMatrix[2][0]);
 		
 	
 		exInt += Ki * ex * dt ;  
@@ -88,19 +141,16 @@ void imuUpdate(Triaxial_Data_t * Acc, Triaxial_Data_t * Gyro, Attitude_Data_t * 
 		ezInt += Ki * ez * dt ;
 		
 		
-		Gyro->x += Kp * ex + exInt;
-		Gyro->y += Kp * ey + eyInt;
-		Gyro->z += Kp * ez + ezInt;
+		gyro->x += Kp * ex + exInt;
+		gyro->y += Kp * ey + eyInt;
+		gyro->z += Kp * ez + ezInt;
 	}
 	
-	float q0Last = q0;
-	float q1Last = q1;
-	float q2Last = q2;
-	float q3Last = q3;
-	q0 += (-q1Last * Gyro->x - q2Last * Gyro->y - q3Last * Gyro->z) * halfT;
-	q1 += ( q0Last * Gyro->x + q2Last * Gyro->z - q3Last * Gyro->y) * halfT;
-	q2 += ( q0Last * Gyro->y - q1Last * Gyro->z + q3Last * Gyro->x) * halfT;
-	q3 += ( q0Last * Gyro->z + q1Last * Gyro->y - q2Last * Gyro->x) * halfT;
+	
+	q0 += (-q1 * gyro->X - q2 * gyro->Y - q3 * gyro->Z) * halfT;
+	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
 	
 	
 	normalise = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
@@ -108,13 +158,18 @@ void imuUpdate(Triaxial_Data_t * Acc, Triaxial_Data_t * Gyro, Attitude_Data_t * 
 	q1 *= normalise;
 	q2 *= normalise;
 	q3 *= normalise;
+
+	quaternion->q0 = q0;
+	quaternion->q1 = q1;
+	quaternion->q2 = q2;
+	quaternion->q3 = q3;
 	
-	imuComputeRotationMatrix();	
+	Quaternion_ComputeRotationMatrix(quaternion);	
 	
 	
-	Angle->pitch = -asinf(rMat[2][0]) * RAD2DEG; 
-	Angle->roll = atan2f(rMat[2][1], rMat[2][2]) * RAD2DEG;
-	Angle->yaw = atan2f(rMat[1][0], rMat[0][0]) * RAD2DEG;
+	Angle->pitch = -asinf(quaternion->RotationMatrix[2][0]) * RAD2DEG; 
+	Angle->roll = atan2f(quaternion->RotationMatrix[2][1], quaternion->RotationMatrix[2][2]) * RAD2DEG;
+	Angle->yaw = atan2f(quaternion->RotationMatrix[1][0], quaternion->RotationMatrix[0][0]) * RAD2DEG;
 
 	Gyro->x = Gyro->x * RAD2DEG;	
 	Gyro->y = Gyro->y * RAD2DEG;

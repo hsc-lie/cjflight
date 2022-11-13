@@ -13,7 +13,9 @@
 #include "tim_input_capture.h"
 #include "pwm.h"
 #include "uart.h"
-#include "mpu6050.h"
+
+#include "mpu6050_config.h"
+
 #include "simulation_i2c.h"
 #include "sbus.h"
 #include "my_systick.h"
@@ -129,16 +131,17 @@ int main(void)
 	remote_init();
 
 	/*软件I2C初始化*/
-	simulation_i2c_init();
+	//simulation_i2c_init();
 	
 	/*气压计初始化*/
 	//bmp280_init();
 	//spl0601_init();
 	
 	/*MPU6050初始化*/
-	mpu6050_init();
-	while(mpu6050_get_zero());
-	mpu6050_biquad_fiter_parameter_init();
+	
+	
+	
+	MPU6050_Init(&MPU6050);
 	
 	//tim_init_ms(20);
 	

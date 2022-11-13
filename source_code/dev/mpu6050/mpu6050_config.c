@@ -5,9 +5,14 @@
 static void MPU6050_I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
 	
-	I2C_HalSendData(&I2C_Dev1, addr, &reg, );
+	I2C_HalSendData(&I2C_Dev1, addr, &reg, 1, data, len);
 }
 
+static void MPU6050_I2CReadReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
+{
+	
+	I2C_HalReadData(&I2C_Dev1, addr, &reg, 1, data, len);
+}
 
 
 MPU6050_t MPU6050 = 
@@ -26,8 +31,8 @@ MPU6050_t MPU6050 =
 
 	void (* I2CWriteReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
 	void (* I2CReadReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
-	.I2CWriteReg = ,
-	.I2CReadReg = ,
+	.I2CWriteReg = MPU6050_I2CWriteReg,
+	.I2CReadReg = MPU6050_I2CReadReg,
 };
 
 

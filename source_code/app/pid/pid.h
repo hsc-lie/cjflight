@@ -1,38 +1,37 @@
 #ifndef __PID_H
 #define __PID_H
 
-#include "common.h"
 
-#include "mpu6050.h"
-#include "filter.h"
+typedef  signed long  PID_Base_t;      
+typedef PID_Base_t (*PID_DFilterFunc_t)(PID_Base_t in);
 
 
 typedef struct
 {
-	float p;
-	float i;
-	float d;
+	PID_Base_t P;
+	PID_Base_t I;
+	PID_Base_t D;
 		
-	float now_error;
-	float last_error;
+	PID_Base_t LastDeviation;
 		
-	float i_sum;
-	float i_sum_min;
-	float i_sum_max;
+	PID_Base_t ISum;
+	PID_Base_t ISumMin;
+	PID_Base_t ISumMax;
 		
-	float out_min;
-	float out_max;
+	PID_Base_t OutMin;
+	PID_Base_t OutMax;
+
+	PID_DFilterFunc_t DFilterFunc;
+	
 }PID_t;
 
 
-float PD_control(PID_t * pid, float error);
-float PI_control(PID_t *pid, float error);
-float PID_control(PID_t *pid, float error);
+float PD_Control(PID_t * pid, PID_Base_t deviation);
+float PI_Control(PID_t *pid, PID_Base_t deviation);
+float PID_Control(PID_t *pid, PID_Base_t deviation);
 
-float PID_control_lpf2(PID_t *pid, float error, low_pass_filter2_parameter_t * lpf2_parameter);
-float PID_control_biquad(PID_t *pid, float error, biquadFilter_t *filter);
+void PID_ISumClean(PID_t * pid);
 
-void PID_i_sum_clean(PID_t * pid);
 
 
 
