@@ -22,42 +22,9 @@ static float InvSqrt(float x)
 }
 
 
-//更新旋转矩阵
-void Quaternion_ComputeRotationMatrix(Quaternion_t * quaternion)
-{
-    float q1q1 = quaternion->q1 * quaternion->q1;
-    float q2q2 = quaternion->q2 * quaternion->q2;
-    float q3q3 = quaternion->q3 * quaternion->q3;
-
-    float q0q1 = quaternion->q0 * quaternion->q1;
-    float q0q2 = quaternion->q0 * quaternion->q2;
-    float q0q3 = quaternion->q0 * quaternion->q3;
-    float q1q2 = quaternion->q1 * quaternion->q2;
-    float q1q3 = quaternion->q1 * quaternion->q3;
-    float q2q3 = quaternion->q2 * quaternion->q3;
-
-    quaternion->RotationMatrix[0][0] = 1.0f - 2.0f * q2q2 - 2.0f * q3q3;
-    quaternion->RotationMatrix[0][1] = 2.0f * (q1q2 + -q0q3);
-    quaternion->RotationMatrix[0][2] = 2.0f * (q1q3 - -q0q2);
-
-    quaternion->RotationMatrix[1][0] = 2.0f * (q1q2 - -q0q3);
-    quaternion->RotationMatrix[1][1] = 1.0f - 2.0f * q1q1 - 2.0f * q3q3;
-    quaternion->RotationMatrix[1][2] = 2.0f * (q2q3 + -q0q1);
-
-    quaternion->RotationMatrix[2][0] = 2.0f * (q1q3 + -q0q2);
-    quaternion->RotationMatrix[2][1] = 2.0f * (q2q3 - -q0q1);
-    quaternion->RotationMatrix[2][2] = 1.0f - 2.0f * q1q1 - 2.0f * q2q2;
-}
 
 
-void Quaternion_Update(Quaternion_t quaternion, Triaxial_Data_t * Gyro)
-{
-	
-
-}
-
-
-void Quaternion_GetPIOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * offset, float dt)
+static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * offset, float dt)
 {
 	float ex; 
 	float ey; 
@@ -101,9 +68,98 @@ void Quaternion_GetPIOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * p
 }
 
 
-void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
+void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float dt)
+{
+	float normalise;
+	float halfT = 0.5f * dt;
+
+	float q0 = quaternion->q0;
+	float q1 = quaternion->q1;
+	float q2 = quaternion->q2;
+	float q3 = quaternion->q3;
+
+	q0 += (-q1 * gyro->X - q2 * gyro->Y - q3 * gyro->Z) * halfT;
+	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+	
+	
+	normalise = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+	q0 *= normalise;
+	q1 *= normalise;
+	q2 *= normalise;
+	q3 *= normalise;
+
+	quaternion->q0 = q0;
+	quaternion->q1 = q1;
+	quaternion->q2 = q2;
+	quaternion->q3 = q3;
+
+}
 
 
+//更新旋转矩阵
+static void Quaternion_ComputeRotationMatrix(Quaternion_t * quaternion)
+{
+    float q1q1 = quaternion->q1 * quaternion->q1;
+    float q2q2 = quaternion->q2 * quaternion->q2;
+    float q3q3 = quaternion->q3 * quaternion->q3;
+
+    float q0q1 = quaternion->q0 * quaternion->q1;
+    float q0q2 = quaternion->q0 * quaternion->q2;
+    float q0q3 = quaternion->q0 * quaternion->q3;
+    float q1q2 = quaternion->q1 * quaternion->q2;
+    float q1q3 = quaternion->q1 * quaternion->q3;
+    float q2q3 = quaternion->q2 * quaternion->q3;
+
+    quaternion->RotationMatrix[0][0] = 1.0f - 2.0f * q2q2 - 2.0f * q3q3;
+    quaternion->RotationMatrix[0][1] = 2.0f * (q1q2 + -q0q3);
+    quaternion->RotationMatrix[0][2] = 2.0f * (q1q3 - -q0q2);
+
+    quaternion->RotationMatrix[1][0] = 2.0f * (q1q2 - -q0q3);
+    quaternion->RotationMatrix[1][1] = 1.0f - 2.0f * q1q1 - 2.0f * q3q3;
+    quaternion->RotationMatrix[1][2] = 2.0f * (q2q3 + -q0q1);
+
+    quaternion->RotationMatrix[2][0] = 2.0f * (q1q3 + -q0q2);
+    quaternion->RotationMatrix[2][1] = 2.0f * (q2q3 - -q0q1);
+    quaternion->RotationMatrix[2][2] = 1.0f - 2.0f * q1q1 - 2.0f * q2q2;
+}
+
+
+void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angle)
+{
+	Quaternion_ComputeRotationMatrix(quaternion);
+	
+	angle->Pitch = RAD2DEG(-asinf(quaternion->RotationMatrix[2][0])); 
+	angle->Roll = RAD2DEG(atan2f(quaternion->RotationMatrix[2][1], quaternion->RotationMatrix[2][2]));
+	angle->Yaw = RAD2DEG(atan2f(quaternion->RotationMatrix[1][0], quaternion->RotationMatrix[0][0]));
+}
+
+void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
+{
+	TriaxialData_t gyroOffset;
+	TriaxialData_t gyroRad;
+
+	gyroRad->X = DEG2RAD(gyro->X);	
+	gyroRad->Y = DEG2RAD(gyro->Y);
+	gyroRad->Z = DEG2RAD(gyro->Z);
+
+	Quaternion_GetPIGyroOffset(quaternion, pi, acc, &gyroOffset, dt);
+
+	gyroRad->X += gyroOffset->X;
+	gyroRad->Y += gyroOffset->Y;
+	gyroRad->Z += gyroOffset->Z;
+
+
+	Quaternion_Update(quaternion, gyroRad, dt);
+
+	Quaternion_ComputeRotationMatrix(quaternion);
+
+	Quaternion_ToAttitudeAngle(quaternion, angle);
+}
+
+
+/*
 void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
 {
 	float normalise;
@@ -178,7 +234,7 @@ void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * acc, Triaxial
 	
 }
 
-
+*/
 void imu_body_to_Earth(Triaxial_Data_t * body_v,Triaxial_Data_t * earth_v)
 {
 	earth_v->x = rMat[0][0] * body_v->x + rMat[0][1] * body_v->y + rMat[0][2] * body_v->z;

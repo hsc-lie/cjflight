@@ -7,7 +7,7 @@
 #include "time.h"
 
 #include "sbus.h"
-#include "mpu6050.h"
+#include "mpu6050_config.h"
 #include "bmp280.h"
 #include "spl06.h"
 #include "pwm.h"
@@ -21,18 +21,99 @@
 
 
 
-PID_t pitch_rate_pid;
-PID_t pitch_angle_pid;
+PID_t PID_PitchRate = 
+{
+	.P = 3.6,
+	.I = 0.02,
+	.D = 52,    //18
+	.LastDeviation = 0,
+	.ISum = 0,
+	.ISumMin = -500,
+	.ISumMax = 500,
+	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
+	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 
-PID_t roll_rate_pid;
-PID_t roll_angle_pid;
+	.DFilterFunc = NULL,
+};
+PID_t PID_PitchAngle = 
+{
+	.P = 7,       
+	.I = 0.0,
+	.D = 0.0,     
+	.ISum = 0,
+	.LastDeviation = 0,
+	.ISumMin = -0,
+	.ISumMax = 0,
+	.OutMin = -300,
+	.OutMax = 300,
 
-PID_t yaw_rate_pid;
-PID_t yaw_angle_pid;
+	.DFilterFunc = NULL,
+};
+
+PID_t PID_RollRate = 
+{
+	.P = PID_PitchRate.P * 0.75,
+	.I = PID_PitchRate.I * 0.75,
+	.D = PID_PitchRate.D * 0.75,
+	.ISum = PID_PitchRate.ISum,
+	.LastDeviation = PID_PitchRate.LastDeviation,
+	.ISumMin = PID_PitchRate.ISumMin,
+	.ISumMax = PID_PitchRate.ISumMax,
+	.OutMin = PID_PitchRate.OutMin,
+	.OutMax = PID_PitchRate.OutMax,
+};
+
+PID_t PID_RollAngle = 
+{
+	.P = PID_PitchAngle.P,
+	.I = PID_PitchAngle.I,
+	.D = PID_PitchAngle.D,
+	.ISum = PID_PitchAngle.ISum,
+	.LastDeviation = PID_PitchAngle.LastDeviation,
+	.ISumMin = PID_PitchAngle.ISumMin,
+	.ISumMax = PID_PitchAngle.ISumMax,
+	.OutMin = PID_PitchAngle.OutMin,
+	.OutMax = PID_PitchAngle.OutMax,
+};
+
+PID_t PID_YawRate = 
+{
+	.P = 8,
+	.I = 0.010,
+	.D = 0,
+	.ISum = 0,
+	.LastDeviation = 0,
+	.ISumMin = PID_PitchRate.ISumMin,
+	.ISumMax = PID_PitchRate.ISumMax,
+	.OutMin = PID_PitchRate.OutMin,
+	.OutMax = PID_PitchRate.OutMax,
+};
+PID_t PID_YawAngle = 
+{
+	.P = PID_PitchAngle.p,
+	.I = PID_PitchAngle.i,
+	.D = PID_PitchAngle.d,
+	.ISum = PID_PitchAngle.ISum,
+	.LastDeviation = PID_PitchAngle.LastDeviation,
+	.ISumMin = PID_PitchAngle.ISumMin,
+	.ISumMax = PID_PitchAngle.ISumMax,
+	.OutMin = PID_PitchAngle.OutMin,
+	.OutMax = PID_PitchAngle.OutMax,
+};
 
 
-PID_t velocity_z_pid;
-PID_t position_z_pid;
+PID_t PID_VelocityZ = {0};
+PID_t PID_PositionZ = {0};
+
+biquadFilter_t biquad_GyroParameterX = {0};
+biquadFilter_t biquad_GyroParameterY = {0};
+biquadFilter_t biquad_GyroParameterZ = {0};
+
+biquadFilter_t biquad_AccParameterX = {0};
+biquadFilter_t biquad_AccParameterY = {0};
+biquadFilter_t biquad_AccParameterZ = {0};
+
+
 
 biquadFilter_t pitch_d_ltem_biquad_parameter = {0};
 biquadFilter_t roll_d_ltem_biquad_parameter = {0};
@@ -46,15 +127,15 @@ float altitude_sliding_filter_buff[ALTITUDE_SLIDING_FILTER_SIZE] = {0};
 
 #define GRAVITY_ACC         980
 
-Triaxial_Data_t earth_acc = {0};
+TriaxialData_t earth_acc = {0};
 
-Triaxial_Data_t estimate_velocity = {0};
-Triaxial_Data_t estimate_position = {0};
-Triaxial_Data_t estimate_acc = {0};
+TriaxialData_t estimate_velocity = {0};
+TriaxialData_t estimate_position = {0};
+TriaxialData_t estimate_acc = {0};
 
-Triaxial_Data_t Origion_NamelessQuad_velocity = {0};
-Triaxial_Data_t Origion_NamelessQuad_position = {0};
-Triaxial_Data_t Origion_NamelessQuad_acc = {0};
+TriaxialData_t Origion_NamelessQuad_velocity = {0};
+TriaxialData_t Origion_NamelessQuad_position = {0};
+TriaxialData_t Origion_NamelessQuad_acc = {0};
 
 
 float baro_compensate_k = 0.02;
@@ -65,87 +146,18 @@ float baro_compensate_k = 0.02;
 
 void pid_init()
 {
-	pitch_rate_pid.p = 3.6;
-	pitch_rate_pid.i = 0.02;
-	pitch_rate_pid.d = 52;    //18
-	pitch_rate_pid.i_sum = 0;
-	pitch_rate_pid.last_error = 0;
-	pitch_rate_pid.i_sum_min = -500;
-	pitch_rate_pid.i_sum_max = 500;
-	pitch_rate_pid.out_min = -ATTITUDE_CONTROL_OUT_MAX;
-	pitch_rate_pid.out_max = ATTITUDE_CONTROL_OUT_MAX;
-	
-	
-	pitch_angle_pid.p = 7;       
-	pitch_angle_pid.i = 0.0;
-	pitch_angle_pid.d = 0.0;     
-	pitch_angle_pid.i_sum = 0;
-	pitch_angle_pid.last_error = 0;
-	pitch_angle_pid.i_sum_min = -0;
-	pitch_angle_pid.i_sum_max = 0;
-	pitch_angle_pid.out_min = -300;
-	pitch_angle_pid.out_max = 300;
-	
-	roll_rate_pid.p = pitch_rate_pid.p * 0.75;
-	roll_rate_pid.i = pitch_rate_pid.i * 0.75;
-	roll_rate_pid.d = pitch_rate_pid.d * 0.75;
-	roll_rate_pid.i_sum = pitch_rate_pid.i_sum;
-	roll_rate_pid.last_error = pitch_rate_pid.last_error;
-	roll_rate_pid.i_sum_min = pitch_rate_pid.i_sum_min;
-	roll_rate_pid.i_sum_max = pitch_rate_pid.i_sum_max;
-	roll_rate_pid.out_min = pitch_rate_pid.out_min;
-	roll_rate_pid.out_max = pitch_rate_pid.out_max;
-	
-	roll_angle_pid.p = pitch_angle_pid.p;
-	roll_angle_pid.i = pitch_angle_pid.i;
-	roll_angle_pid.d = pitch_angle_pid.d;
-	roll_angle_pid.i_sum = pitch_angle_pid.i_sum;
-	roll_angle_pid.last_error = pitch_angle_pid.last_error;
-	roll_angle_pid.i_sum_min = pitch_angle_pid.i_sum_min;
-	roll_angle_pid.i_sum_max = pitch_angle_pid.i_sum_max;
-	roll_angle_pid.out_min = pitch_angle_pid.out_min;
-	roll_angle_pid.out_max = pitch_angle_pid.out_max;
-	
-	yaw_rate_pid.p = 8;
-	yaw_rate_pid.i = 0.010;
-	yaw_rate_pid.d = 0;
-	yaw_rate_pid.i_sum = 0;
-	yaw_rate_pid.last_error = 0;
-	yaw_rate_pid.i_sum_min = pitch_rate_pid.i_sum_min;
-	yaw_rate_pid.i_sum_max = pitch_rate_pid.i_sum_max;
-	yaw_rate_pid.out_min = pitch_rate_pid.out_min;
-	yaw_rate_pid.out_max = pitch_rate_pid.out_max;
-	
-	yaw_angle_pid.p = pitch_angle_pid.p;
-	yaw_angle_pid.i = pitch_angle_pid.i;
-	yaw_angle_pid.d = pitch_angle_pid.d;
-	yaw_angle_pid.i_sum = pitch_angle_pid.i_sum;
-	yaw_angle_pid.last_error = pitch_angle_pid.last_error;
-	yaw_angle_pid.i_sum_min = pitch_angle_pid.i_sum_min;
-	yaw_angle_pid.i_sum_max = pitch_angle_pid.i_sum_max;
-	yaw_angle_pid.out_min = pitch_angle_pid.out_min;
-	yaw_angle_pid.out_max = pitch_angle_pid.out_max;
 
-	velocity_z_pid.p = 400;   //150
-	velocity_z_pid.i = 3;   //1
-	velocity_z_pid.d = 200; //200
-	velocity_z_pid.i_sum = 0;
-	velocity_z_pid.last_error = 0;
-	velocity_z_pid.i_sum_min = -500;
-	velocity_z_pid.i_sum_max = 500;
-	velocity_z_pid.out_min = -ALTITUDE_THROTTLE_CONTROL_OUT_MAX;
-	velocity_z_pid.out_max = ALTITUDE_THROTTLE_CONTROL_OUT_MAX;
 
-	position_z_pid.p = 0.45;
-	position_z_pid.i = 0;
-	position_z_pid.d = 0;
-	position_z_pid.i_sum = 0;
-	position_z_pid.last_error = 0;
-	position_z_pid.i_sum_min = -0.3;
-	position_z_pid.i_sum_max = 0.3;
-	position_z_pid.out_min = -1;
-	position_z_pid.out_max = 1;
+	biquad_filter_init_lpf(&biquad_GyroParameterX, 500, 70);
+	biquad_filter_init_lpf(&biquad_GyroParameterY, 500, 70);
+	biquad_filter_init_lpf(&biquad_GyroParameterZ, 500, 70);
 
+	
+	biquad_filter_init_lpf(&biquad_AccParameterX, 500, 15);	
+	biquad_filter_init_lpf(&biquad_AccParameterY, 500, 15);	
+	biquad_filter_init_lpf(&biquad_AccParameterZ, 500, 15);	
+
+	
 
 	biquad_filter_init_lpf(&pitch_d_ltem_biquad_parameter, 500, 80);
 	biquad_filter_init_lpf(&roll_d_ltem_biquad_parameter, 500, 80);
@@ -159,7 +171,7 @@ void pid_init()
 void motor_stop()
 {
 	PWM_Channel_Type pwm_channel;
-	for(pwm_channel = PWM_Channel_1;pwm_channel < PWM_Channel_MAX;pwm_channel++)
+	for(pwm_channel = PWM_Channel_1,pwm_channel < PWM_Channel_MAX,pwm_channel++)
 	{
 		pwm_out(pwm_channel, MOTOR_STOP_PWM);
 	}
@@ -226,7 +238,7 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 	motor_pwm_out[2] = MOTOR_PWM_MIN - pitch_out - roll_out - yaw_out + throttle_out;   //400
 	motor_pwm_out[3] = MOTOR_PWM_MIN - pitch_out + roll_out + yaw_out + throttle_out;
 	
-	for(pwm_channel = PWM_Channel_1;pwm_channel < PWM_Channel_MAX;pwm_channel++)
+	for(pwm_channel = PWM_Channel_1,pwm_channel < PWM_Channel_MAX,pwm_channel++)
 	{
 		motor_pwm_out[pwm_channel] = int_range(motor_pwm_out[pwm_channel],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
 		pwm_out(pwm_channel, motor_pwm_out[pwm_channel]);
@@ -272,9 +284,9 @@ void Strapdown_INS_High()
 
 	Altitude_Dealt=bmp280_data.altitude - estimate_position.z;//气压计(超声波)与SINS估计量的差，单位cm
 
-	acc_correction[2] += High_Filter[0]*Altitude_Dealt* K_ACC_Z ;//加速度校正量
-	vel_correction[2] += High_Filter[1]*Altitude_Dealt* K_VEL_Z ;//速度校正量
-	pos_correction[2] += High_Filter[2]*Altitude_Dealt* K_POS_Z ;//位置校正量
+	acc_correction[2] += High_Filter[0]*Altitude_Dealt* K_ACC_Z;//加速度校正量
+	vel_correction[2] += High_Filter[1]*Altitude_Dealt* K_VEL_Z;//速度校正量
+	pos_correction[2] += High_Filter[2]*Altitude_Dealt* K_POS_Z;//位置校正量
 
 	//原始加速度+加速度校正量=融合后的加速度
 	estimate_acc.z = earth_acc.z + acc_correction[2];
@@ -283,7 +295,7 @@ void Strapdown_INS_High()
 	SpeedDealt[2]=estimate_acc.z * dt;
 
 	//得到速度增量后，更新原始位置
-	Origion_NamelessQuad_position.z += (estimate_velocity.z + 0.5 * SpeedDealt[2]) * dt;
+	Origion_NamelessQuad_position.z += (estimate_velocity.z + 0.5 * SpeedDealt[2]) * dt,
 
 	//原始位置+位置校正量=融合后位置
 	estimate_position.z = Origion_NamelessQuad_position.z + pos_correction[2];
@@ -301,7 +313,7 @@ void get_estimate_position(float observe_altitude)
 	Triaxial_Data_t acc;
 	float dt = 0.002;
 
-//float altitude_error;
+//float altitude_error,
 
 	acc.x = Origion_NamelessQuad_acc.x * GRAVITY_ACC;
 	acc.y = Origion_NamelessQuad_acc.y * GRAVITY_ACC;
@@ -335,13 +347,13 @@ void get_estimate_position(float observe_altitude)
 uint32_t position_control(float now_altitude, float set_altitude)
 {
 	uint8_t count = 0;
-	int32_t throttle_out = 0; 
+	int32_t throttle_out = 0;
 	static float set_velocity_z = 0;
 	
-	count++;
+	count++,
 	if(count >= 5)
 	{
-		count = 0;
+		count = 0,
 		set_velocity_z = PID_control(&position_z_pid, now_altitude - set_altitude);
 		
 	}
@@ -380,11 +392,17 @@ void control_task(void * parameters)
 	float set_yaw = 0;
 	float set_altitude = 0;
 	flight_mode_t last_remote_mode = Stabilize_Mode;
-	
 
-	for(;;)
+
+	MPU6050_BaseData_t gyroBaseData;
+	MPU6050_BaseData_t accBaseData;
+	
+	MPU6050_ConvertData_t gyroConvertData;
+	MPU6050_ConvertData_t accConvertData;
+
+	for(,,)
 	{
-		time_count++;
+		time_count++,
 		if(time_count >= 1000)
 		{
 			time_count = 0;
@@ -410,15 +428,28 @@ void control_task(void * parameters)
 		if((time_count % 20) == 0)
 		{
 			//接收bmp180海拔高度 
-			//bmp280_data_get(&bmp280_data);
-			//bmp280_data.altitude = sliding_filter(bmp280_data.altitude,altitude_sliding_filter_buff,ALTITUDE_SLIDING_FILTER_SIZE);
+			//bmp280_data_get(&bmp280_data),
+			//bmp280_data.altitude = sliding_filter(bmp280_data.altitude,altitude_sliding_filter_buff,ALTITUDE_SLIDING_FILTER_SIZE),
 			
-			spl06_get_all_data();
+			//spl06_get_all_data(),
 		}
 		
 		//获取mpu6050原始数据
-		mpu6050_get_gyro(&Mpu6050_Gyro);
-        mpu6050_get_acc(&Mpu6050_Acc);
+		MPU6050_GetBaseAcc(&MPU6050, &accBaseData);
+		MPU6050_GetBaseGyro(&MPU6050, &gyroBaseData);
+
+		MPU6050_ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
+		MPU6050_ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
+
+		biquad_filter(&biquad_GyroParameterX, gyroConvertData->X);
+		biquad_filter(&biquad_GyroParameterY, gyroConvertData->Y);
+		biquad_filter(&biquad_GyroParameterZ, gyroConvertData->Z);
+
+		biquad_filter(&biquad_AccParameterX, accConvertData->X);
+		biquad_filter(&biquad_AccParameterY, accConvertData->Y);
+		biquad_filter(&biquad_AccParameterZ, accConvertData->Z);
+		
+
 		//单位转换并滤波
 	    gyro_data_change();
 		Origion_NamelessQuad_acc.x = Acc.x;
@@ -429,7 +460,7 @@ void control_task(void * parameters)
 
 		//预估机体速度和位置
 		//get_estimate_position(bmp280_data.altitude);
-		//bmp280_data.altitude = 0;
+		//bmp280_data.altitude = 0,
 		Strapdown_INS_High();
 		
 		//需要打印的位置信息

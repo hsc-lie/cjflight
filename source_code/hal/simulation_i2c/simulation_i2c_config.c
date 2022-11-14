@@ -56,11 +56,11 @@ static uint8_t SimulationI2C1_SDARead(uint8_t value)
 
 SimulationI2C_t SimulationI2C1 = 
 {
-	.DelayCount = SIMULATION_I2C_DELAY_COUNT;
-	.SCLSet = SimulationI2C1_SCLSet;
-	.SDASet = SimulationI2C1_SDASet;
-	.SDADirSet = SimulationI2C1_SDADirSet;
-	.SDARead = SimulationI2C1_SDARead;
+	.DelayCount = SIMULATION_I2C_DELAY_COUNT,
+	.SCLSet = SimulationI2C1_SCLSet,
+	.SDASet = SimulationI2C1_SDASet,
+	.SDADirSet = SimulationI2C1_SDADirSet,
+	.SDARead = SimulationI2C1_SDARead,
 };
 
 

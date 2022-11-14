@@ -20,11 +20,12 @@ typedef struct
 }AttitudeData_t;
 
 
-
+//float P = 0.4f;
+//float I = 0.001f;
 typedef struct
 {
-	float P = 0.4f;
-	float I = 0.001f;
+	float P;
+	float I;
 
 	float exInt;
 	float eyInt;
@@ -33,20 +34,28 @@ typedef struct
 
 }Quaternion_PIOffset_t;
 
+/*
+float q0=1.0f;
+float q1=0.0f;
+float q2=0.0f;
+float q3=0.0f;
+*/
 typedef struct
 {
-	float q0=1.0f;
-	float q1=0.0f;
-	float q2=0.0f;
-	float q3=0.0f;
+	float q0;
+	float q1;
+	float q2;
+	float q3;
 
 	float RotationMatrix[3][3];
 }Quaternion_t;
 
 
+extern void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float dt);
+extern void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angle);
+extern void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
 
-void imuUpdate(Quaternion_t quaternion, TriaxialData_t * Acc, TriaxialData_t * Gyro, AttitudeData_t * Angle , float dt);
 
-void imu_body_to_Earth(Triaxial_Data_t * body_v,Triaxial_Data_t * earth_v);
+void imu_body_to_Earth(TriaxialData_t * body_v, TriaxialData_t * earth_v);
 
 #endif /*_QUATERNION_H_*/

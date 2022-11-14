@@ -2,7 +2,7 @@
 #define __PID_H
 
 
-typedef  signed long  PID_Base_t;      
+typedef  float  PID_Base_t;      
 typedef PID_Base_t (*PID_DFilterFunc_t)(PID_Base_t in);
 
 

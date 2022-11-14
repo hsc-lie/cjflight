@@ -61,18 +61,18 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管理
 
 	writeData = 0x00;
-	mpu6050->I2CWriteReg(MPU6050_ID, SAMPLE_RATE_DIVIDER, &writeData, 1);   //陀螺仪采样频率
+	mpu6050->I2CWriteReg(mpu6050->DevAddr, SAMPLE_RATE_DIVIDER, &writeData, 1);   //陀螺仪采样频率
 
 	writeData = 0x03;
-	mpu6050->I2CWriteReg(MPU6050_ID, CONFIGURATION, &writeData, 1);         //低通滤波 
+	mpu6050->I2CWriteReg(mpu6050->DevAddr, CONFIGURATION, &writeData, 1);         //低通滤波 
 		
 	//陀螺仪量程  0<<3 250度/s  1<<3 500度/s 2<<3 1000度/s 3<<3 2000度/s
 	writeData = mpu6050->GyroRange << 3;
-	mpu6050->I2CWriteReg(MPU6050_ID,GYROSCOPE_CONFIGURATION, &writeData, 1);
+	mpu6050->I2CWriteReg(mpu6050->DevAddr,GYROSCOPE_CONFIGURATION, &writeData, 1);
 	
 	//加速度量程 0<<3 2g   1<<3 4g   2<<3 8g   3<<3 16g
 	writeData = mpu6050->AccRange << 3;
-	mpu6050->I2CWriteReg(MPU6050_ID,ACCELEROMETER_CONFIGURATION, &writeData, 1);
+	mpu6050->I2CWriteReg(mpu6050->DevAddr,ACCELEROMETER_CONFIGURATION, &writeData, 1);
 }
 
 
@@ -105,11 +105,11 @@ E_MPU6050_ERROR MPU6050_GetBaseGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * gy
 	}
 
 	
-	mpu6050->I2CReadReg(mpu6050->DevAddr, GYRO_XOUT_H, 6, data);
+	mpu6050->I2CReadReg(mpu6050->DevAddr, GYRO_XOUT_H, data, 6);
 
-	gyro->x = (int16_t)((uint16_t)(data[0] << 8) | data[1]) - mpu6050->GyroZero.X;
-	gyro->y = (int16_t)((uint16_t)(data[2] << 8) | data[3]) - mpu6050->GyroZero.Y;
-	gyro->z = (int16_t)((uint16_t)(data[4] << 8) | data[5]) - mpu6050->GyroZero.Z;
+	gyro->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]) - mpu6050->GyroZero.X;
+	gyro->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]) - mpu6050->GyroZero.Y;
+	gyro->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]) - mpu6050->GyroZero.Z;
 
 	return E_MPU6050_ERROR_OK;
 }
@@ -128,7 +128,7 @@ E_MPU6050_ERROR MPU6050_GetBaseAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * acc
 	}
 
 	
-	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, 6, data);
+	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 6);
 
 	acc->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]);
 	acc->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]);
@@ -147,7 +147,7 @@ E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t 
 		return E_MPU6050_ERROR_NULL;
 	}
 
-	gyroConvertBase = (float)(32768f / (250u << (mpu6050->GyroRange + 1)));
+	gyroConvertBase = (float)(32768.0f / (250u << (mpu6050->GyroRange + 1)));
 
 	out->X = (float)in->X/gyroConvertBase;
 	out->Y = (float)in->Y/gyroConvertBase;
