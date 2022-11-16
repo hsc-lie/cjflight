@@ -1,18 +1,19 @@
 #include "i2c_hal_config.h"
 
+#include "simulation_i2c_config.h" 
 
 
 
 
 
-static int I2C1_SendData(uint8_t addr, uint8_t * data, uint32_t len, uint8_t isSendStop)
+static int I2C1_SendData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
 {
-	return 1;
+	return SimulationI2C_SendData(&SimulationI2C1, addr, reg, regLen, data, dataLen);
 }
 
-int I2C1_ReadData(uint8_t      addr, uint8_t * data, uint32_t len)
+static int I2C1_ReadData(uint8_t       addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
 {
-	return 1;
+	return SimulationI2C_ReadData(&SimulationI2C1, addr, reg, regLen, data, dataLen);
 }
 
 

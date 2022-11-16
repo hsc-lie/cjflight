@@ -152,11 +152,11 @@ static uint8_t SimulationI2C_ReadByte(SimulationI2C_t * i2c, uint8_t ack)
 	
 	if(ack == 0)
 	{
-		SimulationI2C_NAck();
+		SimulationI2C_NAck(i2c);
 	}
 	else
 	{
-		SimulationI2C_Ack();
+		SimulationI2C_Ack(i2c);
 	}
 	return data;
 }
@@ -177,7 +177,7 @@ E_SIMULATION_I2C_ERROR SimulationI2C_SendData(SimulationI2C_t * i2c, uint8_t add
 	}
 	
 	SimulationI2C_Start(i2c);
-	SimulationI2C_SendByte((addr << 1) | 0x00);
+	SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
 	
 	ack = SimulationI2C_ReadAck(i2c);
 	if(1 == ack)
@@ -239,7 +239,7 @@ E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t add
 	if(0 != regLen)
 	{
 		SimulationI2C_Start(i2c);
-		SimulationI2C_SendByte((addr << 1) | 0x00);
+		SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
 
 		for(i = 0;i < regLen;++i)
 		{
@@ -257,7 +257,7 @@ E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t add
 	
 	
 	SimulationI2C_Start(i2c);
-	SimulationI2C_SendByte((addr << 1) | 0x01);
+	SimulationI2C_SendByte(i2c, (addr << 1) | 0x01);
 	
 	ack = SimulationI2C_ReadAck(i2c);
 	if(1 == ack)
@@ -266,7 +266,7 @@ E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t add
 	}
 
 		
-	for(i = 0;i < (len - 1);++i)
+	for(i = 0;i < (dataLen - 1);++i)
 	{
 		*data = SimulationI2C_ReadByte(i2c, 1);
 		data++;

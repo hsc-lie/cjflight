@@ -8,6 +8,11 @@
 #include "queue.h"
 #include "semphr.h"
 
+
+#include "rcc_config.h"
+#include "gpio_config.h"
+
+
 #include "led.h"
 #include "time.h"
 #include "tim_input_capture.h"
@@ -110,13 +115,17 @@ __asm void _enable_irq()
 
 
 
+
 int main(void)
 {
 	/*中断优先级分组*/
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
+	RCC_ConfigInitAll();
+	GPIO_ConfigInitAll();
+
 	/*LED初始化*/
-	led_init();
+	//led_init();
 
 	/**/
 	uart_init();

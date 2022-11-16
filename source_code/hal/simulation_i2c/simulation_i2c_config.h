@@ -6,7 +6,7 @@
 
 
 
-extern SimulationI2C_t SimulationI2C;
+extern SimulationI2C_t SimulationI2C1;
 
 
 #endif /*__SIMULATION_I2C_CONFIG_H_*/

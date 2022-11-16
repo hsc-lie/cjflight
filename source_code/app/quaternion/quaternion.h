@@ -53,9 +53,9 @@ typedef struct
 
 extern void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float dt);
 extern void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angle);
-extern void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
+extern void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt);
 
 
-void imu_body_to_Earth(TriaxialData_t * body_v, TriaxialData_t * earth_v);
+//void imu_body_to_Earth(TriaxialData_t * body_v, TriaxialData_t * earth_v);
 
 #endif /*_QUATERNION_H_*/

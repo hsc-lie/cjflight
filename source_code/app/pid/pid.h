@@ -1,6 +1,7 @@
 #ifndef __PID_H
 #define __PID_H
 
+#include "common.h"
 
 typedef  float  PID_Base_t;      
 typedef PID_Base_t (*PID_DFilterFunc_t)(PID_Base_t in);
@@ -26,9 +27,9 @@ typedef struct
 }PID_t;
 
 
-float PD_Control(PID_t * pid, PID_Base_t deviation);
-float PI_Control(PID_t *pid, PID_Base_t deviation);
-float PID_Control(PID_t *pid, PID_Base_t deviation);
+PID_Base_t PD_Control(PID_t * pid, PID_Base_t deviation);
+PID_Base_t PI_Control(PID_t *pid, PID_Base_t deviation);
+PID_Base_t PID_Control(PID_t *pid, PID_Base_t deviation);
 
 void PID_ISumClean(PID_t * pid);
 

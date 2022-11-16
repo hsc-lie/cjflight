@@ -7,6 +7,8 @@ E_I2C_ERROR I2C_HalInit(I2C_HAL_t * i2c)
 	{
 		i2c->Init();
 	}
+	
+	return E_I2C_ERROR_OK;
 }
 
 E_I2C_ERROR I2C_HalSendData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen,uint8_t * data, uint32_t dataLen)
@@ -23,7 +25,7 @@ E_I2C_ERROR I2C_HalSendData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * reg, uint32
 }
 
 
-E_I2C_ERROR I2C_HalReadRegData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen,uint8_t * data, uint32_t dataLen)
+E_I2C_ERROR I2C_HalReadData(I2C_HAL_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen,uint8_t * data, uint32_t dataLen)
 {
 	if((NULL == i2c)
 		|| (NULL == i2c->ReadData)

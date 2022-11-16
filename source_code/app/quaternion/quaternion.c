@@ -1,11 +1,13 @@
+
 #include "quaternion.h"
 #include "math.h"
 
 
 
-
-#define DEG_TO_RAD(deg)		((deg) * 0.017453293f)	//度转弧
-#define RAD_TO_DEG(rad)		((rad) * 57.29578f)		//弧转度
+//度转弧
+#define DEG_TO_RAD(deg)		((deg) * 0.017453293f)	
+//弧转度
+#define RAD_TO_DEG(rad)		((rad) * 57.29578f)		
 
 
 
@@ -31,10 +33,11 @@ static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIO
 	float ez;
 	float normalise;
 
-	if(NULL == quaternion)
+	if((NULL == quaternion)
 		|| (NULL == pi)
 		|| (NULL == acc)
 		|| (NULL == offset)
+	)
 	{
 		return;	
 	}
@@ -84,7 +87,7 @@ void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float d
 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
 	
 	
-	normalise = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+	normalise = InvSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
 	q0 *= normalise;
 	q1 *= normalise;
 	q2 *= normalise;
@@ -130,9 +133,9 @@ void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angl
 {
 	Quaternion_ComputeRotationMatrix(quaternion);
 	
-	angle->Pitch = RAD2DEG(-asinf(quaternion->RotationMatrix[2][0])); 
-	angle->Roll = RAD2DEG(atan2f(quaternion->RotationMatrix[2][1], quaternion->RotationMatrix[2][2]));
-	angle->Yaw = RAD2DEG(atan2f(quaternion->RotationMatrix[1][0], quaternion->RotationMatrix[0][0]));
+	angle->Pitch = RAD_TO_DEG(-asinf(quaternion->RotationMatrix[2][0])); 
+	angle->Roll = RAD_TO_DEG(atan2f(quaternion->RotationMatrix[2][1], quaternion->RotationMatrix[2][2]));
+	angle->Yaw = RAD_TO_DEG(atan2f(quaternion->RotationMatrix[1][0], quaternion->RotationMatrix[0][0]));
 }
 
 void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
@@ -140,18 +143,18 @@ void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t 
 	TriaxialData_t gyroOffset;
 	TriaxialData_t gyroRad;
 
-	gyroRad->X = DEG2RAD(gyro->X);	
-	gyroRad->Y = DEG2RAD(gyro->Y);
-	gyroRad->Z = DEG2RAD(gyro->Z);
+	gyroRad.X = DEG_TO_RAD(gyro->X);	
+	gyroRad.Y = DEG_TO_RAD(gyro->Y);
+	gyroRad.Z = DEG_TO_RAD(gyro->Z);
 
 	Quaternion_GetPIGyroOffset(quaternion, pi, acc, &gyroOffset, dt);
 
-	gyroRad->X += gyroOffset->X;
-	gyroRad->Y += gyroOffset->Y;
-	gyroRad->Z += gyroOffset->Z;
+	gyroRad.X += gyroOffset.X;
+	gyroRad.Y += gyroOffset.Y;
+	gyroRad.Z += gyroOffset.Z;
 
 
-	Quaternion_Update(quaternion, gyroRad, dt);
+	Quaternion_Update(quaternion, &gyroRad, dt);
 
 	Quaternion_ComputeRotationMatrix(quaternion);
 
@@ -235,13 +238,15 @@ void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * acc, Triaxial
 }
 
 */
-void imu_body_to_Earth(Triaxial_Data_t * body_v,Triaxial_Data_t * earth_v)
+
+/*
+void imu_body_to_Earth(TriaxialData_t * body_v,TriaxialData_t * earth_v)
 {
 	earth_v->x = rMat[0][0] * body_v->x + rMat[0][1] * body_v->y + rMat[0][2] * body_v->z;
 	earth_v->y = rMat[1][0] * body_v->x + rMat[1][1] * body_v->y + rMat[1][2] * body_v->z;
 	earth_v->z = rMat[2][0] * body_v->x + rMat[2][1] * body_v->y + rMat[2][2] * body_v->z;
 }
-
+*/
 
 
 

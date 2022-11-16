@@ -52,28 +52,28 @@ PID_t PID_PitchAngle =
 
 PID_t PID_RollRate = 
 {
-	.P = PID_PitchRate.P * 0.75,
-	.I = PID_PitchRate.I * 0.75,
-	.D = PID_PitchRate.D * 0.75,
-	.ISum = PID_PitchRate.ISum,
-	.LastDeviation = PID_PitchRate.LastDeviation,
-	.ISumMin = PID_PitchRate.ISumMin,
-	.ISumMax = PID_PitchRate.ISumMax,
-	.OutMin = PID_PitchRate.OutMin,
-	.OutMax = PID_PitchRate.OutMax,
+	.P = 3.6 * 0.75,
+	.I = 0.02 * 0.75,
+	.D = 52 * 0.75,
+	.ISum = 0,
+	.LastDeviation = 0,
+	.ISumMin = -500,
+	.ISumMax = 500,
+	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
+	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 };
 
 PID_t PID_RollAngle = 
 {
-	.P = PID_PitchAngle.P,
-	.I = PID_PitchAngle.I,
-	.D = PID_PitchAngle.D,
-	.ISum = PID_PitchAngle.ISum,
-	.LastDeviation = PID_PitchAngle.LastDeviation,
-	.ISumMin = PID_PitchAngle.ISumMin,
-	.ISumMax = PID_PitchAngle.ISumMax,
-	.OutMin = PID_PitchAngle.OutMin,
-	.OutMax = PID_PitchAngle.OutMax,
+	.P = 7,
+	.I = 0,
+	.D = 0,
+	.ISum = 0,
+	.LastDeviation = 0,
+	.ISumMin = 0,
+	.ISumMax = 0,
+	.OutMin = -300,
+	.OutMax = 300,
 };
 
 PID_t PID_YawRate = 
@@ -83,22 +83,22 @@ PID_t PID_YawRate =
 	.D = 0,
 	.ISum = 0,
 	.LastDeviation = 0,
-	.ISumMin = PID_PitchRate.ISumMin,
-	.ISumMax = PID_PitchRate.ISumMax,
-	.OutMin = PID_PitchRate.OutMin,
-	.OutMax = PID_PitchRate.OutMax,
+	.ISumMin = -500,
+	.ISumMax = 500,
+	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
+	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 };
 PID_t PID_YawAngle = 
 {
-	.P = PID_PitchAngle.p,
-	.I = PID_PitchAngle.i,
-	.D = PID_PitchAngle.d,
-	.ISum = PID_PitchAngle.ISum,
-	.LastDeviation = PID_PitchAngle.LastDeviation,
-	.ISumMin = PID_PitchAngle.ISumMin,
-	.ISumMax = PID_PitchAngle.ISumMax,
-	.OutMin = PID_PitchAngle.OutMin,
-	.OutMax = PID_PitchAngle.OutMax,
+	.P = 7,
+	.I = 0,
+	.D = 0,
+	.ISum = 0,
+	.LastDeviation = 0,
+	.ISumMin = 0,
+	.ISumMax = 0,
+	.OutMin = -300,
+	.OutMax = 300,
 };
 
 
@@ -112,6 +112,27 @@ biquadFilter_t biquad_GyroParameterZ = {0};
 biquadFilter_t biquad_AccParameterX = {0};
 biquadFilter_t biquad_AccParameterY = {0};
 biquadFilter_t biquad_AccParameterZ = {0};
+
+Quaternion_t Quaternion = 
+{
+	.q0=1.0f,
+	.q1=0.0f,
+	.q2=0.0f,
+	.q3=0.0f,
+
+	.RotationMatrix = {0},
+};
+
+Quaternion_PIOffset_t Quaternion_PIOffset = 
+{
+	.P = 0.4f,
+	.I = 0.001f,
+
+	.exInt = 0,
+	.eyInt = 0,
+	.ezInt = 0,
+};
+
 
 
 
@@ -171,7 +192,7 @@ void pid_init()
 void motor_stop()
 {
 	PWM_Channel_Type pwm_channel;
-	for(pwm_channel = PWM_Channel_1,pwm_channel < PWM_Channel_MAX,pwm_channel++)
+	for(pwm_channel = PWM_Channel_1;pwm_channel < PWM_Channel_MAX;pwm_channel++)
 	{
 		pwm_out(pwm_channel, MOTOR_STOP_PWM);
 	}
@@ -179,7 +200,7 @@ void motor_stop()
 
 
 
-void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float set_yaw)
+void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float set_yaw, AttitudeData_t * nowAngle)
 {
 	static uint8_t attitude_control_count = 0;
 
@@ -199,7 +220,7 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 
 	int32_t motor_pwm_out[4];
 
-	yaw_error = set_yaw - Angle.yaw;
+	yaw_error = set_yaw - nowAngle->Yaw;
 	if(yaw_error > 180)
 	{
 		yaw_error -= 360;
@@ -216,21 +237,21 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 	attitude_control_count++;
 	if(1 == attitude_control_count)
 	{
-		pitch_rate_out = PID_control(&pitch_angle_pid, Angle.pitch - set_pitch);
+		pitch_rate_out = PID_Control(&PID_PitchAngle, nowAngle->Pitch - set_pitch);
 	}
 	else if(2 == attitude_control_count)
 	{
-		roll_rate_out = PID_control(&roll_angle_pid,Angle.roll - set_roll);
+		roll_rate_out = PID_Control(&PID_RollAngle, nowAngle->Roll - set_roll);
 	}
 	else if(3 == attitude_control_count)
 	{
 		attitude_control_count = 0;
-		yaw_rate_out = PID_control(&yaw_angle_pid,yaw_error); 
+		yaw_rate_out = PID_Control(&PID_YawAngle, yaw_error); 
 	}
 
-	pitch_out = (int32_t)PID_control_biquad(&pitch_rate_pid, -Gyro.y - pitch_rate_out, &pitch_d_ltem_biquad_parameter);
-	roll_out = (int32_t)PID_control_biquad(&roll_rate_pid, -Gyro.x - roll_rate_out, &roll_d_ltem_biquad_parameter);
-	yaw_out = (int32_t)PID_control_biquad(&yaw_rate_pid, Gyro.z - yaw_rate_out, &yaw_d_ltem_biquad_parameter);
+	//pitch_out = (int32_t)PID_control_biquad(&pitch_rate_pid, -Gyro.y - pitch_rate_out, &pitch_d_ltem_biquad_parameter);
+	//roll_out = (int32_t)PID_control_biquad(&roll_rate_pid, -Gyro.x - roll_rate_out, &roll_d_ltem_biquad_parameter);
+	//yaw_out = (int32_t)PID_control_biquad(&yaw_rate_pid, Gyro.z - yaw_rate_out, &yaw_d_ltem_biquad_parameter);
 
 	
 	motor_pwm_out[0] = MOTOR_PWM_MIN + pitch_out - roll_out + yaw_out + throttle_out;  //400
@@ -238,7 +259,7 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 	motor_pwm_out[2] = MOTOR_PWM_MIN - pitch_out - roll_out - yaw_out + throttle_out;   //400
 	motor_pwm_out[3] = MOTOR_PWM_MIN - pitch_out + roll_out + yaw_out + throttle_out;
 	
-	for(pwm_channel = PWM_Channel_1,pwm_channel < PWM_Channel_MAX,pwm_channel++)
+	for(pwm_channel = PWM_Channel_1;pwm_channel < PWM_Channel_MAX;pwm_channel++)
 	{
 		motor_pwm_out[pwm_channel] = int_range(motor_pwm_out[pwm_channel],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
 		pwm_out(pwm_channel, motor_pwm_out[pwm_channel]);
@@ -256,7 +277,7 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 float  High_Filter[3]={
 	0.015,  //0.03
 	0.05,//0.05
-	0.02//0.03
+	0.02,//0.03
 };
 
 
@@ -269,10 +290,10 @@ float pos_correction[3] = {0};
 float SpeedDealt[3] = {0};
 
  
-
+/*
 void Strapdown_INS_High()
 {
-	Triaxial_Data_t acc;
+	TriaxialData_t acc;
 	float dt = 0.002f;
 
 	acc.x = Origion_NamelessQuad_acc.x * GRAVITY_ACC;
@@ -368,7 +389,7 @@ uint32_t position_control(float now_altitude, float set_altitude)
 	return throttle_out;
 }
 
-
+*/
 
 uint32_t code_time = 0;
 
@@ -400,9 +421,11 @@ void control_task(void * parameters)
 	MPU6050_ConvertData_t gyroConvertData;
 	MPU6050_ConvertData_t accConvertData;
 
-	for(,,)
+	AttitudeData_t angle;
+
+	for(;;)
 	{
-		time_count++,
+		time_count++;
 		if(time_count >= 1000)
 		{
 			time_count = 0;
@@ -441,38 +464,44 @@ void control_task(void * parameters)
 		MPU6050_ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
 		MPU6050_ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
 
-		biquad_filter(&biquad_GyroParameterX, gyroConvertData->X);
-		biquad_filter(&biquad_GyroParameterY, gyroConvertData->Y);
-		biquad_filter(&biquad_GyroParameterZ, gyroConvertData->Z);
+		biquad_filter(&biquad_GyroParameterX, gyroConvertData.X);
+		biquad_filter(&biquad_GyroParameterY, gyroConvertData.Y);
+		biquad_filter(&biquad_GyroParameterZ, gyroConvertData.Z);
 
-		biquad_filter(&biquad_AccParameterX, accConvertData->X);
-		biquad_filter(&biquad_AccParameterY, accConvertData->Y);
-		biquad_filter(&biquad_AccParameterZ, accConvertData->Z);
+		biquad_filter(&biquad_AccParameterX, accConvertData.X);
+		biquad_filter(&biquad_AccParameterY, accConvertData.Y);
+		biquad_filter(&biquad_AccParameterZ, accConvertData.Z);
 		
 
 		//单位转换并滤波
-	    gyro_data_change();
-		Origion_NamelessQuad_acc.x = Acc.x;
-		Origion_NamelessQuad_acc.y = Acc.y;
-		Origion_NamelessQuad_acc.z = Acc.z;
+
+		//Origion_NamelessQuad_acc.x = Acc.x;
+		//Origion_NamelessQuad_acc.y = Acc.y;
+		//Origion_NamelessQuad_acc.z = Acc.z;
+
+		Quaternion_t Quaternion;
+		Quaternion_PIOffset_t Quaternion_PIOffset;
+		
+		
 		//四元数姿态解算
-        imuUpdate(&Acc, &Gyro, &Angle , 0.002);
+		Quaternion_IMUCalculation(&Quaternion, &Quaternion_PIOffset, &accConvertData, &gyroConvertData, &angle, 0.002);
+
 
 		//预估机体速度和位置
 		//get_estimate_position(bmp280_data.altitude);
 		//bmp280_data.altitude = 0,
-		Strapdown_INS_High();
+		//Strapdown_INS_High();
 		
 		//需要打印的位置信息
 		//xQueueSend(printf_position_queue,&bmp280_data.altitude,0);
 		//xQueueSend(printf_position_queue,&bmp280_data.pressure,0);
-		xQueueSend(printf_position_queue,&estimate_position.z,0);
+		//xQueueSend(printf_position_queue,&estimate_position.z,0);
 
 		//需要打印的速度信息
-		xQueueSend(printf_velocity_queue,&estimate_velocity.z,0);
+		//xQueueSend(printf_velocity_queue,&estimate_velocity.z,0);
 		
 		//需要打印的加速度信息
-		xQueueSend(printf_acc_queue,&estimate_acc.z,0);
+		//xQueueSend(printf_acc_queue,&estimate_acc.z,0);
 		//xQueueSend(printf_acc_queue,&earth_acc.z,0);
 		//xQueueSend(printf_acc_queue,&Origion_NamelessQuad_acc.z,0);
 		
@@ -482,12 +511,13 @@ void control_task(void * parameters)
 			//电机停转
 			motor_stop();
 			//清除PID角速度环I项
-			PID_i_sum_clean(&pitch_rate_pid);
-			PID_i_sum_clean(&roll_rate_pid);
-			PID_i_sum_clean(&yaw_rate_pid);
+			PID_ISumClean(&PID_PitchRate);
+			PID_ISumClean(&PID_RollRate);
+			PID_ISumClean(&PID_YawRate);
+
 
 			//将设定偏航角设置为当前偏航角，防止起飞旋转
-			set_yaw = Angle.yaw;
+			set_yaw = angle.Yaw;
 
 		}
 		else
@@ -502,7 +532,7 @@ void control_task(void * parameters)
 				set_yaw += 360;
 			}
 
-			if(remote_data.mode == Auto_Mode)
+			/*if(remote_data.mode == Auto_Mode)
 			{
 				if(last_remote_mode != Auto_Mode)
 				{
@@ -510,10 +540,10 @@ void control_task(void * parameters)
 				}
 				remote_data.throttle_out = position_control(estimate_position.z, set_altitude);
 			}
-			last_remote_mode = remote_data.mode;
+			last_remote_mode = remote_data.mode;*/
 
 			
-			attitude_control(remote_data.throttle_out,remote_data.set_pitch,remote_data.set_roll,set_yaw);
+			attitude_control(remote_data.throttle_out,remote_data.set_pitch,remote_data.set_roll,set_yaw, &angle);
 		}
 		//code_time = time_count_end_us();
 		

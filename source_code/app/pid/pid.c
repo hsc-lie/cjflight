@@ -37,16 +37,16 @@ PID_Base_t PD_Control(PID_t *pid, PID_Base_t deviation)
 		dItem = pid->DFilterFunc(dItem);
 	}
 	
-	out = pid->P * error + pid->D * dItem;
+	out = pid->P * deviation + pid->D * dItem;
 	
-	out = PID_Limit(out, pid->out_min, pid->out_max);
+	out = PID_Limit(out, pid->OutMin, pid->OutMax);
 
 	pid->LastDeviation = deviation;
 	
 	return out;
 }
 
-PID_Base_t PI_control(PID_t *pid, PID_Base_t deviation)
+PID_Base_t PI_Control(PID_t *pid, PID_Base_t deviation)
 {
 	PID_Base_t out;
 
@@ -64,7 +64,7 @@ PID_Base_t PI_control(PID_t *pid, PID_Base_t deviation)
 	return out;
 }
 
-PID_Base_t PID_control(PID_t *pid, PID_Base_t deviation)
+PID_Base_t PID_Control(PID_t *pid, PID_Base_t deviation)
 {
 	PID_Base_t out;
 	PID_Base_t dItem;
@@ -79,7 +79,7 @@ PID_Base_t PID_control(PID_t *pid, PID_Base_t deviation)
 		dItem = pid->DFilterFunc(dItem);
 	}
 	
-	out = pid->P * deviation + pid->i_sum + pid->D * dItem;
+	out = pid->P * deviation + pid->ISum + pid->D * dItem;
 	out = PID_Limit(out, pid->OutMin, pid->OutMax);
 
 	pid->LastDeviation = deviation;

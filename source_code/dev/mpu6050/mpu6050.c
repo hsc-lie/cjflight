@@ -167,7 +167,7 @@ E_MPU6050_ERROR MPU6050_ConvertDataAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t *
 		return E_MPU6050_ERROR_NULL;
 	}
 
-	accConvertBase = (float)(32768u >> (mpu6050->AccRange + 1);
+	accConvertBase = (float)(32768u >> (mpu6050->AccRange + 1));
 
 	out->X = (float)in->X/accConvertBase;
 	out->Y = (float)in->Y/accConvertBase;
