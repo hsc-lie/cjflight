@@ -240,6 +240,12 @@ E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t add
 	{
 		SimulationI2C_Start(i2c);
 		SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
+		
+		ack = SimulationI2C_ReadAck(i2c);
+		if(1 == ack)
+		{
+			return E_SIMULATION_I2C_ERROR_NACK;
+		}
 
 		for(i = 0;i < regLen;++i)
 		{

@@ -44,9 +44,9 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	//寻找设备设置
 	do
 	{
-		writeData = 0xa5;
-		mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管理
-		mpu6050->I2CReadReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &readData, 1);
+		writeData = 0x18;
+		mpu6050->I2CWriteReg(mpu6050->DevAddr, GYROSCOPE_CONFIGURATION, &writeData, 1);      //MPU6050电源管理
+		mpu6050->I2CReadReg(mpu6050->DevAddr, GYROSCOPE_CONFIGURATION, &readData, 1);
 
 		count++;
 		if(count > 5)
@@ -54,7 +54,7 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 			return E_MPU6050_ERROR_NOT_FIND_DEV;
 		}
 	}
-	while (readData != 0xa5);
+	while (readData != 0x18);
 	
 
 	writeData = 0x00;

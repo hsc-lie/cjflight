@@ -460,6 +460,10 @@ void control_task(void * parameters)
 		//获取mpu6050原始数据
 		MPU6050_GetBaseAcc(&MPU6050, &accBaseData);
 		MPU6050_GetBaseGyro(&MPU6050, &gyroBaseData);
+		
+		gyroBaseData.X -= -7;
+		gyroBaseData.Y -= 54;
+		gyroBaseData.Z -= -6;
 
 		MPU6050_ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
 		MPU6050_ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
@@ -472,15 +476,20 @@ void control_task(void * parameters)
 		biquad_filter(&biquad_AccParameterY, accConvertData.Y);
 		biquad_filter(&biquad_AccParameterZ, accConvertData.Z);
 		
-
+		
+		accConvertData.Y = -accConvertData.Y;
+		accConvertData.Z = -accConvertData.Z;
+		gyroConvertData.Y = -gyroConvertData.Y;
+		gyroConvertData.Z = -gyroConvertData.Z;
+		
 		//单位转换并滤波
 
 		//Origion_NamelessQuad_acc.x = Acc.x;
 		//Origion_NamelessQuad_acc.y = Acc.y;
 		//Origion_NamelessQuad_acc.z = Acc.z;
 
-		Quaternion_t Quaternion;
-		Quaternion_PIOffset_t Quaternion_PIOffset;
+		//Quaternion_t Quaternion;
+		//Quaternion_PIOffset_t QuaOffset;ternion_PI
 		
 		
 		//四元数姿态解算

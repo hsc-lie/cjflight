@@ -112,6 +112,11 @@ __asm void _enable_irq()
 
 
 
+static void mpu6050_delay()
+{
+	uint32_t i = 100000;
+	while(--i);
+}
 
 
 
@@ -149,7 +154,7 @@ int main(void)
 	/*MPU6050初始化*/
 	
 	
-	
+	mpu6050_delay();
 	MPU6050_Init(&MPU6050);
 	
 	//tim_init_ms(20);

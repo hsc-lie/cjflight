@@ -4,7 +4,7 @@
 #include "at32f4xx_gpio_ex.h"
 
 
-#define SIMULATION_I2C_DELAY_COUNT            (20)
+#define SIMULATION_I2C_DELAY_COUNT            (100)
 
 #define SIMULATION_I2C1_SCL_GPIOX         GPIOA
 #define SIMULATION_I2C1_SCL_PIN           GPIO_Pins_10
