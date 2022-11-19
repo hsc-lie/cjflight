@@ -19,6 +19,27 @@
 #include "filter.h"
 
 
+biquadFilter_t biquad_PitchDItemParam = {0};
+biquadFilter_t biquad_RollDItemParam = {0};
+biquadFilter_t biquad_YawDItemParam = {0};
+
+
+static PID_Base_t PID_DItemFilterPitchRate(PID_Base_t in)
+{
+	return  biquad_filter(&biquad_PitchDItemParam, in);
+}
+
+static PID_Base_t PID_DItemFilterRollRate(PID_Base_t in)
+{
+	return  biquad_filter(&biquad_RollDItemParam, in);
+}
+
+static PID_Base_t PID_DItemFilterYawRate(PID_Base_t in)
+{
+	return  biquad_filter(&biquad_YawDItemParam, in);
+}
+
+
 
 
 PID_t PID_PitchRate = 
@@ -33,7 +54,7 @@ PID_t PID_PitchRate =
 	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
 	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 
-	.DFilterFunc = NULL,
+	.DFilterFunc = PID_DItemFilterPitchRate,
 };
 PID_t PID_PitchAngle = 
 {
@@ -61,6 +82,8 @@ PID_t PID_RollRate =
 	.ISumMax = 500,
 	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
 	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
+
+	.DFilterFunc = PID_DItemFilterRollRate,
 };
 
 PID_t PID_RollAngle = 
@@ -74,6 +97,8 @@ PID_t PID_RollAngle =
 	.ISumMax = 0,
 	.OutMin = -300,
 	.OutMax = 300,
+
+	.DFilterFunc = NULL,
 };
 
 PID_t PID_YawRate = 
@@ -87,6 +112,8 @@ PID_t PID_YawRate =
 	.ISumMax = 500,
 	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
 	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
+
+	.DFilterFunc = PID_DItemFilterYawRate,
 };
 PID_t PID_YawAngle = 
 {
@@ -99,6 +126,8 @@ PID_t PID_YawAngle =
 	.ISumMax = 0,
 	.OutMin = -300,
 	.OutMax = 300,
+
+	.DFilterFunc = NULL,
 };
 
 
@@ -112,6 +141,9 @@ biquadFilter_t biquad_GyroParameterZ = {0};
 biquadFilter_t biquad_AccParameterX = {0};
 biquadFilter_t biquad_AccParameterY = {0};
 biquadFilter_t biquad_AccParameterZ = {0};
+
+
+
 
 Quaternion_t Quaternion = 
 {
@@ -136,9 +168,7 @@ Quaternion_PIOffset_t Quaternion_PIOffset =
 
 
 
-biquadFilter_t pitch_d_ltem_biquad_parameter = {0};
-biquadFilter_t roll_d_ltem_biquad_parameter = {0};
-biquadFilter_t yaw_d_ltem_biquad_parameter = {0};
+
 
 biquadFilter_t position_z_d_ltem_biquad_parameter = {0};
 
@@ -178,11 +208,12 @@ void pid_init()
 	biquad_filter_init_lpf(&biquad_AccParameterY, 500, 15);	
 	biquad_filter_init_lpf(&biquad_AccParameterZ, 500, 15);	
 
-	
 
-	biquad_filter_init_lpf(&pitch_d_ltem_biquad_parameter, 500, 80);
-	biquad_filter_init_lpf(&roll_d_ltem_biquad_parameter, 500, 80);
-	biquad_filter_init_lpf(&yaw_d_ltem_biquad_parameter, 500, 80);
+	biquad_filter_init_lpf(&biquad_PitchDItemParam, 500, 70);
+	biquad_filter_init_lpf(&biquad_RollDItemParam, 500, 70);
+	biquad_filter_init_lpf(&biquad_YawDItemParam, 500, 70);
+
+	
 
 	biquad_filter_init_lpf(&position_z_d_ltem_biquad_parameter, 500, 50);
 
@@ -200,7 +231,7 @@ void motor_stop()
 
 
 
-void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float set_yaw, AttitudeData_t * nowAngle)
+void attitude_control(uint32_t throttle_out, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050_ConvertData_t * gyro)
 {
 	static uint8_t attitude_control_count = 0;
 
@@ -220,7 +251,7 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 
 	int32_t motor_pwm_out[4];
 
-	yaw_error = set_yaw - nowAngle->Yaw;
+	yaw_error = setAngle->Yaw - nowAngle->Yaw;
 	if(yaw_error > 180)
 	{
 		yaw_error -= 360;
@@ -230,18 +261,18 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 		yaw_error += 360;
 	}
 	
-	set_pitch += PITCH_ZERO;
-	set_roll += ROLL_ZERO;
+	setAngle->Pitch += PITCH_ZERO;
+	setAngle->Roll += ROLL_ZERO;
 
 
 	attitude_control_count++;
 	if(1 == attitude_control_count)
 	{
-		pitch_rate_out = PID_Control(&PID_PitchAngle, nowAngle->Pitch - set_pitch);
+		pitch_rate_out = PID_Control(&PID_PitchAngle, nowAngle->Pitch - setAngle->Pitch);
 	}
 	else if(2 == attitude_control_count)
 	{
-		roll_rate_out = PID_Control(&PID_RollAngle, nowAngle->Roll - set_roll);
+		roll_rate_out = PID_Control(&PID_RollAngle, nowAngle->Roll - setAngle->Roll);
 	}
 	else if(3 == attitude_control_count)
 	{
@@ -249,9 +280,9 @@ void attitude_control(uint32_t throttle_out,float set_pitch,float set_roll,float
 		yaw_rate_out = PID_Control(&PID_YawAngle, yaw_error); 
 	}
 
-	//pitch_out = (int32_t)PID_control_biquad(&pitch_rate_pid, -Gyro.y - pitch_rate_out, &pitch_d_ltem_biquad_parameter);
-	//roll_out = (int32_t)PID_control_biquad(&roll_rate_pid, -Gyro.x - roll_rate_out, &roll_d_ltem_biquad_parameter);
-	//yaw_out = (int32_t)PID_control_biquad(&yaw_rate_pid, Gyro.z - yaw_rate_out, &yaw_d_ltem_biquad_parameter);
+	pitch_out = (int32_t)PID_Control(&PID_PitchRate, -gyro->Z- pitch_rate_out);
+	roll_out = (int32_t)PID_Control(&PID_RollRate, -gyro->X- roll_rate_out);
+	yaw_out = (int32_t)PID_Control(&PID_YawRate, gyro->Z- yaw_rate_out);
 
 	
 	motor_pwm_out[0] = MOTOR_PWM_MIN + pitch_out - roll_out + yaw_out + throttle_out;  //400
@@ -415,13 +446,14 @@ void control_task(void * parameters)
 	flight_mode_t last_remote_mode = Stabilize_Mode;
 
 
-	MPU6050_BaseData_t gyroBaseData;
-	MPU6050_BaseData_t accBaseData;
+	MPU6050_BaseData_t gyroBaseData = {0};
+	MPU6050_BaseData_t accBaseData = {0};
 	
-	MPU6050_ConvertData_t gyroConvertData;
-	MPU6050_ConvertData_t accConvertData;
+	MPU6050_ConvertData_t gyroConvertData = {0};
+	MPU6050_ConvertData_t accConvertData = {0};
 
-	AttitudeData_t angle;
+	AttitudeData_t nowAngle = {0};
+	AttitudeData_t setAngle = {0};
 
 	for(;;)
 	{
@@ -493,7 +525,7 @@ void control_task(void * parameters)
 		
 		
 		//四元数姿态解算
-		Quaternion_IMUCalculation(&Quaternion, &Quaternion_PIOffset, &accConvertData, &gyroConvertData, &angle, 0.002);
+		Quaternion_IMUCalculation(&Quaternion, &Quaternion_PIOffset, &accConvertData, &gyroConvertData, &nowAngle, 0.002);
 
 
 		//预估机体速度和位置
@@ -516,6 +548,7 @@ void control_task(void * parameters)
 		
 		
 		if((remote_data.throttle_out < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
+		//if(FALSE)
 		{
 			//电机停转
 			motor_stop();
@@ -526,7 +559,7 @@ void control_task(void * parameters)
 
 
 			//将设定偏航角设置为当前偏航角，防止起飞旋转
-			set_yaw = angle.Yaw;
+			set_yaw = nowAngle.Yaw;
 
 		}
 		else
@@ -551,8 +584,10 @@ void control_task(void * parameters)
 			}
 			last_remote_mode = remote_data.mode;*/
 
-			
-			attitude_control(remote_data.throttle_out,remote_data.set_pitch,remote_data.set_roll,set_yaw, &angle);
+			setAngle.Pitch = remote_data.set_pitch;
+			setAngle.Roll = remote_data.set_roll;
+			setAngle.Yaw = set_yaw;
+			attitude_control(remote_data.throttle_out, &setAngle, &nowAngle, &gyroConvertData);
 		}
 		//code_time = time_count_end_us();
 		

@@ -4,7 +4,7 @@
 #include "at32f4xx_gpio_ex.h"
 
 
-#define SIMULATION_I2C_DELAY_COUNT            (100)
+#define SIMULATION_I2C_DELAY_COUNT            (20)
 
 #define SIMULATION_I2C1_SCL_GPIOX         GPIOA
 #define SIMULATION_I2C1_SCL_PIN           GPIO_Pins_10
@@ -46,7 +46,7 @@ static void SimulationI2C1_SDADirSet(E_SIMULATION_I2C_SDA_DIR dir)
 	}
 }
 
-static uint8_t SimulationI2C1_SDARead(uint8_t value)
+static uint8_t SimulationI2C1_SDARead()
 {
 	return GPIO_ReadInputDataBit(SIMULATION_I2C1_SDA_GPIOX, SIMULATION_I2C1_SDA_PIN);
 }

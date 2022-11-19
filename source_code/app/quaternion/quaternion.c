@@ -28,10 +28,10 @@ static float InvSqrt(float x)
 
 static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * offset, float dt)
 {
-	float ex; 
-	float ey; 
-	float ez;
-	float normalise;
+	float ex = 0; 
+	float ey = 0; 
+	float ez = 0;
+	float normalise = 0;
 
 	if((NULL == quaternion)
 		|| (NULL == pi)
@@ -140,8 +140,8 @@ void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angl
 
 void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, AttitudeData_t * angle , float dt)
 {
-	TriaxialData_t gyroOffset;
-	TriaxialData_t gyroRad;
+	TriaxialData_t gyroOffset = {0};
+	TriaxialData_t gyroRad = {0};
 
 	gyroRad.X = DEG_TO_RAD(gyro->X);	
 	gyroRad.Y = DEG_TO_RAD(gyro->Y);

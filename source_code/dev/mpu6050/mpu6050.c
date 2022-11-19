@@ -24,7 +24,11 @@
 #define WHO_AM_I                0x75         //我是谁
 
 
-
+static void mpu6050_delay()
+{
+	uint32_t i = 100000;
+	while(--i);
+}
 
 
 E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
@@ -40,23 +44,36 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	{
 		return E_MPU6050_ERROR_NULL;
 	}
-
+	
+	mpu6050_delay();
+	
+	
 	//寻找设备设置
-	do
+	/*do
 	{
 		writeData = 0x18;
+		mpu6050_delay();
 		mpu6050->I2CWriteReg(mpu6050->DevAddr, GYROSCOPE_CONFIGURATION, &writeData, 1);      //MPU6050电源管理
+		mpu6050_delay();
 		mpu6050->I2CReadReg(mpu6050->DevAddr, GYROSCOPE_CONFIGURATION, &readData, 1);
+		
 
-		count++;
+		//count++;
 		if(count > 5)
 		{
-			return E_MPU6050_ERROR_NOT_FIND_DEV;
+			//return E_MPU6050_ERROR_NOT_FIND_DEV;
 		}
 	}
-	while (readData != 0x18);
+	while (readData != 0x18);*/
 	
-
+	//检测陀螺仪	
+	while(readData != 0x98)
+	{	
+		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
+		mpu6050_delay();
+	}
+	
+		
 	writeData = 0x00;
 	mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管理
 
