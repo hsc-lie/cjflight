@@ -280,7 +280,7 @@ void attitude_control(uint32_t throttle_out, AttitudeData_t * setAngle, Attitude
 		yaw_rate_out = PID_Control(&PID_YawAngle, yaw_error); 
 	}
 
-	pitch_out = (int32_t)PID_Control(&PID_PitchRate, -gyro->Z- pitch_rate_out);
+	pitch_out = (int32_t)PID_Control(&PID_PitchRate, -gyro->Y- pitch_rate_out);
 	roll_out = (int32_t)PID_Control(&PID_RollRate, -gyro->X- roll_rate_out);
 	yaw_out = (int32_t)PID_Control(&PID_YawRate, gyro->Z- yaw_rate_out);
 
