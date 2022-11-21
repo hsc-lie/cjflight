@@ -6,15 +6,19 @@
 typedef struct
 {
 	GPIO_Type * GPIOx;
+	uint16_t GPIO_PinSource; 
+	uint8_t GPIO_AF;
 	GPIO_InitType GPIO_InitType;
+	
 	
 }GPIO_Config_t;
 
 
 
-GPIO_Config_t GPIO_ConfigTable[] = 
+const GPIO_Config_t GPIO_ConfigTable[] = 
 {
-	
+
+	//软件I2C SDA
 	{
 		.GPIOx = GPIOA,
 		.GPIO_InitType = 
@@ -27,6 +31,7 @@ GPIO_Config_t GPIO_ConfigTable[] =
 		},
 	},
 	
+	//软件I2C SCL
 	{
 		.GPIOx = GPIOA,
 		.GPIO_InitType = 
@@ -39,6 +44,7 @@ GPIO_Config_t GPIO_ConfigTable[] =
 		},
 	},
 
+			
 	{
 		.GPIOx = GPIOA,
 		.GPIO_InitType = 
@@ -51,6 +57,37 @@ GPIO_Config_t GPIO_ConfigTable[] =
 		},
 	},
 	
+	//串口1 TX
+	{
+		.GPIOx = GPIOB,
+		.GPIO_PinSource = GPIO_PinsSource6,
+		.GPIO_AF = GPIO_AF_0,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = GPIO_Pins_6,
+	    	.GPIO_Mode = GPIO_Mode_AF,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+	//串口1 RX
+	{
+		.GPIOx = GPIOA,
+		.GPIO_PinSource = GPIO_PinsSource6,
+		.GPIO_AF = GPIO_AF_0,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = GPIO_Pins_7,
+	    	.GPIO_Mode = GPIO_Mode_AF,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+
+	
+			
 	{
 		.GPIOx = GPIOC,
 		.GPIO_InitType = 
@@ -66,6 +103,7 @@ GPIO_Config_t GPIO_ConfigTable[] =
 
 
 
+
 void GPIO_ConfigInitAll(void)
 {
 	uint32_t i;
@@ -73,7 +111,8 @@ void GPIO_ConfigInitAll(void)
 
 	for(i = 0;i < len;++i)
 	{
-		GPIO_Init(GPIO_ConfigTable[i].GPIOx, &GPIO_ConfigTable[i].GPIO_InitType);
+		GPIO_Init(GPIO_ConfigTable[i].GPIOx, (GPIO_Config_t *)&GPIO_ConfigTable[i].GPIO_InitType);
+		GPIO_PinAFConfig(GPIO_ConfigTable[i].GPIOx, GPIO_ConfigTable[i].GPIO_PinSource, GPIO_ConfigTable[i].GPIO_AF);
 	}
 	
 }

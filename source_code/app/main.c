@@ -11,6 +11,7 @@
 
 #include "rcc_config.h"
 #include "gpio_config.h"
+#include "usart_config.h"
 
 
 #include "led.h"
@@ -124,12 +125,13 @@ int main(void)
 
 	RCC_ConfigInitAll();
 	GPIO_ConfigInitAll();
+	USART_ConfigInitAll();
 
 	/*LED初始化*/
 	//led_init();
 
 	/**/
-	uart_init();
+	//uart_init();
 	
 	/*PID参数初始化*/
 	pid_init();

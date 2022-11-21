@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>AT32F421C8T7,USE_STDPERIPH_DRIVER,USE_FULL_ASSERT,AT_START_F421_V1_0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\source_code\app;..\source_code\app\control;..\source_code\app\filter;..\source_code\app\pid;..\source_code\app\quaternion;..\source_code\app\remote;..\source_code\common;..\source_code\dev\bmp280;..\source_code\dev\mpu6050;..\source_code\dev\spl06;..\source_code\freeRTOS;..\source_code\freeRTOS\include;..\source_code\freeRTOS\RVDS;..\source_code\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\source_code\Libraries\CMSIS\CM4\CoreSupport;..\source_code\Libraries\CMSIS\CM4\DeviceSupport;..\source_code\user\inc;..\source_code\hal\simulation_i2c;..\source_code\hal\i2c;..\source_code\hardware\gpio;..\source_code\hardware\rcc</IncludePath>
+              <IncludePath>..\source_code\app;..\source_code\app\control;..\source_code\app\filter;..\source_code\app\pid;..\source_code\app\quaternion;..\source_code\app\remote;..\source_code\common;..\source_code\dev\bmp280;..\source_code\dev\mpu6050;..\source_code\dev\spl06;..\source_code\freeRTOS;..\source_code\freeRTOS\include;..\source_code\freeRTOS\RVDS;..\source_code\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\source_code\Libraries\CMSIS\CM4\CoreSupport;..\source_code\Libraries\CMSIS\CM4\DeviceSupport;..\source_code\user\inc;..\source_code\hal\simulation_i2c;..\source_code\hal\i2c;..\source_code\hardware\gpio;..\source_code\hardware\rcc;..\source_code\hardware\usart;..\source_code\hal\usart</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -671,6 +671,11 @@
               <FileType>1</FileType>
               <FilePath>..\source_code\hardware\rcc\rcc_config.c</FilePath>
             </File>
+            <File>
+              <FileName>usart_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\hardware\usart\usart_config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -695,6 +700,16 @@
               <FileName>simulation_i2c_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source_code\hal\simulation_i2c\simulation_i2c_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\hal\usart\usart_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart_hal_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\hal\usart\usart_hal_config.c</FilePath>
             </File>
           </Files>
         </Group>
