@@ -69,6 +69,8 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	//检测陀螺仪	
 	while(readData != 0x98)
 	{	
+		//writeData
+		//mpu6050->I2CWriteReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
 		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
 		mpu6050_delay();
 	}
@@ -90,6 +92,8 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	//加速度量程 0<<3 2g   1<<3 4g   2<<3 8g   3<<3 16g
 	writeData = mpu6050->AccRange << 3;
 	mpu6050->I2CWriteReg(mpu6050->DevAddr,ACCELEROMETER_CONFIGURATION, &writeData, 1);
+	
+	
 }
 
 
