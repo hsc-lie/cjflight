@@ -2,7 +2,7 @@
 #define __USART_CONFIG_H_
 
 
-
+#include "common.h"
 
 void USART_ConfigInitAll(void);
 

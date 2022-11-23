@@ -168,12 +168,23 @@ void USART1_IRQHandler(void)
   */
 void USART2_IRQHandler(void)
 {
-  if(USART_GetITStatus(USART2, USART_INT_RDNE) != RESET)
-  {
-    //sbus_updata_data();
-    ibus_read_original_data();
-    USART_ClearITPendingBit(USART2, USART_INT_RDNE);
-  }
+	static uint32_t idleCount = 0;
+	if(USART_GetITStatus(USART2, USART_INT_RDNE) == SET)
+	{
+		USART_ClearITPendingBit(USART2, USART_INT_RDNE);
+		//sbus_updata_data();
+		ibus_read_original_data();
+		
+	}
+
+	if(USART_GetITStatus(USART2, USART_INT_IDLEF) == SET)
+	{
+	
+		USART_ReceiveData(USART2);
+		//USART_ClearFlag();
+		//USART_ClearITPendingBit(USART2, USART_INT_RDNE);
+		idleCount++;
+	}
 }
 
 int led_flag = 0;
@@ -221,6 +232,23 @@ void EXTI1_0_IRQHandler(void)
 }
 
 
+
+void DMA1_Channel7_4_IRQHandler(void)
+{
+	static int i = 0;
+	static int j = 0;
+	if(DMA_GetITStatus(DMA1_INT_HT5) == SET)
+	{
+		DMA_ClearITPendingBit(DMA1_INT_HT5);
+		i++;
+	}
+	
+	if(DMA_GetITStatus(DMA1_INT_TC5) == SET)
+	{
+		DMA_ClearITPendingBit(DMA1_INT_TC5);
+		j++;
+	}
+}
 
 
 /**

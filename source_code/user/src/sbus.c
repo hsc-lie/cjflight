@@ -25,6 +25,8 @@ void sbus_init()
   ibus_handel.data_read_flag = 0;
 
 
+#if 0
+
   RCC_AHBPeriphClockCmd(SBUS_UART_RX_GPIO_RCC, ENABLE);
 
   RCC_APB1PeriphClockCmd(SBUS_UART_RCC, ENABLE); 
@@ -41,7 +43,7 @@ void sbus_init()
   GPIO_Init(SBUS_UART_RX_GPIO, &GPIO_InitStructure);
 
 
-  USART_StructInit(&USART_InitStructure);
+  //USART_StructInit(&USART_InitStructure);
   USART_InitStructure.USART_BaudRate = SBUS_UART_BAUDRATE;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -63,6 +65,7 @@ void sbus_init()
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
+#endif
 }
 
 

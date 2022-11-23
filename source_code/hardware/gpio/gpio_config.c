@@ -17,6 +17,20 @@ typedef struct
 
 const GPIO_Config_t GPIO_ConfigTable[] = 
 {
+	//USART2 RX
+	{
+		.GPIOx = GPIOA,
+		.GPIO_PinSource = GPIO_PinsSource3,
+		.GPIO_AF = GPIO_AF_1,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = GPIO_Pins_3,
+	    	.GPIO_Mode = GPIO_Mode_AF,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
 
 	//软件I2C SDA
 	{
