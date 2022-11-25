@@ -34,11 +34,13 @@ typedef struct
 
 }Quaternion_PIOffset_t;
 
+
 /*
-float q0=1.0f;
-float q1=0.0f;
-float q2=0.0f;
-float q3=0.0f;
+	定义Quaternion_t结构体时请初始化为以下值
+	q0=1.0f;
+	q1=0.0f;
+	q2=0.0f;
+	q3=0.0f;
 */
 typedef struct
 {

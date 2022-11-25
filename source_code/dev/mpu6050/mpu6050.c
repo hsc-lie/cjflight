@@ -48,24 +48,6 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	mpu6050_delay();
 	
 	
-	//寻找设备设置
-	/*do
-	{
-		writeData = 0x18;
-		mpu6050_delay();
-		mpu6050->I2CWriteReg(mpu6050->DevAddr, GYROSCOPE_CONFIGURATION, &writeData, 1);      //MPU6050电源管理
-		mpu6050_delay();
-		mpu6050->I2CReadReg(mpu6050->DevAddr, GYROSCOPE_CONFIGURATION, &readData, 1);
-		
-
-		//count++;
-		if(count > 5)
-		{
-			//return E_MPU6050_ERROR_NOT_FIND_DEV;
-		}
-	}
-	while (readData != 0x18);*/
-	
 	//检测陀螺仪	
 	while(readData != 0x98)
 	{	
@@ -96,24 +78,7 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	
 }
 
-
 //获得所有轴的角速度
-/*
-void mpu6050_get_gyro(Mpu6050_Data_t * Gyro)
-{
-	uint8_t dat[6] = {0};
-	simulation_i2c_readregs(MPU6050_ID,GYRO_XOUT_H,6,dat);
-
-	Gyro->x = (int16_t)((dat[0] << 8) | dat[1]);
-	Gyro->y = (int16_t)((dat[2] << 8) | dat[3]);
-	Gyro->z = (int16_t)((dat[4] << 8) | dat[5]);
-
-	//Gyro->x = -Gyro->x;
-	Gyro->y = -Gyro->y;
-	Gyro->z = -Gyro->z;
-}
-*/
-
 E_MPU6050_ERROR MPU6050_GetBaseGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * gyro)
 {
 	uint8_t data[6] = {0};
@@ -158,7 +123,7 @@ E_MPU6050_ERROR MPU6050_GetBaseAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * acc
 	return E_MPU6050_ERROR_OK;
 }
 
-
+//陀螺仪角速度单位转换
 E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_ConvertData_t * out)
 {
 	float gyroConvertBase;
@@ -177,7 +142,7 @@ E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t 
 	return E_MPU6050_ERROR_OK;
 }
 
-
+//加速度单位转换
 E_MPU6050_ERROR MPU6050_ConvertDataAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_ConvertData_t * out)
 {
 	float accConvertBase;
@@ -196,52 +161,6 @@ E_MPU6050_ERROR MPU6050_ConvertDataAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t *
 
 	return E_MPU6050_ERROR_OK;
 }
-
-
-/*
-void mpu6050_biquad_fiter_parameter_init()
-{
-	uint32_t i;
-	for(i = 0;i < 3;i++)
-	{
-		biquad_filter_init_lpf(&gyro_biquad_parameter[i], 500, 70);
-		biquad_filter_init_lpf(&acc_biquad_parameter[i], 500, 15);		
-	}
-
-
-}*/
-
-
-
-/*
-void gyro_data_change()
-{
-	
-
-	Acc.x = (float)Mpu6050_Acc.x/4096;
-	Acc.y = (float)Mpu6050_Acc.y/4096;
-	Acc.z = (float)Mpu6050_Acc.z/4096;
-	
-
-	Acc.x = biquad_filter(&acc_biquad_parameter[0], Acc.x);
-	Acc.y = biquad_filter(&acc_biquad_parameter[1], Acc.y);
-	Acc.z = biquad_filter(&acc_biquad_parameter[2], Acc.z);
-
-
-	
-	Gyro.x=(float)(Mpu6050_Gyro.x - Mpu6050_Gyro_Zero.x)/16.384;     //陀螺仪采集零偏和转换单位
-	Gyro.y=(float)(Mpu6050_Gyro.y - Mpu6050_Gyro_Zero.y)/16.384;
-	Gyro.z=(float)(Mpu6050_Gyro.z - Mpu6050_Gyro_Zero.z)/16.384;
-
-
-	Gyro.x = biquad_filter(&gyro_biquad_parameter[0], Gyro.x);
-	Gyro.y = biquad_filter(&gyro_biquad_parameter[1], Gyro.y);
-	Gyro.z = biquad_filter(&gyro_biquad_parameter[2], Gyro.z);
-
-	
-}
-*/
-
 
 
 

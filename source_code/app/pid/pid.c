@@ -1,6 +1,6 @@
 #include "pid.h"
 
-
+//限幅
 static PID_Base_t PID_Limit(PID_Base_t value, PID_Base_t min, PID_Base_t max)
 {
 	if(value < min)
@@ -19,8 +19,7 @@ static PID_Base_t PID_Limit(PID_Base_t value, PID_Base_t min, PID_Base_t max)
 
 
 
-
-PID_Base_t PD_Control(PID_t *pid, PID_Base_t deviation)
+PID_Base_t PD_Control(PID_t * const pid, PID_Base_t deviation)
 {
 	PID_Base_t out;
 	PID_Base_t dItem;
@@ -46,7 +45,7 @@ PID_Base_t PD_Control(PID_t *pid, PID_Base_t deviation)
 	return out;
 }
 
-PID_Base_t PI_Control(PID_t *pid, PID_Base_t deviation)
+PID_Base_t PI_Control(PID_t * const pid, PID_Base_t deviation)
 {
 	PID_Base_t out;
 
@@ -64,7 +63,7 @@ PID_Base_t PI_Control(PID_t *pid, PID_Base_t deviation)
 	return out;
 }
 
-PID_Base_t PID_Control(PID_t *pid, PID_Base_t deviation)
+PID_Base_t PID_Control(PID_t * const pid, PID_Base_t deviation)
 {
 	PID_Base_t out;
 	PID_Base_t dItem;
@@ -89,7 +88,7 @@ PID_Base_t PID_Control(PID_t *pid, PID_Base_t deviation)
 
 
 
-void PID_ISumClean(PID_t * pid)
+void PID_ISumClean(PID_t * const pid)
 {
 	if(NULL != pid)
 	{
