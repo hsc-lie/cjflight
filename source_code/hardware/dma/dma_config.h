@@ -4,7 +4,7 @@
 
 #include "common.h"
 
-#define DMA_USART2_RX_BUFFER_SIZE        (24)
+#define DMA_USART2_RX_BUFFER_SIZE        (32)
 
 
 extern uint8_t DMA_USARTRXBuffer[DMA_USART2_RX_BUFFER_SIZE];
