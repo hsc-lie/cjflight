@@ -1,7 +1,7 @@
 #include "usart_hal.h"
 
 
-E_USART_HAL_ERROR USART_HAL_SendData(const USART_HAL_t const * usart, uint8_t *data, uint32_t len)
+E_USART_HAL_ERROR USART_HAL_SendData(const USART_HAL_t * const usart, uint8_t *data, uint32_t len)
 {
 	if((NULL == usart)
 		|| (NULL == usart->SendData)
@@ -16,7 +16,7 @@ E_USART_HAL_ERROR USART_HAL_SendData(const USART_HAL_t const * usart, uint8_t *d
 }
 
 
-E_USART_HAL_ERROR USART_HAL_ReadData(const USART_HAL_t const * usart, uint8_t *data, uint32_t readLen, uint32_t * outLen)
+E_USART_HAL_ERROR USART_HAL_ReadData(const USART_HAL_t * const usart, uint8_t *data, uint32_t readLen, uint32_t * outLen)
 {
 	if((NULL == usart)
 		|| (NULL == usart->ReadData)

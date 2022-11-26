@@ -27,11 +27,11 @@ typedef struct
 }PID_t;
 
 
-PID_Base_t PD_Control(PID_t * pid, PID_Base_t deviation);
-PID_Base_t PI_Control(PID_t *pid, PID_Base_t deviation);
-PID_Base_t PID_Control(PID_t *pid, PID_Base_t deviation);
+PID_Base_t PD_Control(PID_t * const pid, PID_Base_t deviation);
+PID_Base_t PI_Control(PID_t * const pid, PID_Base_t deviation);
+PID_Base_t PID_Control(PID_t * const pid, PID_Base_t deviation);
 
-void PID_ISumClean(PID_t * pid);
+void PID_ISumClean(PID_t * const pid);
 
 
 

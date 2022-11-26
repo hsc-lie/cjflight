@@ -19,8 +19,8 @@ typedef struct
 
 
 
-E_USART_HAL_ERROR USART_HAL_SendData(const USART_HAL_t const * usart, uint8_t *data, uint32_t len);
-E_USART_HAL_ERROR USART_HAL_ReadData(const USART_HAL_t const * usart, uint8_t *data, uint32_t readLen, uint32_t * outLen);
+E_USART_HAL_ERROR USART_HAL_SendData(const USART_HAL_t * const usart, uint8_t *data, uint32_t len);
+E_USART_HAL_ERROR USART_HAL_ReadData(const USART_HAL_t * const usart, uint8_t *data, uint32_t readLen, uint32_t * outLen);
 
 
 

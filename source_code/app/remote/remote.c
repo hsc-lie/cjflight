@@ -58,15 +58,15 @@ void remote_ibus_to_reality(remote_data_t * data)
     data->throttle_out += THROTTLE_OUT_MIN;
 
     ibus_value = ibus_get_channel_value(IBUS_Channel2);
-    data->set_pitch = (SET_PITCH_MAX - SET_PITCH_MIN) * (ibus_value - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
+    data->set_pitch = (float)(SET_PITCH_MAX - SET_PITCH_MIN) * (ibus_value - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
     data->set_pitch += SET_PITCH_MIN;
 
     ibus_value = ibus_get_channel_value(IBUS_Channel1);
-    data->set_roll = (SET_ROLL_MAX - SET_ROLL_MIN) * (ibus_value - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
+    data->set_roll = (float)(SET_ROLL_MAX - SET_ROLL_MIN) * (ibus_value - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
     data->set_roll += SET_ROLL_MIN;
 
     ibus_value = ibus_get_channel_value(IBUS_Channel4);
-    data->set_yaw_rate = (SET_YAW_RATE_MAX - SET_YAW_RATE_MIN) * (ibus_value - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
+    data->set_yaw_rate = (float)(SET_YAW_RATE_MAX - SET_YAW_RATE_MIN) * (ibus_value - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
     data->set_yaw_rate += SET_YAW_RATE_MIN;
 	data->set_yaw_rate = -data->set_yaw_rate;
 
@@ -99,15 +99,24 @@ void remote_task(void * parameters)
 	//uint32_t motor_out;
 	for(;;)
 	{
-        xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
+        //xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
 
-		remote_update_status = remote_update();
+		remote_update_status = IBUS_Analysis();
 
-        if(0 == remote_update_status)
-        {
-            remote_ibus_to_reality(&remote_data);
-            xQueueSend(remote_queue,&remote_data,0);
-        }
+
+
+		if(0 == IBUS_Analysis())
+		{
+			remote_update_status = remote_update();
+			if(0 == remote_update_status)
+	        {
+	            remote_ibus_to_reality(&remote_data);
+	            xQueueSend(remote_queue,&remote_data,0);
+	        }
+		}
+
+			
+        
 
 		/*motor_out = remote_throttle_to_motor_get();
 		pwm_out(PWM_Channel_1, motor_out);

@@ -3,7 +3,10 @@
 #include "at32f4xx.h"
 
 
-uint8_t USART2_RXBuff[64] = {0};
+#include "usart_config.h"
+
+
+uint8_t DMA_USARTRXBuffer[DMA_USART2_RX_BUFFER_SIZE];
 
 
 void DMA_ConfigInitAll()
@@ -12,9 +15,9 @@ void DMA_ConfigInitAll()
 	NVIC_InitType NVIC_InitStructure;
  
   	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)&USART2->DT;
-  	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t)&USART2_RXBuff;
+  	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t)&DMA_USARTRXBuffer;
   	DMA_InitStruct.DMA_Direction = DMA_DIR_PERIPHERALSRC;
-  	DMA_InitStruct.DMA_BufferSize = sizeof(USART2_RXBuff)/sizeof(uint8_t);
+  	DMA_InitStruct.DMA_BufferSize = DMA_USART2_RX_BUFFER_SIZE;
 	DMA_InitStruct.DMA_PeripheralInc = DMA_PERIPHERALINC_DISABLE;
 	DMA_InitStruct.DMA_MemoryInc = DMA_MEMORYINC_ENABLE;
 	DMA_InitStruct.DMA_PeripheralDataWidth = DMA_PERIPHERALDATAWIDTH_BYTE;
@@ -26,8 +29,9 @@ void DMA_ConfigInitAll()
 	
   	DMA_Init(DMA1_Channel5, &DMA_InitStruct);
 
-	DMA_INTConfig(DMA1_Channel5, DMA_INT_TC, ENABLE);
 	DMA_INTConfig(DMA1_Channel5, DMA_INT_HT, ENABLE);
+	DMA_INTConfig(DMA1_Channel5, DMA_INT_TC, ENABLE);
+	
 
 	DMA_ChannelEnable(DMA1_Channel5, ENABLE);
 
@@ -37,5 +41,31 @@ void DMA_ConfigInitAll()
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+}
+
+
+
+void DMA1_CH5_HT_Transmission()
+{
+	uint32_t i;
+	uint32_t halfSize = DMA_USART2_RX_BUFFER_SIZE >> 1;
+
+	for(i = 0;i < halfSize;++i)
+	{
+		CircularQueue_WriteByte(&USART2_Queue, DMA_USARTRXBuffer[i]);
+	}
+		
+}
+
+
+void DMA1_CH5_TC_Transmission()
+{
+	uint32_t i;
+	uint32_t halfSize = DMA_USART2_RX_BUFFER_SIZE >> 1;
+
+	for(i = halfSize;i < DMA_USART2_RX_BUFFER_SIZE;++i)
+	{
+		CircularQueue_WriteByte(&USART2_Queue, DMA_USARTRXBuffer[i]);
+	}
 }
 

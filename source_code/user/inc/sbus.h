@@ -4,6 +4,7 @@
 
 #include "at32f4xx.h"
 
+#include "common.h"
 
 #include "at32f4xx_gpio_ex.h"
 #include "at32f4xx_usart.h"
@@ -67,7 +68,10 @@ void sbus_init(void);
 void sbus_updata_data(void);
 
 
-void ibus_read_original_data(void);
+//void ibus_read_original_data(void);
+//void ibus_read_original_data(uint8_t data);
+extern int IBUS_Analysis();
+
 
 uint8_t ibus_data_solution(void);  
 uint16_t ibus_get_channel_value(IBUS_Channel_Type Channel);

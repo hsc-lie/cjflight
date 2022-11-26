@@ -2,6 +2,20 @@
 
 #include "at32f4xx_usart.h"
 
+            
+uint8_t USART2_Buffer[USART2_BUFFER_SIZE];
+CircularQueue_t USART2_Queue = 
+{
+	.Buffer = USART2_Buffer,
+	.BufferSize = USART2_BUFFER_SIZE,
+
+	.WriteIndex = 0,
+	.ReadIndex = 0,
+};
+
+
+
+
 
 void USART_ConfigInitAll()
 {
@@ -64,6 +78,18 @@ void USART_ConfigInitAll()
 }
 
 
+
+
+void USART_TransmissionData(USART_Type * USARTx,  uint8_t * data, uint32_t len)
+{
+	uint32_t i;
+	for(i = 0;i < len;i++)
+	{
+		while(USART_GetFlagStatus(USARTx, USART_FLAG_TDE) == RESET);
+    	USART_SendData(USARTx, *data);
+		++data;
+	}
+}
 
 
 

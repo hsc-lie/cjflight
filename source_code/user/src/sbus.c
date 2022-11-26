@@ -4,6 +4,7 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+#include "usart_hal_config.h"
 
 #define SBUS_DATA_LEN    32
 
@@ -170,14 +171,15 @@ uint16_t ibus_get_channel_value(IBUS_Channel_Type Channel)
 //uint32_t ibus_time = 0;
 
 
-void ibus_read_original_data()
+static int ibus_read_original_data(uint8_t data)
 {
+	int ret = 1;
   static uint8_t data_num = 0;
 
-  uint8_t data;
+  //uint8_t data;
   extern xSemaphoreHandle remote_read_semaphore;
 
-  data = USART_ReceiveData(SBUS_UARTx);
+  //data = USART_ReceiveData(SBUS_UARTx);
 
   if((0 == data_num) && (0x20 == data))
   {
@@ -217,15 +219,38 @@ void ibus_read_original_data()
     ibus_set_data_buff(data_num, data);
     data_num = 0;
     ibus_handel.data_read_index = ibus_handel.data_read_index ^ 0x01;
-    
-    xSemaphoreGiveFromISR(remote_read_semaphore,pdTRUE);
+
+	ret = 0;
+    //xSemaphoreGiveFromISR(remote_read_semaphore,pdTRUE);
   }
   else
   {
     data_num = 0;
     ibus_handel.data_read_flag = 0;
   }
- 
+
+  	return ret;
 }
 
+
+int IBUS_Analysis()
+{
+	uint32_t i;
+	int ret = 1;
+	
+	uint8_t data[32];
+	uint32_t outLen = 0;
+	
+	USART_HAL_ReadData(&USART2_HAL, data, 32, &outLen);
+
+	for(i = 0;i < outLen;++i)
+	{
+		if(0 == ibus_read_original_data(data[i]))
+		{
+			ret = 0;
+		}
+	}
+
+	return ret;
+}
 

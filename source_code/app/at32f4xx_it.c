@@ -12,22 +12,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "at32f4xx_it.h"
 
-#include "led.h"
-#include "time.h"
-#include "tim_input_capture.h"
-#include "pwm.h"
-#include "uart.h"
-#include "sbus.h"
 
-#include "mpu6050.h"
-
-#include "quaternion.h"
+#include "usart_config.h"
+#include "dma_config.h"
 
 
-
-//extern void vPortSVCHandler();
-//extern void xPortSysTickHandler();
-//extern void xPortPendSVHandler();
 
 
 /** @addtogroup AT32F421_StdPeriph_Examples
@@ -172,7 +161,7 @@ void USART2_IRQHandler(void)
 	{
 		USART_ClearITPendingBit(USART2, USART_INT_RDNE);
 		//sbus_updata_data();
-		ibus_read_original_data();
+		//ibus_read_original_data();
 		
 	}
 
@@ -180,6 +169,7 @@ void USART2_IRQHandler(void)
 	{
 	
 		USART_ReceiveData(USART2);
+
 		//USART_ClearFlag();
 		//USART_ClearITPendingBit(USART2, USART_INT_RDNE);
 	}
@@ -206,7 +196,7 @@ void TMR3_GLOBAL_IRQHandler(void)
   if(TMR_GetINTStatus(TMR3, TMR_INT_CC2) == SET) 
   {
     TMR_ClearITPendingBit(TMR3, TMR_INT_CC2);
-    tim_get_ppm();
+    //tim_get_ppm();
   }
 }
 
@@ -215,7 +205,7 @@ void TMR15_GLOBAL_IRQHandler(void)
   if(TMR_GetINTStatus(TMR15, TMR_INT_CC1) == SET) 
   {
     TMR_ClearITPendingBit(TMR15, TMR_INT_CC1);
-    tim_get_ppm();
+    //tim_get_ppm();
   }
 }
 
@@ -225,7 +215,7 @@ void EXTI1_0_IRQHandler(void)
   if(EXTI_GetIntStatus(EXTI_Line0) == SET)
   {
     EXTI_ClearIntPendingBit(EXTI_Line0);
-	  tim_get_ppm();
+	  //tim_get_ppm();
   }
 }
 
@@ -233,17 +223,25 @@ void EXTI1_0_IRQHandler(void)
 
 void DMA1_Channel7_4_IRQHandler(void)
 {
+
 	//static int i = 0;
 	//static int j = 0;
+	//传输一半中断
 	if(DMA_GetITStatus(DMA1_INT_HT5) == SET)
 	{
 		DMA_ClearITPendingBit(DMA1_INT_HT5);
+
+		DMA1_CH5_HT_Transmission();
+		
 		//i++;
 	}
-	
+	//传输完成中断
 	if(DMA_GetITStatus(DMA1_INT_TC5) == SET)
 	{
 		DMA_ClearITPendingBit(DMA1_INT_TC5);
+
+		DMA1_CH5_TC_Transmission();
+			
 		//j++;
 	}
 }
