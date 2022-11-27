@@ -452,6 +452,10 @@ void control_task(void * parameters)
 	MPU6050_ConvertData_t gyroConvertData = {0};
 	MPU6050_ConvertData_t accConvertData = {0};
 
+	TriaxialData_t magData = {0, 0, 0};
+	//TriaxialData_t magData = {0, 1, 0};//yaw -90
+	//TriaxialData_t magData = {0, -1, 0};//yaw 90
+
 	AttitudeData_t nowAngle = {0};
 	AttitudeData_t setAngle = {0};
 
@@ -525,7 +529,7 @@ void control_task(void * parameters)
 		
 		
 		//四元数姿态解算
-		Quaternion_IMUCalculation(&Quaternion, &Quaternion_PIOffset, &accConvertData, &gyroConvertData, &nowAngle, 0.002);
+		Quaternion_IMUCalculation(&Quaternion, &Quaternion_PIOffset, &accConvertData, &gyroConvertData, &magData, &nowAngle, 0.002);
 
 
 		//预估机体速度和位置
