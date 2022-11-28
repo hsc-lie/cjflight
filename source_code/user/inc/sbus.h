@@ -30,7 +30,7 @@
 #define SBUS_UART_IRQ                           USART2_IRQn
 
 
-
+#ifndef IBUS_Channel_Type
 typedef enum
 {
     IBUS_Channel1,
@@ -43,12 +43,13 @@ typedef enum
     IBUS_Channel8,
     IBUS_Channel_MAX
 }IBUS_Channel_Type;
-
+#endif
 
 
 
 typedef struct
 {
+
     uint8_t data_buff[32];
     uint16_t data_sum;
 }IBus_data_t;

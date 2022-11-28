@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>AT32F421C8T7,USE_STDPERIPH_DRIVER,USE_FULL_ASSERT,AT_START_F421_V1_0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\source_code\app;..\source_code\app\control;..\source_code\app\filter;..\source_code\app\pid;..\source_code\app\quaternion;..\source_code\app\remote;..\source_code\common;..\source_code\dev\bmp280;..\source_code\dev\mpu6050;..\source_code\dev\spl06;..\source_code\freeRTOS;..\source_code\freeRTOS\include;..\source_code\freeRTOS\RVDS;..\source_code\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\source_code\Libraries\CMSIS\CM4\CoreSupport;..\source_code\Libraries\CMSIS\CM4\DeviceSupport;..\source_code\user\inc;..\source_code\hal\simulation_i2c;..\source_code\hal\i2c;..\source_code\hardware\gpio;..\source_code\hardware\rcc;..\source_code\hardware\usart;..\source_code\hal\usart;..\source_code\hardware\dma;..\source_code\common\circular_queue</IncludePath>
+              <IncludePath>..\source_code\app;..\source_code\app\control;..\source_code\app\filter;..\source_code\app\pid;..\source_code\app\quaternion;..\source_code\app\remote;..\source_code\common;..\source_code\dev\bmp280;..\source_code\dev\mpu6050;..\source_code\dev\spl06;..\source_code\freeRTOS;..\source_code\freeRTOS\include;..\source_code\freeRTOS\RVDS;..\source_code\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\source_code\Libraries\CMSIS\CM4\CoreSupport;..\source_code\Libraries\CMSIS\CM4\DeviceSupport;..\source_code\user\inc;..\source_code\hal\simulation_i2c;..\source_code\hal\i2c;..\source_code\hardware\gpio;..\source_code\hardware\rcc;..\source_code\hardware\usart;..\source_code\hal\usart;..\source_code\hardware\dma;..\source_code\common\circular_queue;..\source_code\protocol_stack\ibus</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -745,6 +745,16 @@
               <FileName>circular_queue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source_code\common\circular_queue\circular_queue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>protocol_stack</GroupName>
+          <Files>
+            <File>
+              <FileName>ibus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\protocol_stack\ibus\ibus.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -4,6 +4,12 @@
 #include "queue.h"
 #include "semphr.h"
 
+#include "usart_hal_config.h"
+#include "ibus.h"
+
+
+IBUS_t IBUS = {0};
+
 
 
 void remote_init()
@@ -86,6 +92,16 @@ void remote_ibus_to_reality(remote_data_t * data)
 
 }
 
+void IBUS_Test()
+{
+	uint8_t data[32];
+	uint32_t outLen = 0;
+	
+	USART_HAL_ReadData(&USART2_HAL, data, 32, &outLen);
+
+	IBUS_AnalysisData(&IBUS, data, outLen);
+}
+
 
 void remote_task(void * parameters)
 {
@@ -103,7 +119,8 @@ void remote_task(void * parameters)
 
 		remote_update_status = IBUS_Analysis();
 
-
+		//IBUS_Test();
+		
 
 		if(0 == IBUS_Analysis())
 		{
