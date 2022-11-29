@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-#include "sbus.h"
 #include "tim_input_capture.h"
 #include "pwm.h"
 
@@ -37,22 +36,10 @@ typedef enum
     Auto_Mode,
 }flight_mode_t;
 
-typedef struct
-{
-    flight_mode_t mode; 
-    uint32_t throttle_out;
-    float set_pitch;
-    float set_roll;
-    float set_yaw_rate;
-}remote_data_t; 
-
 
 
 
 void remote_init(void);
-uint8_t remote_update(void);
-uint16_t remote_channel_value_get(IBUS_Channel_Type channel_name);
-int remote_throttle_to_motor_get(void);
 
 void remote_task(void * parameters);
 

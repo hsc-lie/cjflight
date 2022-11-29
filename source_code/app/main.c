@@ -1,12 +1,10 @@
+#include "main.h"
 #include "at32f4xx.h"
 
 #include "stdio.h"
 
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
+
 
 
 #include "rcc_config.h"
@@ -24,12 +22,13 @@
 #include "mpu6050_config.h"
 
 #include "simulation_i2c.h"
-#include "sbus.h"
 #include "my_systick.h"
 #include "bmp280.h"
 #include "spl06.h"
 
-#include "remote.h"
+#include "remote_data.h"
+
+#include "remote_task.h"
 #include "quaternion.h"
 #include "control.h"
 
@@ -50,7 +49,7 @@ uint32_t heap_size2;
 uint32_t stack_size;
 
 /*遥控数据传输队列句柄*/
-xQueueHandle remote_queue;
+xQueueHandle RemoteDataQueue;
 
 xQueueHandle printf_velocity_queue;
 xQueueHandle printf_position_queue;
@@ -160,7 +159,7 @@ int main(void)
 	//tim_init_ms(20);
 	
 	/*创建遥控数据消息队列*/
-	remote_queue = xQueueCreate(1,sizeof(remote_data_t));
+	RemoteDataQueue = xQueueCreate(1, sizeof(RemoteData_t));
 
 	printf_velocity_queue = xQueueCreate(1,sizeof(float));
 	printf_position_queue = xQueueCreate(1,sizeof(float));
@@ -168,10 +167,7 @@ int main(void)
 
 	/*创建遥控接受信号*/
 	remote_read_semaphore = xSemaphoreCreateBinary();
-	if(remote_queue == NULL)
-	{
-		for(;;);
-	}
+
 
 	/*LED任务创建*/
 	xTaskCreate(led_task,

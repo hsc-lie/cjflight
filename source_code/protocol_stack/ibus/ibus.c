@@ -2,11 +2,13 @@
 
 
 
-E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len)
+E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len, uint8_t * const isGetPackage)
 {
 	//int ret = 1;
 	uint32_t i;
 	uint16_t checkSum;
+
+	*isGetPackage = FALSE;
 
 	if(NULL == ibus)
 	{
@@ -54,6 +56,8 @@ E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len)
 			    {
 					ibus->ChannelData[i] = ((uint16_t)(ibus->DataBuffer[(i << 1) + 3]) & 0x0f) << 8 | (ibus->DataBuffer[(i << 1) + 2]);
 			    }
+
+				*isGetPackage = TRUE;
 
 				if(NULL != ibus->ReceivedPackageFunc)
 				{

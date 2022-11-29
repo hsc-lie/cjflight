@@ -1,19 +1,19 @@
 #include "control.h"
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
+#include "main.h"
+
 
 #include "time.h"
 
-#include "sbus.h"
 #include "mpu6050_config.h"
 #include "bmp280.h"
 #include "spl06.h"
 #include "pwm.h"
 
+#include "remote_data.h"
+
 #include "quaternion.h"
-#include "remote.h"
+#include "remote_task.h"
 #include "pid.h"
 #include "common.h"
 #include "filter.h"
@@ -437,7 +437,7 @@ void control_task(void * parameters)
 	
 
 	//uint16_t remote_data[IBUS_Channel_MAX] = {0};
-	remote_data_t remote_data;
+	RemoteData_t remoteData = {0};
 	int32_t remote_lose_count = 0;
 	uint8_t remote_lose_flag = 0;
 
@@ -469,7 +469,8 @@ void control_task(void * parameters)
 		//time_count_start_us();
 
 		//接收遥控器数据
-		if(xQueueReceive(remote_queue,&remote_data,0) == pdFALSE)
+		
+		if(xQueueReceive(RemoteDataQueue,&remoteData,0) == pdFALSE)
 		{
 			remote_lose_count++;
 			if(remote_lose_count > 100)
@@ -551,7 +552,7 @@ void control_task(void * parameters)
 		//xQueueSend(printf_acc_queue,&Origion_NamelessQuad_acc.z,0);
 		
 		
-		if((remote_data.throttle_out < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
+		if((RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y)  < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
 		//if(FALSE)
 		{
 			//电机停转
@@ -568,7 +569,8 @@ void control_task(void * parameters)
 		}
 		else
 		{
-			set_yaw += remote_data.set_yaw_rate;
+			set_yaw += RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_X);
+			
 			if(set_yaw > 180)
 			{
 				set_yaw -= 360;
@@ -588,10 +590,10 @@ void control_task(void * parameters)
 			}
 			last_remote_mode = remote_data.mode;*/
 
-			setAngle.Pitch = remote_data.set_pitch;
-			setAngle.Roll = remote_data.set_roll;
+			setAngle.Pitch = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_Y);
+			setAngle.Roll = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_X);
 			setAngle.Yaw = set_yaw;
-			attitude_control(remote_data.throttle_out, &setAngle, &nowAngle, &gyroConvertData);
+			attitude_control(RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
 		}
 		//code_time = time_count_end_us();
 		

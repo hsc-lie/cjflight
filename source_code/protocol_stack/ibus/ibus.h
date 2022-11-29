@@ -20,11 +20,16 @@ typedef enum
 }E_IBUS_Channel;
 
 
+
+
 typedef enum
 {
 	E_IBUS_ERROR_OK = 0,
 	E_IBUS_ERROR_NULL,
 }E_IBUS_ERROR_TYPE;
+
+
+
 
 
 typedef struct
@@ -42,7 +47,7 @@ typedef struct
 }IBUS_t;
 
 
-E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len);
+E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len, uint8_t * const isGetPackage);
 uint16_t IBUS_GetChannelData(IBUS_t * ibus, E_IBUS_Channel channel);
 
 
