@@ -133,7 +133,7 @@ E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t 
 		return E_MPU6050_ERROR_NULL;
 	}
 
-	gyroConvertBase = (float)(32768.0f / (250u << (mpu6050->GyroRange + 1)));
+	gyroConvertBase = (float)(32768.0f / (250u << mpu6050->GyroRange));
 
 	out->X = (float)in->X/gyroConvertBase;
 	out->Y = (float)in->Y/gyroConvertBase;

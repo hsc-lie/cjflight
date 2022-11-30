@@ -157,8 +157,8 @@ Quaternion_t Quaternion =
 
 Quaternion_PIOffset_t Quaternion_PIOffset = 
 {
-	.P = 0.4f,
-	.I = 0.001f,
+	.P = 0.8f,
+	.I = 0.000f,
 
 	.exInt = 0,
 	.eyInt = 0,
@@ -455,6 +455,7 @@ void control_task(void * parameters)
 	TriaxialData_t magData = {0, 0, 0};
 	//TriaxialData_t magData = {0, 1, 0};//yaw -90
 	//TriaxialData_t magData = {0, -1, 0};//yaw 90
+	//TriaxialData_t magData = {1, 1, 1};//
 
 	AttitudeData_t nowAngle = {0};
 	AttitudeData_t setAngle = {0};
