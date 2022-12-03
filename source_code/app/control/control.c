@@ -3,12 +3,13 @@
 #include "main.h"
 
 
-#include "time.h"
 
+#include "motor_config.h"
 #include "mpu6050_config.h"
-#include "bmp280.h"
-#include "spl06.h"
-#include "pwm.h"
+
+//#include "bmp280.h"
+//#include "spl06.h"
+
 
 #include "remote_data.h"
 
@@ -58,7 +59,7 @@ PID_t PID_PitchRate =
 };
 PID_t PID_PitchAngle = 
 {
-	.P = 7,       
+	.P = 5,       
 	.I = 0.0,
 	.D = 0.0,     
 	.ISum = 0,
@@ -88,7 +89,7 @@ PID_t PID_RollRate =
 
 PID_t PID_RollAngle = 
 {
-	.P = 7,
+	.P = 5,
 	.I = 0,
 	.D = 0,
 	.ISum = 0,
@@ -117,7 +118,7 @@ PID_t PID_YawRate =
 };
 PID_t PID_YawAngle = 
 {
-	.P = 7,
+	.P = 5,
 	.I = 0,
 	.D = 0,
 	.ISum = 0,
@@ -157,7 +158,7 @@ Quaternion_t Quaternion =
 
 Quaternion_PIOffset_t Quaternion_PIOffset = 
 {
-	.P = 0.8f,
+	.P = 0.4f,
 	.I = 0.000f,
 
 	.exInt = 0,
@@ -222,34 +223,35 @@ void pid_init()
 
 void motor_stop()
 {
-	PWM_Channel_Type pwm_channel;
-	for(pwm_channel = PWM_Channel_1;pwm_channel < PWM_Channel_MAX;pwm_channel++)
+	uint32_t i;
+
+	for(i = 0;i < 4;++i)
 	{
-		pwm_out(pwm_channel, MOTOR_STOP_PWM);
+		Motor_Out(&Motor[i], MOTOR_STOP_PWM);
 	}
 }
 
 
 
-void attitude_control(uint32_t throttle_out, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050_ConvertData_t * gyro)
+void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050_ConvertData_t * gyro)
 {
+	uint32_t i;
 	static uint8_t attitude_control_count = 0;
 
-	PWM_Channel_Type pwm_channel;
 
 	float yaw_error;
 
-	static float  pitch_rate_out = 0;
-	int32_t pitch_out = 0;
+	float  pitchRateOut = 0;
+	int32_t pitchOut = 0;
 
-	static float roll_rate_out = 0;
-	int32_t roll_out = 0;
+	float rollRateOut = 0;
+	int32_t rollOut = 0;
 
-	static float yaw_rate_out = 0;
-	int32_t yaw_out = 0;
+	float yawRateOut = 0;
+	int32_t yawOut = 0;
 	
 
-	int32_t motor_pwm_out[4];
+	int32_t motorOut[4];
 
 	yaw_error = setAngle->Yaw - nowAngle->Yaw;
 	if(yaw_error > 180)
@@ -268,32 +270,32 @@ void attitude_control(uint32_t throttle_out, AttitudeData_t * setAngle, Attitude
 	attitude_control_count++;
 	if(1 == attitude_control_count)
 	{
-		pitch_rate_out = PID_Control(&PID_PitchAngle, nowAngle->Pitch - setAngle->Pitch);
+		pitchRateOut = PID_Control(&PID_PitchAngle, nowAngle->Pitch - setAngle->Pitch);
 	}
 	else if(2 == attitude_control_count)
 	{
-		roll_rate_out = PID_Control(&PID_RollAngle, nowAngle->Roll - setAngle->Roll);
+		rollRateOut = PID_Control(&PID_RollAngle, nowAngle->Roll - setAngle->Roll);
 	}
 	else if(3 == attitude_control_count)
 	{
 		attitude_control_count = 0;
-		yaw_rate_out = PID_Control(&PID_YawAngle, yaw_error); 
+		yawRateOut = PID_Control(&PID_YawAngle, yaw_error); 
 	}
 
-	pitch_out = (int32_t)PID_Control(&PID_PitchRate, -gyro->Y- pitch_rate_out);
-	roll_out = (int32_t)PID_Control(&PID_RollRate, -gyro->X- roll_rate_out);
-	yaw_out = (int32_t)PID_Control(&PID_YawRate, gyro->Z- yaw_rate_out);
+	pitchOut = (int32_t)PID_Control(&PID_PitchRate, -gyro->Y- pitchRateOut);
+	rollOut = (int32_t)PID_Control(&PID_RollRate, -gyro->X- rollRateOut);
+	yawOut = (int32_t)PID_Control(&PID_YawRate, gyro->Z- yawRateOut);
 
 	
-	motor_pwm_out[0] = MOTOR_PWM_MIN + pitch_out - roll_out + yaw_out + throttle_out;  //400
-	motor_pwm_out[1] = MOTOR_PWM_MIN + pitch_out + roll_out - yaw_out + throttle_out;     
-	motor_pwm_out[2] = MOTOR_PWM_MIN - pitch_out - roll_out - yaw_out + throttle_out;   //400
-	motor_pwm_out[3] = MOTOR_PWM_MIN - pitch_out + roll_out + yaw_out + throttle_out;
-	
-	for(pwm_channel = PWM_Channel_1;pwm_channel < PWM_Channel_MAX;pwm_channel++)
+	motorOut[0] = MOTOR_PWM_MIN + pitchOut - rollOut + yawOut + throttleOut;  //400
+	motorOut[1] = MOTOR_PWM_MIN + pitchOut + rollOut - yawOut + throttleOut;     
+	motorOut[2] = MOTOR_PWM_MIN - pitchOut - rollOut - yawOut + throttleOut;   //400
+	motorOut[3] = MOTOR_PWM_MIN - pitchOut + rollOut + yawOut + throttleOut;
+
+	for(i = 0;i < 4;++i)
 	{
-		motor_pwm_out[pwm_channel] = int_range(motor_pwm_out[pwm_channel],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
-		pwm_out(pwm_channel, motor_pwm_out[pwm_channel]);
+		motorOut[i] = int_range(motorOut[i],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
+		Motor_Out(&Motor[i], motorOut[i]);
 	}
 
 	
@@ -594,7 +596,7 @@ void control_task(void * parameters)
 			setAngle.Pitch = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_Y);
 			setAngle.Roll = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_X);
 			setAngle.Yaw = set_yaw;
-			attitude_control(RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
+			AttitudeControl(RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
 		}
 		//code_time = time_count_end_us();
 		

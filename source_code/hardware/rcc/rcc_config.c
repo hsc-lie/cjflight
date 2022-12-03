@@ -16,6 +16,9 @@ void RCC_ConfigInitAll()
 	
 	//串口2时钟使能
 	RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_USART2, ENABLE);
+
+	//Timer3时钟使能
+	RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
 	
 }
 

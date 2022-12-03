@@ -11,13 +11,13 @@
 #include "gpio_config.h"
 #include "usart_config.h"
 #include "dma_config.h"
+#include "timer_config.h"
 
 
 #include "led.h"
 #include "time.h"
 #include "tim_input_capture.h"
-#include "pwm.h"
-#include "uart.h"
+
 
 #include "mpu6050_config.h"
 
@@ -57,7 +57,7 @@ xQueueHandle printf_acc_queue;
 
 
 /*遥控器数据接受信号句柄*/
-xSemaphoreHandle remote_read_semaphore;
+//xSemaphoreHandle remote_read_semaphore;
 
 void led_task(void * parameters)
 {
@@ -125,27 +125,21 @@ int main(void)
 
 	RCC_ConfigInitAll();
 	GPIO_ConfigInitAll();
-	USART_ConfigInitAll();
-
 	DMA_ConfigInitAll();
+	Timer_ConfigInitAll();
+	USART_ConfigInitAll();
+	
 
 	/*LED初始化*/
 	//led_init();
 
-	/**/
-	//uart_init();
 	
 	/*PID参数初始化*/
 	pid_init();
 	
 	/*电机PWM初始化*/
-	pwm_init();
+	//pwm_init();
 
-	/*遥控器初始化*/
-	remote_init();
-
-	/*软件I2C初始化*/
-	//simulation_i2c_init();
 	
 	/*气压计初始化*/
 	//bmp280_init();
@@ -166,7 +160,7 @@ int main(void)
 	printf_acc_queue = xQueueCreate(1,sizeof(float));
 
 	/*创建遥控接受信号*/
-	remote_read_semaphore = xSemaphoreCreateBinary();
+	//remote_read_semaphore = xSemaphoreCreateBinary();
 
 
 	/*LED任务创建*/

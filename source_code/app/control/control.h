@@ -7,10 +7,10 @@
 
 #define ATTITUDE_CONTROL_OUT_MAX     2000
 
-#define MOTOR_STOP_PWM               4000
+#define MOTOR_STOP_PWM               0
 
-#define MOTOR_PWM_MIN                4500
-#define MOTOR_PWM_MAX                8000
+#define MOTOR_PWM_MIN                500
+#define MOTOR_PWM_MAX                4000
 
 #define THROTTLE_DEAD_ZONE           100
 
@@ -18,8 +18,8 @@
 
 #define ALTITUDE_THROTTLE_CONTROL_OUT_MAX     2000
 
-#define PITCH_ZERO                   (-3)
-#define ROLL_ZERO                    (-0)
+#define PITCH_ZERO                   (-2.00)
+#define ROLL_ZERO                    (-1.21)
 
 void pid_init(void);
 

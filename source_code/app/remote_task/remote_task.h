@@ -4,7 +4,7 @@
 #include "common.h"
 
 #include "tim_input_capture.h"
-#include "pwm.h"
+
 
 
 #define REMOTE_VALUE_MIN      1000

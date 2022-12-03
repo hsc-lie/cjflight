@@ -61,10 +61,10 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	writeData = 0x00;
 	mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管理
 
-	writeData = 0x00;
+	writeData = 0x01;
 	mpu6050->I2CWriteReg(mpu6050->DevAddr, SAMPLE_RATE_DIVIDER, &writeData, 1);   //陀螺仪采样频率
 
-	writeData = 0x03;
+	writeData = 0x02;
 	mpu6050->I2CWriteReg(mpu6050->DevAddr, CONFIGURATION, &writeData, 1);         //低通滤波 
 		
 	//陀螺仪量程  0<<3 250度/s  1<<3 500度/s 2<<3 1000度/s 3<<3 2000度/s

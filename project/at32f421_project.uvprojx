@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>AT32F421C8T7,USE_STDPERIPH_DRIVER,USE_FULL_ASSERT,AT_START_F421_V1_0</Define>
               <Undefine></Undefine>
-              <IncludePath>..\source_code\app;..\source_code\app\control;..\source_code\app\filter;..\source_code\app\pid;..\source_code\app\quaternion;..\source_code\common;..\source_code\dev\bmp280;..\source_code\dev\mpu6050;..\source_code\dev\spl06;..\source_code\freeRTOS;..\source_code\freeRTOS\include;..\source_code\freeRTOS\RVDS;..\source_code\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\source_code\Libraries\CMSIS\CM4\CoreSupport;..\source_code\Libraries\CMSIS\CM4\DeviceSupport;..\source_code\user\inc;..\source_code\hal\simulation_i2c;..\source_code\hal\i2c;..\source_code\hardware\gpio;..\source_code\hardware\rcc;..\source_code\hardware\usart;..\source_code\hal\usart;..\source_code\hardware\dma;..\source_code\common\circular_queue;..\source_code\protocol_stack\ibus;..\source_code\app\remote_task;..\source_code\dal\remote</IncludePath>
+              <IncludePath>..\source_code\app;..\source_code\app\control;..\source_code\app\filter;..\source_code\app\pid;..\source_code\app\quaternion;..\source_code\common;..\source_code\dev\bmp280;..\source_code\dev\mpu6050;..\source_code\dev\spl06;..\source_code\freeRTOS;..\source_code\freeRTOS\include;..\source_code\freeRTOS\RVDS;..\source_code\Libraries\AT32F4xx_StdPeriph_Driver\inc;..\source_code\Libraries\CMSIS\CM4\CoreSupport;..\source_code\Libraries\CMSIS\CM4\DeviceSupport;..\source_code\user\inc;..\source_code\hal\simulation_i2c;..\source_code\hal\i2c;..\source_code\hardware\gpio;..\source_code\hardware\rcc;..\source_code\hardware\usart;..\source_code\hal\usart;..\source_code\hardware\dma;..\source_code\common\circular_queue;..\source_code\protocol_stack\ibus;..\source_code\app\remote_task;..\source_code\dal\remote;..\source_code\hardware\timer;..\source_code\hal\pwm;..\source_code\dev\motor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -557,11 +557,6 @@
               <FilePath>..\source_code\user\src\my_systick.c</FilePath>
             </File>
             <File>
-              <FileName>pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source_code\user\src\pwm.c</FilePath>
-            </File>
-            <File>
               <FileName>tim_input_capture.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source_code\user\src\tim_input_capture.c</FilePath>
@@ -676,6 +671,11 @@
               <FileType>1</FileType>
               <FilePath>..\source_code\hardware\dma\dma_config.c</FilePath>
             </File>
+            <File>
+              <FileName>timer_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\hardware\timer\timer_config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -711,6 +711,16 @@
               <FileType>1</FileType>
               <FilePath>..\source_code\hal\usart\usart_hal_config.c</FilePath>
             </File>
+            <File>
+              <FileName>pwm_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\hal\pwm\pwm_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm_hal_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\hal\pwm\pwm_hal_config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -725,6 +735,16 @@
               <FileName>mpu6050_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source_code\dev\mpu6050\mpu6050_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\dev\motor\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\dev\motor\motor_config.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -16,12 +16,6 @@ IBUS_t IBUS =
 
 
 
-void remote_init()
-{
-    //tim_input_capture_init();
-}
-
-
 static void IBUSDataToRemoteData(IBUS_t * ibus, RemoteData_t * remote)
 {
 	int throttle = 0;
@@ -101,8 +95,6 @@ static void IBUSDataUpdate()
 
 void remote_task(void * parameters)
 {
-    extern xQueueHandle remote_queue;
-    extern xSemaphoreHandle remote_read_semaphore;
 
     //uint8_t remote_update_status;
     //remote_data_t remote_data;
