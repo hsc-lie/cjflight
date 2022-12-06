@@ -2,6 +2,11 @@
 #include "math.h"
 
 
+/****************************************************************************************
+本文件代码参考自betaFlight
+github网址 https://github.com/betaflight/betaflight
+****************************************************************************************/
+
 
 #define BIQUAD_Q 1.0f / sqrtf(2.0f)     /* quality factor - butterworth*/
 #define M_PIf       3.1415926f
