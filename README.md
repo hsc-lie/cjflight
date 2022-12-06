@@ -4,7 +4,7 @@
 RTOS使用freeRTOS
 
 #### 软件架构
-app:应用层\n
+#app:应用层
 dal：设备抽象层
 dev：设备层
 hal：硬件抽象层
