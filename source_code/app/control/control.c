@@ -42,7 +42,7 @@ static PID_Base_t PID_DItemFilterYawRate(PID_Base_t in)
 
 
 
-
+//俯仰角角速度环PID
 PID_t PID_PitchRate = 
 {
 	.P = 3.6,
@@ -57,6 +57,8 @@ PID_t PID_PitchRate =
 
 	.DFilterFunc = PID_DItemFilterPitchRate,
 };
+
+//俯仰角角度环PID
 PID_t PID_PitchAngle = 
 {
 	.P = 5,       
@@ -72,6 +74,7 @@ PID_t PID_PitchAngle =
 	.DFilterFunc = NULL,
 };
 
+//横滚角角速度环PID
 PID_t PID_RollRate = 
 {
 	.P = 3.6 * 0.75,
@@ -87,6 +90,7 @@ PID_t PID_RollRate =
 	.DFilterFunc = PID_DItemFilterRollRate,
 };
 
+//横滚角角度环PID
 PID_t PID_RollAngle = 
 {
 	.P = 5,
@@ -102,6 +106,7 @@ PID_t PID_RollAngle =
 	.DFilterFunc = NULL,
 };
 
+//偏航角角速度环PID
 PID_t PID_YawRate = 
 {
 	.P = 8,
@@ -116,6 +121,8 @@ PID_t PID_YawRate =
 
 	.DFilterFunc = PID_DItemFilterYawRate,
 };
+
+//偏航角角度环PID
 PID_t PID_YawAngle = 
 {
 	.P = 5,
@@ -145,7 +152,7 @@ biquadFilter_t biquad_AccParameterZ = {0};
 
 
 
-
+//姿态四元数
 Quaternion_t Quaternion = 
 {
 	.q0=1.0f,
@@ -156,6 +163,8 @@ Quaternion_t Quaternion =
 	.RotationMatrix = {0},
 };
 
+//用于姿态解算中通过加速度计和磁力计修正角度
+//P越大回正速度越快
 Quaternion_PIOffset_t Quaternion_PIOffset = 
 {
 	.P = 0.4f,
@@ -165,8 +174,6 @@ Quaternion_PIOffset_t Quaternion_PIOffset =
 	.eyInt = 0,
 	.ezInt = 0,
 };
-
-
 
 
 
@@ -195,8 +202,8 @@ float baro_compensate_k = 0.02;
 
 
 
-
-void pid_init()
+//滤波参数初始化 暂时放这里
+void FilterInit()
 {
 
 
@@ -221,7 +228,8 @@ void pid_init()
 }
 
 
-void motor_stop()
+//所有电机停转
+static void MotorStopAll()
 {
 	uint32_t i;
 
@@ -232,7 +240,7 @@ void motor_stop()
 }
 
 
-
+//姿态控制
 void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050_ConvertData_t * gyro)
 {
 	uint32_t i;
@@ -426,16 +434,11 @@ uint32_t position_control(float now_altitude, float set_altitude)
 
 uint32_t code_time = 0;
 
-void control_task(void * parameters)
+void ControlTask(void * parameters)
 {
-	extern xQueueHandle remote_queue;
-
-	extern xQueueHandle printf_velocity_queue;
-	extern xQueueHandle printf_position_queue;
-	extern xQueueHandle printf_acc_queue;
 
 	TickType_t time = xTaskGetTickCount();
-	uint32_t time_count = 0;
+	uint32_t timeCount = 0;
 	
 
 	//uint16_t remote_data[IBUS_Channel_MAX] = {0};
@@ -464,10 +467,10 @@ void control_task(void * parameters)
 
 	for(;;)
 	{
-		time_count++;
-		if(time_count >= 1000)
+		timeCount++;
+		if(timeCount >= 1000)
 		{
-			time_count = 0;
+			timeCount = 0;
 		}
 		//time_count_start_us();
 
@@ -488,7 +491,7 @@ void control_task(void * parameters)
 			remote_lose_flag = 0;
 		}
 
-		if((time_count % 20) == 0)
+		if((timeCount % 20) == 0)
 		{
 			//接收bmp180海拔高度 
 			//bmp280_data_get(&bmp280_data),
@@ -559,7 +562,7 @@ void control_task(void * parameters)
 		//if(FALSE)
 		{
 			//电机停转
-			motor_stop();
+			MotorStopAll();
 			//清除PID角速度环I项
 			PID_ISumClean(&PID_PitchRate);
 			PID_ISumClean(&PID_RollRate);
@@ -598,7 +601,6 @@ void control_task(void * parameters)
 			setAngle.Yaw = set_yaw;
 			AttitudeControl(RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
 		}
-		//code_time = time_count_end_us();
 		
 		vTaskDelayUntil(&time,2);
 	}

@@ -4,9 +4,6 @@
 #include "stdio.h"
 
 
-
-
-
 #include "rcc_config.h"
 #include "gpio_config.h"
 #include "usart_config.h"
@@ -15,17 +12,15 @@
 
 
 #include "led.h"
-#include "time.h"
-#include "tim_input_capture.h"
 
 
 #include "mpu6050_config.h"
 
 #include "simulation_i2c.h"
-#include "my_systick.h"
-#include "bmp280.h"
-#include "spl06.h"
+//#include "bmp280.h"
+//#include "spl06.h"
 
+#include "led_cfg.h"
 #include "remote_data.h"
 
 #include "remote_task.h"
@@ -59,21 +54,29 @@ xQueueHandle printf_acc_queue;
 /*遥控器数据接受信号句柄*/
 //xSemaphoreHandle remote_read_semaphore;
 
-void led_task(void * parameters)
+void LEDTask(void * parameters)
 {
 	for(;;)
 	{
-		LED1_ON();
-		//BMP180_Altitude(&bmp180_data.temp, &bmp180_data.pressure, &bmp180_data.altitude);
+		LED_SetValue(&LED1, 1);
 		vTaskDelay(500);
-		LED1_OFF();
+		LED_SetValue(&LED1, 0);
 		vTaskDelay(500);
 	}
 	
 }
 
 
-void printf_task(void * parameters)
+
+int fputc(int ch, FILE *f)
+{
+	/* 发送一个字节数据到串口 */
+  	//uart_send_byte(UARTx, (uint8_t)ch);
+	return (ch);
+}
+
+
+void PrintfTask(void * parameters)
 {
 	float printf_velocity = 0;
 	float printf_position = 0;
@@ -113,11 +116,6 @@ __asm void _enable_irq()
 
 
 
-
-
-
-
-
 int main(void)
 {
 	/*中断优先级分组*/
@@ -135,7 +133,7 @@ int main(void)
 
 	
 	/*PID参数初始化*/
-	pid_init();
+	FilterInit();
 	
 	/*电机PWM初始化*/
 	//pwm_init();
@@ -146,8 +144,6 @@ int main(void)
 	//spl0601_init();
 	
 	/*MPU6050初始化*/
-	
-	
 	MPU6050_Init(&MPU6050);
 	
 	//tim_init_ms(20);
@@ -164,7 +160,7 @@ int main(void)
 
 
 	/*LED任务创建*/
-	xTaskCreate(led_task,
+	xTaskCreate(LEDTask,
 				"led",
 				32,
 				NULL,
@@ -172,7 +168,7 @@ int main(void)
 				NULL);
 
 	/*打印任务创建*/
-	/*xTaskCreate(printf_task,
+	/*xTaskCreate(PrintfTask,
 				"printf",
 				200,
 				NULL,
@@ -180,7 +176,7 @@ int main(void)
 				NULL);*/
 
 	/*遥控器接受任务创建*/
-	xTaskCreate(remote_task,
+	xTaskCreate(RemoteTask,
 				"remote",
 				256,
 				NULL,
@@ -188,7 +184,7 @@ int main(void)
 				NULL);
 
 	/*姿态控制任务创建*/
-	xTaskCreate(control_task,
+	xTaskCreate(ControlTask,
 				"control",
 				512,
 				NULL,

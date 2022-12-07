@@ -93,27 +93,15 @@ static void IBUSDataUpdate()
 }
 
 
-void remote_task(void * parameters)
+void RemoteTask(void * parameters)
 {
 
-    //uint8_t remote_update_status;
-    //remote_data_t remote_data;
-    
-
-	//uint32_t motor_out;
 	for(;;)
 	{
         //xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
 
-		
         IBUSDataUpdate();
 		vTaskDelay(1);
-		/*motor_out = remote_throttle_to_motor_get();
-		pwm_out(PWM_Channel_1, motor_out);
-		pwm_out(PWM_Channel_2, motor_out);
-		pwm_out(PWM_Channel_3, motor_out);
-		pwm_out(PWM_Channel_4, motor_out);*/
-		//ibus_data_solution();
-		//stack_size = uxTaskGetStackHighWaterMark(NULL);
+
 	}
 }

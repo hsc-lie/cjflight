@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-#include "tim_input_capture.h"
 
 
 
@@ -38,10 +37,7 @@ typedef enum
 
 
 
-
-void remote_init(void);
-
-void remote_task(void * parameters);
+void RemoteTask(void * parameters);
 
 
 

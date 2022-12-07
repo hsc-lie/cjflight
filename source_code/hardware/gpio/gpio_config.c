@@ -3,6 +3,8 @@
 
 
 
+
+
 typedef struct
 {
 	GPIO_Type * GPIOx;
@@ -12,6 +14,63 @@ typedef struct
 	
 	
 }GPIO_Config_t;
+
+
+
+
+
+
+
+
+//LED GPIO
+const GPIO_Config_t LED_GPIOConfigTable[] = 
+{
+	//LED1
+	{
+		.GPIOx = LED1_GPIO,
+		.GPIO_PinSource = 0,
+		.GPIO_AF = 0,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = LED1_GPIO_PIN,
+	    	.GPIO_Mode = GPIO_Mode_OUT,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+
+	//LED2
+	{
+		.GPIOx = LED2_GPIO,
+		.GPIO_PinSource = 0,
+		.GPIO_AF = 0,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = LED2_GPIO_PIN,
+	    	.GPIO_Mode = GPIO_Mode_OUT,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+
+	//LED3
+	{
+		.GPIOx = LED3_GPIO,
+		.GPIO_PinSource = 0,
+		.GPIO_AF = 0,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = LED3_GPIO_PIN,
+	    	.GPIO_Mode = GPIO_Mode_OUT,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+};
+
 
 
 
@@ -164,36 +223,6 @@ const GPIO_Config_t Timer3_GPIOConfigTable[] =
 };
 
 
-const GPIO_Config_t GPIO_ConfigTable[] = 
-{
-
-			
-	{
-		.GPIOx = GPIOA,
-		.GPIO_InitType = 
-		{
-			.GPIO_Pins  = GPIO_Pins_11,
-	    	.GPIO_Mode = GPIO_Mode_OUT,
-	    	.GPIO_OutType = GPIO_OutType_PP,
-	    	.GPIO_Pull = GPIO_Pull_NOPULL,
-	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
-		},
-	},
-	
-			
-	{
-		.GPIOx = GPIOC,
-		.GPIO_InitType = 
-		{
-			.GPIO_Pins  = GPIO_Pins_14,
-	    	.GPIO_Mode = GPIO_Mode_OUT,
-	    	.GPIO_OutType = GPIO_OutType_PP,
-	    	.GPIO_Pull = GPIO_Pull_NOPULL,
-	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
-		},
-	},
-};
-
 
 
 void GPIO_ConfigInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
@@ -210,8 +239,10 @@ void GPIO_ConfigInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
 
 void GPIO_ConfigInitAll(void)
 {
-	//普通GPIO
-	GPIO_ConfigInit(&GPIO_ConfigTable, sizeof(GPIO_ConfigTable)/sizeof(GPIO_Config_t));
+
+
+	//LED GPIO
+	GPIO_ConfigInit(&LED_GPIOConfigTable, sizeof(LED_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//USART1
 	GPIO_ConfigInit(&USART1_GPIOConfigTable, sizeof(USART1_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//USART2

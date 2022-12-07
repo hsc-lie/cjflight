@@ -21,9 +21,9 @@
 #define PITCH_ZERO                   (-2.00)
 #define ROLL_ZERO                    (-1.21)
 
-void pid_init(void);
+void FilterInit(void);
 
-void control_task(void * parameters);
+void ControlTask(void * parameters);
 void Strapdown_INS_High(void);
 
 
