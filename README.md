@@ -14,7 +14,6 @@
 - freeRTOS：存放freeRTOS V9源码
 - Libraries：存放芯片片内外设驱动库
 
-- user：暂未整理的代码
 
 
 
