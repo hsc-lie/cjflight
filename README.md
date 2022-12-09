@@ -8,7 +8,7 @@
 - hal：硬件抽象层
 - hardware：硬件层
 
-- comomon：一些通用的模块
+- common：一些通用的模块
 - protocol_stack：通讯协议栈
 
 - freeRTOS：存放freeRTOS V9源码
