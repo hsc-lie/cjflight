@@ -716,6 +716,16 @@
               <FileType>1</FileType>
               <FilePath>..\source_code\dev\motor\motor_config.c</FilePath>
             </File>
+            <File>
+              <FileName>bmp280.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\dev\bmp280\bmp280.c</FilePath>
+            </File>
+            <File>
+              <FileName>bmp280_cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source_code\dev\bmp280\bmp280_cfg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

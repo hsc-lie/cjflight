@@ -3,12 +3,11 @@
 #include "main.h"
 
 
-
 #include "motor_config.h"
 #include "mpu6050_config.h"
-
-//#include "bmp280.h"
+#include "bmp280_cfg.h"
 //#include "spl06.h"
+
 
 
 #include "remote_data.h"
@@ -446,8 +445,8 @@ void ControlTask(void * parameters)
 	int32_t remote_lose_count = 0;
 	uint8_t remote_lose_flag = 0;
 
-	float set_yaw = 0;
-	float set_altitude = 0;
+	float setYaw = 0;
+	
 	flight_mode_t last_remote_mode = Stabilize_Mode;
 
 
@@ -465,10 +464,13 @@ void ControlTask(void * parameters)
 	AttitudeData_t nowAngle = {0};
 	AttitudeData_t setAngle = {0};
 
+
+	BMP280_Data_t bmp280Data = {0};
+
 	for(;;)
 	{
 		timeCount++;
-		if(timeCount >= 1000)
+		if(timeCount > 1000)
 		{
 			timeCount = 0;
 		}
@@ -491,14 +493,23 @@ void ControlTask(void * parameters)
 			remote_lose_flag = 0;
 		}
 
-		if((timeCount % 20) == 0)
-		{
+
+		if((timeCount % 25) == 0)
+		{		
+			BMP280_Startup(&BMP280);
+		}
+
+		if((timeCount % 50) == 0)
+		{					
 			//接收bmp180海拔高度 
-			//bmp280_data_get(&bmp280_data),
+			BMP280_GetData(&BMP280, &bmp280Data);
+			
 			//bmp280_data.altitude = sliding_filter(bmp280_data.altitude,altitude_sliding_filter_buff,ALTITUDE_SLIDING_FILTER_SIZE),
 			
 			//spl06_get_all_data(),
 		}
+
+		
 		
 		//获取mpu6050原始数据
 		MPU6050_GetBaseAcc(&MPU6050, &accBaseData);
@@ -570,20 +581,20 @@ void ControlTask(void * parameters)
 
 
 			//将设定偏航角设置为当前偏航角，防止起飞旋转
-			set_yaw = nowAngle.Yaw;
+			setYaw = nowAngle.Yaw;
 
 		}
 		else
 		{
-			set_yaw += RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_X);
+			setYaw += RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_X);
 			
-			if(set_yaw > 180)
+			if(setYaw > 180)
 			{
-				set_yaw -= 360;
+				setYaw -= 360;
 			}
-			else if(set_yaw < -180)
+			else if(setYaw < -180)
 			{
-				set_yaw += 360;
+				setYaw += 360;
 			}
 
 			/*if(remote_data.mode == Auto_Mode)
@@ -598,7 +609,7 @@ void ControlTask(void * parameters)
 
 			setAngle.Pitch = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_Y);
 			setAngle.Roll = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_X);
-			setAngle.Yaw = set_yaw;
+			setAngle.Yaw = setYaw;
 			AttitudeControl(RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
 		}
 		

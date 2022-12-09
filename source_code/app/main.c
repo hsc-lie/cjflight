@@ -11,17 +11,18 @@
 #include "timer_config.h"
 
 
-#include "led.h"
+#include "simulation_i2c.h"
+
 
 
 #include "mpu6050_config.h"
-
-#include "simulation_i2c.h"
-//#include "bmp280.h"
+#include "bmp280_cfg.h"
 //#include "spl06.h"
+
 
 #include "led_cfg.h"
 #include "remote_data.h"
+
 
 #include "remote_task.h"
 #include "quaternion.h"
@@ -58,6 +59,8 @@ void LEDTask(void * parameters)
 {
 	for(;;)
 	{
+		
+	
 		LED_SetValue(&LED1, 1);
 		vTaskDelay(500);
 		LED_SetValue(&LED1, 0);
@@ -128,23 +131,16 @@ int main(void)
 	USART_ConfigInitAll();
 	
 
-	/*LED初始化*/
-	//led_init();
-
-	
-	/*PID参数初始化*/
+	/*滤波参数初始化*/
 	FilterInit();
-	
-	/*电机PWM初始化*/
-	//pwm_init();
 
-	
-	/*气压计初始化*/
-	//bmp280_init();
-	//spl0601_init();
-	
 	/*MPU6050初始化*/
 	MPU6050_Init(&MPU6050);
+
+
+	/*气压计初始化*/
+	BMP280_Init(&BMP280);
+	//spl0601_init();
 	
 	//tim_init_ms(20);
 	
