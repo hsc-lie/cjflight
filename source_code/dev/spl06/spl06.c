@@ -1,378 +1,263 @@
 #include "spl06.h"
 
-
-struct spl0601_t spl0601 = {0};
-struct spl0601_t *p_spl0601;
-
-spl06_data_t spl06_data = {0};
+   
 
 
-/*****************************************************************************
- 函 数 名  : spl0601_init
- 功能描述  : SPL06-01 初始化函数
- 输入参数  : void  
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月30日
-    作    者   : WL
-    修改内容   : 新生成函数
 
-*****************************************************************************/
-void spl0601_init(void)
+
+//获取补偿参数
+void SPL06_GetCalibParams(SPL06_t * spl06)
 {
-    p_spl0601 = &spl0601; /* read Chip Id */
-    //p_spl0601->i32rawPressure = 0;
-    //p_spl0601->i32rawTemperature = 0;
-    p_spl0601->chip_id = 0x34;
 
-    spl0601_get_calib_param();
-    // sampling rate = 1Hz; Pressure oversample = 2;
-    spl0601_rateset(PRESSURE_SENSOR,32, 8);   
-    // sampling rate = 1Hz; Temperature oversample = 1; 
-    spl0601_rateset(TEMPERATURE_SENSOR,32, 8);
-    //Start background measurement
+	uint8_t data[18] = {0};
+
+	if((NULL == spl06)
+		&& (NULL == spl06->I2CReadReg)
+	)
+	{
+		return;
+	}
+
+
+	spl06->I2CReadReg(spl06->DevAddr, 0x10, data, 18);
+
+	
+	
+	spl06->CalibParams.c0 = ((int16_t)data[0] << 4) | (data[1] >> 4);
+	spl06->CalibParams.c0 = (spl06->CalibParams.c0&0x0800)?(0xF000|spl06->CalibParams.c0):spl06->CalibParams.c0;
+	
+
+	spl06->CalibParams.c1 = (int16_t)(data[1] & 0x0F) << 8 | data[2];
+    spl06->CalibParams.c1 = (spl06->CalibParams.c1 & 0x0800)?(0xF000|spl06->CalibParams.c1):spl06->CalibParams.c1;
+	
+
+	spl06->CalibParams.c00 = (int32_t)data[3]<<12 | (int32_t)data[4]<<4 | (int32_t)data[5]>>4;
+    spl06->CalibParams.c00 = (spl06->CalibParams.c00&0x080000)?(0xFFF00000|spl06->CalibParams.c00):spl06->CalibParams.c00;
+
+	
+
+	spl06->CalibParams.c10 = (int32_t)data[5] << 16 | (int32_t)data[6]<<8 | data[7];
+    spl06->CalibParams.c10 = (spl06->CalibParams.c10&0x080000)?(0xFFF00000|spl06->CalibParams.c10):spl06->CalibParams.c10;
+
+
+	spl06->CalibParams.c01 = (int16_t)data[8] << 8 | data[9];
+    
+    spl06->CalibParams.c11 = (int16_t)data[10] << 8 | data[11];
+	spl06->CalibParams.c11 = (spl06->CalibParams.c11 & 0x0800) ? (0xF000 | spl06->CalibParams.c11) : spl06->CalibParams.c11;
+
+    spl06->CalibParams.c20 = (int16_t)data[12] << 8 | data[13];
+	spl06->CalibParams.c20 = (spl06->CalibParams.c20&0x0800) ? (0xF000|spl06->CalibParams.c20):spl06->CalibParams.c20;
+    
+	spl06->CalibParams.c21 = (int16_t)data[14] << 8 | data[15];
+	spl06->CalibParams.c21 = (spl06->CalibParams.c21&0x0800)?(0xF000|spl06->CalibParams.c21):spl06->CalibParams.c21;
+
+    spl06->CalibParams.c30 = (int16_t)data[16] << 8 | data[17];
+	spl06->CalibParams.c30 = (spl06->CalibParams.c30&0x0800)?(0xF000|spl06->CalibParams.c30):spl06->CalibParams.c30;
+
     
 }
 
-/*****************************************************************************
- 函 数 名  : spl0601_rateset
- 功能描述  :  设置温度传感器的每秒采样次数以及过采样率
- 输入参数  : uint8_t u8OverSmpl  过采样率         Maximal = 128
-             uint8_t u8SmplRate  每秒采样次数(Hz) Maximal = 128
-             uint8_t iSensor     0: Pressure; 1: Temperature
- 输出参数  : 无
- 返 回 值  : 无
- 调用函数  :
- 被调函数  :
 
- 修改历史      :
-  1.日    期   : 2015年11月24日
-    作    者   : WL
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-void spl0601_rateset(uint8_t iSensor, uint8_t u8SmplRate, uint8_t u8OverSmpl)
+static void SPL06_Delay()
 {
-    uint8_t reg = 0;
-    int32_t i32kPkT = 0;
-    switch(u8SmplRate)
+	uint32_t count = 100000;
+
+	while(--count);
+}
+
+
+//SPL06初始化
+E_SPL06_ERROR SPL06_Init(SPL06_t * spl06)
+{
+
+	uint8_t id = 0;
+	uint8_t count = 0;
+
+	if((NULL == spl06)
+		|| (NULL == spl06->I2CWriteReg)
+		|| (NULL == spl06->I2CReadReg)
+	)
+	{
+		return E_SPL06_ERROR_NULL;
+	}
+
+	SPL06_Delay();
+
+	do
+	{
+		++count;
+		spl06->I2CReadReg(spl06->DevAddr, 0x0D, &id, 1);
+
+		if(count > 5)
+		{
+			return E_SPL06_ERROR_DEV_NOT_FOUND;
+		}
+	}
+	while (id != 0x10);
+	
+
+	SPL06_GetCalibParams(spl06);
+
+	SPL06_SetPressureRate(spl06, spl06->PressureRate, spl06->PressurePRC);
+
+	SPL06_SetTemperatureRate(spl06, spl06->TemperatureRate, spl06->TemperaturePRC);
+
+	SPL06_SetMode(spl06, spl06->Mode);
+
+
+	return E_SPL06_ERROR_OK;
+}
+
+
+static int32_t SPL06_GetKPKT(E_SPL06_PRC prc) 
+{
+	int32_t kpkt;
+
+	switch(prc)
     {
-        case 2:
-            reg |= (1<<5);
+    	case E_SPL06_PRC_TIMES1:
+			kpkt = 524288;
+			break;
+        case E_SPL06_PRC_TIMES2:
+            kpkt = 1572864;
             break;
-        case 4:
-            reg |= (2<<5);
+        case E_SPL06_PRC_TIMES4:
+            kpkt = 3670016;
             break;
-        case 8:
-            reg |= (3<<5);
+        case E_SPL06_PRC_TIMES8:
+            kpkt = 7864320;
             break;
-        case 16:
-            reg |= (4<<5);
+        case E_SPL06_PRC_TIMES16:
+            kpkt = 253952;
             break;
-        case 32:
-            reg |= (5<<5);
+        case E_SPL06_PRC_TIMES32:
+            kpkt = 516096;
             break;
-        case 64:
-            reg |= (6<<5);
+        case E_SPL06_PRC_TIMES64:
+            kpkt = 1040384;
             break;
-        case 128:
-            reg |= (7<<5);
+        case E_SPL06_PRC_TIMES128:
+            kpkt = 2088960;
             break;
-        case 1:
         default:
+            kpkt = 524288;
             break;
     }
-    switch(u8OverSmpl)
+
+	return kpkt;
+	
+}
+
+
+void SPL06_SetPressureRate(SPL06_t * spl06, E_SPL06_RATE rate, E_SPL06_PRC prc)
+{
+
+	uint8_t writeData = 0;
+	uint8_t readData = 0;
+
+
+	spl06->KP = SPL06_GetKPKT(prc);
+	writeData = (rate << 4) | prc;
+	spl06->I2CWriteReg(spl06->DevAddr, 0x06, &writeData, 1);
+
+    if(prc > E_SPL06_PRC_TIMES8)
     {
-        case 2:
-            reg |= 1;
-            i32kPkT = 1572864;
-            break;
-        case 4:
-            reg |= 2;
-            i32kPkT = 3670016;
-            break;
-        case 8:
-            reg |= 3;
-            i32kPkT = 7864320;
-            break;
-        case 16:
-            i32kPkT = 253952;
-            reg |= 4;
-            break;
-        case 32:
-            i32kPkT = 516096;
-            reg |= 5;
-            break;
-        case 64:
-            i32kPkT = 1040384;
-            reg |= 6;
-            break;
-        case 128:
-            i32kPkT = 2088960;
-            reg |= 7;
-            break;
-        case 1:
-        default:
-            i32kPkT = 524288;
-            break;
+		spl06->I2CReadReg(spl06->DevAddr, 0x09, &readData, 1);	
+		writeData = readData | 0x04;
+		spl06->I2CWriteReg(spl06->DevAddr, 0x09, &writeData, 1);
     }
 
-    if(iSensor == 0)
+
+}
+
+
+void SPL06_SetTemperatureRate(SPL06_t * spl06, E_SPL06_RATE rate, E_SPL06_PRC prc)
+{
+
+	uint8_t writeData = 0;
+	uint8_t readData = 0;
+
+
+	spl06->KT = SPL06_GetKPKT(prc);
+	
+	writeData = (rate << 4) | prc;
+	spl06->I2CWriteReg(spl06->DevAddr, 0x07, &writeData, 1);
+    if(prc > E_SPL06_PRC_TIMES8)
     {
-        p_spl0601->i32kP = i32kPkT;
-        //spl0601_write(HW_ADR, 0x06, reg);
-        simulation_i2c_writereg(SPL06_ADDR, 0x06, reg);
-        if(u8OverSmpl > 8)
-        {
-            //reg = spl0601_read(HW_ADR, 0x09);
-            simulation_i2c_readregs(SPL06_ADDR, 0x09, 1, &reg);
-            //spl0601_write(HW_ADR, 0x09, reg | 0x04);
-            simulation_i2c_writereg(SPL06_ADDR, 0x09, reg | 0x04);
-        }
-    }
-    if(iSensor == 1)
-    {
-        p_spl0601->i32kT = i32kPkT;
-        //spl0601_write(HW_ADR, 0x07, reg|0x80);  //Using mems temperature
-        simulation_i2c_writereg(SPL06_ADDR, 0x07, reg|0x80);
-        if(u8OverSmpl > 8)
-        {
-            //reg = spl0601_read(HW_ADR, 0x09);
-            simulation_i2c_readregs(SPL06_ADDR, 0x09, 1, &reg);
-            //spl0601_write(HW_ADR, 0x09, reg | 0x08);
-            simulation_i2c_writereg(SPL06_ADDR, 0x09, reg | 0x08);
-        }
+		spl06->I2CReadReg(spl06->DevAddr, 0x09, &readData, 1);
+		writeData = readData | 0x08;
+		spl06->I2CWriteReg(spl06->DevAddr, 0x09, &writeData, 1);
     }
 
 }
 
-/*****************************************************************************
- 函 数 名  : spl0601_get_calib_param
- 功能描述  : 获取校准参数
- 输入参数  : void  
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月30日
-    作    者   : WL
-    修改内容   : 新生成函数
 
-*****************************************************************************/
-void spl0601_get_calib_param(void)
+//设置模式
+void SPL06_SetMode(SPL06_t * spl06, E_SPL06_MODE mode)
 {
-    uint8_t h;
-    uint8_t m;
-    uint8_t l;
-
-    //h =  spl0601_read(HW_ADR, 0x10);
-    //l  =  spl0601_read(HW_ADR, 0x11);
-    simulation_i2c_readregs(SPL06_ADDR, 0x10, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x11, 1, &l);
-
-    p_spl0601->calib_param.c0 = (int16_t)h<<4 | l>>4;
-    p_spl0601->calib_param.c0 = (p_spl0601->calib_param.c0&0x0800)?(0xF000|p_spl0601->calib_param.c0):p_spl0601->calib_param.c0;
-    
-    //h =  spl0601_read(HW_ADR, 0x11);
-    //l  =  spl0601_read(HW_ADR, 0x12);
-    simulation_i2c_readregs(SPL06_ADDR, 0x11, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x12, 1, &l);
-    p_spl0601->calib_param.c1 = (int16_t)(h&0x0F)<<8 | l;
-    p_spl0601->calib_param.c1 = (p_spl0601->calib_param.c1&0x0800)?(0xF000|p_spl0601->calib_param.c1):p_spl0601->calib_param.c1;
-    
-    //h =  spl0601_read(HW_ADR, 0x13);
-    //m =  spl0601_read(HW_ADR, 0x14);
-    //l =  spl0601_read(HW_ADR, 0x15);
-    simulation_i2c_readregs(SPL06_ADDR, 0x13, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x14, 1, &m);
-    simulation_i2c_readregs(SPL06_ADDR, 0x15, 1, &l);
-    p_spl0601->calib_param.c00 = (int32_t)h<<12 | (int32_t)m<<4 | (int32_t)l>>4;
-    p_spl0601->calib_param.c00 = (p_spl0601->calib_param.c00&0x080000)?(0xFFF00000|p_spl0601->calib_param.c00):p_spl0601->calib_param.c00;
-    
-    //h =  spl0601_read(HW_ADR, 0x15);
-    //m =  spl0601_read(HW_ADR, 0x16);
-    //l =  spl0601_read(HW_ADR, 0x17);
-    simulation_i2c_readregs(SPL06_ADDR, 0x15, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x16, 1, &m);
-    simulation_i2c_readregs(SPL06_ADDR, 0x17, 1, &l);
-    p_spl0601->calib_param.c10 = (int32_t)h<<16 | (int32_t)m<<8 | l;
-    p_spl0601->calib_param.c10 = (p_spl0601->calib_param.c10&0x080000)?(0xFFF00000|p_spl0601->calib_param.c10):p_spl0601->calib_param.c10;
-    
-    //h =  spl0601_read(HW_ADR, 0x18);
-    //l  =  spl0601_read(HW_ADR, 0x19);
-    simulation_i2c_readregs(SPL06_ADDR, 0x18, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x19, 1, &l);
-    p_spl0601->calib_param.c01 = (int16_t)h<<8 | l;
-    
-    //h =  spl0601_read(HW_ADR, 0x1A);
-    //l  =  spl0601_read(HW_ADR, 0x1B);
-    simulation_i2c_readregs(SPL06_ADDR, 0x1a, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x1b, 1, &l);
-    p_spl0601->calib_param.c11 = (int16_t)h<<8 | l;
-    
-    //h =  spl0601_read(HW_ADR, 0x1C);
-    //l  =  spl0601_read(HW_ADR, 0x1D);
-    simulation_i2c_readregs(SPL06_ADDR, 0x1c, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x1d, 1, &l);
-    p_spl0601->calib_param.c20 = (int16_t)h<<8 | l;
-    
-    //h =  spl0601_read(HW_ADR, 0x1E);
-    //l  =  spl0601_read(HW_ADR, 0x1F);
-    simulation_i2c_readregs(SPL06_ADDR, 0x1e, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x1f, 1, &l);
-    p_spl0601->calib_param.c21 = (int16_t)h<<8 | l;
-    
-    //h =  spl0601_read(HW_ADR, 0x20);
-    //l  =  spl0601_read(HW_ADR, 0x21);
-    simulation_i2c_readregs(SPL06_ADDR, 0x20, 1, &h);
-    simulation_i2c_readregs(SPL06_ADDR, 0x21, 1, &l);
-    p_spl0601->calib_param.c30 = (int16_t)h<<8 | l;
+	spl06->I2CWriteReg(spl06->DevAddr, 0x08, &mode, 1);
 }
 
 
-/*****************************************************************************
- 函 数 名  : spl0601_start_temperature
- 功能描述  : 发起一次温度测量
- 输入参数  : void  
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月30日
-    作    者   : WL
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-void spl0601_start_temperature(void)
+//获取SPL06温度
+float SPL06_GetTemperature(SPL06_t * spl06)
 {
-    //spl0601_write(HW_ADR, 0x08, 0x02);
-    simulation_i2c_writereg(SPL06_ADDR, 0x08, 0x02);
+    float tsc;
+
+	uint8_t data[3] = {0};
+
+	if((NULL == spl06)
+		&& (NULL == spl06->I2CReadReg)
+	)
+	{
+		return 0;
+	}
+
+	spl06->I2CReadReg(spl06->DevAddr, 0x03, data, 3);
+    spl06->RawTemperature = (int32_t)data[0]<<16 | (int32_t)data[1]<<8 | (int32_t)data[2];
+    spl06->RawTemperature= (spl06->RawTemperature&0x800000) ? (0xFF000000|spl06->RawTemperature) : spl06->RawTemperature;
+
+    tsc = spl06->RawTemperature / (float)spl06->KT;
+	
+    return (spl06->CalibParams.c0 * 0.5 + spl06->CalibParams.c1 * tsc);
 }
 
-/*****************************************************************************
- 函 数 名  : spl0601_start_pressure
- 功能描述  : 发起一次压力值测量
- 输入参数  : void  
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月30日
-    作    者   : WL
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-void spl0601_start_pressure(void)
+//获取SPL06气压值
+float SPL06_GetPressure(SPL06_t * spl06)
 {
-    //spl0601_write(HW_ADR, 0x08, 0x01);
-    simulation_i2c_writereg(SPL06_ADDR, 0x08, 0x01);
-}
-
-/*****************************************************************************
- 函 数 名  : spl0601_start_continuous
- 功能描述  : Select node for the continuously measurement
- 输入参数  : uint8_t mode  1: pressure; 2: temperature; 3: pressure and temperature
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月25日
-    作    者   : WL
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-void spl0601_start_continuous(uint8_t mode)
-{
-    //spl0601_write(HW_ADR, 0x08, mode+4);
-    simulation_i2c_writereg(SPL06_ADDR, 0x08, mode+4);
-}
-
-
-
-
-/*****************************************************************************
- 函 数 名  : spl0601_get_temperature
- 功能描述  : 在获取原始值的基础上，返回浮点校准后的温度值
- 输入参数  : void  
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月30日
-    作    者   : WL
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-float spl0601_get_temperature(void)
-{
-    float fTCompensate;
-    float fTsc;
-
-    fTsc = p_spl0601->i32rawTemperature / (float)p_spl0601->i32kT;
-    fTCompensate =  p_spl0601->calib_param.c0 * 0.5 + p_spl0601->calib_param.c1 * fTsc;
-    return fTCompensate;
-}
-
-/*****************************************************************************
- 函 数 名  : spl0601_get_pressure
- 功能描述  : 在获取原始值的基础上，返回浮点校准后的压力值
- 输入参数  : void  
- 输出参数  : 无
- 返 回 值  : 
- 调用函数  : 
- 被调函数  : 
- 
- 修改历史      :
-  1.日    期   : 2015年11月30日
-    作    者   : WL
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-float spl0601_get_pressure(void)
-{
-    float fTsc, fPsc;
+    float tsc, psc;
     float qua2, qua3;
-    float fPCompensate;
 
-    fTsc = p_spl0601->i32rawTemperature / (float)p_spl0601->i32kT;
-    fPsc = p_spl0601->i32rawPressure / (float)p_spl0601->i32kP;
-    qua2 = p_spl0601->calib_param.c10 + fPsc * (p_spl0601->calib_param.c20 + fPsc* p_spl0601->calib_param.c30);
-    qua3 = fTsc * fPsc * (p_spl0601->calib_param.c11 + fPsc * p_spl0601->calib_param.c21);
+	uint8_t data[3] = {0};
 
-    fPCompensate = p_spl0601->calib_param.c00 + fPsc * qua2 + fTsc * p_spl0601->calib_param.c01 + qua3;
-    return fPCompensate;
+	if((NULL == spl06)
+		&& (NULL == spl06->I2CReadReg)
+	)
+	{
+		return 0;
+	}
+	
+	spl06->I2CReadReg(spl06->DevAddr, 0x00, data, 3);
+    spl06->RawPressure = (int32_t)data[0]<<16 | (int32_t)data[1]<<8 | (int32_t)data[2];
+    spl06->RawPressure= (spl06->RawPressure & 0x800000) ? (0xFF000000|spl06->RawPressure) : spl06->RawPressure;
+	
+
+    tsc = spl06->RawTemperature / (float)spl06->KT;
+    psc = spl06->RawPressure / (float)spl06->KP;
+    qua2 = spl06->CalibParams.c10 + psc * (spl06->CalibParams.c20 + psc* spl06->CalibParams.c30);
+    qua3 = tsc * psc * (spl06->CalibParams.c11 + psc * spl06->CalibParams.c21);
+
+    return (spl06->CalibParams.c00 + psc * qua2 + tsc * spl06->CalibParams.c01 + qua3);
 }
 
-void spl06_get_all_data()
+
+//获取SPL06所有数据
+void SPL06_GetDataAll(SPL06_t * spl06, SPL06_Data_t * data)
 {
-    uint8_t data[3] = {0};
 
-    simulation_i2c_readregs(SPL06_ADDR, 0x00, 3, data);
-    p_spl0601->i32rawPressure = (int32_t)data[0]<<16 | (int32_t)data[1]<<8 | (int32_t)data[2];
-    p_spl0601->i32rawPressure= (p_spl0601->i32rawPressure&0x800000) ? (0xFF000000|p_spl0601->i32rawPressure) : p_spl0601->i32rawPressure;
-
-    simulation_i2c_readregs(SPL06_ADDR, 0x03, 3, data);
-    p_spl0601->i32rawTemperature = (int32_t)data[0]<<16 | (int32_t)data[1]<<8 | (int32_t)data[2];
-    p_spl0601->i32rawTemperature= (p_spl0601->i32rawTemperature&0x800000) ? (0xFF000000|p_spl0601->i32rawTemperature) : p_spl0601->i32rawTemperature;
-
-
-    spl06_data.temp = spl0601_get_temperature();
-    spl06_data.pressure = spl0601_get_pressure();
-
+	data->Pressure = SPL06_GetPressure(spl06);
+	data->Temperature = SPL06_GetTemperature(spl06);
+	
 }
+
 

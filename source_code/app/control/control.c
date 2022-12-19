@@ -1,12 +1,15 @@
 #include "control.h"
 
-#include "main.h"
+
+#include <math.h>
+#include <stdint.h>
+
 
 
 #include "motor_config.h"
 #include "mpu6050_config.h"
 #include "bmp280_cfg.h"
-//#include "spl06.h"
+#include "spl06_cfg.h"
 
 
 
@@ -18,6 +21,8 @@
 #include "common.h"
 #include "filter.h"
 
+
+#include "main.h"
 
 biquadFilter_t biquad_PitchDItemParam = {0};
 biquadFilter_t biquad_RollDItemParam = {0};
@@ -151,6 +156,9 @@ biquadFilter_t biquad_AccParameterZ = {0};
 
 
 
+
+
+
 //姿态四元数
 Quaternion_t Quaternion = 
 {
@@ -179,13 +187,11 @@ Quaternion_PIOffset_t Quaternion_PIOffset =
 
 biquadFilter_t position_z_d_ltem_biquad_parameter = {0};
 
-#define ALTITUDE_SLIDING_FILTER_SIZE    5
-float altitude_sliding_filter_buff[ALTITUDE_SLIDING_FILTER_SIZE] = {0};
+
 
 
 #define GRAVITY_ACC         980
 
-TriaxialData_t earth_acc = {0};
 
 TriaxialData_t estimate_velocity = {0};
 TriaxialData_t estimate_position = {0};
@@ -196,9 +202,25 @@ TriaxialData_t Origion_NamelessQuad_position = {0};
 TriaxialData_t Origion_NamelessQuad_acc = {0};
 
 
-float baro_compensate_k = 0.02;
 
 
+
+#define ALTITUDE_SLIDING_FILTER_SIZE    5
+float AltitudeSlidingFilterBuffer[ALTITUDE_SLIDING_FILTER_SIZE] = {0};
+
+SlidingFilter_t AltitudeSlidingFilterParam = 
+{
+	.Index = 0,
+	.BufferSize = ALTITUDE_SLIDING_FILTER_SIZE,
+	.Buffer = AltitudeSlidingFilterBuffer,
+	.Sum = 0,
+};
+
+LowPassFilter_t AltitudeLPFParam = 
+{
+	.K = 0.5,
+	.LastValue = 0,
+};
 
 
 //滤波参数初始化 暂时放这里
@@ -211,9 +233,9 @@ void FilterInit()
 	biquad_filter_init_lpf(&biquad_GyroParameterZ, 500, 70);
 
 	
-	biquad_filter_init_lpf(&biquad_AccParameterX, 500, 15);	
-	biquad_filter_init_lpf(&biquad_AccParameterY, 500, 15);	
-	biquad_filter_init_lpf(&biquad_AccParameterZ, 500, 15);	
+	biquad_filter_init_lpf(&biquad_AccParameterX, 500, 70);	
+	biquad_filter_init_lpf(&biquad_AccParameterY, 500, 70);	
+	biquad_filter_init_lpf(&biquad_AccParameterZ, 500, 70);	
 
 
 	biquad_filter_init_lpf(&biquad_PitchDItemParam, 500, 70);
@@ -308,6 +330,87 @@ void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeDa
 	
 }
 
+/* Workaround a lack of optimization in gcc */
+float exp_cst1 = 2139095040.f;
+float exp_cst2 = 0.f;
+
+
+/* Relative error bounded by 1e-5 for normalized outputs
+   Returns invalid outputs for nan inputs
+   Continuous error */
+float exp_approx(float val) {
+  union { int32_t i; float f; } xu, xu2;
+  float val2, val3, val4, b;
+  int32_t val4i;
+  val2 = 12102203.1615614f*val+1065353216.f;
+  val3 = val2 < exp_cst1 ? val2 : exp_cst1;
+  val4 = val3 > exp_cst2 ? val3 : exp_cst2;
+  val4i = (int32_t) val4;
+  xu.i = val4i & 0x7F800000;                   // mask exponent  / round down to neareset 2^n (implicit mantisa bit)
+  xu2.i = (val4i & 0x7FFFFF) | 0x3F800000;     // force exponent to 0
+  b = xu2.f;
+
+  /* Generated in Sollya with:
+     > f=remez(1-x*exp(-(x-1)*log(2)),
+               [|(x-1)*(x-2), (x-1)*(x-2)*x, (x-1)*(x-2)*x*x|],
+               [1.000001,1.999999], exp(-(x-1)*log(2)));
+     > plot(exp((x-1)*log(2))/(f+x)-1, [1,2]);
+     > f+x;
+  */
+  return
+    xu.f * (0.509871020343597804469416f + b *
+            (0.312146713032169896138863f + b *
+             (0.166617139319965966118107f + b *
+              (-2.19061993049215080032874e-3f + b *
+               1.3555747234758484073940937e-2f))));
+}
+
+
+/* Absolute error bounded by 1e-6 for normalized inputs
+   Returns a finite number for +inf input
+   Returns -inf for nan and <= 0 inputs.
+   Continuous error. */
+float log_approx(float val) {
+  union { float f; int32_t i; } valu;
+  float exp, addcst, x;
+  valu.f = val;
+  exp = valu.i >> 23;
+  /* 89.970756366f = 127 * log(2) - constant term of polynomial */
+  addcst = val > 0 ? -89.970756366f : -(float)INFINITY;
+  valu.i = (valu.i & 0x7FFFFF) | 0x3F800000;
+  x = valu.f;
+
+
+  /* Generated in Sollya using:
+    > f = remez(log(x)-(x-1)*log(2),
+            [|1,(x-1)*(x-2), (x-1)*(x-2)*x, (x-1)*(x-2)*x*x,
+              (x-1)*(x-2)*x*x*x|], [1,2], 1, 1e-8);
+    > plot(f+(x-1)*log(2)-log(x), [1,2]);
+    > f+(x-1)*log(2)
+ */
+  return
+    x * (3.529304993f + x * (-2.461222105f +
+      x * (1.130626167f + x * (-0.288739945f +
+        x * 3.110401639e-2f))))
+    + (addcst + 0.69314718055995f*exp);
+}
+
+
+float pow_approx(float a, float b)
+{
+    return exp_approx(b * log_approx(a));
+}
+
+
+float PressureToAltitude(float pressure)//cm
+{ 
+    //return 4433000.0f * (1.0f - powf(0.190295f, pressure/101325.0f));
+	//return 44300.0f * (1.0f - powf(pressure/101325.0f, 0.190257519));
+	//return (1.0f - pow_approx(pressure / 101325.0f, 0.190295f)) * 4433000.0f;
+	return (1.0f - powf(pressure / 101325.0f, 0.190295f)) * 4433000.0f;
+}
+
+
 
 #define TIME_CONTANST_Z     5.0f
 #define K_ACC_Z (5.0f / (TIME_CONTANST_Z * TIME_CONTANST_Z * TIME_CONTANST_Z))
@@ -315,9 +418,9 @@ void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeDa
 #define K_POS_Z (3.0f / TIME_CONTANST_Z)
 
 float  High_Filter[3]={
-	0.015,  //0.03
-	0.05,//0.05
-	0.02,//0.03
+	0.010,  //0.03  0.015
+	0.05,//0.05     
+	0.02,//0.03 0.02
 };
 
 
@@ -330,80 +433,90 @@ float pos_correction[3] = {0};
 float SpeedDealt[3] = {0};
 
  
-/*
-void Strapdown_INS_High()
+
+void Strapdown_INS_High(TriaxialData_t * acc, float altitude, float dt)
 {
-	TriaxialData_t acc;
-	float dt = 0.002f;
+	TriaxialData_t accEarth = {0};
+	
+	Quaternion_BodyToEarth(&Quaternion, acc, &accEarth);
 
-	acc.x = Origion_NamelessQuad_acc.x * GRAVITY_ACC;
-	acc.y = Origion_NamelessQuad_acc.y * GRAVITY_ACC;
-	acc.z = Origion_NamelessQuad_acc.z * GRAVITY_ACC;
+	accEarth.X *= GRAVITY_ACC;
+	accEarth.Y *= GRAVITY_ACC;
+	accEarth.Z *= GRAVITY_ACC;
+	
+	accEarth.Z -= GRAVITY_ACC + 34;
 
-	imu_body_to_Earth(&acc,&earth_acc);
-	earth_acc.z -= GRAVITY_ACC;
-
-	Altitude_Dealt=bmp280_data.altitude - estimate_position.z;//气压计(超声波)与SINS估计量的差，单位cm
+	Altitude_Dealt = altitude - estimate_position.Z;//气压计(超声波)与SINS估计量的差，单位cm 
+	
+	if(ABS(Altitude_Dealt) > 500)
+	{
+		//estimate_position.Z = altitude;
+		Origion_NamelessQuad_position.Z = altitude;
+	}
 
 	acc_correction[2] += High_Filter[0]*Altitude_Dealt* K_ACC_Z;//加速度校正量
 	vel_correction[2] += High_Filter[1]*Altitude_Dealt* K_VEL_Z;//速度校正量
 	pos_correction[2] += High_Filter[2]*Altitude_Dealt* K_POS_Z;//位置校正量
 
 	//原始加速度+加速度校正量=融合后的加速度
-	estimate_acc.z = earth_acc.z + acc_correction[2];
+	estimate_acc.Z = accEarth.Z + acc_correction[2];
 
 	//融合后的加速度积分得到速度增量
-	SpeedDealt[2]=estimate_acc.z * dt;
+	SpeedDealt[2]=estimate_acc.Z * dt;
 
 	//得到速度增量后，更新原始位置
-	Origion_NamelessQuad_position.z += (estimate_velocity.z + 0.5 * SpeedDealt[2]) * dt,
+	Origion_NamelessQuad_position.Z += (estimate_velocity.Z + 0.5 * SpeedDealt[2]) * dt,
 
 	//原始位置+位置校正量=融合后位置
-	estimate_position.z = Origion_NamelessQuad_position.z + pos_correction[2];
+	estimate_position.Z = Origion_NamelessQuad_position.Z + pos_correction[2];
 
 	//原始速度+速度校正量=融合后的速度
-	Origion_NamelessQuad_velocity.z += SpeedDealt[2];
-	estimate_velocity.z = Origion_NamelessQuad_velocity.z + vel_correction[2];
+	Origion_NamelessQuad_velocity.Z += SpeedDealt[2];
+	estimate_velocity.Z = Origion_NamelessQuad_velocity.Z + vel_correction[2];
 }
 
 
+float baro_compensate_k = 0.02f;
 
-float altitude_error;
-void get_estimate_position(float observe_altitude)
+void PositionFusion(TriaxialData_t * acc, float observeAltitude, float dt)
 {
-	Triaxial_Data_t acc;
-	float dt = 0.002;
+	TriaxialData_t accEarth = {0};
+	float altitudeDeviation;
+	
+	Quaternion_BodyToEarth(&Quaternion, acc, &accEarth);
 
-//float altitude_error,
+	accEarth.X *= GRAVITY_ACC;
+	accEarth.Y *= GRAVITY_ACC;
+	accEarth.Z *= GRAVITY_ACC;
+	
+	accEarth.Z -= GRAVITY_ACC + 15;
 
-	acc.x = Origion_NamelessQuad_acc.x * GRAVITY_ACC;
-	acc.y = Origion_NamelessQuad_acc.y * GRAVITY_ACC;
-	acc.z = Origion_NamelessQuad_acc.z * GRAVITY_ACC;
+	estimate_acc.X = accEarth.X;
+	estimate_acc.Y = accEarth.Y;
+	estimate_acc.Z = accEarth.Z;
+	
 
-	imu_body_to_Earth(&acc,&earth_acc);
-	earth_acc.z -= GRAVITY_ACC + 40;
-
-	altitude_error = observe_altitude - estimate_position.z;
+	altitudeDeviation = observeAltitude - estimate_position.Z;
 	
 	//偏差过大 直接给值
-	if(ABS(altitude_error) > 500)
+	if(ABS(altitudeDeviation) > 500)
 	{
-		estimate_position.z = observe_altitude;
-		estimate_velocity.z = 0;
+		estimate_position.Z = observeAltitude;
+		estimate_velocity.Z = 0;
 	}
 	else
 	{
-		estimate_velocity.z += earth_acc.z * dt;
-		estimate_position.z += estimate_velocity.z * dt + 0.5*earth_acc.z*dt*dt;
 		
+		estimate_position.Z += estimate_velocity.Z * dt + 0.5*estimate_acc.Z*dt*dt;
+		estimate_velocity.Z += estimate_acc.Z * dt;
 
-		estimate_position.z += baro_compensate_k * altitude_error;
-		estimate_velocity.z += baro_compensate_k  * altitude_error;
+		estimate_position.Z += baro_compensate_k * altitudeDeviation;
+		estimate_velocity.Z += baro_compensate_k * altitudeDeviation;
 	}
 
 }
 
-
+/*
 //位置控制
 uint32_t position_control(float now_altitude, float set_altitude)
 {
@@ -431,7 +544,6 @@ uint32_t position_control(float now_altitude, float set_altitude)
 
 */
 
-uint32_t code_time = 0;
 
 void ControlTask(void * parameters)
 {
@@ -466,6 +578,8 @@ void ControlTask(void * parameters)
 
 
 	BMP280_Data_t bmp280Data = {0};
+	SPL06_Data_t spl06Data = {0};
+	static float altitude = 0;
 
 	for(;;)
 	{
@@ -494,20 +608,7 @@ void ControlTask(void * parameters)
 		}
 
 
-		if((timeCount % 25) == 0)
-		{		
-			BMP280_Startup(&BMP280);
-		}
-
-		if((timeCount % 50) == 0)
-		{					
-			//接收bmp180海拔高度 
-			BMP280_GetData(&BMP280, &bmp280Data);
-			
-			//bmp280_data.altitude = sliding_filter(bmp280_data.altitude,altitude_sliding_filter_buff,ALTITUDE_SLIDING_FILTER_SIZE),
-			
-			//spl06_get_all_data(),
-		}
+		
 
 		
 		
@@ -535,15 +636,37 @@ void ControlTask(void * parameters)
 		accConvertData.Z = -accConvertData.Z;
 		gyroConvertData.Y = -gyroConvertData.Y;
 		gyroConvertData.Z = -gyroConvertData.Z;
-		
-		//单位转换并滤波
 
-		//Origion_NamelessQuad_acc.x = Acc.x;
-		//Origion_NamelessQuad_acc.y = Acc.y;
-		//Origion_NamelessQuad_acc.z = Acc.z;
 
-		//Quaternion_t Quaternion;
-		//Quaternion_PIOffset_t QuaOffset;ternion_PI
+		if((timeCount % 10) == 0)
+		{					
+			//接收bmp180海拔高度 
+			/*
+			BMP280_GetData(&BMP280, &bmp280Data);
+			bmp280Data.Pressure = SlidingFilter(&AltitudeSlidingFilterParam, bmp280Data.Pressure);
+			altitude = PressureToAltitude(bmp280Data.Pressure);
+			altitude = LowPassFilter(&AltitudeLPFParam, altitude);*/
+
+
+			//SPL06
+			SPL06_GetDataAll(&SPL06, &spl06Data);
+			//spl06Data.Pressure = SlidingFilter(&AltitudeSlidingFilterParam, spl06Data.Pressure);
+			altitude = PressureToAltitude(spl06Data.Pressure);
+			//altitude = LowPassFilter(&AltitudeLPFParam, altitude);
+
+			//需要打印的位置信息
+			xQueueSend(BaroAltitudeQueue,&altitude,0);
+			xQueueSend(AltitudeQueue,&estimate_position.Z,0);
+			xQueueSend(AccQueue,&estimate_acc.Z,0);
+
+			//xQueueSend(printf_position_queue,&estimate_position.z,0);
+			
+			//altitude = 100;
+			
+			//bmp280_data.altitude = sliding_filter(bmp280_data.altitude,altitude_sliding_filter_buff,ALTITUDE_SLIDING_FILTER_SIZE),
+			
+			//spl06_get_all_data(),
+		}
 		
 		
 		//四元数姿态解算
@@ -567,7 +690,10 @@ void ControlTask(void * parameters)
 		//xQueueSend(printf_acc_queue,&estimate_acc.z,0);
 		//xQueueSend(printf_acc_queue,&earth_acc.z,0);
 		//xQueueSend(printf_acc_queue,&Origion_NamelessQuad_acc.z,0);
-		
+
+
+		//Strapdown_INS_High(&accConvertData, altitude, 0.002);
+		PositionFusion(&accConvertData, altitude, 0.002);
 		
 		if((RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y)  < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
 		//if(FALSE)

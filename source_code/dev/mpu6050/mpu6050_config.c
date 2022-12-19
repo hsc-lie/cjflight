@@ -20,7 +20,7 @@ MPU6050_t MPU6050 =
 	.DevAddr = MPU6050_DEV_ADDR1,
 	
 	.GyroRange = E_MPU6050_GYRO_RANGE_2000,
-	.AccRange = E_MPU6050_ACC_RANGE_8G,
+	.AccRange = E_MPU6050_ACC_RANGE_2G,
 
 	.GyroZero = 
 	{

@@ -24,7 +24,6 @@
 void FilterInit(void);
 
 void ControlTask(void * parameters);
-void Strapdown_INS_High(void);
 
 
 

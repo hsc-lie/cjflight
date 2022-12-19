@@ -5,8 +5,24 @@
 
 
 
-void (*SendData)(uint8_t data, uint32_t len);
-void (*ReadData)(uint8_t * data, uint32_t readLen, uint32_t * outLen);
+//void (*SendData)(uint8_t data, uint32_t len);
+//void (*ReadData)(uint8_t * data, uint32_t readLen, uint32_t * outLen);
+
+
+static void USART1_HAL_SendData(uint8_t * data, uint32_t len)
+{
+	USART_TransmissionData(USART1, data, len);
+}
+
+
+
+USART_HAL_t USART1_HAL = 
+{
+	.SendData = USART1_HAL_SendData,
+	.ReadData = NULL,
+};
+
+
 
 
 static void USART2_HAL_ReadData(uint8_t * data, uint32_t readLen, uint32_t * outLen)
@@ -29,6 +45,7 @@ static void USART2_HAL_ReadData(uint8_t * data, uint32_t readLen, uint32_t * out
 
 	*outLen = i;
 }
+
 
 
 USART_HAL_t USART2_HAL = 

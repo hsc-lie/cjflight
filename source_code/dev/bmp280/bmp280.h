@@ -69,7 +69,6 @@ typedef struct
 {
 	float Pressure;
     float Temp;
-    float Altitude;
 }BMP280_Data_t;
 
 

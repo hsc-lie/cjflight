@@ -137,3 +137,49 @@ float sliding_filter(float input,float * buff,uint32_t buff_size)
     return out;
 }
 
+
+float LowPassFilter(LowPassFilter_t * filter, float in)
+{
+	float out;
+
+	out = filter->K * in + (1 - filter->K) * filter->LastValue;
+	filter->LastValue = in;
+	
+	return out;
+}
+
+
+//滑动滤波
+float SlidingFilter(SlidingFilter_t * filter, float in)
+{
+
+	uint32_t index;
+
+	if((NULL == filter)
+		|| (NULL == filter->Buffer)
+	)
+	{
+		return 0;
+	}
+
+	
+	index = filter->Index;
+
+	//减去最旧的值
+	filter->Sum -= filter->Buffer[index];
+
+	//得到新值
+	filter->Sum += in;
+	filter->Buffer[index] = in;
+
+	++index;
+	if(index == filter->BufferSize)
+	{
+		index = 0;
+	}
+
+	filter->Index = index;
+
+	return (filter->Sum / filter->BufferSize);
+}
+

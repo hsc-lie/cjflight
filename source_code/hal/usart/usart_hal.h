@@ -13,7 +13,7 @@ typedef enum
 
 typedef struct
 {
-	void (*SendData)(uint8_t data, uint32_t len);
+	void (*SendData)(uint8_t * data, uint32_t len);
 	void (*ReadData)(uint8_t * data, uint32_t readLen, uint32_t * outLen);
 }USART_HAL_t;
 

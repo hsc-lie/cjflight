@@ -13,6 +13,26 @@
 #define LED3_GPIO_PIN      GPIO_Pins_11
 
 
+#if 0 
+
+#define SIMULATION_I2C_SCL_GPIO          GPIOA
+#define SIMULATION_I2C_SCL_GPIO_PIN      GPIO_Pins_10
+
+#define SIMULATION_I2C_SDA_GPIO          GPIOA
+#define SIMULATION_I2C_SDA_GPIO_PIN      GPIO_Pins_9
+
+#else
+
+#define SIMULATION_I2C_SCL_GPIO          GPIOA
+#define SIMULATION_I2C_SCL_GPIO_PIN      GPIO_Pins_8
+
+#define SIMULATION_I2C_SDA_GPIO          GPIOB
+#define SIMULATION_I2C_SDA_GPIO_PIN      GPIO_Pins_15
+
+
+#endif
+
+
 
 
 

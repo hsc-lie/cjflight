@@ -11,13 +11,16 @@
 #include "timer_config.h"
 
 
-#include "simulation_i2c.h"
+
+#include "usart_hal_config.h"
+#include "i2c_hal_config.h"
+#include "simulation_i2c_config.h"
 
 
 
 #include "mpu6050_config.h"
 #include "bmp280_cfg.h"
-//#include "spl06.h"
+#include "spl06_cfg.h"
 
 
 #include "led_cfg.h"
@@ -47,9 +50,13 @@ uint32_t stack_size;
 /*遥控数据传输队列句柄*/
 xQueueHandle RemoteDataQueue;
 
-xQueueHandle printf_velocity_queue;
-xQueueHandle printf_position_queue;
-xQueueHandle printf_acc_queue;
+
+xQueueHandle BaroAltitudeQueue;
+xQueueHandle AltitudeQueue;
+xQueueHandle AccQueue;
+
+
+
 
 
 /*遥控器数据接受信号句柄*/
@@ -75,28 +82,38 @@ int fputc(int ch, FILE *f)
 {
 	/* 发送一个字节数据到串口 */
   	//uart_send_byte(UARTx, (uint8_t)ch);
+
+	uint8_t data = (uint8_t)ch;
+  	USART_HAL_SendData(&USART1_HAL, &data, 1);
 	return (ch);
 }
 
 
 void PrintfTask(void * parameters)
 {
-	float printf_velocity = 0;
-	float printf_position = 0;
-	float printf_acc = 0;
 
+	float baroAltitude = 0;
+	float altitude = 0;
+	float acc = 0;
+	
 	for(;;)
 	{
-		xQueueReceive(printf_velocity_queue,&printf_velocity,0);
-		xQueueReceive(printf_position_queue,&printf_position,0);
-		xQueueReceive(printf_acc_queue,&printf_acc,0);
+		xQueueReceive(BaroAltitudeQueue,&baroAltitude,0);
+		xQueueReceive(AltitudeQueue,&altitude,0);
+		xQueueReceive(AccQueue,&acc,0);
+		
 
-		printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
+		//printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
+		printf("d: %f, %f, %f\n", baroAltitude, altitude, acc);
+		
+		//USART_HAL_SendData(&USART1_HAL, "hello world\n", 12);
 
-		//stack_size = uxTaskGetStackHighWaterMark(NULL); 
 		//printf("hello world\n");
-		//uart_send_byte(UARTx,6);
-		vTaskDelay(20);
+
+
+		//stack_size = uxTaskGetStackHighWaterMark(NULL);
+		//vTaskDelay(10);
+		 
 	}
 
 }
@@ -117,6 +134,27 @@ __asm void _enable_irq()
 */
 
 
+void I2C_DevAddrTest()
+{
+	uint8_t addr = 0;
+
+	uint8_t reg = 0;
+	uint8_t readData = 0;
+
+	E_I2C_ERROR ret;
+
+	for(addr = 0;addr < 0x7f;addr++)
+	{
+		ret = SimulationI2C_ReadData(&SimulationI2C1, addr, &reg, 1, &readData, 1);
+		//ret = I2C_HalReadData(&I2C_Dev1, addr, &reg, 1, &readData, 1);
+
+		if(E_I2C_ERROR_OK == ret)
+		{
+			ret = 0;
+		}
+	}
+}
+
 
 
 int main(void)
@@ -135,21 +173,22 @@ int main(void)
 	FilterInit();
 
 	/*MPU6050初始化*/
-	MPU6050_Init(&MPU6050);
+	//MPU6050_Init(&MPU6050);
 
 
 	/*气压计初始化*/
-	BMP280_Init(&BMP280);
-	//spl0601_init();
+	//BMP280_Init(&BMP280);
+	SPL06_Init(&SPL06);
+	//I2C_DevAddrTest();
 	
-	//tim_init_ms(20);
+
 	
 	/*创建遥控数据消息队列*/
 	RemoteDataQueue = xQueueCreate(1, sizeof(RemoteData_t));
 
-	printf_velocity_queue = xQueueCreate(1,sizeof(float));
-	printf_position_queue = xQueueCreate(1,sizeof(float));
-	printf_acc_queue = xQueueCreate(1,sizeof(float));
+	BaroAltitudeQueue = xQueueCreate(1,sizeof(float));
+	AltitudeQueue = xQueueCreate(1,sizeof(float));
+	AccQueue = xQueueCreate(1,sizeof(float));
 
 	/*创建遥控接受信号*/
 	//remote_read_semaphore = xSemaphoreCreateBinary();
@@ -160,16 +199,16 @@ int main(void)
 				"led",
 				32,
 				NULL,
-				1,
+				2,
 				NULL);
 
 	/*打印任务创建*/
-	/*xTaskCreate(PrintfTask,
+	xTaskCreate(PrintfTask,
 				"printf",
-				200,
+				256,
 				NULL,
-				2,
-				NULL);*/
+				1,
+				NULL);
 
 	/*遥控器接受任务创建*/
 	xTaskCreate(RemoteTask,

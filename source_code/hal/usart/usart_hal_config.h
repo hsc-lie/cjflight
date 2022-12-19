@@ -4,6 +4,7 @@
 
 #include "usart_hal.h"
 
+extern USART_HAL_t USART1_HAL;
 extern USART_HAL_t USART2_HAL;
 
 

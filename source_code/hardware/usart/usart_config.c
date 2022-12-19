@@ -34,16 +34,16 @@ void USART_ConfigInitAll()
 
 	USART_Init(USART1, &USART_InitStructure);
 
-	USART_INTConfig(USART1, USART_INT_RDNE, ENABLE);
-	//USART_INTConfig(UARTx, USART_INT_TDE, ENABLE);
+	//USART_INTConfig(USART1, USART_INT_RDNE, ENABLE);
+	//USART_INTConfig(USART1, USART_INT_TDE, ENABLE);
 
 	USART_Cmd(USART1, ENABLE);
-	
+	/*
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 14;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+	NVIC_Init(&NVIC_InitStructure);*/
 
 #endif
 

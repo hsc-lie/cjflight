@@ -10,7 +10,6 @@ github网址 https://github.com/betaflight/betaflight
 
 
 
-
 #include "common.h"
 
 
@@ -28,9 +27,32 @@ typedef enum
 } biquadFilterType_e;
 
 
+typedef struct
+{
+	float K;
+	float LastValue;
+}LowPassFilter_t;
+
+
+typedef struct
+{
+	uint32_t Index;   //请初始化为0
+
+	uint32_t BufferSize;
+	float * Buffer;
+
+	float Sum;    //请初始化为0
+	
+}SlidingFilter_t;
+
+
 void biquad_filter_init_lpf(biquadFilter_t *filter, uint16_t samplingFreq, uint16_t filterFreq);
 float biquad_filter(biquadFilter_t *filter, float input);
 
-float sliding_filter(float input,float * buff,uint32_t buff_size);
+//一阶低通滤波
+float LowPassFilter(LowPassFilter_t * filter, float in);
+//滑动滤波
+float SlidingFilter(SlidingFilter_t * filter, float in);
+
 
 #endif /*_FILTER_H_*/

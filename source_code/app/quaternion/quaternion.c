@@ -28,6 +28,9 @@ static float InvSqrt(float x)
 //PI互补滤波求补正
 static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * mag, TriaxialData_t * offset, float dt)
 {
+	TriaxialData_t accTemp;
+	TriaxialData_t magTemp;
+
 	float ex = 0; 
 	float ey = 0; 
 	float ez = 0;
@@ -46,17 +49,23 @@ static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIO
 		return;	
 	}
 
+	
+
+	magTemp.X = mag->X;
+	magTemp.Y = mag->Y;
+	magTemp.Z = mag->Z;
+
 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计算根号0 保险加上这个判断
-	if((mag->X != 0.0f) || (mag->Y != 0.0f) || (mag->Z != 0.0f))
+	if((magTemp.X != 0.0f) || (magTemp.Y != 0.0f) || (magTemp.Z != 0.0f))
 	{
 		//归一化
-		normalise = InvSqrt(mag->X * mag->X + mag->Y * mag->Y + mag->Z * mag->Z);
-		mag->X *= normalise;
-		mag->Y *= normalise;
-		mag->Z *= normalise;
+		normalise = InvSqrt(magTemp.X * magTemp.X + magTemp.Y * magTemp.Y + magTemp.Z * magTemp.Z);
+		magTemp.X *= normalise;
+		magTemp.Y *= normalise;
+		magTemp.Z *= normalise;
 	
 		//磁力从机体坐标转到地球坐标
-		Quaternion_BodyToEarth(quaternion, mag, &magEarth);
+		Quaternion_BodyToEarth(quaternion, &magTemp, &magEarth);
 		//水平面向量和为北边 勾股定理定北边为x轴 
 		magEarth.X = 1.0f / InvSqrt(magEarth.X * magEarth.X + magEarth.Y * magEarth.Y);
 		magEarth.Y = 0;
@@ -67,21 +76,23 @@ static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIO
 	}
 
 
-	
+	accTemp.X = acc->X;
+	accTemp.Y = acc->Y;
+	accTemp.Z = acc->Z;
 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计算根号0 保险加上这个判断
-	if((acc->X != 0.0f) || (acc->Y != 0.0f) || (acc->Z != 0.0f))
+	if((accTemp.X != 0.0f) || (accTemp.Y != 0.0f) || (accTemp.Z != 0.0f))
 	{
 
 		//归一化
-		normalise = InvSqrt(acc->X * acc->X + acc->Y * acc->Y + acc->Z * acc->Z);
-		acc->X *= normalise;
-		acc->Y *= normalise;
-		acc->Z *= normalise;
+		normalise = InvSqrt(accTemp.X * accTemp.X + accTemp.Y * accTemp.Y + accTemp.Z * accTemp.Z);
+		accTemp.X *= normalise;
+		accTemp.Y *= normalise;
+		accTemp.Z *= normalise;
 		
 		//向量叉乘得出偏差
-		ex = (acc->Y * quaternion->RotationMatrix[2][2] - acc->Z * quaternion->RotationMatrix[2][1]) + (mag->Y * magBody.Z - mag->Z * magBody.Y);
-		ey = (acc->Z * quaternion->RotationMatrix[2][0] - acc->X * quaternion->RotationMatrix[2][2]) + (mag->Z * magBody.X - mag->X * magBody.Z);
-		ez = (acc->X * quaternion->RotationMatrix[2][1] - acc->Y * quaternion->RotationMatrix[2][0]) + (mag->X * magBody.Y - mag->Y * magBody.X);
+		ex = (accTemp.Y * quaternion->RotationMatrix[2][2] - accTemp.Z * quaternion->RotationMatrix[2][1]) + (magTemp.Y * magBody.Z - magTemp.Z * magBody.Y);
+		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]) + (magTemp.Z * magBody.X - magTemp.X * magBody.Z);
+		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]) + (magTemp.X * magBody.Y - magTemp.Y * magBody.X);
 		
 		//PI互补滤波 I项
 		pi->exInt += pi->I * ex * dt;  

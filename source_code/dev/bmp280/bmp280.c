@@ -1,5 +1,5 @@
 #include "bmp280.h"
-#include "math.h"
+//#include "math.h"
 
 
 /****************************************************************************************
@@ -47,7 +47,7 @@ github网址 https://github.com/betaflight/betaflight
 
 
 //配置bmp气压计 气压和温度过采样
-#define BMP280_PRESSURE_OSR         (BMP280_OVERSAMP_8X)
+#define BMP280_PRESSURE_OSR         (BMP280_OVERSAMP_4X)
 #define BMP280_TEMPERATURE_OSR      (BMP280_OVERSAMP_1X)
 #define BMP280_MODE                 (BMP280_PRESSURE_OSR << 2 | BMP280_TEMPERATURE_OSR << 5 | BMP280_FORCED_MODE)
 
@@ -97,8 +97,8 @@ E_BMP280_ERROR BMP280_Init(BMP280_t * bmp280)
 	writeData = BMP280_MODE;
 	bmp280->I2CWriteReg(bmp280->DevAddr, BMP280_CTRL_MEAS_REG, &writeData, 1);
 
-	//writeData = BMP280_FILTER;
-	//bmp280->I2CWriteReg(bmp280->DevAddr, BMP280_CONFIG_REG, &writeData, 1);
+	writeData = BMP280_FILTER;
+	bmp280->I2CWriteReg(bmp280->DevAddr, BMP280_CONFIG_REG, &writeData, 1);
 
 	return  E_BMP280_ERROR_OK;
 }
@@ -140,14 +140,7 @@ static uint32_t BMP280_CompensatePressure(BMP280_t * bmp280, int32_t pressure_va
 }
 
 
-static float pressureToAltitude(const float pressure)
-{
-    
-    //return (1.0f - powf(pressure / 101325.0f, 0.190295f)) * 4433000.0f;
-    return 44300.0f * (1.0f - powf(pressure/101325.0f, 0.190257519));
 
-	//return (pressure - 97000) / 9;
-}
 
 
 
@@ -191,8 +184,6 @@ E_BMP280_ERROR BMP280_GetData(BMP280_t * bmp280, BMP280_Data_t * data)
 
     data->Temp = (float)BMP280_CompensateTemp(bmp280, temperature)/100.0f;	
 	data->Pressure = (float)BMP280_CompensatePressure(bmp280, pressure)/256.0f;	
-
-	data->Altitude = pressureToAltitude(data->Pressure) * 100.0f;
 
 	return  E_BMP280_ERROR_OK;
 }

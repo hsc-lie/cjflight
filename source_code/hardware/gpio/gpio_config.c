@@ -131,12 +131,25 @@ const GPIO_Config_t USART2_GPIOConfigTable[] =
 //软件I2C
 const GPIO_Config_t SimulationI2C_GPIOConfigTable[] = 
 {
-	//软件I2C SDA
+	//软件I2C SCL
 	{
-		.GPIOx = GPIOA,
+		.GPIOx = SIMULATION_I2C_SCL_GPIO,
 		.GPIO_InitType = 
 		{
-			.GPIO_Pins	= GPIO_Pins_9,
+			.GPIO_Pins  = SIMULATION_I2C_SCL_GPIO_PIN,
+	    	.GPIO_Mode = GPIO_Mode_OUT,
+	    	.GPIO_OutType = GPIO_OutType_OD,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+
+	//软件I2C SDA
+	{
+		.GPIOx = SIMULATION_I2C_SDA_GPIO,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins	= SIMULATION_I2C_SDA_GPIO_PIN,
 			.GPIO_Mode = GPIO_Mode_OUT,
 			.GPIO_OutType = GPIO_OutType_OD,
 			.GPIO_Pull = GPIO_Pull_NOPULL,
@@ -144,18 +157,7 @@ const GPIO_Config_t SimulationI2C_GPIOConfigTable[] =
 		},
 	},
 	
-	//软件I2C SCL
-	{
-		.GPIOx = GPIOA,
-		.GPIO_InitType = 
-		{
-			.GPIO_Pins  = GPIO_Pins_10,
-	    	.GPIO_Mode = GPIO_Mode_OUT,
-	    	.GPIO_OutType = GPIO_OutType_OD,
-	    	.GPIO_Pull = GPIO_Pull_NOPULL,
-	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
-		},
-	},
+	
 };
 
 //Timer3
