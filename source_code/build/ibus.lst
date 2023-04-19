@@ -1,0 +1,511 @@
+ARM GAS  /tmp/ccgrZiH7.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"ibus.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.IBUS_AnalysisData,"ax",%progbits
+  18              		.align	1
+  19              		.global	IBUS_AnalysisData
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	IBUS_AnalysisData:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./protocol_stack/ibus/ibus.c"
+   1:./protocol_stack/ibus/ibus.c **** #include "ibus.h"
+   2:./protocol_stack/ibus/ibus.c **** 
+   3:./protocol_stack/ibus/ibus.c **** 
+   4:./protocol_stack/ibus/ibus.c **** 
+   5:./protocol_stack/ibus/ibus.c **** E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len, uint8_t * const is
+   6:./protocol_stack/ibus/ibus.c **** {
+  30              		.loc 1 6 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 6 1 is_stmt 0 view .LVU1
+  35 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 24
+  38              		.cfi_offset 4, -24
+  39              		.cfi_offset 5, -20
+  40              		.cfi_offset 6, -16
+  41              		.cfi_offset 7, -12
+  42              		.cfi_offset 8, -8
+  43              		.cfi_offset 14, -4
+  44 0004 9846     		mov	r8, r3
+   7:./protocol_stack/ibus/ibus.c **** 	//int ret = 1;
+   8:./protocol_stack/ibus/ibus.c **** 	uint32_t i;
+  45              		.loc 1 8 2 is_stmt 1 view .LVU2
+   9:./protocol_stack/ibus/ibus.c **** 	uint16_t checkSum;
+  46              		.loc 1 9 2 view .LVU3
+  10:./protocol_stack/ibus/ibus.c **** 
+  11:./protocol_stack/ibus/ibus.c **** 	*isGetPackage = FALSE;
+  47              		.loc 1 11 2 view .LVU4
+ARM GAS  /tmp/ccgrZiH7.s 			page 2
+
+
+  48              		.loc 1 11 16 is_stmt 0 view .LVU5
+  49 0006 0023     		movs	r3, #0
+  50              	.LVL1:
+  51              		.loc 1 11 16 view .LVU6
+  52 0008 88F80030 		strb	r3, [r8]
+  12:./protocol_stack/ibus/ibus.c **** 
+  13:./protocol_stack/ibus/ibus.c **** 	if(NULL == ibus)
+  53              		.loc 1 13 2 is_stmt 1 view .LVU7
+  54              		.loc 1 13 4 is_stmt 0 view .LVU8
+  55 000c 20B1     		cbz	r0, .L15
+  56 000e 0D46     		mov	r5, r1
+  57 0010 1746     		mov	r7, r2
+  58 0012 0446     		mov	r4, r0
+  14:./protocol_stack/ibus/ibus.c **** 	{
+  15:./protocol_stack/ibus/ibus.c **** 		return E_IBUS_ERROR_NULL;
+  16:./protocol_stack/ibus/ibus.c **** 	}
+  17:./protocol_stack/ibus/ibus.c **** 
+  18:./protocol_stack/ibus/ibus.c **** 	for(i = 0;i < len;i++)
+  59              		.loc 1 18 8 view .LVU9
+  60 0014 0026     		movs	r6, #0
+  61 0016 12E0     		b	.L2
+  62              	.L15:
+  15:./protocol_stack/ibus/ibus.c **** 	}
+  63              		.loc 1 15 3 is_stmt 1 view .LVU10
+  15:./protocol_stack/ibus/ibus.c **** 	}
+  64              		.loc 1 15 10 is_stmt 0 view .LVU11
+  65 0018 0120     		movs	r0, #1
+  66              	.LVL2:
+  67              	.L1:
+  19:./protocol_stack/ibus/ibus.c **** 	{
+  20:./protocol_stack/ibus/ibus.c **** 		//头
+  21:./protocol_stack/ibus/ibus.c **** 		if((0 == ibus->NowDataIndex) && (0x20 == *data))
+  22:./protocol_stack/ibus/ibus.c **** 		{
+  23:./protocol_stack/ibus/ibus.c **** 			ibus->DataBuffer[0] = *data;
+  24:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+  25:./protocol_stack/ibus/ibus.c **** 		}
+  26:./protocol_stack/ibus/ibus.c **** 		//头
+  27:./protocol_stack/ibus/ibus.c **** 		else if((1 == ibus->NowDataIndex) && (0x40 == *data))
+  28:./protocol_stack/ibus/ibus.c **** 		{
+  29:./protocol_stack/ibus/ibus.c **** 			ibus->DataBuffer[1] = *data;
+  30:./protocol_stack/ibus/ibus.c **** 			ibus->CheckSum = 0;
+  31:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+  32:./protocol_stack/ibus/ibus.c **** 		}
+  33:./protocol_stack/ibus/ibus.c **** 		//数据
+  34:./protocol_stack/ibus/ibus.c **** 		else if((ibus->NowDataIndex > 1) && (ibus->NowDataIndex < 30))    //30
+  35:./protocol_stack/ibus/ibus.c **** 		{
+  36:./protocol_stack/ibus/ibus.c **** 			ibus->DataBuffer[ibus->NowDataIndex] = *data;
+  37:./protocol_stack/ibus/ibus.c **** 		  	ibus->CheckSum += *data;
+  38:./protocol_stack/ibus/ibus.c **** 		  	++ibus->NowDataIndex;
+  39:./protocol_stack/ibus/ibus.c **** 		}
+  40:./protocol_stack/ibus/ibus.c **** 		else if(30 == ibus->NowDataIndex)
+  41:./protocol_stack/ibus/ibus.c **** 		{
+  42:./protocol_stack/ibus/ibus.c **** 			ibus->DataBuffer[ibus->NowDataIndex] = *data;
+  43:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+  44:./protocol_stack/ibus/ibus.c **** 		}
+  45:./protocol_stack/ibus/ibus.c **** 		//数据校验
+  46:./protocol_stack/ibus/ibus.c **** 		else if(31 == ibus->NowDataIndex)
+ARM GAS  /tmp/ccgrZiH7.s 			page 3
+
+
+  47:./protocol_stack/ibus/ibus.c **** 		{
+  48:./protocol_stack/ibus/ibus.c **** 			ibus->DataBuffer[ibus->NowDataIndex] = *data;
+  49:./protocol_stack/ibus/ibus.c **** 			ibus->NowDataIndex = 0;
+  50:./protocol_stack/ibus/ibus.c **** 			
+  51:./protocol_stack/ibus/ibus.c **** 			checkSum = (((uint16_t)ibus->DataBuffer[31]) << 8) | ibus->DataBuffer[30];
+  52:./protocol_stack/ibus/ibus.c ****   			ibus->CheckSum = (ibus->CheckSum + 0x60) ^ 0xffff;
+  53:./protocol_stack/ibus/ibus.c **** 			if(ibus->CheckSum == checkSum)
+  54:./protocol_stack/ibus/ibus.c **** 			{
+  55:./protocol_stack/ibus/ibus.c **** 				for(i = 0;i < E_IBUS_Channel_MAX;i++)
+  56:./protocol_stack/ibus/ibus.c **** 			    {
+  57:./protocol_stack/ibus/ibus.c **** 					ibus->ChannelData[i] = ((uint16_t)(ibus->DataBuffer[(i << 1) + 3]) & 0x0f) << 8 | (ibus->DataB
+  58:./protocol_stack/ibus/ibus.c **** 			    }
+  59:./protocol_stack/ibus/ibus.c **** 
+  60:./protocol_stack/ibus/ibus.c **** 				*isGetPackage = TRUE;
+  61:./protocol_stack/ibus/ibus.c **** 
+  62:./protocol_stack/ibus/ibus.c **** 				if(NULL != ibus->ReceivedPackageFunc)
+  63:./protocol_stack/ibus/ibus.c **** 				{
+  64:./protocol_stack/ibus/ibus.c **** 					ibus->ReceivedPackageFunc(ibus->ChannelData);
+  65:./protocol_stack/ibus/ibus.c **** 				}
+  66:./protocol_stack/ibus/ibus.c **** 			}
+  67:./protocol_stack/ibus/ibus.c **** 		}
+  68:./protocol_stack/ibus/ibus.c **** 		else
+  69:./protocol_stack/ibus/ibus.c **** 		{
+  70:./protocol_stack/ibus/ibus.c **** 			ibus->NowDataIndex = 0;
+  71:./protocol_stack/ibus/ibus.c **** 		}
+  72:./protocol_stack/ibus/ibus.c **** 		
+  73:./protocol_stack/ibus/ibus.c **** 		++data;
+  74:./protocol_stack/ibus/ibus.c **** 	}
+  75:./protocol_stack/ibus/ibus.c **** 
+  76:./protocol_stack/ibus/ibus.c ****   	//return ret;
+  77:./protocol_stack/ibus/ibus.c **** }
+  68              		.loc 1 77 1 view .LVU12
+  69 001a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+  70              	.LVL3:
+  71              	.L3:
+  27:./protocol_stack/ibus/ibus.c **** 		{
+  72              		.loc 1 27 8 is_stmt 1 view .LVU13
+  27:./protocol_stack/ibus/ibus.c **** 		{
+  73              		.loc 1 27 10 is_stmt 0 view .LVU14
+  74 001e 0128     		cmp	r0, #1
+  75 0020 19D0     		beq	.L16
+  76              	.L5:
+  34:./protocol_stack/ibus/ibus.c **** 		{
+  77              		.loc 1 34 8 is_stmt 1 view .LVU15
+  34:./protocol_stack/ibus/ibus.c **** 		{
+  78              		.loc 1 34 36 is_stmt 0 view .LVU16
+  79 0022 811E     		subs	r1, r0, #2
+  80 0024 C9B2     		uxtb	r1, r1
+  34:./protocol_stack/ibus/ibus.c **** 		{
+  81              		.loc 1 34 10 view .LVU17
+  82 0026 1B29     		cmp	r1, #27
+  83 0028 1ED8     		bhi	.L6
+  36:./protocol_stack/ibus/ibus.c **** 		  	ibus->CheckSum += *data;
+  84              		.loc 1 36 4 is_stmt 1 view .LVU18
+  36:./protocol_stack/ibus/ibus.c **** 		  	ibus->CheckSum += *data;
+  85              		.loc 1 36 43 is_stmt 0 view .LVU19
+  86 002a 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ARM GAS  /tmp/ccgrZiH7.s 			page 4
+
+
+  36:./protocol_stack/ibus/ibus.c **** 		  	ibus->CheckSum += *data;
+  87              		.loc 1 36 41 view .LVU20
+  88 002c 2218     		adds	r2, r4, r0
+  89 002e 1371     		strb	r3, [r2, #4]
+  37:./protocol_stack/ibus/ibus.c **** 		  	++ibus->NowDataIndex;
+  90              		.loc 1 37 6 is_stmt 1 view .LVU21
+  37:./protocol_stack/ibus/ibus.c **** 		  	++ibus->NowDataIndex;
+  91              		.loc 1 37 21 is_stmt 0 view .LVU22
+  92 0030 6288     		ldrh	r2, [r4, #2]
+  93 0032 1344     		add	r3, r3, r2
+  94 0034 6380     		strh	r3, [r4, #2]	@ movhi
+  38:./protocol_stack/ibus/ibus.c **** 		}
+  95              		.loc 1 38 6 is_stmt 1 view .LVU23
+  96 0036 0130     		adds	r0, r0, #1
+  97 0038 2070     		strb	r0, [r4]
+  98              	.L4:
+  73:./protocol_stack/ibus/ibus.c **** 	}
+  99              		.loc 1 73 3 discriminator 2 view .LVU24
+ 100 003a 0135     		adds	r5, r5, #1
+ 101              	.LVL4:
+  18:./protocol_stack/ibus/ibus.c **** 	{
+ 102              		.loc 1 18 20 discriminator 2 view .LVU25
+  18:./protocol_stack/ibus/ibus.c **** 	{
+ 103              		.loc 1 18 21 is_stmt 0 discriminator 2 view .LVU26
+ 104 003c 0136     		adds	r6, r6, #1
+ 105              	.LVL5:
+ 106              	.L2:
+  18:./protocol_stack/ibus/ibus.c **** 	{
+ 107              		.loc 1 18 12 is_stmt 1 discriminator 1 view .LVU27
+  18:./protocol_stack/ibus/ibus.c **** 	{
+ 108              		.loc 1 18 2 is_stmt 0 discriminator 1 view .LVU28
+ 109 003e BE42     		cmp	r6, r7
+ 110 0040 EBD2     		bcs	.L1
+  21:./protocol_stack/ibus/ibus.c **** 		{
+ 111              		.loc 1 21 3 is_stmt 1 view .LVU29
+  21:./protocol_stack/ibus/ibus.c **** 		{
+ 112              		.loc 1 21 16 is_stmt 0 view .LVU30
+ 113 0042 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+  21:./protocol_stack/ibus/ibus.c **** 		{
+ 114              		.loc 1 21 5 view .LVU31
+ 115 0044 0028     		cmp	r0, #0
+ 116 0046 EAD1     		bne	.L3
+  21:./protocol_stack/ibus/ibus.c **** 		{
+ 117              		.loc 1 21 44 discriminator 1 view .LVU32
+ 118 0048 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+  21:./protocol_stack/ibus/ibus.c **** 		{
+ 119              		.loc 1 21 32 discriminator 1 view .LVU33
+ 120 004a 202B     		cmp	r3, #32
+ 121 004c E7D1     		bne	.L3
+  23:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 122              		.loc 1 23 4 is_stmt 1 view .LVU34
+  23:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 123              		.loc 1 23 24 is_stmt 0 view .LVU35
+ 124 004e 2371     		strb	r3, [r4, #4]
+  24:./protocol_stack/ibus/ibus.c **** 		}
+ 125              		.loc 1 24 4 is_stmt 1 view .LVU36
+ 126 0050 0130     		adds	r0, r0, #1
+ARM GAS  /tmp/ccgrZiH7.s 			page 5
+
+
+ 127 0052 2070     		strb	r0, [r4]
+ 128 0054 F1E7     		b	.L4
+ 129              	.L16:
+  27:./protocol_stack/ibus/ibus.c **** 		{
+ 130              		.loc 1 27 49 is_stmt 0 discriminator 1 view .LVU37
+ 131 0056 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+  27:./protocol_stack/ibus/ibus.c **** 		{
+ 132              		.loc 1 27 37 discriminator 1 view .LVU38
+ 133 0058 402B     		cmp	r3, #64
+ 134 005a E2D1     		bne	.L5
+  29:./protocol_stack/ibus/ibus.c **** 			ibus->CheckSum = 0;
+ 135              		.loc 1 29 4 is_stmt 1 view .LVU39
+  29:./protocol_stack/ibus/ibus.c **** 			ibus->CheckSum = 0;
+ 136              		.loc 1 29 24 is_stmt 0 view .LVU40
+ 137 005c 6371     		strb	r3, [r4, #5]
+  30:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 138              		.loc 1 30 4 is_stmt 1 view .LVU41
+  30:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 139              		.loc 1 30 19 is_stmt 0 view .LVU42
+ 140 005e 0023     		movs	r3, #0
+ 141 0060 6380     		strh	r3, [r4, #2]	@ movhi
+  31:./protocol_stack/ibus/ibus.c **** 		}
+ 142              		.loc 1 31 4 is_stmt 1 view .LVU43
+ 143 0062 0130     		adds	r0, r0, #1
+ 144 0064 2070     		strb	r0, [r4]
+ 145 0066 E8E7     		b	.L4
+ 146              	.L6:
+  40:./protocol_stack/ibus/ibus.c **** 		{
+ 147              		.loc 1 40 8 view .LVU44
+  40:./protocol_stack/ibus/ibus.c **** 		{
+ 148              		.loc 1 40 10 is_stmt 0 view .LVU45
+ 149 0068 1E28     		cmp	r0, #30
+ 150 006a 04D0     		beq	.L17
+  46:./protocol_stack/ibus/ibus.c **** 		{
+ 151              		.loc 1 46 8 is_stmt 1 view .LVU46
+  46:./protocol_stack/ibus/ibus.c **** 		{
+ 152              		.loc 1 46 10 is_stmt 0 view .LVU47
+ 153 006c 1F28     		cmp	r0, #31
+ 154 006e 08D0     		beq	.L18
+  70:./protocol_stack/ibus/ibus.c **** 		}
+ 155              		.loc 1 70 4 is_stmt 1 view .LVU48
+  70:./protocol_stack/ibus/ibus.c **** 		}
+ 156              		.loc 1 70 23 is_stmt 0 view .LVU49
+ 157 0070 0023     		movs	r3, #0
+ 158 0072 2370     		strb	r3, [r4]
+ 159 0074 E1E7     		b	.L4
+ 160              	.L17:
+  42:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 161              		.loc 1 42 4 is_stmt 1 view .LVU50
+  42:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 162              		.loc 1 42 43 is_stmt 0 view .LVU51
+ 163 0076 2A78     		ldrb	r2, [r5]	@ zero_extendqisi2
+  42:./protocol_stack/ibus/ibus.c **** 			++ibus->NowDataIndex;
+ 164              		.loc 1 42 41 view .LVU52
+ 165 0078 2318     		adds	r3, r4, r0
+ 166 007a 1A71     		strb	r2, [r3, #4]
+  43:./protocol_stack/ibus/ibus.c **** 		}
+ARM GAS  /tmp/ccgrZiH7.s 			page 6
+
+
+ 167              		.loc 1 43 4 is_stmt 1 view .LVU53
+ 168 007c 0130     		adds	r0, r0, #1
+ 169 007e 2070     		strb	r0, [r4]
+ 170 0080 DBE7     		b	.L4
+ 171              	.L18:
+  48:./protocol_stack/ibus/ibus.c **** 			ibus->NowDataIndex = 0;
+ 172              		.loc 1 48 4 view .LVU54
+  48:./protocol_stack/ibus/ibus.c **** 			ibus->NowDataIndex = 0;
+ 173              		.loc 1 48 43 is_stmt 0 view .LVU55
+ 174 0082 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+  48:./protocol_stack/ibus/ibus.c **** 			ibus->NowDataIndex = 0;
+ 175              		.loc 1 48 41 view .LVU56
+ 176 0084 2044     		add	r0, r0, r4
+ 177 0086 0371     		strb	r3, [r0, #4]
+  49:./protocol_stack/ibus/ibus.c **** 			
+ 178              		.loc 1 49 4 is_stmt 1 view .LVU57
+  49:./protocol_stack/ibus/ibus.c **** 			
+ 179              		.loc 1 49 23 is_stmt 0 view .LVU58
+ 180 0088 0023     		movs	r3, #0
+ 181 008a 2370     		strb	r3, [r4]
+  51:./protocol_stack/ibus/ibus.c ****   			ibus->CheckSum = (ibus->CheckSum + 0x60) ^ 0xffff;
+ 182              		.loc 1 51 4 is_stmt 1 view .LVU59
+  51:./protocol_stack/ibus/ibus.c ****   			ibus->CheckSum = (ibus->CheckSum + 0x60) ^ 0xffff;
+ 183              		.loc 1 51 43 is_stmt 0 view .LVU60
+ 184 008c 94F82330 		ldrb	r3, [r4, #35]	@ zero_extendqisi2
+  51:./protocol_stack/ibus/ibus.c ****   			ibus->CheckSum = (ibus->CheckSum + 0x60) ^ 0xffff;
+ 185              		.loc 1 51 73 view .LVU61
+ 186 0090 94F82220 		ldrb	r2, [r4, #34]	@ zero_extendqisi2
+  51:./protocol_stack/ibus/ibus.c ****   			ibus->CheckSum = (ibus->CheckSum + 0x60) ^ 0xffff;
+ 187              		.loc 1 51 13 view .LVU62
+ 188 0094 42EA0322 		orr	r2, r2, r3, lsl #8
+ 189              	.LVL6:
+  52:./protocol_stack/ibus/ibus.c **** 			if(ibus->CheckSum == checkSum)
+ 190              		.loc 1 52 6 is_stmt 1 view .LVU63
+  52:./protocol_stack/ibus/ibus.c **** 			if(ibus->CheckSum == checkSum)
+ 191              		.loc 1 52 28 is_stmt 0 view .LVU64
+ 192 0098 6388     		ldrh	r3, [r4, #2]
+  52:./protocol_stack/ibus/ibus.c **** 			if(ibus->CheckSum == checkSum)
+ 193              		.loc 1 52 39 view .LVU65
+ 194 009a 6033     		adds	r3, r3, #96
+ 195 009c 9BB2     		uxth	r3, r3
+  52:./protocol_stack/ibus/ibus.c **** 			if(ibus->CheckSum == checkSum)
+ 196              		.loc 1 52 47 view .LVU66
+ 197 009e DB43     		mvns	r3, r3
+ 198 00a0 9BB2     		uxth	r3, r3
+  52:./protocol_stack/ibus/ibus.c **** 			if(ibus->CheckSum == checkSum)
+ 199              		.loc 1 52 21 view .LVU67
+ 200 00a2 6380     		strh	r3, [r4, #2]	@ movhi
+  53:./protocol_stack/ibus/ibus.c **** 			{
+ 201              		.loc 1 53 4 is_stmt 1 view .LVU68
+  53:./protocol_stack/ibus/ibus.c **** 			{
+ 202              		.loc 1 53 6 is_stmt 0 view .LVU69
+ 203 00a4 9342     		cmp	r3, r2
+ 204 00a6 C8D1     		bne	.L4
+  55:./protocol_stack/ibus/ibus.c **** 			    {
+ 205              		.loc 1 55 11 view .LVU70
+ 206 00a8 0026     		movs	r6, #0
+ARM GAS  /tmp/ccgrZiH7.s 			page 7
+
+
+ 207              	.LVL7:
+  55:./protocol_stack/ibus/ibus.c **** 			    {
+ 208              		.loc 1 55 11 view .LVU71
+ 209 00aa 10E0     		b	.L9
+ 210              	.LVL8:
+ 211              	.L10:
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 212              		.loc 1 57 6 is_stmt 1 discriminator 3 view .LVU72
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 213              		.loc 1 57 61 is_stmt 0 discriminator 3 view .LVU73
+ 214 00ac 7200     		lsls	r2, r6, #1
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 215              		.loc 1 57 67 discriminator 3 view .LVU74
+ 216 00ae D31C     		adds	r3, r2, #3
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 217              		.loc 1 57 57 discriminator 3 view .LVU75
+ 218 00b0 2344     		add	r3, r3, r4
+ 219 00b2 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 220              		.loc 1 57 81 discriminator 3 view .LVU76
+ 221 00b4 1B02     		lsls	r3, r3, #8
+ 222 00b6 03F47063 		and	r3, r3, #3840
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 223              		.loc 1 57 115 discriminator 3 view .LVU77
+ 224 00ba 0232     		adds	r2, r2, #2
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 225              		.loc 1 57 105 discriminator 3 view .LVU78
+ 226 00bc 2244     		add	r2, r2, r4
+ 227 00be 1279     		ldrb	r2, [r2, #4]	@ zero_extendqisi2
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 228              		.loc 1 57 86 discriminator 3 view .LVU79
+ 229 00c0 1343     		orrs	r3, r3, r2
+  57:./protocol_stack/ibus/ibus.c **** 			    }
+ 230              		.loc 1 57 27 discriminator 3 view .LVU80
+ 231 00c2 06F11002 		add	r2, r6, #16
+ 232 00c6 04EB4202 		add	r2, r4, r2, lsl #1
+ 233 00ca 9380     		strh	r3, [r2, #4]	@ movhi
+  55:./protocol_stack/ibus/ibus.c **** 			    {
+ 234              		.loc 1 55 38 is_stmt 1 discriminator 3 view .LVU81
+  55:./protocol_stack/ibus/ibus.c **** 			    {
+ 235              		.loc 1 55 39 is_stmt 0 discriminator 3 view .LVU82
+ 236 00cc 0136     		adds	r6, r6, #1
+ 237              	.LVL9:
+ 238              	.L9:
+  55:./protocol_stack/ibus/ibus.c **** 			    {
+ 239              		.loc 1 55 15 is_stmt 1 discriminator 1 view .LVU83
+  55:./protocol_stack/ibus/ibus.c **** 			    {
+ 240              		.loc 1 55 5 is_stmt 0 discriminator 1 view .LVU84
+ 241 00ce 072E     		cmp	r6, #7
+ 242 00d0 ECD9     		bls	.L10
+  60:./protocol_stack/ibus/ibus.c **** 
+ 243              		.loc 1 60 5 is_stmt 1 view .LVU85
+  60:./protocol_stack/ibus/ibus.c **** 
+ 244              		.loc 1 60 19 is_stmt 0 view .LVU86
+ 245 00d2 0123     		movs	r3, #1
+ 246 00d4 88F80030 		strb	r3, [r8]
+  62:./protocol_stack/ibus/ibus.c **** 				{
+ARM GAS  /tmp/ccgrZiH7.s 			page 8
+
+
+ 247              		.loc 1 62 5 is_stmt 1 view .LVU87
+  62:./protocol_stack/ibus/ibus.c **** 				{
+ 248              		.loc 1 62 20 is_stmt 0 view .LVU88
+ 249 00d8 636B     		ldr	r3, [r4, #52]
+  62:./protocol_stack/ibus/ibus.c **** 				{
+ 250              		.loc 1 62 7 view .LVU89
+ 251 00da 002B     		cmp	r3, #0
+ 252 00dc ADD0     		beq	.L4
+  64:./protocol_stack/ibus/ibus.c **** 				}
+ 253              		.loc 1 64 6 is_stmt 1 view .LVU90
+ 254 00de 04F12400 		add	r0, r4, #36
+ 255 00e2 9847     		blx	r3
+ 256              	.LVL10:
+ 257 00e4 A9E7     		b	.L4
+ 258              		.cfi_endproc
+ 259              	.LFE123:
+ 261              		.section	.text.IBUS_GetChannelData,"ax",%progbits
+ 262              		.align	1
+ 263              		.global	IBUS_GetChannelData
+ 264              		.syntax unified
+ 265              		.thumb
+ 266              		.thumb_func
+ 267              		.fpu fpv4-sp-d16
+ 269              	IBUS_GetChannelData:
+ 270              	.LVL11:
+ 271              	.LFB124:
+  78:./protocol_stack/ibus/ibus.c **** 
+  79:./protocol_stack/ibus/ibus.c **** 
+  80:./protocol_stack/ibus/ibus.c **** 
+  81:./protocol_stack/ibus/ibus.c **** 
+  82:./protocol_stack/ibus/ibus.c **** uint16_t IBUS_GetChannelData(IBUS_t * ibus, E_IBUS_Channel channel)
+  83:./protocol_stack/ibus/ibus.c **** {
+ 272              		.loc 1 83 1 view -0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              		@ link register save eliminated.
+  84:./protocol_stack/ibus/ibus.c **** 	if(NULL == ibus)
+ 277              		.loc 1 84 2 view .LVU92
+ 278              		.loc 1 84 4 is_stmt 0 view .LVU93
+ 279 0000 20B1     		cbz	r0, .L21
+  85:./protocol_stack/ibus/ibus.c **** 	{
+  86:./protocol_stack/ibus/ibus.c **** 		return 0;
+  87:./protocol_stack/ibus/ibus.c **** 	}
+  88:./protocol_stack/ibus/ibus.c **** 	else
+  89:./protocol_stack/ibus/ibus.c **** 	{
+  90:./protocol_stack/ibus/ibus.c **** 		return ibus->ChannelData[channel];
+ 280              		.loc 1 90 3 is_stmt 1 view .LVU94
+ 281              		.loc 1 90 27 is_stmt 0 view .LVU95
+ 282 0002 1031     		adds	r1, r1, #16
+ 283              	.LVL12:
+ 284              		.loc 1 90 27 view .LVU96
+ 285 0004 00EB4101 		add	r1, r0, r1, lsl #1
+ 286 0008 8888     		ldrh	r0, [r1, #4]
+ 287              	.LVL13:
+ 288              		.loc 1 90 27 view .LVU97
+ 289 000a 7047     		bx	lr
+ARM GAS  /tmp/ccgrZiH7.s 			page 9
+
+
+ 290              	.LVL14:
+ 291              	.L21:
+  86:./protocol_stack/ibus/ibus.c **** 	}
+ 292              		.loc 1 86 10 view .LVU98
+ 293 000c 0020     		movs	r0, #0
+ 294              	.LVL15:
+  91:./protocol_stack/ibus/ibus.c **** 	}
+  92:./protocol_stack/ibus/ibus.c **** 	
+  93:./protocol_stack/ibus/ibus.c **** }
+ 295              		.loc 1 93 1 view .LVU99
+ 296 000e 7047     		bx	lr
+ 297              		.cfi_endproc
+ 298              	.LFE124:
+ 300              		.text
+ 301              	.Letext0:
+ 302              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 303              		.file 3 "./protocol_stack/ibus/ibus.h"
+ARM GAS  /tmp/ccgrZiH7.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ibus.c
+     /tmp/ccgrZiH7.s:18     .text.IBUS_AnalysisData:0000000000000000 $t
+     /tmp/ccgrZiH7.s:26     .text.IBUS_AnalysisData:0000000000000000 IBUS_AnalysisData
+     /tmp/ccgrZiH7.s:262    .text.IBUS_GetChannelData:0000000000000000 $t
+     /tmp/ccgrZiH7.s:269    .text.IBUS_GetChannelData:0000000000000000 IBUS_GetChannelData
+
+NO UNDEFINED SYMBOLS

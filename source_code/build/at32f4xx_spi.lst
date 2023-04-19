@@ -1,0 +1,2348 @@
+ARM GAS  /tmp/cctmoqFu.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"at32f4xx_spi.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.SPI_I2S_Reset,"ax",%progbits
+  18              		.align	1
+  19              		.global	SPI_I2S_Reset
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	SPI_I2S_Reset:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./lib/src/at32f4xx_spi.c"
+   1:./lib/src/at32f4xx_spi.c **** /**
+   2:./lib/src/at32f4xx_spi.c ****   **************************************************************************
+   3:./lib/src/at32f4xx_spi.c ****   * File   : at32f4xx_spi.c
+   4:./lib/src/at32f4xx_spi.c ****   * Version: V1.2.4
+   5:./lib/src/at32f4xx_spi.c ****   * Date   : 2020-08-26
+   6:./lib/src/at32f4xx_spi.c ****   * Brief  : at32f4xx SPI source file
+   7:./lib/src/at32f4xx_spi.c ****   **************************************************************************
+   8:./lib/src/at32f4xx_spi.c ****   */
+   9:./lib/src/at32f4xx_spi.c **** 
+  10:./lib/src/at32f4xx_spi.c **** 
+  11:./lib/src/at32f4xx_spi.c **** /* Includes ------------------------------------------------------------------*/
+  12:./lib/src/at32f4xx_spi.c **** #include "at32f4xx_spi.h"
+  13:./lib/src/at32f4xx_spi.c **** #include "at32f4xx_rcc.h"
+  14:./lib/src/at32f4xx_spi.c **** 
+  15:./lib/src/at32f4xx_spi.c **** /** @addtogroup at32f4xx_StdPeriph_Driver
+  16:./lib/src/at32f4xx_spi.c ****   * @{
+  17:./lib/src/at32f4xx_spi.c ****   */
+  18:./lib/src/at32f4xx_spi.c **** 
+  19:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI
+  20:./lib/src/at32f4xx_spi.c ****   * @brief SPI driver modules
+  21:./lib/src/at32f4xx_spi.c ****   * @{
+  22:./lib/src/at32f4xx_spi.c ****   */
+  23:./lib/src/at32f4xx_spi.c **** 
+  24:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI_Private_TypesDefinitions
+  25:./lib/src/at32f4xx_spi.c ****   * @{
+  26:./lib/src/at32f4xx_spi.c ****   */
+  27:./lib/src/at32f4xx_spi.c **** 
+  28:./lib/src/at32f4xx_spi.c **** /**
+  29:./lib/src/at32f4xx_spi.c ****   * @}
+ARM GAS  /tmp/cctmoqFu.s 			page 2
+
+
+  30:./lib/src/at32f4xx_spi.c ****   */
+  31:./lib/src/at32f4xx_spi.c **** 
+  32:./lib/src/at32f4xx_spi.c **** 
+  33:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI_Private_Defines
+  34:./lib/src/at32f4xx_spi.c ****   * @{
+  35:./lib/src/at32f4xx_spi.c ****   */
+  36:./lib/src/at32f4xx_spi.c **** 
+  37:./lib/src/at32f4xx_spi.c **** /* SPI SPE mask */
+  38:./lib/src/at32f4xx_spi.c **** #define CTRL1_SPIEN_SET         ((uint16_t)0x0040)
+  39:./lib/src/at32f4xx_spi.c **** #define CTRL1_SPIEN_RESET       ((uint16_t)0xFFBF)
+  40:./lib/src/at32f4xx_spi.c **** 
+  41:./lib/src/at32f4xx_spi.c **** /* I2S I2SE mask */
+  42:./lib/src/at32f4xx_spi.c **** #define I2SCTRL_I2SEN_SET       ((uint16_t)0x0400)
+  43:./lib/src/at32f4xx_spi.c **** #define I2SCTRL_I2SEN_RESET     ((uint16_t)0xFBFF)
+  44:./lib/src/at32f4xx_spi.c **** 
+  45:./lib/src/at32f4xx_spi.c **** /* SPI CRCNext mask */
+  46:./lib/src/at32f4xx_spi.c **** #define CTRL1_CTN_SET           ((uint16_t)0x1000)
+  47:./lib/src/at32f4xx_spi.c **** 
+  48:./lib/src/at32f4xx_spi.c **** /* SPI CRCEN mask */
+  49:./lib/src/at32f4xx_spi.c **** #define CTRL1_CCE_SET           ((uint16_t)0x2000)
+  50:./lib/src/at32f4xx_spi.c **** #define CTRL1_CCE_RESET         ((uint16_t)0xDFFF)
+  51:./lib/src/at32f4xx_spi.c **** 
+  52:./lib/src/at32f4xx_spi.c **** /* SPI SSOE mask */
+  53:./lib/src/at32f4xx_spi.c **** #define CTRL2_NSSOE_SET         ((uint16_t)0x0004)
+  54:./lib/src/at32f4xx_spi.c **** #define CTRL2_NSSOE_RESET       ((uint16_t)0xFFFB)
+  55:./lib/src/at32f4xx_spi.c **** 
+  56:./lib/src/at32f4xx_spi.c **** /* SPI registers Masks */
+  57:./lib/src/at32f4xx_spi.c **** #define CTRL1_CLEAR_MASK        ((uint16_t)0x3040)
+  58:./lib/src/at32f4xx_spi.c **** #define I2SCTRL_CLEAR_MASK      ((uint16_t)0xF040)
+  59:./lib/src/at32f4xx_spi.c **** 
+  60:./lib/src/at32f4xx_spi.c **** /* SPI or I2S mode selection masks */
+  61:./lib/src/at32f4xx_spi.c **** #define SPI_MODE_SEL            ((uint16_t)0xF7FF)
+  62:./lib/src/at32f4xx_spi.c **** #define I2S_MODE_SEL            ((uint16_t)0x0800)
+  63:./lib/src/at32f4xx_spi.c **** 
+  64:./lib/src/at32f4xx_spi.c **** /* I2S clock source selection masks */
+  65:./lib/src/at32f4xx_spi.c **** #define I2S2_CLK_SRC            ((uint32_t)(0x00020000))
+  66:./lib/src/at32f4xx_spi.c **** #define I2S3_CLK_SRC            ((uint32_t)(0x00040000))
+  67:./lib/src/at32f4xx_spi.c **** #define I2S_MUL_MASK            ((uint32_t)(0x0000F000))
+  68:./lib/src/at32f4xx_spi.c **** #define I2S_DIV_MASK            ((uint32_t)(0x000000F0))
+  69:./lib/src/at32f4xx_spi.c **** 
+  70:./lib/src/at32f4xx_spi.c **** /**
+  71:./lib/src/at32f4xx_spi.c ****   * @}
+  72:./lib/src/at32f4xx_spi.c ****   */
+  73:./lib/src/at32f4xx_spi.c **** 
+  74:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI_Private_Macros
+  75:./lib/src/at32f4xx_spi.c ****   * @{
+  76:./lib/src/at32f4xx_spi.c ****   */
+  77:./lib/src/at32f4xx_spi.c **** 
+  78:./lib/src/at32f4xx_spi.c **** /**
+  79:./lib/src/at32f4xx_spi.c ****   * @}
+  80:./lib/src/at32f4xx_spi.c ****   */
+  81:./lib/src/at32f4xx_spi.c **** 
+  82:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI_Private_Variables
+  83:./lib/src/at32f4xx_spi.c ****   * @{
+  84:./lib/src/at32f4xx_spi.c ****   */
+  85:./lib/src/at32f4xx_spi.c **** 
+  86:./lib/src/at32f4xx_spi.c **** /**
+ARM GAS  /tmp/cctmoqFu.s 			page 3
+
+
+  87:./lib/src/at32f4xx_spi.c ****   * @}
+  88:./lib/src/at32f4xx_spi.c ****   */
+  89:./lib/src/at32f4xx_spi.c **** 
+  90:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI_Private_FunctionPrototypes
+  91:./lib/src/at32f4xx_spi.c ****   * @{
+  92:./lib/src/at32f4xx_spi.c ****   */
+  93:./lib/src/at32f4xx_spi.c **** 
+  94:./lib/src/at32f4xx_spi.c **** /**
+  95:./lib/src/at32f4xx_spi.c ****   * @}
+  96:./lib/src/at32f4xx_spi.c ****   */
+  97:./lib/src/at32f4xx_spi.c **** 
+  98:./lib/src/at32f4xx_spi.c **** /** @defgroup SPI_Private_Functions
+  99:./lib/src/at32f4xx_spi.c ****   * @{
+ 100:./lib/src/at32f4xx_spi.c ****   */
+ 101:./lib/src/at32f4xx_spi.c **** 
+ 102:./lib/src/at32f4xx_spi.c **** /**
+ 103:./lib/src/at32f4xx_spi.c ****   * @brief  Deinitializes the SPIx peripheral registers to their default
+ 104:./lib/src/at32f4xx_spi.c ****   *         reset values (Affects also the I2Ss).
+ 105:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 106:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 107:./lib/src/at32f4xx_spi.c ****   */
+ 108:./lib/src/at32f4xx_spi.c **** void SPI_I2S_Reset(SPI_Type* SPIx)
+ 109:./lib/src/at32f4xx_spi.c **** {
+  30              		.loc 1 109 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 109 1 is_stmt 0 view .LVU1
+  35 0000 08B5     		push	{r3, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+ 110:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 111:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+  40              		.loc 1 111 3 is_stmt 1 view .LVU2
+ 112:./lib/src/at32f4xx_spi.c **** 
+ 113:./lib/src/at32f4xx_spi.c ****   if (SPIx == SPI1)
+  41              		.loc 1 113 3 view .LVU3
+  42              		.loc 1 113 6 is_stmt 0 view .LVU4
+  43 0002 0E4B     		ldr	r3, .L7
+  44 0004 9842     		cmp	r0, r3
+  45 0006 03D0     		beq	.L5
+ 114:./lib/src/at32f4xx_spi.c ****   {
+ 115:./lib/src/at32f4xx_spi.c ****     /* Enable SPI1 reset state */
+ 116:./lib/src/at32f4xx_spi.c ****     RCC_APB2PeriphResetCmd(RCC_APB2PERIPH_SPI1, ENABLE);
+ 117:./lib/src/at32f4xx_spi.c ****     /* Release SPI1 from reset state */
+ 118:./lib/src/at32f4xx_spi.c ****     RCC_APB2PeriphResetCmd(RCC_APB2PERIPH_SPI1, DISABLE);
+ 119:./lib/src/at32f4xx_spi.c ****   }
+ 120:./lib/src/at32f4xx_spi.c ****   else if (SPIx == SPI2)
+  46              		.loc 1 120 8 is_stmt 1 view .LVU5
+  47              		.loc 1 120 11 is_stmt 0 view .LVU6
+  48 0008 0D4B     		ldr	r3, .L7+4
+  49 000a 9842     		cmp	r0, r3
+  50 000c 0BD0     		beq	.L6
+  51              	.LVL1:
+  52              	.L1:
+ARM GAS  /tmp/cctmoqFu.s 			page 4
+
+
+ 121:./lib/src/at32f4xx_spi.c ****   {
+ 122:./lib/src/at32f4xx_spi.c ****     /* Enable SPI2 reset state */
+ 123:./lib/src/at32f4xx_spi.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_SPI2, ENABLE);
+ 124:./lib/src/at32f4xx_spi.c ****     /* Release SPI2 from reset state */
+ 125:./lib/src/at32f4xx_spi.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_SPI2, DISABLE);
+ 126:./lib/src/at32f4xx_spi.c ****   }
+ 127:./lib/src/at32f4xx_spi.c **** #if defined (AT32F403xx) || defined (AT32F403Axx) || \
+ 128:./lib/src/at32f4xx_spi.c ****     defined (AT32F407xx)
+ 129:./lib/src/at32f4xx_spi.c ****   else if (SPIx == SPI3)
+ 130:./lib/src/at32f4xx_spi.c ****   {
+ 131:./lib/src/at32f4xx_spi.c ****     /* Enable SPI3 reset state */
+ 132:./lib/src/at32f4xx_spi.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_SPI3, ENABLE);
+ 133:./lib/src/at32f4xx_spi.c ****     /* Release SPI3 from reset state */
+ 134:./lib/src/at32f4xx_spi.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_SPI3, DISABLE);
+ 135:./lib/src/at32f4xx_spi.c ****   }
+ 136:./lib/src/at32f4xx_spi.c ****   else if (SPIx == SPI4)
+ 137:./lib/src/at32f4xx_spi.c ****   {
+ 138:./lib/src/at32f4xx_spi.c ****     /* Enable SPI4 reset state */
+ 139:./lib/src/at32f4xx_spi.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_SPI4, ENABLE);
+ 140:./lib/src/at32f4xx_spi.c ****     /* Release SPI4 from reset state */
+ 141:./lib/src/at32f4xx_spi.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_SPI4, DISABLE);
+ 142:./lib/src/at32f4xx_spi.c ****   }
+ 143:./lib/src/at32f4xx_spi.c **** #endif
+ 144:./lib/src/at32f4xx_spi.c **** }
+  53              		.loc 1 144 1 view .LVU7
+  54 000e 08BD     		pop	{r3, pc}
+  55              	.LVL2:
+  56              	.L5:
+ 116:./lib/src/at32f4xx_spi.c ****     /* Release SPI1 from reset state */
+  57              		.loc 1 116 5 is_stmt 1 view .LVU8
+  58 0010 0121     		movs	r1, #1
+  59 0012 4FF48050 		mov	r0, #4096
+  60              	.LVL3:
+ 116:./lib/src/at32f4xx_spi.c ****     /* Release SPI1 from reset state */
+  61              		.loc 1 116 5 is_stmt 0 view .LVU9
+  62 0016 FFF7FEFF 		bl	RCC_APB2PeriphResetCmd
+  63              	.LVL4:
+ 118:./lib/src/at32f4xx_spi.c ****   }
+  64              		.loc 1 118 5 is_stmt 1 view .LVU10
+  65 001a 0021     		movs	r1, #0
+  66 001c 4FF48050 		mov	r0, #4096
+  67 0020 FFF7FEFF 		bl	RCC_APB2PeriphResetCmd
+  68              	.LVL5:
+  69 0024 F3E7     		b	.L1
+  70              	.LVL6:
+  71              	.L6:
+ 123:./lib/src/at32f4xx_spi.c ****     /* Release SPI2 from reset state */
+  72              		.loc 1 123 5 view .LVU11
+  73 0026 0121     		movs	r1, #1
+  74 0028 4FF48040 		mov	r0, #16384
+  75              	.LVL7:
+ 123:./lib/src/at32f4xx_spi.c ****     /* Release SPI2 from reset state */
+  76              		.loc 1 123 5 is_stmt 0 view .LVU12
+  77 002c FFF7FEFF 		bl	RCC_APB1PeriphResetCmd
+  78              	.LVL8:
+ 125:./lib/src/at32f4xx_spi.c ****   }
+  79              		.loc 1 125 5 is_stmt 1 view .LVU13
+ARM GAS  /tmp/cctmoqFu.s 			page 5
+
+
+  80 0030 0021     		movs	r1, #0
+  81 0032 4FF48040 		mov	r0, #16384
+  82 0036 FFF7FEFF 		bl	RCC_APB1PeriphResetCmd
+  83              	.LVL9:
+  84              		.loc 1 144 1 is_stmt 0 view .LVU14
+  85 003a E8E7     		b	.L1
+  86              	.L8:
+  87              		.align	2
+  88              	.L7:
+  89 003c 00300140 		.word	1073819648
+  90 0040 00380040 		.word	1073756160
+  91              		.cfi_endproc
+  92              	.LFE123:
+  94              		.section	.text.SPI_Init,"ax",%progbits
+  95              		.align	1
+  96              		.global	SPI_Init
+  97              		.syntax unified
+  98              		.thumb
+  99              		.thumb_func
+ 100              		.fpu fpv4-sp-d16
+ 102              	SPI_Init:
+ 103              	.LVL10:
+ 104              	.LFB124:
+ 145:./lib/src/at32f4xx_spi.c **** 
+ 146:./lib/src/at32f4xx_spi.c **** /**
+ 147:./lib/src/at32f4xx_spi.c ****   * @brief  Initializes the SPIx peripheral according to the specified
+ 148:./lib/src/at32f4xx_spi.c ****   *         parameters in the SPI_InitStruct.
+ 149:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 150:./lib/src/at32f4xx_spi.c ****   * @param  SPI_InitStruct: pointer to a SPI_InitType structure that
+ 151:./lib/src/at32f4xx_spi.c ****   *         contains the configuration information for the specified SPI peripheral.
+ 152:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 153:./lib/src/at32f4xx_spi.c ****   */
+ 154:./lib/src/at32f4xx_spi.c **** void SPI_Init(SPI_Type* SPIx, SPI_InitType* SPI_InitStruct)
+ 155:./lib/src/at32f4xx_spi.c **** {
+ 105              		.loc 1 155 1 is_stmt 1 view -0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		.loc 1 155 1 is_stmt 0 view .LVU16
+ 110 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 111              	.LCFI1:
+ 112              		.cfi_def_cfa_offset 20
+ 113              		.cfi_offset 4, -20
+ 114              		.cfi_offset 5, -16
+ 115              		.cfi_offset 6, -12
+ 116              		.cfi_offset 7, -8
+ 117              		.cfi_offset 14, -4
+ 156:./lib/src/at32f4xx_spi.c ****   uint16_t tmpreg = 0;
+ 118              		.loc 1 156 3 is_stmt 1 view .LVU17
+ 119              	.LVL11:
+ 157:./lib/src/at32f4xx_spi.c **** 
+ 158:./lib/src/at32f4xx_spi.c ****   /* check the parameters */
+ 159:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 120              		.loc 1 159 3 view .LVU18
+ 160:./lib/src/at32f4xx_spi.c **** 
+ 161:./lib/src/at32f4xx_spi.c ****   /* Check the SPI parameters */
+ 162:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_TRANS_MODE(SPI_InitStruct->SPI_TransMode));
+ARM GAS  /tmp/cctmoqFu.s 			page 6
+
+
+ 121              		.loc 1 162 3 view .LVU19
+ 163:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_MODE(SPI_InitStruct->SPI_Mode));
+ 122              		.loc 1 163 3 view .LVU20
+ 164:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_FRAMESIZE(SPI_InitStruct->SPI_FrameSize));
+ 123              		.loc 1 164 3 view .LVU21
+ 165:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_CPOL(SPI_InitStruct->SPI_CPOL));
+ 124              		.loc 1 165 3 view .LVU22
+ 166:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_CPHA(SPI_InitStruct->SPI_CPHA));
+ 125              		.loc 1 166 3 view .LVU23
+ 167:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_NSSSEL(SPI_InitStruct->SPI_NSSSEL));
+ 126              		.loc 1 167 3 view .LVU24
+ 168:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_MCLKP(SPI_InitStruct->SPI_MCLKP));
+ 127              		.loc 1 168 3 view .LVU25
+ 169:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_FIRST_BIT(SPI_InitStruct->SPI_FirstBit));
+ 128              		.loc 1 169 3 view .LVU26
+ 170:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_CPOLY(SPI_InitStruct->SPI_CPOLY));
+ 129              		.loc 1 170 3 view .LVU27
+ 171:./lib/src/at32f4xx_spi.c **** 
+ 172:./lib/src/at32f4xx_spi.c ****   /*---------------------------- SPIx CTRL1 Configuration ------------------------*/
+ 173:./lib/src/at32f4xx_spi.c ****   /* Get the SPIx CTRL1 value */
+ 174:./lib/src/at32f4xx_spi.c ****   tmpreg = SPIx->CTRL1;
+ 130              		.loc 1 174 3 view .LVU28
+ 131              		.loc 1 174 10 is_stmt 0 view .LVU29
+ 132 0002 0388     		ldrh	r3, [r0]
+ 133              	.LVL12:
+ 175:./lib/src/at32f4xx_spi.c ****   /* Clear BIDIMode, BIDIOE, RxONLY, SSM, SSI, LSBFirst, BR, MSTR, CPOL and CPHA bits */
+ 176:./lib/src/at32f4xx_spi.c ****   tmpreg &= CTRL1_CLEAR_MASK;
+ 134              		.loc 1 176 3 is_stmt 1 view .LVU30
+ 135              		.loc 1 176 10 is_stmt 0 view .LVU31
+ 136 0004 03F4415C 		and	ip, r3, #12352
+ 137              	.LVL13:
+ 177:./lib/src/at32f4xx_spi.c ****   /* Configure SPIx: direction, NSS management, first transmitted bit, BaudRate prescaler
+ 178:./lib/src/at32f4xx_spi.c ****      master/salve mode, CPOL and CPHA */
+ 179:./lib/src/at32f4xx_spi.c ****   /* Set BIDImode, BIDIOE and RxONLY bits according to SPI_Direction value */
+ 180:./lib/src/at32f4xx_spi.c ****   /* Set SSM, SSI and MSTR bits according to SPI_Mode and SPI_NSS values */
+ 181:./lib/src/at32f4xx_spi.c ****   /* Set LSBFirst bit according to SPI_FirstBit value */
+ 182:./lib/src/at32f4xx_spi.c ****   /* Set BR bits according to SPI_BaudRatePrescaler value */
+ 183:./lib/src/at32f4xx_spi.c ****   /* Set CPOL bit according to SPI_CPOL value */
+ 184:./lib/src/at32f4xx_spi.c ****   /* Set CPHA bit according to SPI_CPHA value */
+ 185:./lib/src/at32f4xx_spi.c **** 
+ 186:./lib/src/at32f4xx_spi.c ****   if (SPI_InitStruct->SPI_MCLKP & SPI_MCLKP_OVER_256)
+ 138              		.loc 1 186 3 is_stmt 1 view .LVU32
+ 139              		.loc 1 186 7 is_stmt 0 view .LVU33
+ 140 0008 B1F90C30 		ldrsh	r3, [r1, #12]
+ 141              		.loc 1 186 6 view .LVU34
+ 142 000c 002B     		cmp	r3, #0
+ 143 000e 25DB     		blt	.L13
+ 187:./lib/src/at32f4xx_spi.c ****   {
+ 188:./lib/src/at32f4xx_spi.c ****     /* MCLKP is over 256 */
+ 189:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 |= SPI_CTRL2_MCLKP_3;
+ 190:./lib/src/at32f4xx_spi.c ****   }
+ 191:./lib/src/at32f4xx_spi.c ****   else
+ 192:./lib/src/at32f4xx_spi.c ****   {
+ 193:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 &= ~SPI_CTRL2_MCLKP_3;
+ 144              		.loc 1 193 5 is_stmt 1 view .LVU35
+ 145              		.loc 1 193 17 is_stmt 0 view .LVU36
+ 146 0010 8288     		ldrh	r2, [r0, #4]
+ARM GAS  /tmp/cctmoqFu.s 			page 7
+
+
+ 147 0012 92B2     		uxth	r2, r2
+ 148 0014 22F48072 		bic	r2, r2, #256
+ 149 0018 92B2     		uxth	r2, r2
+ 150 001a 8280     		strh	r2, [r0, #4]	@ movhi
+ 151              	.L11:
+ 194:./lib/src/at32f4xx_spi.c ****   }
+ 195:./lib/src/at32f4xx_spi.c **** 
+ 196:./lib/src/at32f4xx_spi.c ****   tmpreg |= (uint16_t)((uint32_t)SPI_InitStruct->SPI_TransMode | SPI_InitStruct->SPI_Mode |
+ 152              		.loc 1 196 3 is_stmt 1 view .LVU37
+ 153              		.loc 1 196 48 is_stmt 0 view .LVU38
+ 154 001c 0E88     		ldrh	r6, [r1]
+ 155              		.loc 1 196 80 view .LVU39
+ 156 001e 4F88     		ldrh	r7, [r1, #2]
+ 197:./lib/src/at32f4xx_spi.c ****                        SPI_InitStruct->SPI_FrameSize | SPI_InitStruct->SPI_CPOL |
+ 157              		.loc 1 197 38 view .LVU40
+ 158 0020 8D88     		ldrh	r5, [r1, #4]
+ 159              		.loc 1 197 70 view .LVU41
+ 160 0022 CC88     		ldrh	r4, [r1, #6]
+ 198:./lib/src/at32f4xx_spi.c ****                        SPI_InitStruct->SPI_CPHA | SPI_InitStruct->SPI_NSSSEL |
+ 161              		.loc 1 198 38 view .LVU42
+ 162 0024 B1F808E0 		ldrh	lr, [r1, #8]
+ 163              		.loc 1 198 65 view .LVU43
+ 164 0028 4A89     		ldrh	r2, [r1, #10]
+ 199:./lib/src/at32f4xx_spi.c ****                        (SPI_InitStruct->SPI_MCLKP & 0x7FFF) | SPI_InitStruct->SPI_FirstBit);
+ 165              		.loc 1 199 39 view .LVU44
+ 166 002a 8B89     		ldrh	r3, [r1, #12]
+ 167              		.loc 1 199 51 view .LVU45
+ 168 002c C3F30E03 		ubfx	r3, r3, #0, #15
+ 198:./lib/src/at32f4xx_spi.c ****                        SPI_InitStruct->SPI_CPHA | SPI_InitStruct->SPI_NSSSEL |
+ 169              		.loc 1 198 78 view .LVU46
+ 170 0030 3E43     		orrs	r6, r6, r7
+ 171 0032 3543     		orrs	r5, r5, r6
+ 172 0034 2C43     		orrs	r4, r4, r5
+ 173 0036 4EEA040E 		orr	lr, lr, r4
+ 174 003a 42EA0E02 		orr	r2, r2, lr
+ 175 003e 1343     		orrs	r3, r3, r2
+ 176              		.loc 1 199 77 view .LVU47
+ 177 0040 CA89     		ldrh	r2, [r1, #14]
+ 196:./lib/src/at32f4xx_spi.c ****                        SPI_InitStruct->SPI_FrameSize | SPI_InitStruct->SPI_CPOL |
+ 178              		.loc 1 196 13 view .LVU48
+ 179 0042 1343     		orrs	r3, r3, r2
+ 196:./lib/src/at32f4xx_spi.c ****                        SPI_InitStruct->SPI_FrameSize | SPI_InitStruct->SPI_CPOL |
+ 180              		.loc 1 196 10 view .LVU49
+ 181 0044 43EA0C03 		orr	r3, r3, ip
+ 182              	.LVL14:
+ 200:./lib/src/at32f4xx_spi.c ****   /* Write to SPIx CTRL1 */
+ 201:./lib/src/at32f4xx_spi.c ****   SPIx->CTRL1 = tmpreg;
+ 183              		.loc 1 201 3 is_stmt 1 view .LVU50
+ 184              		.loc 1 201 15 is_stmt 0 view .LVU51
+ 185 0048 0380     		strh	r3, [r0]	@ movhi
+ 202:./lib/src/at32f4xx_spi.c **** 
+ 203:./lib/src/at32f4xx_spi.c **** 
+ 204:./lib/src/at32f4xx_spi.c ****   /* Activate the SPI mode (Reset I2SMOD bit in I2SCFGR register) */
+ 205:./lib/src/at32f4xx_spi.c ****   SPIx->I2SCTRL &= SPI_MODE_SEL;
+ 186              		.loc 1 205 3 is_stmt 1 view .LVU52
+ 187              		.loc 1 205 17 is_stmt 0 view .LVU53
+ 188 004a 838B     		ldrh	r3, [r0, #28]
+ARM GAS  /tmp/cctmoqFu.s 			page 8
+
+
+ 189              	.LVL15:
+ 190              		.loc 1 205 17 view .LVU54
+ 191 004c 9BB2     		uxth	r3, r3
+ 192 004e 23F40063 		bic	r3, r3, #2048
+ 193 0052 9BB2     		uxth	r3, r3
+ 194 0054 8383     		strh	r3, [r0, #28]	@ movhi
+ 195              	.LVL16:
+ 206:./lib/src/at32f4xx_spi.c **** 
+ 207:./lib/src/at32f4xx_spi.c ****   /*---------------------------- SPIx CRCPOLY Configuration --------------------*/
+ 208:./lib/src/at32f4xx_spi.c ****   /* Write to SPIx CRCPOLY */
+ 209:./lib/src/at32f4xx_spi.c ****   SPIx->CPOLY = SPI_InitStruct->SPI_CPOLY;
+ 196              		.loc 1 209 3 is_stmt 1 view .LVU55
+ 197              		.loc 1 209 31 is_stmt 0 view .LVU56
+ 198 0056 0B8A     		ldrh	r3, [r1, #16]
+ 199              		.loc 1 209 15 view .LVU57
+ 200 0058 0382     		strh	r3, [r0, #16]	@ movhi
+ 210:./lib/src/at32f4xx_spi.c **** }
+ 201              		.loc 1 210 1 view .LVU58
+ 202 005a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 203              	.LVL17:
+ 204              	.L13:
+ 189:./lib/src/at32f4xx_spi.c ****   }
+ 205              		.loc 1 189 5 is_stmt 1 view .LVU59
+ 189:./lib/src/at32f4xx_spi.c ****   }
+ 206              		.loc 1 189 17 is_stmt 0 view .LVU60
+ 207 005c 8388     		ldrh	r3, [r0, #4]
+ 208 005e 9BB2     		uxth	r3, r3
+ 209 0060 43F48073 		orr	r3, r3, #256
+ 210 0064 8380     		strh	r3, [r0, #4]	@ movhi
+ 211 0066 D9E7     		b	.L11
+ 212              		.cfi_endproc
+ 213              	.LFE124:
+ 215              		.section	.text.I2S_Init,"ax",%progbits
+ 216              		.align	1
+ 217              		.global	I2S_Init
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 221              		.fpu fpv4-sp-d16
+ 223              	I2S_Init:
+ 224              	.LVL18:
+ 225              	.LFB125:
+ 211:./lib/src/at32f4xx_spi.c **** 
+ 212:./lib/src/at32f4xx_spi.c **** /**
+ 213:./lib/src/at32f4xx_spi.c ****   * @brief  Initializes the SPIx peripheral according to the specified
+ 214:./lib/src/at32f4xx_spi.c ****   *         parameters in the I2S_InitStruct.
+ 215:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 2, 3, or 4 to select the SPI peripheral
+ 216:./lib/src/at32f4xx_spi.c ****   *         (configured in I2S mode).
+ 217:./lib/src/at32f4xx_spi.c ****   * @param  I2S_InitStruct: pointer to an I2S_InitType structure that
+ 218:./lib/src/at32f4xx_spi.c ****   *         contains the configuration information for the specified SPI peripheral
+ 219:./lib/src/at32f4xx_spi.c ****   *         configured in I2S mode.
+ 220:./lib/src/at32f4xx_spi.c ****   * @note
+ 221:./lib/src/at32f4xx_spi.c ****   *  The function calculates the optimal prescaler needed to obtain the most
+ 222:./lib/src/at32f4xx_spi.c ****   *  accurate audio frequency (depending on the I2S clock source, the PLL values
+ 223:./lib/src/at32f4xx_spi.c ****   *  and the product configuration). But in case the prescaler value is greater
+ 224:./lib/src/at32f4xx_spi.c ****   *  than 511, the default value (0x02) will be configured instead.  *
+ 225:./lib/src/at32f4xx_spi.c ****   * @retval None
+ARM GAS  /tmp/cctmoqFu.s 			page 9
+
+
+ 226:./lib/src/at32f4xx_spi.c ****   */
+ 227:./lib/src/at32f4xx_spi.c **** void I2S_Init(SPI_Type* SPIx, I2S_InitType* I2S_InitStruct)
+ 228:./lib/src/at32f4xx_spi.c **** {
+ 226              		.loc 1 228 1 is_stmt 1 view -0
+ 227              		.cfi_startproc
+ 228              		@ args = 0, pretend = 0, frame = 24
+ 229              		@ frame_needed = 0, uses_anonymous_args = 0
+ 230              		.loc 1 228 1 is_stmt 0 view .LVU62
+ 231 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 232              	.LCFI2:
+ 233              		.cfi_def_cfa_offset 20
+ 234              		.cfi_offset 4, -20
+ 235              		.cfi_offset 5, -16
+ 236              		.cfi_offset 6, -12
+ 237              		.cfi_offset 7, -8
+ 238              		.cfi_offset 14, -4
+ 239 0002 87B0     		sub	sp, sp, #28
+ 240              	.LCFI3:
+ 241              		.cfi_def_cfa_offset 48
+ 242 0004 0546     		mov	r5, r0
+ 243 0006 0C46     		mov	r4, r1
+ 229:./lib/src/at32f4xx_spi.c ****   uint16_t tmpreg = 0, i2sdiv = 2, i2sodd = 0, packetlength = 1;
+ 244              		.loc 1 229 3 is_stmt 1 view .LVU63
+ 245              	.LVL19:
+ 230:./lib/src/at32f4xx_spi.c ****   uint32_t tmp = 0;
+ 246              		.loc 1 230 3 view .LVU64
+ 231:./lib/src/at32f4xx_spi.c ****   RCC_ClockType RCC_Clocks;
+ 247              		.loc 1 231 3 view .LVU65
+ 232:./lib/src/at32f4xx_spi.c ****   uint32_t sourceclock = 0;
+ 248              		.loc 1 232 3 view .LVU66
+ 233:./lib/src/at32f4xx_spi.c **** 
+ 234:./lib/src/at32f4xx_spi.c ****   /* Check the I2S parameters */
+ 235:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_PERIPH(SPIx));
+ 249              		.loc 1 235 3 view .LVU67
+ 236:./lib/src/at32f4xx_spi.c ****   assert_param(IS_I2S_MODE(I2S_InitStruct->I2S_Mode));
+ 250              		.loc 1 236 3 view .LVU68
+ 237:./lib/src/at32f4xx_spi.c ****   assert_param(IS_I2S_AUDIOPROTOCOL(I2S_InitStruct->I2s_AudioProtocol));
+ 251              		.loc 1 237 3 view .LVU69
+ 238:./lib/src/at32f4xx_spi.c ****   assert_param(IS_I2S_FRAMEFORMAT(I2S_InitStruct->I2S_FrameFormat));
+ 252              		.loc 1 238 3 view .LVU70
+ 239:./lib/src/at32f4xx_spi.c ****   assert_param(IS_I2S_MCLKOE(I2S_InitStruct->I2S_MCLKOE));
+ 253              		.loc 1 239 3 view .LVU71
+ 240:./lib/src/at32f4xx_spi.c ****   assert_param(IS_I2S_AUDIO_FREQ(I2S_InitStruct->I2S_AudioFreq));
+ 254              		.loc 1 240 3 view .LVU72
+ 241:./lib/src/at32f4xx_spi.c ****   assert_param(IS_I2S_CPOL(I2S_InitStruct->I2S_CPOL));
+ 255              		.loc 1 241 3 view .LVU73
+ 242:./lib/src/at32f4xx_spi.c **** 
+ 243:./lib/src/at32f4xx_spi.c ****   /*----------------------- SPIx I2SCFGR & I2SPR Configuration -----------------*/
+ 244:./lib/src/at32f4xx_spi.c ****   /* Clear I2SMOD, I2SE, I2SCFG, PCMSYNC, I2SSTD, CKPOL, DATLEN and CHLEN bits */
+ 245:./lib/src/at32f4xx_spi.c ****   SPIx->I2SCTRL &= I2SCTRL_CLEAR_MASK;
+ 256              		.loc 1 245 3 view .LVU74
+ 257              		.loc 1 245 17 is_stmt 0 view .LVU75
+ 258 0008 838B     		ldrh	r3, [r0, #28]
+ 259 000a 9BB2     		uxth	r3, r3
+ 260 000c 23F47B63 		bic	r3, r3, #4016
+ 261 0010 23F00F03 		bic	r3, r3, #15
+ 262 0014 9BB2     		uxth	r3, r3
+ARM GAS  /tmp/cctmoqFu.s 			page 10
+
+
+ 263 0016 8383     		strh	r3, [r0, #28]	@ movhi
+ 246:./lib/src/at32f4xx_spi.c ****   SPIx->I2SCLKP = 0x0002;
+ 264              		.loc 1 246 3 is_stmt 1 view .LVU76
+ 265              		.loc 1 246 17 is_stmt 0 view .LVU77
+ 266 0018 0223     		movs	r3, #2
+ 267 001a 0384     		strh	r3, [r0, #32]	@ movhi
+ 247:./lib/src/at32f4xx_spi.c **** 
+ 248:./lib/src/at32f4xx_spi.c ****   /* Get the I2SCFGR register value */
+ 249:./lib/src/at32f4xx_spi.c ****   tmpreg = SPIx->I2SCTRL;
+ 268              		.loc 1 249 3 is_stmt 1 view .LVU78
+ 269              		.loc 1 249 10 is_stmt 0 view .LVU79
+ 270 001c 868B     		ldrh	r6, [r0, #28]
+ 271 001e B6B2     		uxth	r6, r6
+ 272              	.LVL20:
+ 250:./lib/src/at32f4xx_spi.c **** 
+ 251:./lib/src/at32f4xx_spi.c ****   /* If the default value has to be written, reinitialize i2sdiv and i2sodd*/
+ 252:./lib/src/at32f4xx_spi.c ****   if(I2S_InitStruct->I2S_AudioFreq == I2S_AUDIOFREQ_DEFAULT)
+ 273              		.loc 1 252 3 is_stmt 1 view .LVU80
+ 274              		.loc 1 252 20 is_stmt 0 view .LVU81
+ 275 0020 8B68     		ldr	r3, [r1, #8]
+ 276              		.loc 1 252 5 view .LVU82
+ 277 0022 022B     		cmp	r3, #2
+ 278 0024 3CD0     		beq	.L20
+ 253:./lib/src/at32f4xx_spi.c ****   {
+ 254:./lib/src/at32f4xx_spi.c ****     i2sodd = (uint16_t)0;
+ 255:./lib/src/at32f4xx_spi.c ****     i2sdiv = (uint16_t)2;
+ 256:./lib/src/at32f4xx_spi.c ****   }
+ 257:./lib/src/at32f4xx_spi.c ****   /* If the requested audio frequency is not the default, compute the prescaler */
+ 258:./lib/src/at32f4xx_spi.c ****   else
+ 259:./lib/src/at32f4xx_spi.c ****   {
+ 260:./lib/src/at32f4xx_spi.c ****     /* Check the frame length (For the Prescaler computing) */
+ 261:./lib/src/at32f4xx_spi.c ****     if(I2S_InitStruct->I2S_FrameFormat == I2S_FRAMEFORMAT_DL16BIT_CHL16BIT)
+ 279              		.loc 1 261 5 is_stmt 1 view .LVU83
+ 280              		.loc 1 261 22 is_stmt 0 view .LVU84
+ 281 0026 8B88     		ldrh	r3, [r1, #4]
+ 282              		.loc 1 261 7 view .LVU85
+ 283 0028 73BB     		cbnz	r3, .L21
+ 262:./lib/src/at32f4xx_spi.c ****     {
+ 263:./lib/src/at32f4xx_spi.c ****       /* Packet length is 16 bits */
+ 264:./lib/src/at32f4xx_spi.c ****       packetlength = 1;
+ 284              		.loc 1 264 20 view .LVU86
+ 285 002a 0127     		movs	r7, #1
+ 286              	.L16:
+ 287              	.LVL21:
+ 265:./lib/src/at32f4xx_spi.c ****     }
+ 266:./lib/src/at32f4xx_spi.c ****     else
+ 267:./lib/src/at32f4xx_spi.c ****     {
+ 268:./lib/src/at32f4xx_spi.c ****       /* Packet length is 32 bits */
+ 269:./lib/src/at32f4xx_spi.c ****       packetlength = 2;
+ 270:./lib/src/at32f4xx_spi.c ****     }
+ 271:./lib/src/at32f4xx_spi.c **** 
+ 272:./lib/src/at32f4xx_spi.c ****     /* Get the I2S clock source mask depending on the peripheral number */
+ 273:./lib/src/at32f4xx_spi.c ****     if(((uint32_t)SPIx) == SPI2_BASE)
+ 288              		.loc 1 273 5 is_stmt 1 view .LVU87
+ 274:./lib/src/at32f4xx_spi.c ****     {
+ 275:./lib/src/at32f4xx_spi.c ****       /* The mask is relative to I2S2 */
+ 276:./lib/src/at32f4xx_spi.c ****       tmp = I2S2_CLK_SRC;
+ARM GAS  /tmp/cctmoqFu.s 			page 11
+
+
+ 277:./lib/src/at32f4xx_spi.c ****     }
+ 278:./lib/src/at32f4xx_spi.c ****     else
+ 279:./lib/src/at32f4xx_spi.c ****     {
+ 280:./lib/src/at32f4xx_spi.c ****       /* The mask is relative to I2S3 */
+ 281:./lib/src/at32f4xx_spi.c ****       tmp = I2S3_CLK_SRC;
+ 282:./lib/src/at32f4xx_spi.c ****     }
+ 283:./lib/src/at32f4xx_spi.c **** 
+ 284:./lib/src/at32f4xx_spi.c ****     /* Check the I2S clock source configuration depending on the Device */
+ 285:./lib/src/at32f4xx_spi.c ****     /* I2S Clock source is System clock: Get System Clock frequency */
+ 286:./lib/src/at32f4xx_spi.c ****     RCC_GetClocksFreq(&RCC_Clocks);
+ 289              		.loc 1 286 5 view .LVU88
+ 290 002c 01A8     		add	r0, sp, #4
+ 291              	.LVL22:
+ 292              		.loc 1 286 5 is_stmt 0 view .LVU89
+ 293 002e FFF7FEFF 		bl	RCC_GetClocksFreq
+ 294              	.LVL23:
+ 287:./lib/src/at32f4xx_spi.c **** 
+ 288:./lib/src/at32f4xx_spi.c ****     /* Get the source clock value: based on System Clock value */
+ 289:./lib/src/at32f4xx_spi.c ****     sourceclock = RCC_Clocks.SYSCLK_Freq;
+ 295              		.loc 1 289 5 is_stmt 1 view .LVU90
+ 296              		.loc 1 289 17 is_stmt 0 view .LVU91
+ 297 0032 019B     		ldr	r3, [sp, #4]
+ 298              	.LVL24:
+ 290:./lib/src/at32f4xx_spi.c **** 
+ 291:./lib/src/at32f4xx_spi.c ****     /* Compute the Real divider depending on the MCLK output state with a floating point */
+ 292:./lib/src/at32f4xx_spi.c ****     if(I2S_InitStruct->I2S_MCLKOE == I2S_MCLKOE_ENABLE)
+ 299              		.loc 1 292 5 is_stmt 1 view .LVU92
+ 300              		.loc 1 292 22 is_stmt 0 view .LVU93
+ 301 0034 E288     		ldrh	r2, [r4, #6]
+ 302              		.loc 1 292 7 view .LVU94
+ 303 0036 B2F5007F 		cmp	r2, #512
+ 304 003a 27D0     		beq	.L24
+ 293:./lib/src/at32f4xx_spi.c ****     {
+ 294:./lib/src/at32f4xx_spi.c ****       /* MCLK output is enabled */
+ 295:./lib/src/at32f4xx_spi.c ****       tmp = (uint16_t)(((((sourceclock / 256) * 10) / I2S_InitStruct->I2S_AudioFreq)) + 5);
+ 296:./lib/src/at32f4xx_spi.c ****     }
+ 297:./lib/src/at32f4xx_spi.c ****     else
+ 298:./lib/src/at32f4xx_spi.c ****     {
+ 299:./lib/src/at32f4xx_spi.c ****       /* MCLK output is disabled */
+ 300:./lib/src/at32f4xx_spi.c ****       tmp = (uint16_t)(((((sourceclock / (32 * packetlength)) * 10 ) / I2S_InitStruct->I2S_AudioFre
+ 305              		.loc 1 300 7 is_stmt 1 view .LVU95
+ 306              		.loc 1 300 46 is_stmt 0 view .LVU96
+ 307 003c 7F01     		lsls	r7, r7, #5
+ 308              	.LVL25:
+ 309              		.loc 1 300 40 view .LVU97
+ 310 003e B3FBF7F3 		udiv	r3, r3, r7
+ 311              	.LVL26:
+ 312              		.loc 1 300 63 view .LVU98
+ 313 0042 03EB8303 		add	r3, r3, r3, lsl #2
+ 314 0046 5B00     		lsls	r3, r3, #1
+ 315              		.loc 1 300 86 view .LVU99
+ 316 0048 A268     		ldr	r2, [r4, #8]
+ 317              		.loc 1 300 70 view .LVU100
+ 318 004a B3FBF2F3 		udiv	r3, r3, r2
+ 319              		.loc 1 300 13 view .LVU101
+ 320 004e 0533     		adds	r3, r3, #5
+ 321 0050 9BB2     		uxth	r3, r3
+ARM GAS  /tmp/cctmoqFu.s 			page 12
+
+
+ 322              	.LVL27:
+ 323              	.L18:
+ 301:./lib/src/at32f4xx_spi.c ****     }
+ 302:./lib/src/at32f4xx_spi.c **** 
+ 303:./lib/src/at32f4xx_spi.c ****     /* Remove the floating point */
+ 304:./lib/src/at32f4xx_spi.c ****     tmp = tmp / 10;
+ 324              		.loc 1 304 5 is_stmt 1 view .LVU102
+ 325              		.loc 1 304 9 is_stmt 0 view .LVU103
+ 326 0052 1E4A     		ldr	r2, .L25
+ 327 0054 A2FB0323 		umull	r2, r3, r2, r3
+ 328              	.LVL28:
+ 305:./lib/src/at32f4xx_spi.c **** 
+ 306:./lib/src/at32f4xx_spi.c ****     /* Check the parity of the divider */
+ 307:./lib/src/at32f4xx_spi.c ****     i2sodd = (uint16_t)(tmp & (uint16_t)0x0001);
+ 329              		.loc 1 307 5 is_stmt 1 view .LVU104
+ 330              		.loc 1 307 12 is_stmt 0 view .LVU105
+ 331 0058 C3F3C002 		ubfx	r2, r3, #3, #1
+ 332              	.LVL29:
+ 308:./lib/src/at32f4xx_spi.c **** 
+ 309:./lib/src/at32f4xx_spi.c ****     /* Compute the i2sdiv prescaler */
+ 310:./lib/src/at32f4xx_spi.c ****     i2sdiv = (uint16_t)((tmp - i2sodd) / 2);
+ 333              		.loc 1 310 5 is_stmt 1 view .LVU106
+ 334              		.loc 1 310 30 is_stmt 0 view .LVU107
+ 335 005c C2EBD303 		rsb	r3, r2, r3, lsr #3
+ 336              	.LVL30:
+ 337              		.loc 1 310 12 view .LVU108
+ 338 0060 C3F34F03 		ubfx	r3, r3, #1, #16
+ 339              	.LVL31:
+ 311:./lib/src/at32f4xx_spi.c **** 
+ 312:./lib/src/at32f4xx_spi.c ****     /* Get the Mask for the Odd bit (SPI_I2SPR[8]) register */
+ 313:./lib/src/at32f4xx_spi.c ****     i2sodd = (uint16_t) (i2sodd << 8);
+ 340              		.loc 1 313 5 is_stmt 1 view .LVU109
+ 341              		.loc 1 313 12 is_stmt 0 view .LVU110
+ 342 0064 1102     		lsls	r1, r2, #8
+ 343              	.LVL32:
+ 344              	.L15:
+ 314:./lib/src/at32f4xx_spi.c ****   }
+ 315:./lib/src/at32f4xx_spi.c **** 
+ 316:./lib/src/at32f4xx_spi.c ****   /* Test if the divider is 1 or 0 or greater than 0xFF */
+ 317:./lib/src/at32f4xx_spi.c ****   if ((i2sdiv < 2) || (i2sdiv > I2S_DIV_VALUE_MAX))
+ 345              		.loc 1 317 3 is_stmt 1 view .LVU111
+ 346              		.loc 1 317 20 is_stmt 0 view .LVU112
+ 347 0066 9A1E     		subs	r2, r3, #2
+ 348 0068 92B2     		uxth	r2, r2
+ 349              		.loc 1 317 6 view .LVU113
+ 350 006a 40F2FD30 		movw	r0, #1021
+ 351 006e 8242     		cmp	r2, r0
+ 352 0070 19D8     		bhi	.L22
+ 318:./lib/src/at32f4xx_spi.c ****   {
+ 319:./lib/src/at32f4xx_spi.c ****     /* Set the default values */
+ 320:./lib/src/at32f4xx_spi.c ****     i2sdiv = 2;
+ 321:./lib/src/at32f4xx_spi.c ****     i2sodd = 0;
+ 322:./lib/src/at32f4xx_spi.c ****   }
+ 323:./lib/src/at32f4xx_spi.c ****   else if (i2sdiv & I2S_DIV_EXT_VALUE_MASK)
+ 353              		.loc 1 323 8 is_stmt 1 view .LVU114
+ 354              		.loc 1 323 11 is_stmt 0 view .LVU115
+ 355 0072 13F4407F 		tst	r3, #768
+ARM GAS  /tmp/cctmoqFu.s 			page 13
+
+
+ 356 0076 18D0     		beq	.L19
+ 324:./lib/src/at32f4xx_spi.c ****   {
+ 325:./lib/src/at32f4xx_spi.c ****     /* Shift I2SDIV[9:8] to SPI_I2SCLKP[11:10] */
+ 326:./lib/src/at32f4xx_spi.c ****     i2sdiv |= ((i2sdiv & I2S_DIV_EXT_VALUE_MASK) << I2S_DIV_EXT_VALUE_LSHIFT_OFFSET);
+ 357              		.loc 1 326 5 is_stmt 1 view .LVU116
+ 358              		.loc 1 326 50 is_stmt 0 view .LVU117
+ 359 0078 9A00     		lsls	r2, r3, #2
+ 360 007a 02F44062 		and	r2, r2, #3072
+ 361              		.loc 1 326 12 view .LVU118
+ 362 007e 1343     		orrs	r3, r3, r2
+ 363              	.LVL33:
+ 327:./lib/src/at32f4xx_spi.c ****     i2sdiv &= ~I2S_DIV_EXT_VALUE_MASK;
+ 364              		.loc 1 327 5 is_stmt 1 view .LVU119
+ 365              		.loc 1 327 12 is_stmt 0 view .LVU120
+ 366 0080 23F44073 		bic	r3, r3, #768
+ 367              	.LVL34:
+ 368              		.loc 1 327 12 view .LVU121
+ 369 0084 9BB2     		uxth	r3, r3
+ 370              	.LVL35:
+ 371              		.loc 1 327 12 view .LVU122
+ 372 0086 10E0     		b	.L19
+ 373              	.LVL36:
+ 374              	.L21:
+ 269:./lib/src/at32f4xx_spi.c ****     }
+ 375              		.loc 1 269 20 view .LVU123
+ 376 0088 0227     		movs	r7, #2
+ 377 008a CFE7     		b	.L16
+ 378              	.LVL37:
+ 379              	.L24:
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 380              		.loc 1 295 7 is_stmt 1 view .LVU124
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 381              		.loc 1 295 40 is_stmt 0 view .LVU125
+ 382 008c 1B0A     		lsrs	r3, r3, #8
+ 383              	.LVL38:
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 384              		.loc 1 295 47 view .LVU126
+ 385 008e 03EB8303 		add	r3, r3, r3, lsl #2
+ 386 0092 5B00     		lsls	r3, r3, #1
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 387              		.loc 1 295 69 view .LVU127
+ 388 0094 A268     		ldr	r2, [r4, #8]
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 389              		.loc 1 295 53 view .LVU128
+ 390 0096 B3FBF2F3 		udiv	r3, r3, r2
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 391              		.loc 1 295 13 view .LVU129
+ 392 009a 0533     		adds	r3, r3, #5
+ 393 009c 9BB2     		uxth	r3, r3
+ 394              	.LVL39:
+ 295:./lib/src/at32f4xx_spi.c ****     }
+ 395              		.loc 1 295 13 view .LVU130
+ 396 009e D8E7     		b	.L18
+ 397              	.LVL40:
+ 398              	.L20:
+ 254:./lib/src/at32f4xx_spi.c ****     i2sdiv = (uint16_t)2;
+ 399              		.loc 1 254 12 view .LVU131
+ARM GAS  /tmp/cctmoqFu.s 			page 14
+
+
+ 400 00a0 0021     		movs	r1, #0
+ 401              	.LVL41:
+ 255:./lib/src/at32f4xx_spi.c ****   }
+ 402              		.loc 1 255 12 view .LVU132
+ 403 00a2 0223     		movs	r3, #2
+ 404 00a4 DFE7     		b	.L15
+ 405              	.LVL42:
+ 406              	.L22:
+ 321:./lib/src/at32f4xx_spi.c ****   }
+ 407              		.loc 1 321 12 view .LVU133
+ 408 00a6 0021     		movs	r1, #0
+ 409              	.LVL43:
+ 320:./lib/src/at32f4xx_spi.c ****     i2sodd = 0;
+ 410              		.loc 1 320 12 view .LVU134
+ 411 00a8 0223     		movs	r3, #2
+ 412              	.LVL44:
+ 413              	.L19:
+ 328:./lib/src/at32f4xx_spi.c ****   }
+ 329:./lib/src/at32f4xx_spi.c **** 
+ 330:./lib/src/at32f4xx_spi.c ****   /* Write to SPIx I2SPR register the computed value */
+ 331:./lib/src/at32f4xx_spi.c ****   SPIx->I2SCLKP = (uint16_t)(i2sdiv | (uint16_t)(i2sodd | (uint16_t)I2S_InitStruct->I2S_MCLKOE));
+ 414              		.loc 1 331 3 is_stmt 1 view .LVU135
+ 415              		.loc 1 331 83 is_stmt 0 view .LVU136
+ 416 00aa E288     		ldrh	r2, [r4, #6]
+ 417              		.loc 1 331 39 view .LVU137
+ 418 00ac 0A43     		orrs	r2, r2, r1
+ 419              		.loc 1 331 19 view .LVU138
+ 420 00ae 1343     		orrs	r3, r3, r2
+ 421              	.LVL45:
+ 422              		.loc 1 331 17 view .LVU139
+ 423 00b0 2B84     		strh	r3, [r5, #32]	@ movhi
+ 332:./lib/src/at32f4xx_spi.c **** 
+ 333:./lib/src/at32f4xx_spi.c ****   /* Configure the I2S with the SPI_InitStruct values */
+ 334:./lib/src/at32f4xx_spi.c ****   tmpreg |= (uint16_t)(I2S_MODE_SEL | (uint16_t)(I2S_InitStruct->I2S_Mode | \
+ 424              		.loc 1 334 3 is_stmt 1 view .LVU140
+ 425              		.loc 1 334 64 is_stmt 0 view .LVU141
+ 426 00b2 2388     		ldrh	r3, [r4]
+ 335:./lib/src/at32f4xx_spi.c ****                        (uint16_t)(I2S_InitStruct->I2s_AudioProtocol | (uint16_t)(I2S_InitStruct->I2
+ 427              		.loc 1 335 49 view .LVU142
+ 428 00b4 6288     		ldrh	r2, [r4, #2]
+ 429              		.loc 1 335 96 view .LVU143
+ 430 00b6 A188     		ldrh	r1, [r4, #4]
+ 431              	.LVL46:
+ 336:./lib/src/at32f4xx_spi.c ****                                   (uint16_t)I2S_InitStruct->I2S_CPOL))));
+ 432              		.loc 1 336 59 view .LVU144
+ 433 00b8 A089     		ldrh	r0, [r4, #12]
+ 335:./lib/src/at32f4xx_spi.c ****                        (uint16_t)(I2S_InitStruct->I2s_AudioProtocol | (uint16_t)(I2S_InitStruct->I2
+ 434              		.loc 1 335 71 view .LVU145
+ 435 00ba 0143     		orrs	r1, r1, r0
+ 335:./lib/src/at32f4xx_spi.c ****                        (uint16_t)(I2S_InitStruct->I2s_AudioProtocol | (uint16_t)(I2S_InitStruct->I2
+ 436              		.loc 1 335 24 view .LVU146
+ 437 00bc 0A43     		orrs	r2, r2, r1
+ 334:./lib/src/at32f4xx_spi.c ****                        (uint16_t)(I2S_InitStruct->I2s_AudioProtocol | (uint16_t)(I2S_InitStruct->I2
+ 438              		.loc 1 334 39 view .LVU147
+ 439 00be 1343     		orrs	r3, r3, r2
+ 334:./lib/src/at32f4xx_spi.c ****                        (uint16_t)(I2S_InitStruct->I2s_AudioProtocol | (uint16_t)(I2S_InitStruct->I2
+ 440              		.loc 1 334 10 view .LVU148
+ARM GAS  /tmp/cctmoqFu.s 			page 15
+
+
+ 441 00c0 1E43     		orrs	r6, r6, r3
+ 442              	.LVL47:
+ 334:./lib/src/at32f4xx_spi.c ****                        (uint16_t)(I2S_InitStruct->I2s_AudioProtocol | (uint16_t)(I2S_InitStruct->I2
+ 443              		.loc 1 334 10 view .LVU149
+ 444 00c2 46F40066 		orr	r6, r6, #2048
+ 445              	.LVL48:
+ 337:./lib/src/at32f4xx_spi.c **** 
+ 338:./lib/src/at32f4xx_spi.c ****   /* Write to SPIx I2SCFGR */
+ 339:./lib/src/at32f4xx_spi.c ****   SPIx->I2SCTRL = tmpreg;
+ 446              		.loc 1 339 3 is_stmt 1 view .LVU150
+ 447              		.loc 1 339 17 is_stmt 0 view .LVU151
+ 448 00c6 AE83     		strh	r6, [r5, #28]	@ movhi
+ 340:./lib/src/at32f4xx_spi.c **** }
+ 449              		.loc 1 340 1 view .LVU152
+ 450 00c8 07B0     		add	sp, sp, #28
+ 451              	.LCFI4:
+ 452              		.cfi_def_cfa_offset 20
+ 453              		@ sp needed
+ 454 00ca F0BD     		pop	{r4, r5, r6, r7, pc}
+ 455              	.LVL49:
+ 456              	.L26:
+ 457              		.loc 1 340 1 view .LVU153
+ 458              		.align	2
+ 459              	.L25:
+ 460 00cc CDCCCCCC 		.word	-858993459
+ 461              		.cfi_endproc
+ 462              	.LFE125:
+ 464              		.section	.text.SPI_DefaultInitParaConfig,"ax",%progbits
+ 465              		.align	1
+ 466              		.global	SPI_DefaultInitParaConfig
+ 467              		.syntax unified
+ 468              		.thumb
+ 469              		.thumb_func
+ 470              		.fpu fpv4-sp-d16
+ 472              	SPI_DefaultInitParaConfig:
+ 473              	.LVL50:
+ 474              	.LFB126:
+ 341:./lib/src/at32f4xx_spi.c **** 
+ 342:./lib/src/at32f4xx_spi.c **** /**
+ 343:./lib/src/at32f4xx_spi.c ****   * @brief  Fills each SPI_InitStruct member with its default value.
+ 344:./lib/src/at32f4xx_spi.c ****   * @param  SPI_InitStruct : pointer to a SPI_InitType structure which will be initialized.
+ 345:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 346:./lib/src/at32f4xx_spi.c ****   */
+ 347:./lib/src/at32f4xx_spi.c **** void SPI_DefaultInitParaConfig(SPI_InitType* SPI_InitStruct)
+ 348:./lib/src/at32f4xx_spi.c **** {
+ 475              		.loc 1 348 1 is_stmt 1 view -0
+ 476              		.cfi_startproc
+ 477              		@ args = 0, pretend = 0, frame = 0
+ 478              		@ frame_needed = 0, uses_anonymous_args = 0
+ 479              		@ link register save eliminated.
+ 349:./lib/src/at32f4xx_spi.c ****   /*--------------- Reset SPI init structure parameters values -----------------*/
+ 350:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_Direction member */
+ 351:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_TransMode = SPI_TRANSMODE_FULLDUPLEX;
+ 480              		.loc 1 351 3 view .LVU155
+ 481              		.loc 1 351 33 is_stmt 0 view .LVU156
+ 482 0000 0023     		movs	r3, #0
+ 483 0002 0380     		strh	r3, [r0]	@ movhi
+ARM GAS  /tmp/cctmoqFu.s 			page 16
+
+
+ 352:./lib/src/at32f4xx_spi.c ****   /* initialize the SPI_Mode member */
+ 353:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_Mode = SPI_MODE_SLAVE;
+ 484              		.loc 1 353 3 is_stmt 1 view .LVU157
+ 485              		.loc 1 353 28 is_stmt 0 view .LVU158
+ 486 0004 4380     		strh	r3, [r0, #2]	@ movhi
+ 354:./lib/src/at32f4xx_spi.c ****   /* initialize the SPI_DataSize member */
+ 355:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_FrameSize = SPI_FRAMESIZE_8BIT;
+ 487              		.loc 1 355 3 is_stmt 1 view .LVU159
+ 488              		.loc 1 355 33 is_stmt 0 view .LVU160
+ 489 0006 8380     		strh	r3, [r0, #4]	@ movhi
+ 356:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_CPOL member */
+ 357:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_CPOL = SPI_CPOL_LOW;
+ 490              		.loc 1 357 3 is_stmt 1 view .LVU161
+ 491              		.loc 1 357 28 is_stmt 0 view .LVU162
+ 492 0008 C380     		strh	r3, [r0, #6]	@ movhi
+ 358:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_CPHA member */
+ 359:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_CPHA = SPI_CPHA_1EDGE;
+ 493              		.loc 1 359 3 is_stmt 1 view .LVU163
+ 494              		.loc 1 359 28 is_stmt 0 view .LVU164
+ 495 000a 0381     		strh	r3, [r0, #8]	@ movhi
+ 360:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_NSS member */
+ 361:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_NSSSEL = SPI_NSSSEL_HARD;
+ 496              		.loc 1 361 3 is_stmt 1 view .LVU165
+ 497              		.loc 1 361 30 is_stmt 0 view .LVU166
+ 498 000c 4381     		strh	r3, [r0, #10]	@ movhi
+ 362:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_BaudRatePrescaler member */
+ 363:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_MCLKP = SPI_MCLKP_2;
+ 499              		.loc 1 363 3 is_stmt 1 view .LVU167
+ 500              		.loc 1 363 29 is_stmt 0 view .LVU168
+ 501 000e 8381     		strh	r3, [r0, #12]	@ movhi
+ 364:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_FirstBit member */
+ 365:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_FirstBit = SPI_FIRSTBIT_MSB;
+ 502              		.loc 1 365 3 is_stmt 1 view .LVU169
+ 503              		.loc 1 365 32 is_stmt 0 view .LVU170
+ 504 0010 C381     		strh	r3, [r0, #14]	@ movhi
+ 366:./lib/src/at32f4xx_spi.c ****   /* Initialize the SPI_CRCPolynomial member */
+ 367:./lib/src/at32f4xx_spi.c ****   SPI_InitStruct->SPI_CPOLY = 7;
+ 505              		.loc 1 367 3 is_stmt 1 view .LVU171
+ 506              		.loc 1 367 29 is_stmt 0 view .LVU172
+ 507 0012 0723     		movs	r3, #7
+ 508 0014 0382     		strh	r3, [r0, #16]	@ movhi
+ 368:./lib/src/at32f4xx_spi.c **** }
+ 509              		.loc 1 368 1 view .LVU173
+ 510 0016 7047     		bx	lr
+ 511              		.cfi_endproc
+ 512              	.LFE126:
+ 514              		.section	.text.I2S_DefaultInit,"ax",%progbits
+ 515              		.align	1
+ 516              		.global	I2S_DefaultInit
+ 517              		.syntax unified
+ 518              		.thumb
+ 519              		.thumb_func
+ 520              		.fpu fpv4-sp-d16
+ 522              	I2S_DefaultInit:
+ 523              	.LVL51:
+ 524              	.LFB127:
+ 369:./lib/src/at32f4xx_spi.c **** 
+ARM GAS  /tmp/cctmoqFu.s 			page 17
+
+
+ 370:./lib/src/at32f4xx_spi.c **** /**
+ 371:./lib/src/at32f4xx_spi.c ****   * @brief  Fills each I2S_InitStruct member with its default value.
+ 372:./lib/src/at32f4xx_spi.c ****   * @param  I2S_InitStruct : pointer to a I2S_InitType structure which will be initialized.
+ 373:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 374:./lib/src/at32f4xx_spi.c ****   */
+ 375:./lib/src/at32f4xx_spi.c **** void I2S_DefaultInit(I2S_InitType* I2S_InitStruct)
+ 376:./lib/src/at32f4xx_spi.c **** {
+ 525              		.loc 1 376 1 is_stmt 1 view -0
+ 526              		.cfi_startproc
+ 527              		@ args = 0, pretend = 0, frame = 0
+ 528              		@ frame_needed = 0, uses_anonymous_args = 0
+ 529              		@ link register save eliminated.
+ 377:./lib/src/at32f4xx_spi.c ****   /*--------------- Reset I2S init structure parameters values -----------------*/
+ 378:./lib/src/at32f4xx_spi.c ****   /* Initialize the I2S_Mode member */
+ 379:./lib/src/at32f4xx_spi.c ****   I2S_InitStruct->I2S_Mode = I2S_MODE_SLAVETX;
+ 530              		.loc 1 379 3 view .LVU175
+ 531              		.loc 1 379 28 is_stmt 0 view .LVU176
+ 532 0000 0023     		movs	r3, #0
+ 533 0002 0380     		strh	r3, [r0]	@ movhi
+ 380:./lib/src/at32f4xx_spi.c **** 
+ 381:./lib/src/at32f4xx_spi.c ****   /* Initialize the I2S_Standard member */
+ 382:./lib/src/at32f4xx_spi.c ****   I2S_InitStruct->I2s_AudioProtocol = I2S_AUDIOPROTOCOL_PHILLIPS;
+ 534              		.loc 1 382 3 is_stmt 1 view .LVU177
+ 535              		.loc 1 382 37 is_stmt 0 view .LVU178
+ 536 0004 4380     		strh	r3, [r0, #2]	@ movhi
+ 383:./lib/src/at32f4xx_spi.c **** 
+ 384:./lib/src/at32f4xx_spi.c ****   /* Initialize the I2S_DataFormat member */
+ 385:./lib/src/at32f4xx_spi.c ****   I2S_InitStruct->I2S_FrameFormat = I2S_FRAMEFORMAT_DL16BIT_CHL16BIT;
+ 537              		.loc 1 385 3 is_stmt 1 view .LVU179
+ 538              		.loc 1 385 35 is_stmt 0 view .LVU180
+ 539 0006 8380     		strh	r3, [r0, #4]	@ movhi
+ 386:./lib/src/at32f4xx_spi.c **** 
+ 387:./lib/src/at32f4xx_spi.c ****   /* Initialize the I2S_MCLKOutput member */
+ 388:./lib/src/at32f4xx_spi.c ****   I2S_InitStruct->I2S_MCLKOE = I2S_MCLKOE_DISABLE;
+ 540              		.loc 1 388 3 is_stmt 1 view .LVU181
+ 541              		.loc 1 388 30 is_stmt 0 view .LVU182
+ 542 0008 C380     		strh	r3, [r0, #6]	@ movhi
+ 389:./lib/src/at32f4xx_spi.c **** 
+ 390:./lib/src/at32f4xx_spi.c ****   /* Initialize the I2S_AudioFreq member */
+ 391:./lib/src/at32f4xx_spi.c ****   I2S_InitStruct->I2S_AudioFreq = I2S_AUDIOFREQ_DEFAULT;
+ 543              		.loc 1 391 3 is_stmt 1 view .LVU183
+ 544              		.loc 1 391 33 is_stmt 0 view .LVU184
+ 545 000a 0222     		movs	r2, #2
+ 546 000c 8260     		str	r2, [r0, #8]
+ 392:./lib/src/at32f4xx_spi.c **** 
+ 393:./lib/src/at32f4xx_spi.c ****   /* Initialize the I2S_CPOL member */
+ 394:./lib/src/at32f4xx_spi.c ****   I2S_InitStruct->I2S_CPOL = I2S_CPOL_LOW;
+ 547              		.loc 1 394 3 is_stmt 1 view .LVU185
+ 548              		.loc 1 394 28 is_stmt 0 view .LVU186
+ 549 000e 8381     		strh	r3, [r0, #12]	@ movhi
+ 395:./lib/src/at32f4xx_spi.c **** }
+ 550              		.loc 1 395 1 view .LVU187
+ 551 0010 7047     		bx	lr
+ 552              		.cfi_endproc
+ 553              	.LFE127:
+ 555              		.section	.text.SPI_Enable,"ax",%progbits
+ 556              		.align	1
+ARM GAS  /tmp/cctmoqFu.s 			page 18
+
+
+ 557              		.global	SPI_Enable
+ 558              		.syntax unified
+ 559              		.thumb
+ 560              		.thumb_func
+ 561              		.fpu fpv4-sp-d16
+ 563              	SPI_Enable:
+ 564              	.LVL52:
+ 565              	.LFB128:
+ 396:./lib/src/at32f4xx_spi.c **** 
+ 397:./lib/src/at32f4xx_spi.c **** /**
+ 398:./lib/src/at32f4xx_spi.c ****   * @brief  Enables or disables the specified SPI peripheral.
+ 399:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 400:./lib/src/at32f4xx_spi.c ****   * @param  NewState: new state of the SPIx peripheral.
+ 401:./lib/src/at32f4xx_spi.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 402:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 403:./lib/src/at32f4xx_spi.c ****   */
+ 404:./lib/src/at32f4xx_spi.c **** void SPI_Enable(SPI_Type* SPIx, FunctionalState NewState)
+ 405:./lib/src/at32f4xx_spi.c **** {
+ 566              		.loc 1 405 1 is_stmt 1 view -0
+ 567              		.cfi_startproc
+ 568              		@ args = 0, pretend = 0, frame = 0
+ 569              		@ frame_needed = 0, uses_anonymous_args = 0
+ 570              		@ link register save eliminated.
+ 406:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 407:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 571              		.loc 1 407 3 view .LVU189
+ 408:./lib/src/at32f4xx_spi.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 572              		.loc 1 408 3 view .LVU190
+ 409:./lib/src/at32f4xx_spi.c **** 
+ 410:./lib/src/at32f4xx_spi.c ****   if (NewState != DISABLE)
+ 573              		.loc 1 410 3 view .LVU191
+ 574              		.loc 1 410 6 is_stmt 0 view .LVU192
+ 575 0000 29B1     		cbz	r1, .L30
+ 411:./lib/src/at32f4xx_spi.c ****   {
+ 412:./lib/src/at32f4xx_spi.c ****     /* Enable the selected SPI peripheral */
+ 413:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 |= CTRL1_SPIEN_SET;
+ 576              		.loc 1 413 5 is_stmt 1 view .LVU193
+ 577              		.loc 1 413 17 is_stmt 0 view .LVU194
+ 578 0002 0388     		ldrh	r3, [r0]
+ 579 0004 9BB2     		uxth	r3, r3
+ 580 0006 43F04003 		orr	r3, r3, #64
+ 581 000a 0380     		strh	r3, [r0]	@ movhi
+ 582 000c 7047     		bx	lr
+ 583              	.L30:
+ 414:./lib/src/at32f4xx_spi.c ****   }
+ 415:./lib/src/at32f4xx_spi.c ****   else
+ 416:./lib/src/at32f4xx_spi.c ****   {
+ 417:./lib/src/at32f4xx_spi.c ****     /* Disable the selected SPI peripheral */
+ 418:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 &= CTRL1_SPIEN_RESET;
+ 584              		.loc 1 418 5 is_stmt 1 view .LVU195
+ 585              		.loc 1 418 17 is_stmt 0 view .LVU196
+ 586 000e 0388     		ldrh	r3, [r0]
+ 587 0010 9BB2     		uxth	r3, r3
+ 588 0012 23F04003 		bic	r3, r3, #64
+ 589 0016 9BB2     		uxth	r3, r3
+ 590 0018 0380     		strh	r3, [r0]	@ movhi
+ 419:./lib/src/at32f4xx_spi.c ****   }
+ARM GAS  /tmp/cctmoqFu.s 			page 19
+
+
+ 420:./lib/src/at32f4xx_spi.c **** }
+ 591              		.loc 1 420 1 view .LVU197
+ 592 001a 7047     		bx	lr
+ 593              		.cfi_endproc
+ 594              	.LFE128:
+ 596              		.section	.text.I2S_Enable,"ax",%progbits
+ 597              		.align	1
+ 598              		.global	I2S_Enable
+ 599              		.syntax unified
+ 600              		.thumb
+ 601              		.thumb_func
+ 602              		.fpu fpv4-sp-d16
+ 604              	I2S_Enable:
+ 605              	.LVL53:
+ 606              	.LFB129:
+ 421:./lib/src/at32f4xx_spi.c **** 
+ 422:./lib/src/at32f4xx_spi.c **** /**
+ 423:./lib/src/at32f4xx_spi.c ****   * @brief  Enables or disables the specified SPI peripheral (in I2S mode).
+ 424:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 2, 3, or 4 to select the SPI peripheral.
+ 425:./lib/src/at32f4xx_spi.c ****   * @param  NewState: new state of the SPIx peripheral.
+ 426:./lib/src/at32f4xx_spi.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 427:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 428:./lib/src/at32f4xx_spi.c ****   */
+ 429:./lib/src/at32f4xx_spi.c **** void I2S_Enable(SPI_Type* SPIx, FunctionalState NewState)
+ 430:./lib/src/at32f4xx_spi.c **** {
+ 607              		.loc 1 430 1 is_stmt 1 view -0
+ 608              		.cfi_startproc
+ 609              		@ args = 0, pretend = 0, frame = 0
+ 610              		@ frame_needed = 0, uses_anonymous_args = 0
+ 611              		@ link register save eliminated.
+ 431:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 432:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_PERIPH(SPIx));
+ 612              		.loc 1 432 3 view .LVU199
+ 433:./lib/src/at32f4xx_spi.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 613              		.loc 1 433 3 view .LVU200
+ 434:./lib/src/at32f4xx_spi.c **** 
+ 435:./lib/src/at32f4xx_spi.c ****   if (NewState != DISABLE)
+ 614              		.loc 1 435 3 view .LVU201
+ 615              		.loc 1 435 6 is_stmt 0 view .LVU202
+ 616 0000 29B1     		cbz	r1, .L33
+ 436:./lib/src/at32f4xx_spi.c ****   {
+ 437:./lib/src/at32f4xx_spi.c ****     /* Enable the selected SPI peripheral (in I2S mode) */
+ 438:./lib/src/at32f4xx_spi.c ****     SPIx->I2SCTRL |= I2SCTRL_I2SEN_SET;
+ 617              		.loc 1 438 5 is_stmt 1 view .LVU203
+ 618              		.loc 1 438 19 is_stmt 0 view .LVU204
+ 619 0002 838B     		ldrh	r3, [r0, #28]
+ 620 0004 9BB2     		uxth	r3, r3
+ 621 0006 43F48063 		orr	r3, r3, #1024
+ 622 000a 8383     		strh	r3, [r0, #28]	@ movhi
+ 623 000c 7047     		bx	lr
+ 624              	.L33:
+ 439:./lib/src/at32f4xx_spi.c ****   }
+ 440:./lib/src/at32f4xx_spi.c ****   else
+ 441:./lib/src/at32f4xx_spi.c ****   {
+ 442:./lib/src/at32f4xx_spi.c ****     /* Disable the selected SPI peripheral (in I2S mode) */
+ 443:./lib/src/at32f4xx_spi.c ****     SPIx->I2SCTRL &= I2SCTRL_I2SEN_RESET;
+ 625              		.loc 1 443 5 is_stmt 1 view .LVU205
+ARM GAS  /tmp/cctmoqFu.s 			page 20
+
+
+ 626              		.loc 1 443 19 is_stmt 0 view .LVU206
+ 627 000e 838B     		ldrh	r3, [r0, #28]
+ 628 0010 9BB2     		uxth	r3, r3
+ 629 0012 23F48063 		bic	r3, r3, #1024
+ 630 0016 9BB2     		uxth	r3, r3
+ 631 0018 8383     		strh	r3, [r0, #28]	@ movhi
+ 444:./lib/src/at32f4xx_spi.c ****   }
+ 445:./lib/src/at32f4xx_spi.c **** }
+ 632              		.loc 1 445 1 view .LVU207
+ 633 001a 7047     		bx	lr
+ 634              		.cfi_endproc
+ 635              	.LFE129:
+ 637              		.section	.text.SPI_I2S_INTConfig,"ax",%progbits
+ 638              		.align	1
+ 639              		.global	SPI_I2S_INTConfig
+ 640              		.syntax unified
+ 641              		.thumb
+ 642              		.thumb_func
+ 643              		.fpu fpv4-sp-d16
+ 645              	SPI_I2S_INTConfig:
+ 646              	.LVL54:
+ 647              	.LFB130:
+ 446:./lib/src/at32f4xx_spi.c **** 
+ 447:./lib/src/at32f4xx_spi.c **** /**
+ 448:./lib/src/at32f4xx_spi.c ****   * @brief  Enables or disables the specified SPI/I2S interrupts.
+ 449:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 450:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 451:./lib/src/at32f4xx_spi.c ****   *   - 2, 3, or 4 in I2S mode
+ 452:./lib/src/at32f4xx_spi.c ****   * @param  SPI_I2S_INT: specifies the SPI/I2S interrupt source to be enabled or disabled.
+ 453:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 454:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_INT_TE: Tx buffer empty interrupt mask
+ 455:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_INT_RNE: Rx buffer not empty interrupt mask
+ 456:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_INT_ERR: Error interrupt mask
+ 457:./lib/src/at32f4xx_spi.c ****   * @param  NewState: new state of the specified SPI/I2S interrupt.
+ 458:./lib/src/at32f4xx_spi.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 459:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 460:./lib/src/at32f4xx_spi.c ****   */
+ 461:./lib/src/at32f4xx_spi.c **** void SPI_I2S_INTConfig(SPI_Type* SPIx, uint8_t SPI_I2S_INT, FunctionalState NewState)
+ 462:./lib/src/at32f4xx_spi.c **** {
+ 648              		.loc 1 462 1 is_stmt 1 view -0
+ 649              		.cfi_startproc
+ 650              		@ args = 0, pretend = 0, frame = 0
+ 651              		@ frame_needed = 0, uses_anonymous_args = 0
+ 652              		@ link register save eliminated.
+ 463:./lib/src/at32f4xx_spi.c ****   uint16_t itpos = 0, itmask = 0 ;
+ 653              		.loc 1 463 3 view .LVU209
+ 464:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 465:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 654              		.loc 1 465 3 view .LVU210
+ 466:./lib/src/at32f4xx_spi.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 655              		.loc 1 466 3 view .LVU211
+ 467:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_CONFIG_INT(SPI_I2S_INT));
+ 656              		.loc 1 467 3 view .LVU212
+ 468:./lib/src/at32f4xx_spi.c **** 
+ 469:./lib/src/at32f4xx_spi.c ****   /* Get the SPI/I2S INT index */
+ 470:./lib/src/at32f4xx_spi.c ****   itpos = SPI_I2S_INT >> 4;
+ 657              		.loc 1 470 3 view .LVU213
+ARM GAS  /tmp/cctmoqFu.s 			page 21
+
+
+ 658              		.loc 1 470 9 is_stmt 0 view .LVU214
+ 659 0000 0B09     		lsrs	r3, r1, #4
+ 660              	.LVL55:
+ 471:./lib/src/at32f4xx_spi.c **** 
+ 472:./lib/src/at32f4xx_spi.c ****   /* Set the INT mask */
+ 473:./lib/src/at32f4xx_spi.c ****   itmask = (uint16_t)1 << (uint16_t)itpos;
+ 661              		.loc 1 473 3 is_stmt 1 view .LVU215
+ 662              		.loc 1 473 24 is_stmt 0 view .LVU216
+ 663 0002 0121     		movs	r1, #1
+ 664              	.LVL56:
+ 665              		.loc 1 473 24 view .LVU217
+ 666 0004 9940     		lsls	r1, r1, r3
+ 667              		.loc 1 473 10 view .LVU218
+ 668 0006 89B2     		uxth	r1, r1
+ 669              	.LVL57:
+ 474:./lib/src/at32f4xx_spi.c **** 
+ 475:./lib/src/at32f4xx_spi.c ****   if (NewState != DISABLE)
+ 670              		.loc 1 475 3 is_stmt 1 view .LVU219
+ 671              		.loc 1 475 6 is_stmt 0 view .LVU220
+ 672 0008 22B1     		cbz	r2, .L36
+ 476:./lib/src/at32f4xx_spi.c ****   {
+ 477:./lib/src/at32f4xx_spi.c ****     /* Enable the selected SPI/I2S interrupt */
+ 478:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 |= itmask;
+ 673              		.loc 1 478 5 is_stmt 1 view .LVU221
+ 674              		.loc 1 478 17 is_stmt 0 view .LVU222
+ 675 000a 8388     		ldrh	r3, [r0, #4]
+ 676              	.LVL58:
+ 677              		.loc 1 478 17 view .LVU223
+ 678 000c 9BB2     		uxth	r3, r3
+ 679 000e 1943     		orrs	r1, r1, r3
+ 680              	.LVL59:
+ 681              		.loc 1 478 17 view .LVU224
+ 682 0010 8180     		strh	r1, [r0, #4]	@ movhi
+ 683 0012 7047     		bx	lr
+ 684              	.LVL60:
+ 685              	.L36:
+ 479:./lib/src/at32f4xx_spi.c ****   }
+ 480:./lib/src/at32f4xx_spi.c ****   else
+ 481:./lib/src/at32f4xx_spi.c ****   {
+ 482:./lib/src/at32f4xx_spi.c ****     /* Disable the selected SPI/I2S interrupt */
+ 483:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 &= (uint16_t)~itmask;
+ 686              		.loc 1 483 5 is_stmt 1 view .LVU225
+ 687              		.loc 1 483 17 is_stmt 0 view .LVU226
+ 688 0014 8388     		ldrh	r3, [r0, #4]
+ 689              	.LVL61:
+ 690              		.loc 1 483 20 view .LVU227
+ 691 0016 C943     		mvns	r1, r1
+ 692              	.LVL62:
+ 693              		.loc 1 483 20 view .LVU228
+ 694 0018 89B2     		uxth	r1, r1
+ 695              	.LVL63:
+ 696              		.loc 1 483 17 view .LVU229
+ 697 001a 1940     		ands	r1, r1, r3
+ 698 001c 8180     		strh	r1, [r0, #4]	@ movhi
+ 484:./lib/src/at32f4xx_spi.c ****   }
+ 485:./lib/src/at32f4xx_spi.c **** }
+ 699              		.loc 1 485 1 view .LVU230
+ARM GAS  /tmp/cctmoqFu.s 			page 22
+
+
+ 700 001e 7047     		bx	lr
+ 701              		.cfi_endproc
+ 702              	.LFE130:
+ 704              		.section	.text.SPI_I2S_DMAEnable,"ax",%progbits
+ 705              		.align	1
+ 706              		.global	SPI_I2S_DMAEnable
+ 707              		.syntax unified
+ 708              		.thumb
+ 709              		.thumb_func
+ 710              		.fpu fpv4-sp-d16
+ 712              	SPI_I2S_DMAEnable:
+ 713              	.LVL64:
+ 714              	.LFB131:
+ 486:./lib/src/at32f4xx_spi.c **** 
+ 487:./lib/src/at32f4xx_spi.c **** /**
+ 488:./lib/src/at32f4xx_spi.c ****   * @brief  Enables or disables the SPIx/I2Sx DMA interface.
+ 489:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 490:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 491:./lib/src/at32f4xx_spi.c ****   *   - 2, 3, or 4 in I2S mode
+ 492:./lib/src/at32f4xx_spi.c ****   * @param  SPI_I2S_DMAReq: specifies the SPI/I2S DMA transfer request to be enabled or disabled.
+ 493:./lib/src/at32f4xx_spi.c ****   *   This parameter can be any combination of the following values:
+ 494:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_DMA_TX: Tx buffer DMA transfer request
+ 495:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_DMA_RX: Rx buffer DMA transfer request
+ 496:./lib/src/at32f4xx_spi.c ****   * @param  NewState: new state of the selected SPI/I2S DMA transfer request.
+ 497:./lib/src/at32f4xx_spi.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 498:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 499:./lib/src/at32f4xx_spi.c ****   */
+ 500:./lib/src/at32f4xx_spi.c **** void SPI_I2S_DMAEnable(SPI_Type* SPIx, uint16_t SPI_I2S_DMAReq, FunctionalState NewState)
+ 501:./lib/src/at32f4xx_spi.c **** {
+ 715              		.loc 1 501 1 is_stmt 1 view -0
+ 716              		.cfi_startproc
+ 717              		@ args = 0, pretend = 0, frame = 0
+ 718              		@ frame_needed = 0, uses_anonymous_args = 0
+ 719              		@ link register save eliminated.
+ 502:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 503:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 720              		.loc 1 503 3 view .LVU232
+ 504:./lib/src/at32f4xx_spi.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 721              		.loc 1 504 3 view .LVU233
+ 505:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_DMA(SPI_I2S_DMAReq));
+ 722              		.loc 1 505 3 view .LVU234
+ 506:./lib/src/at32f4xx_spi.c **** 
+ 507:./lib/src/at32f4xx_spi.c ****   if (NewState != DISABLE)
+ 723              		.loc 1 507 3 view .LVU235
+ 724              		.loc 1 507 6 is_stmt 0 view .LVU236
+ 725 0000 22B1     		cbz	r2, .L39
+ 508:./lib/src/at32f4xx_spi.c ****   {
+ 509:./lib/src/at32f4xx_spi.c ****     /* Enable the selected SPI/I2S DMA requests */
+ 510:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 |= SPI_I2S_DMAReq;
+ 726              		.loc 1 510 5 is_stmt 1 view .LVU237
+ 727              		.loc 1 510 17 is_stmt 0 view .LVU238
+ 728 0002 8388     		ldrh	r3, [r0, #4]
+ 729 0004 9BB2     		uxth	r3, r3
+ 730 0006 1943     		orrs	r1, r1, r3
+ 731              	.LVL65:
+ 732              		.loc 1 510 17 view .LVU239
+ 733 0008 8180     		strh	r1, [r0, #4]	@ movhi
+ARM GAS  /tmp/cctmoqFu.s 			page 23
+
+
+ 734 000a 7047     		bx	lr
+ 735              	.LVL66:
+ 736              	.L39:
+ 511:./lib/src/at32f4xx_spi.c ****   }
+ 512:./lib/src/at32f4xx_spi.c ****   else
+ 513:./lib/src/at32f4xx_spi.c ****   {
+ 514:./lib/src/at32f4xx_spi.c ****     /* Disable the selected SPI/I2S DMA requests */
+ 515:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 &= (uint16_t)~SPI_I2S_DMAReq;
+ 737              		.loc 1 515 5 is_stmt 1 view .LVU240
+ 738              		.loc 1 515 17 is_stmt 0 view .LVU241
+ 739 000c 8388     		ldrh	r3, [r0, #4]
+ 740              		.loc 1 515 20 view .LVU242
+ 741 000e C943     		mvns	r1, r1
+ 742              	.LVL67:
+ 743              		.loc 1 515 20 view .LVU243
+ 744 0010 89B2     		uxth	r1, r1
+ 745              		.loc 1 515 17 view .LVU244
+ 746 0012 1940     		ands	r1, r1, r3
+ 747 0014 8180     		strh	r1, [r0, #4]	@ movhi
+ 516:./lib/src/at32f4xx_spi.c ****   }
+ 517:./lib/src/at32f4xx_spi.c **** }
+ 748              		.loc 1 517 1 view .LVU245
+ 749 0016 7047     		bx	lr
+ 750              		.cfi_endproc
+ 751              	.LFE131:
+ 753              		.section	.text.SPI_I2S_TxData,"ax",%progbits
+ 754              		.align	1
+ 755              		.global	SPI_I2S_TxData
+ 756              		.syntax unified
+ 757              		.thumb
+ 758              		.thumb_func
+ 759              		.fpu fpv4-sp-d16
+ 761              	SPI_I2S_TxData:
+ 762              	.LVL68:
+ 763              	.LFB132:
+ 518:./lib/src/at32f4xx_spi.c **** 
+ 519:./lib/src/at32f4xx_spi.c **** /**
+ 520:./lib/src/at32f4xx_spi.c ****   * @brief  Transmits a Data through the SPIx/I2Sx peripheral.
+ 521:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 522:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 523:./lib/src/at32f4xx_spi.c ****   *   - 2, 3, or 4 in I2S mode
+ 524:./lib/src/at32f4xx_spi.c ****   * @param  Data : Data to be transmitted.
+ 525:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 526:./lib/src/at32f4xx_spi.c ****   */
+ 527:./lib/src/at32f4xx_spi.c **** void SPI_I2S_TxData(SPI_Type* SPIx, uint16_t Data)
+ 528:./lib/src/at32f4xx_spi.c **** {
+ 764              		.loc 1 528 1 is_stmt 1 view -0
+ 765              		.cfi_startproc
+ 766              		@ args = 0, pretend = 0, frame = 0
+ 767              		@ frame_needed = 0, uses_anonymous_args = 0
+ 768              		@ link register save eliminated.
+ 529:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 530:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 769              		.loc 1 530 3 view .LVU247
+ 531:./lib/src/at32f4xx_spi.c **** 
+ 532:./lib/src/at32f4xx_spi.c ****   /* Write in the DR register the data to be sent */
+ 533:./lib/src/at32f4xx_spi.c ****   SPIx->DT = Data;
+ARM GAS  /tmp/cctmoqFu.s 			page 24
+
+
+ 770              		.loc 1 533 3 view .LVU248
+ 771              		.loc 1 533 12 is_stmt 0 view .LVU249
+ 772 0000 8181     		strh	r1, [r0, #12]	@ movhi
+ 534:./lib/src/at32f4xx_spi.c **** }
+ 773              		.loc 1 534 1 view .LVU250
+ 774 0002 7047     		bx	lr
+ 775              		.cfi_endproc
+ 776              	.LFE132:
+ 778              		.section	.text.SPI_I2S_RxData,"ax",%progbits
+ 779              		.align	1
+ 780              		.global	SPI_I2S_RxData
+ 781              		.syntax unified
+ 782              		.thumb
+ 783              		.thumb_func
+ 784              		.fpu fpv4-sp-d16
+ 786              	SPI_I2S_RxData:
+ 787              	.LVL69:
+ 788              	.LFB133:
+ 535:./lib/src/at32f4xx_spi.c **** 
+ 536:./lib/src/at32f4xx_spi.c **** /**
+ 537:./lib/src/at32f4xx_spi.c ****   * @brief  Returns the most recent received data by the SPIx/I2Sx peripheral.
+ 538:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 539:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 540:./lib/src/at32f4xx_spi.c ****   *   - 2, 3, or 4 in I2S mode
+ 541:./lib/src/at32f4xx_spi.c ****   * @retval The value of the received data.
+ 542:./lib/src/at32f4xx_spi.c ****   */
+ 543:./lib/src/at32f4xx_spi.c **** uint16_t SPI_I2S_RxData(SPI_Type* SPIx)
+ 544:./lib/src/at32f4xx_spi.c **** {
+ 789              		.loc 1 544 1 is_stmt 1 view -0
+ 790              		.cfi_startproc
+ 791              		@ args = 0, pretend = 0, frame = 0
+ 792              		@ frame_needed = 0, uses_anonymous_args = 0
+ 793              		@ link register save eliminated.
+ 545:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 546:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 794              		.loc 1 546 3 view .LVU252
+ 547:./lib/src/at32f4xx_spi.c **** 
+ 548:./lib/src/at32f4xx_spi.c ****   /* Return the data in the DR register */
+ 549:./lib/src/at32f4xx_spi.c ****   return SPIx->DT;
+ 795              		.loc 1 549 3 view .LVU253
+ 796              		.loc 1 549 14 is_stmt 0 view .LVU254
+ 797 0000 8089     		ldrh	r0, [r0, #12]
+ 798              	.LVL70:
+ 550:./lib/src/at32f4xx_spi.c **** }
+ 799              		.loc 1 550 1 view .LVU255
+ 800 0002 80B2     		uxth	r0, r0
+ 801 0004 7047     		bx	lr
+ 802              		.cfi_endproc
+ 803              	.LFE133:
+ 805              		.section	.text.SPI_NSSInternalSoftwareConfig,"ax",%progbits
+ 806              		.align	1
+ 807              		.global	SPI_NSSInternalSoftwareConfig
+ 808              		.syntax unified
+ 809              		.thumb
+ 810              		.thumb_func
+ 811              		.fpu fpv4-sp-d16
+ 813              	SPI_NSSInternalSoftwareConfig:
+ARM GAS  /tmp/cctmoqFu.s 			page 25
+
+
+ 814              	.LVL71:
+ 815              	.LFB134:
+ 551:./lib/src/at32f4xx_spi.c **** 
+ 552:./lib/src/at32f4xx_spi.c **** /**
+ 553:./lib/src/at32f4xx_spi.c ****   * @brief  Configures internally by software the NSS pin for the selected SPI.
+ 554:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 555:./lib/src/at32f4xx_spi.c ****   * @param  SPI_NSSInternalSoft: specifies the SPI NSS internal state.
+ 556:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 557:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_ISS_SET: Set NSS pin internally
+ 558:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_ISS_RESET: Reset NSS pin internally
+ 559:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 560:./lib/src/at32f4xx_spi.c ****   */
+ 561:./lib/src/at32f4xx_spi.c **** void SPI_NSSInternalSoftwareConfig(SPI_Type* SPIx, uint16_t SPI_NSSInternalSoft)
+ 562:./lib/src/at32f4xx_spi.c **** {
+ 816              		.loc 1 562 1 is_stmt 1 view -0
+ 817              		.cfi_startproc
+ 818              		@ args = 0, pretend = 0, frame = 0
+ 819              		@ frame_needed = 0, uses_anonymous_args = 0
+ 820              		@ link register save eliminated.
+ 563:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 564:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 821              		.loc 1 564 3 view .LVU257
+ 565:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ISS(SPI_NSSInternalSoft));
+ 822              		.loc 1 565 3 view .LVU258
+ 566:./lib/src/at32f4xx_spi.c **** 
+ 567:./lib/src/at32f4xx_spi.c ****   if (SPI_NSSInternalSoft != SPI_ISS_RESET)
+ 823              		.loc 1 567 3 view .LVU259
+ 824              		.loc 1 567 6 is_stmt 0 view .LVU260
+ 825 0000 4FF6FF63 		movw	r3, #65279
+ 826 0004 9942     		cmp	r1, r3
+ 827 0006 05D0     		beq	.L44
+ 568:./lib/src/at32f4xx_spi.c ****   {
+ 569:./lib/src/at32f4xx_spi.c ****     /* Set NSS pin internally by software */
+ 570:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 |= SPI_ISS_SET;
+ 828              		.loc 1 570 5 is_stmt 1 view .LVU261
+ 829              		.loc 1 570 17 is_stmt 0 view .LVU262
+ 830 0008 0388     		ldrh	r3, [r0]
+ 831 000a 9BB2     		uxth	r3, r3
+ 832 000c 43F48073 		orr	r3, r3, #256
+ 833 0010 0380     		strh	r3, [r0]	@ movhi
+ 834 0012 7047     		bx	lr
+ 835              	.L44:
+ 571:./lib/src/at32f4xx_spi.c ****   }
+ 572:./lib/src/at32f4xx_spi.c ****   else
+ 573:./lib/src/at32f4xx_spi.c ****   {
+ 574:./lib/src/at32f4xx_spi.c ****     /* Reset NSS pin internally by software */
+ 575:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 &= SPI_ISS_RESET;
+ 836              		.loc 1 575 5 is_stmt 1 view .LVU263
+ 837              		.loc 1 575 17 is_stmt 0 view .LVU264
+ 838 0014 0388     		ldrh	r3, [r0]
+ 839 0016 9BB2     		uxth	r3, r3
+ 840 0018 23F48073 		bic	r3, r3, #256
+ 841 001c 9BB2     		uxth	r3, r3
+ 842 001e 0380     		strh	r3, [r0]	@ movhi
+ 576:./lib/src/at32f4xx_spi.c ****   }
+ 577:./lib/src/at32f4xx_spi.c **** }
+ 843              		.loc 1 577 1 view .LVU265
+ARM GAS  /tmp/cctmoqFu.s 			page 26
+
+
+ 844 0020 7047     		bx	lr
+ 845              		.cfi_endproc
+ 846              	.LFE134:
+ 848              		.section	.text.SPI_NSSHardwareOutputEnable,"ax",%progbits
+ 849              		.align	1
+ 850              		.global	SPI_NSSHardwareOutputEnable
+ 851              		.syntax unified
+ 852              		.thumb
+ 853              		.thumb_func
+ 854              		.fpu fpv4-sp-d16
+ 856              	SPI_NSSHardwareOutputEnable:
+ 857              	.LVL72:
+ 858              	.LFB135:
+ 578:./lib/src/at32f4xx_spi.c **** 
+ 579:./lib/src/at32f4xx_spi.c **** /**
+ 580:./lib/src/at32f4xx_spi.c ****   * @brief  Enables or disables the SS output for the selected SPI.
+ 581:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 582:./lib/src/at32f4xx_spi.c ****   * @param  NewState: new state of the SPIx SS output.
+ 583:./lib/src/at32f4xx_spi.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 584:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 585:./lib/src/at32f4xx_spi.c ****   */
+ 586:./lib/src/at32f4xx_spi.c **** void SPI_NSSHardwareOutputEnable(SPI_Type* SPIx, FunctionalState NewState)
+ 587:./lib/src/at32f4xx_spi.c **** {
+ 859              		.loc 1 587 1 is_stmt 1 view -0
+ 860              		.cfi_startproc
+ 861              		@ args = 0, pretend = 0, frame = 0
+ 862              		@ frame_needed = 0, uses_anonymous_args = 0
+ 863              		@ link register save eliminated.
+ 588:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 589:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 864              		.loc 1 589 3 view .LVU267
+ 590:./lib/src/at32f4xx_spi.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 865              		.loc 1 590 3 view .LVU268
+ 591:./lib/src/at32f4xx_spi.c **** 
+ 592:./lib/src/at32f4xx_spi.c ****   if (NewState != DISABLE)
+ 866              		.loc 1 592 3 view .LVU269
+ 867              		.loc 1 592 6 is_stmt 0 view .LVU270
+ 868 0000 29B1     		cbz	r1, .L47
+ 593:./lib/src/at32f4xx_spi.c ****   {
+ 594:./lib/src/at32f4xx_spi.c ****     /* Enable the selected SPI SS output */
+ 595:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 |= CTRL2_NSSOE_SET;
+ 869              		.loc 1 595 5 is_stmt 1 view .LVU271
+ 870              		.loc 1 595 17 is_stmt 0 view .LVU272
+ 871 0002 8388     		ldrh	r3, [r0, #4]
+ 872 0004 9BB2     		uxth	r3, r3
+ 873 0006 43F00403 		orr	r3, r3, #4
+ 874 000a 8380     		strh	r3, [r0, #4]	@ movhi
+ 875 000c 7047     		bx	lr
+ 876              	.L47:
+ 596:./lib/src/at32f4xx_spi.c ****   }
+ 597:./lib/src/at32f4xx_spi.c ****   else
+ 598:./lib/src/at32f4xx_spi.c ****   {
+ 599:./lib/src/at32f4xx_spi.c ****     /* Disable the selected SPI SS output */
+ 600:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL2 &= CTRL2_NSSOE_RESET;
+ 877              		.loc 1 600 5 is_stmt 1 view .LVU273
+ 878              		.loc 1 600 17 is_stmt 0 view .LVU274
+ 879 000e 8388     		ldrh	r3, [r0, #4]
+ARM GAS  /tmp/cctmoqFu.s 			page 27
+
+
+ 880 0010 9BB2     		uxth	r3, r3
+ 881 0012 23F00403 		bic	r3, r3, #4
+ 882 0016 9BB2     		uxth	r3, r3
+ 883 0018 8380     		strh	r3, [r0, #4]	@ movhi
+ 601:./lib/src/at32f4xx_spi.c ****   }
+ 602:./lib/src/at32f4xx_spi.c **** }
+ 884              		.loc 1 602 1 view .LVU275
+ 885 001a 7047     		bx	lr
+ 886              		.cfi_endproc
+ 887              	.LFE135:
+ 889              		.section	.text.SPI_FrameSizeConfig,"ax",%progbits
+ 890              		.align	1
+ 891              		.global	SPI_FrameSizeConfig
+ 892              		.syntax unified
+ 893              		.thumb
+ 894              		.thumb_func
+ 895              		.fpu fpv4-sp-d16
+ 897              	SPI_FrameSizeConfig:
+ 898              	.LVL73:
+ 899              	.LFB136:
+ 603:./lib/src/at32f4xx_spi.c **** 
+ 604:./lib/src/at32f4xx_spi.c **** /**
+ 605:./lib/src/at32f4xx_spi.c ****   * @brief  Configures the data size for the selected SPI.
+ 606:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 607:./lib/src/at32f4xx_spi.c ****   * @param  SPI_DataSize: specifies the SPI data size.
+ 608:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 609:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_FRAMESIZE_16BIT: Set data frame format to 16bit
+ 610:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_FRAMESIZE_8BIT: Set data frame format to 8bit
+ 611:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 612:./lib/src/at32f4xx_spi.c ****   */
+ 613:./lib/src/at32f4xx_spi.c **** void SPI_FrameSizeConfig(SPI_Type* SPIx, uint16_t SPI_DataSize)
+ 614:./lib/src/at32f4xx_spi.c **** {
+ 900              		.loc 1 614 1 is_stmt 1 view -0
+ 901              		.cfi_startproc
+ 902              		@ args = 0, pretend = 0, frame = 0
+ 903              		@ frame_needed = 0, uses_anonymous_args = 0
+ 904              		@ link register save eliminated.
+ 615:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 616:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 905              		.loc 1 616 3 view .LVU277
+ 617:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_FRAMESIZE(SPI_DataSize));
+ 906              		.loc 1 617 3 view .LVU278
+ 618:./lib/src/at32f4xx_spi.c ****   /* Clear DFF bit */
+ 619:./lib/src/at32f4xx_spi.c ****   SPIx->CTRL1 &= (uint16_t)~SPI_FRAMESIZE_16BIT;
+ 907              		.loc 1 619 3 view .LVU279
+ 908              		.loc 1 619 15 is_stmt 0 view .LVU280
+ 909 0000 0388     		ldrh	r3, [r0]
+ 910 0002 9BB2     		uxth	r3, r3
+ 911 0004 23F40063 		bic	r3, r3, #2048
+ 912 0008 9BB2     		uxth	r3, r3
+ 913 000a 0380     		strh	r3, [r0]	@ movhi
+ 620:./lib/src/at32f4xx_spi.c ****   /* Set new DFF bit value */
+ 621:./lib/src/at32f4xx_spi.c ****   SPIx->CTRL1 |= SPI_DataSize;
+ 914              		.loc 1 621 3 is_stmt 1 view .LVU281
+ 915              		.loc 1 621 15 is_stmt 0 view .LVU282
+ 916 000c 0388     		ldrh	r3, [r0]
+ 917 000e 9BB2     		uxth	r3, r3
+ARM GAS  /tmp/cctmoqFu.s 			page 28
+
+
+ 918 0010 0B43     		orrs	r3, r3, r1
+ 919 0012 0380     		strh	r3, [r0]	@ movhi
+ 622:./lib/src/at32f4xx_spi.c **** }
+ 920              		.loc 1 622 1 view .LVU283
+ 921 0014 7047     		bx	lr
+ 922              		.cfi_endproc
+ 923              	.LFE136:
+ 925              		.section	.text.SPI_TxCRC,"ax",%progbits
+ 926              		.align	1
+ 927              		.global	SPI_TxCRC
+ 928              		.syntax unified
+ 929              		.thumb
+ 930              		.thumb_func
+ 931              		.fpu fpv4-sp-d16
+ 933              	SPI_TxCRC:
+ 934              	.LVL74:
+ 935              	.LFB137:
+ 623:./lib/src/at32f4xx_spi.c **** 
+ 624:./lib/src/at32f4xx_spi.c **** /**
+ 625:./lib/src/at32f4xx_spi.c ****   * @brief  Transmit the SPIx CRC value.
+ 626:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 627:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 628:./lib/src/at32f4xx_spi.c ****   */
+ 629:./lib/src/at32f4xx_spi.c **** void SPI_TxCRC(SPI_Type* SPIx)
+ 630:./lib/src/at32f4xx_spi.c **** {
+ 936              		.loc 1 630 1 is_stmt 1 view -0
+ 937              		.cfi_startproc
+ 938              		@ args = 0, pretend = 0, frame = 0
+ 939              		@ frame_needed = 0, uses_anonymous_args = 0
+ 940              		@ link register save eliminated.
+ 631:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 632:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 941              		.loc 1 632 3 view .LVU285
+ 633:./lib/src/at32f4xx_spi.c **** 
+ 634:./lib/src/at32f4xx_spi.c ****   /* Enable the selected SPI CRC transmission */
+ 635:./lib/src/at32f4xx_spi.c ****   SPIx->CTRL1 |= CTRL1_CTN_SET;
+ 942              		.loc 1 635 3 view .LVU286
+ 943              		.loc 1 635 15 is_stmt 0 view .LVU287
+ 944 0000 0388     		ldrh	r3, [r0]
+ 945 0002 9BB2     		uxth	r3, r3
+ 946 0004 43F48053 		orr	r3, r3, #4096
+ 947 0008 0380     		strh	r3, [r0]	@ movhi
+ 636:./lib/src/at32f4xx_spi.c **** }
+ 948              		.loc 1 636 1 view .LVU288
+ 949 000a 7047     		bx	lr
+ 950              		.cfi_endproc
+ 951              	.LFE137:
+ 953              		.section	.text.SPI_CRCEN,"ax",%progbits
+ 954              		.align	1
+ 955              		.global	SPI_CRCEN
+ 956              		.syntax unified
+ 957              		.thumb
+ 958              		.thumb_func
+ 959              		.fpu fpv4-sp-d16
+ 961              	SPI_CRCEN:
+ 962              	.LVL75:
+ 963              	.LFB138:
+ARM GAS  /tmp/cctmoqFu.s 			page 29
+
+
+ 637:./lib/src/at32f4xx_spi.c **** 
+ 638:./lib/src/at32f4xx_spi.c **** /**
+ 639:./lib/src/at32f4xx_spi.c ****   * @brief  Enables or disables the CRC value calculation of the transferred bytes.
+ 640:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 641:./lib/src/at32f4xx_spi.c ****   * @param  NewState: new state of the SPIx CRC value calculation.
+ 642:./lib/src/at32f4xx_spi.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 643:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 644:./lib/src/at32f4xx_spi.c ****   */
+ 645:./lib/src/at32f4xx_spi.c **** void SPI_CRCEN(SPI_Type* SPIx, FunctionalState NewState)
+ 646:./lib/src/at32f4xx_spi.c **** {
+ 964              		.loc 1 646 1 is_stmt 1 view -0
+ 965              		.cfi_startproc
+ 966              		@ args = 0, pretend = 0, frame = 0
+ 967              		@ frame_needed = 0, uses_anonymous_args = 0
+ 968              		@ link register save eliminated.
+ 647:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 648:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 969              		.loc 1 648 3 view .LVU290
+ 649:./lib/src/at32f4xx_spi.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 970              		.loc 1 649 3 view .LVU291
+ 650:./lib/src/at32f4xx_spi.c **** 
+ 651:./lib/src/at32f4xx_spi.c ****   if (NewState != DISABLE)
+ 971              		.loc 1 651 3 view .LVU292
+ 972              		.loc 1 651 6 is_stmt 0 view .LVU293
+ 973 0000 29B1     		cbz	r1, .L52
+ 652:./lib/src/at32f4xx_spi.c ****   {
+ 653:./lib/src/at32f4xx_spi.c ****     /* Enable the selected SPI CRC calculation */
+ 654:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 |= CTRL1_CCE_SET;
+ 974              		.loc 1 654 5 is_stmt 1 view .LVU294
+ 975              		.loc 1 654 17 is_stmt 0 view .LVU295
+ 976 0002 0388     		ldrh	r3, [r0]
+ 977 0004 9BB2     		uxth	r3, r3
+ 978 0006 43F40053 		orr	r3, r3, #8192
+ 979 000a 0380     		strh	r3, [r0]	@ movhi
+ 980 000c 7047     		bx	lr
+ 981              	.L52:
+ 655:./lib/src/at32f4xx_spi.c ****   }
+ 656:./lib/src/at32f4xx_spi.c ****   else
+ 657:./lib/src/at32f4xx_spi.c ****   {
+ 658:./lib/src/at32f4xx_spi.c ****     /* Disable the selected SPI CRC calculation */
+ 659:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 &= CTRL1_CCE_RESET;
+ 982              		.loc 1 659 5 is_stmt 1 view .LVU296
+ 983              		.loc 1 659 17 is_stmt 0 view .LVU297
+ 984 000e 0388     		ldrh	r3, [r0]
+ 985 0010 9BB2     		uxth	r3, r3
+ 986 0012 23F40053 		bic	r3, r3, #8192
+ 987 0016 9BB2     		uxth	r3, r3
+ 988 0018 0380     		strh	r3, [r0]	@ movhi
+ 660:./lib/src/at32f4xx_spi.c ****   }
+ 661:./lib/src/at32f4xx_spi.c **** }
+ 989              		.loc 1 661 1 view .LVU298
+ 990 001a 7047     		bx	lr
+ 991              		.cfi_endproc
+ 992              	.LFE138:
+ 994              		.section	.text.SPI_GetCRC,"ax",%progbits
+ 995              		.align	1
+ 996              		.global	SPI_GetCRC
+ARM GAS  /tmp/cctmoqFu.s 			page 30
+
+
+ 997              		.syntax unified
+ 998              		.thumb
+ 999              		.thumb_func
+ 1000              		.fpu fpv4-sp-d16
+ 1002              	SPI_GetCRC:
+ 1003              	.LVL76:
+ 1004              	.LFB139:
+ 662:./lib/src/at32f4xx_spi.c **** 
+ 663:./lib/src/at32f4xx_spi.c **** /**
+ 664:./lib/src/at32f4xx_spi.c ****   * @brief  Returns the transmit or the receive CRC register value for the specified SPI.
+ 665:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 666:./lib/src/at32f4xx_spi.c ****   * @param  SPI_CRC: specifies the CRC register to be read.
+ 667:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 668:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_CRC_TX: Selects Tx CRC register
+ 669:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_CRC_RX: Selects Rx CRC register
+ 670:./lib/src/at32f4xx_spi.c ****   * @retval The selected CRC register value..
+ 671:./lib/src/at32f4xx_spi.c ****   */
+ 672:./lib/src/at32f4xx_spi.c **** uint16_t SPI_GetCRC(SPI_Type* SPIx, uint8_t SPI_CRC)
+ 673:./lib/src/at32f4xx_spi.c **** {
+ 1005              		.loc 1 673 1 is_stmt 1 view -0
+ 1006              		.cfi_startproc
+ 1007              		@ args = 0, pretend = 0, frame = 0
+ 1008              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1009              		@ link register save eliminated.
+ 674:./lib/src/at32f4xx_spi.c ****   uint16_t crcreg = 0;
+ 1010              		.loc 1 674 3 view .LVU300
+ 675:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 676:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1011              		.loc 1 676 3 view .LVU301
+ 677:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_CRC(SPI_CRC));
+ 1012              		.loc 1 677 3 view .LVU302
+ 678:./lib/src/at32f4xx_spi.c **** 
+ 679:./lib/src/at32f4xx_spi.c ****   if (SPI_CRC != SPI_CRC_RX)
+ 1013              		.loc 1 679 3 view .LVU303
+ 1014              		.loc 1 679 6 is_stmt 0 view .LVU304
+ 1015 0000 0129     		cmp	r1, #1
+ 1016 0002 02D0     		beq	.L55
+ 680:./lib/src/at32f4xx_spi.c ****   {
+ 681:./lib/src/at32f4xx_spi.c ****     /* Get the Tx CRC register */
+ 682:./lib/src/at32f4xx_spi.c ****     crcreg = SPIx->TCRC;
+ 1017              		.loc 1 682 5 is_stmt 1 view .LVU305
+ 1018              		.loc 1 682 12 is_stmt 0 view .LVU306
+ 1019 0004 008B     		ldrh	r0, [r0, #24]
+ 1020              	.LVL77:
+ 1021              		.loc 1 682 12 view .LVU307
+ 1022 0006 80B2     		uxth	r0, r0
+ 1023              	.LVL78:
+ 1024              		.loc 1 682 12 view .LVU308
+ 1025 0008 7047     		bx	lr
+ 1026              	.LVL79:
+ 1027              	.L55:
+ 683:./lib/src/at32f4xx_spi.c ****   }
+ 684:./lib/src/at32f4xx_spi.c ****   else
+ 685:./lib/src/at32f4xx_spi.c ****   {
+ 686:./lib/src/at32f4xx_spi.c ****     /* Get the Rx CRC register */
+ 687:./lib/src/at32f4xx_spi.c ****     crcreg = SPIx->RCRC;
+ 1028              		.loc 1 687 5 is_stmt 1 view .LVU309
+ARM GAS  /tmp/cctmoqFu.s 			page 31
+
+
+ 1029              		.loc 1 687 12 is_stmt 0 view .LVU310
+ 1030 000a 808A     		ldrh	r0, [r0, #20]
+ 1031              	.LVL80:
+ 1032              		.loc 1 687 12 view .LVU311
+ 1033 000c 80B2     		uxth	r0, r0
+ 1034              	.LVL81:
+ 688:./lib/src/at32f4xx_spi.c ****   }
+ 689:./lib/src/at32f4xx_spi.c **** 
+ 690:./lib/src/at32f4xx_spi.c ****   /* Return the selected CRC register */
+ 691:./lib/src/at32f4xx_spi.c ****   return crcreg;
+ 1035              		.loc 1 691 3 is_stmt 1 view .LVU312
+ 692:./lib/src/at32f4xx_spi.c **** }
+ 1036              		.loc 1 692 1 is_stmt 0 view .LVU313
+ 1037 000e 7047     		bx	lr
+ 1038              		.cfi_endproc
+ 1039              	.LFE139:
+ 1041              		.section	.text.SPI_GetCRCPolynomial,"ax",%progbits
+ 1042              		.align	1
+ 1043              		.global	SPI_GetCRCPolynomial
+ 1044              		.syntax unified
+ 1045              		.thumb
+ 1046              		.thumb_func
+ 1047              		.fpu fpv4-sp-d16
+ 1049              	SPI_GetCRCPolynomial:
+ 1050              	.LVL82:
+ 1051              	.LFB140:
+ 693:./lib/src/at32f4xx_spi.c **** 
+ 694:./lib/src/at32f4xx_spi.c **** /**
+ 695:./lib/src/at32f4xx_spi.c ****   * @brief  Returns the CRC Polynomial register value for the specified SPI.
+ 696:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 697:./lib/src/at32f4xx_spi.c ****   * @retval The CRC Polynomial register value.
+ 698:./lib/src/at32f4xx_spi.c ****   */
+ 699:./lib/src/at32f4xx_spi.c **** uint16_t SPI_GetCRCPolynomial(SPI_Type* SPIx)
+ 700:./lib/src/at32f4xx_spi.c **** {
+ 1052              		.loc 1 700 1 is_stmt 1 view -0
+ 1053              		.cfi_startproc
+ 1054              		@ args = 0, pretend = 0, frame = 0
+ 1055              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1056              		@ link register save eliminated.
+ 701:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 702:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1057              		.loc 1 702 3 view .LVU315
+ 703:./lib/src/at32f4xx_spi.c **** 
+ 704:./lib/src/at32f4xx_spi.c ****   /* Return the CRC polynomial register */
+ 705:./lib/src/at32f4xx_spi.c ****   return SPIx->CPOLY;
+ 1058              		.loc 1 705 3 view .LVU316
+ 1059              		.loc 1 705 14 is_stmt 0 view .LVU317
+ 1060 0000 008A     		ldrh	r0, [r0, #16]
+ 1061              	.LVL83:
+ 706:./lib/src/at32f4xx_spi.c **** }
+ 1062              		.loc 1 706 1 view .LVU318
+ 1063 0002 80B2     		uxth	r0, r0
+ 1064 0004 7047     		bx	lr
+ 1065              		.cfi_endproc
+ 1066              	.LFE140:
+ 1068              		.section	.text.SPI_HalfDuplexTransModeConfig,"ax",%progbits
+ 1069              		.align	1
+ARM GAS  /tmp/cctmoqFu.s 			page 32
+
+
+ 1070              		.global	SPI_HalfDuplexTransModeConfig
+ 1071              		.syntax unified
+ 1072              		.thumb
+ 1073              		.thumb_func
+ 1074              		.fpu fpv4-sp-d16
+ 1076              	SPI_HalfDuplexTransModeConfig:
+ 1077              	.LVL84:
+ 1078              	.LFB141:
+ 707:./lib/src/at32f4xx_spi.c **** 
+ 708:./lib/src/at32f4xx_spi.c **** /**
+ 709:./lib/src/at32f4xx_spi.c ****   * @brief  Selects the data transfer direction in bi-directional mode for the specified SPI.
+ 710:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be 1, 2, 3 or 4 to select the SPI peripheral.
+ 711:./lib/src/at32f4xx_spi.c ****   * @param  SPI_Direction: specifies the data transfer direction in bi-directional mode.
+ 712:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 713:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_HALFDUPLEX_TX: Selects Tx transmission direction
+ 714:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_HALFDUPLEX_RX: Selects Rx receive direction
+ 715:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 716:./lib/src/at32f4xx_spi.c ****   */
+ 717:./lib/src/at32f4xx_spi.c **** void SPI_HalfDuplexTransModeConfig(SPI_Type* SPIx, uint16_t SPI_Direction)
+ 718:./lib/src/at32f4xx_spi.c **** {
+ 1079              		.loc 1 718 1 is_stmt 1 view -0
+ 1080              		.cfi_startproc
+ 1081              		@ args = 0, pretend = 0, frame = 0
+ 1082              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1083              		@ link register save eliminated.
+ 719:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 720:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1084              		.loc 1 720 3 view .LVU320
+ 721:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_DIRECTION(SPI_Direction));
+ 1085              		.loc 1 721 3 view .LVU321
+ 722:./lib/src/at32f4xx_spi.c **** 
+ 723:./lib/src/at32f4xx_spi.c ****   if (SPI_Direction == SPI_HALFDUPLEX_TX)
+ 1086              		.loc 1 723 3 view .LVU322
+ 1087              		.loc 1 723 6 is_stmt 0 view .LVU323
+ 1088 0000 B1F5804F 		cmp	r1, #16384
+ 1089 0004 06D0     		beq	.L61
+ 724:./lib/src/at32f4xx_spi.c ****   {
+ 725:./lib/src/at32f4xx_spi.c ****     /* Set the Tx only mode */
+ 726:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 |= SPI_HALFDUPLEX_TX;
+ 727:./lib/src/at32f4xx_spi.c ****   }
+ 728:./lib/src/at32f4xx_spi.c ****   else
+ 729:./lib/src/at32f4xx_spi.c ****   {
+ 730:./lib/src/at32f4xx_spi.c ****     /* Set the Rx only mode */
+ 731:./lib/src/at32f4xx_spi.c ****     SPIx->CTRL1 &= SPI_HALFDUPLEX_RX;
+ 1090              		.loc 1 731 5 is_stmt 1 view .LVU324
+ 1091              		.loc 1 731 17 is_stmt 0 view .LVU325
+ 1092 0006 0388     		ldrh	r3, [r0]
+ 1093 0008 9BB2     		uxth	r3, r3
+ 1094 000a 23F48043 		bic	r3, r3, #16384
+ 1095 000e 9BB2     		uxth	r3, r3
+ 1096 0010 0380     		strh	r3, [r0]	@ movhi
+ 732:./lib/src/at32f4xx_spi.c ****   }
+ 733:./lib/src/at32f4xx_spi.c **** }
+ 1097              		.loc 1 733 1 view .LVU326
+ 1098 0012 7047     		bx	lr
+ 1099              	.L61:
+ 726:./lib/src/at32f4xx_spi.c ****   }
+ARM GAS  /tmp/cctmoqFu.s 			page 33
+
+
+ 1100              		.loc 1 726 5 is_stmt 1 view .LVU327
+ 726:./lib/src/at32f4xx_spi.c ****   }
+ 1101              		.loc 1 726 17 is_stmt 0 view .LVU328
+ 1102 0014 0388     		ldrh	r3, [r0]
+ 1103 0016 9BB2     		uxth	r3, r3
+ 1104 0018 43F48043 		orr	r3, r3, #16384
+ 1105 001c 0380     		strh	r3, [r0]	@ movhi
+ 1106 001e 7047     		bx	lr
+ 1107              		.cfi_endproc
+ 1108              	.LFE141:
+ 1110              		.section	.text.SPI_I2S_GetFlagStatus,"ax",%progbits
+ 1111              		.align	1
+ 1112              		.global	SPI_I2S_GetFlagStatus
+ 1113              		.syntax unified
+ 1114              		.thumb
+ 1115              		.thumb_func
+ 1116              		.fpu fpv4-sp-d16
+ 1118              	SPI_I2S_GetFlagStatus:
+ 1119              	.LVL85:
+ 1120              	.LFB142:
+ 734:./lib/src/at32f4xx_spi.c **** 
+ 735:./lib/src/at32f4xx_spi.c **** /**
+ 736:./lib/src/at32f4xx_spi.c ****   * @brief  Checks whether the specified SPI/I2S flag is set or not.
+ 737:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 738:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 739:./lib/src/at32f4xx_spi.c ****   *   - 2, 3, or 4 in I2S mode
+ 740:./lib/src/at32f4xx_spi.c ****   * @param  SPI_I2S_FLAG: specifies the SPI/I2S flag to check.
+ 741:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 742:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_FLAG_TE: Transmit buffer empty flag.
+ 743:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_FLAG_RNE: Receive buffer not empty flag.
+ 744:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_FLAG_BUSY: Busy flag.
+ 745:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_FLAG_OVR: Overrun flag.
+ 746:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_FLAG_MODF: Mode Fault flag.
+ 747:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_FLAG_CERR: CRC Error flag.
+ 748:./lib/src/at32f4xx_spi.c ****   *     @arg I2S_FLAG_UDR: Underrun Error flag.
+ 749:./lib/src/at32f4xx_spi.c ****   *     @arg I2S_FLAG_CS: Channel Side flag.
+ 750:./lib/src/at32f4xx_spi.c ****   * @retval The new state of SPI_I2S_FLAG (SET or RESET).
+ 751:./lib/src/at32f4xx_spi.c ****   */
+ 752:./lib/src/at32f4xx_spi.c **** FlagStatus SPI_I2S_GetFlagStatus(SPI_Type* SPIx, uint16_t SPI_I2S_FLAG)
+ 753:./lib/src/at32f4xx_spi.c **** {
+ 1121              		.loc 1 753 1 is_stmt 1 view -0
+ 1122              		.cfi_startproc
+ 1123              		@ args = 0, pretend = 0, frame = 0
+ 1124              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1125              		@ link register save eliminated.
+ 754:./lib/src/at32f4xx_spi.c ****   FlagStatus bitstatus = RESET;
+ 1126              		.loc 1 754 3 view .LVU330
+ 755:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 756:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1127              		.loc 1 756 3 view .LVU331
+ 757:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_GET_FLAG(SPI_I2S_FLAG));
+ 1128              		.loc 1 757 3 view .LVU332
+ 758:./lib/src/at32f4xx_spi.c **** 
+ 759:./lib/src/at32f4xx_spi.c ****   /* Check the status of the specified SPI/I2S flag */
+ 760:./lib/src/at32f4xx_spi.c ****   if ((SPIx->STS & SPI_I2S_FLAG) != (uint16_t)RESET)
+ 1129              		.loc 1 760 3 view .LVU333
+ 1130              		.loc 1 760 12 is_stmt 0 view .LVU334
+ARM GAS  /tmp/cctmoqFu.s 			page 34
+
+
+ 1131 0000 0389     		ldrh	r3, [r0, #8]
+ 1132              		.loc 1 760 6 view .LVU335
+ 1133 0002 1942     		tst	r1, r3
+ 1134 0004 01D0     		beq	.L64
+ 761:./lib/src/at32f4xx_spi.c ****   {
+ 762:./lib/src/at32f4xx_spi.c ****     /* SPI_I2S_FLAG is set */
+ 763:./lib/src/at32f4xx_spi.c ****     bitstatus = SET;
+ 1135              		.loc 1 763 15 view .LVU336
+ 1136 0006 0120     		movs	r0, #1
+ 1137              	.LVL86:
+ 1138              		.loc 1 763 15 view .LVU337
+ 1139 0008 7047     		bx	lr
+ 1140              	.LVL87:
+ 1141              	.L64:
+ 764:./lib/src/at32f4xx_spi.c ****   }
+ 765:./lib/src/at32f4xx_spi.c ****   else
+ 766:./lib/src/at32f4xx_spi.c ****   {
+ 767:./lib/src/at32f4xx_spi.c ****     /* SPI_I2S_FLAG is reset */
+ 768:./lib/src/at32f4xx_spi.c ****     bitstatus = RESET;
+ 1142              		.loc 1 768 15 view .LVU338
+ 1143 000a 0020     		movs	r0, #0
+ 1144              	.LVL88:
+ 769:./lib/src/at32f4xx_spi.c ****   }
+ 770:./lib/src/at32f4xx_spi.c **** 
+ 771:./lib/src/at32f4xx_spi.c ****   /* Return the SPI_I2S_FLAG status */
+ 772:./lib/src/at32f4xx_spi.c ****   return  bitstatus;
+ 1145              		.loc 1 772 3 is_stmt 1 view .LVU339
+ 773:./lib/src/at32f4xx_spi.c **** }
+ 1146              		.loc 1 773 1 is_stmt 0 view .LVU340
+ 1147 000c 7047     		bx	lr
+ 1148              		.cfi_endproc
+ 1149              	.LFE142:
+ 1151              		.section	.text.SPI_I2S_ClearFlag,"ax",%progbits
+ 1152              		.align	1
+ 1153              		.global	SPI_I2S_ClearFlag
+ 1154              		.syntax unified
+ 1155              		.thumb
+ 1156              		.thumb_func
+ 1157              		.fpu fpv4-sp-d16
+ 1159              	SPI_I2S_ClearFlag:
+ 1160              	.LVL89:
+ 1161              	.LFB143:
+ 774:./lib/src/at32f4xx_spi.c **** 
+ 775:./lib/src/at32f4xx_spi.c **** /**
+ 776:./lib/src/at32f4xx_spi.c ****   * @brief  Clears the SPIx CRC Error (CRCERR) flag.
+ 777:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 778:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 779:./lib/src/at32f4xx_spi.c ****   * @param  SPI_I2S_FLAG: specifies the SPI flag to clear.
+ 780:./lib/src/at32f4xx_spi.c ****   *   This function clears only CRCERR flag.
+ 781:./lib/src/at32f4xx_spi.c ****   * @note
+ 782:./lib/src/at32f4xx_spi.c ****   *   - OVR (OverRun error) flag is cleared by software sequence: a read
+ 783:./lib/src/at32f4xx_spi.c ****   *     operation to SPI_DT register (SPI_I2S_RxData()) followed by a read
+ 784:./lib/src/at32f4xx_spi.c ****   *     operation to SPI_STS register (SPI_I2S_GetFlagStatus()).
+ 785:./lib/src/at32f4xx_spi.c ****   *   - UDR (UnderRun error) flag is cleared by a read operation to
+ 786:./lib/src/at32f4xx_spi.c ****   *     SPI_STS register (SPI_I2S_GetFlagStatus()).
+ 787:./lib/src/at32f4xx_spi.c ****   *   - MODF (Mode Fault) flag is cleared by software sequence: a read/write
+ 788:./lib/src/at32f4xx_spi.c ****   *     operation to SPI_STS register (SPI_I2S_GetFlagStatus()) followed by a
+ARM GAS  /tmp/cctmoqFu.s 			page 35
+
+
+ 789:./lib/src/at32f4xx_spi.c ****   *     write operation to SPI_CTRL1 register (SPI_Enable() to enable the SPI).
+ 790:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 791:./lib/src/at32f4xx_spi.c ****   */
+ 792:./lib/src/at32f4xx_spi.c **** void SPI_I2S_ClearFlag(SPI_Type* SPIx, uint16_t SPI_I2S_FLAG)
+ 793:./lib/src/at32f4xx_spi.c **** {
+ 1162              		.loc 1 793 1 is_stmt 1 view -0
+ 1163              		.cfi_startproc
+ 1164              		@ args = 0, pretend = 0, frame = 0
+ 1165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1166              		@ link register save eliminated.
+ 794:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 795:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1167              		.loc 1 795 3 view .LVU342
+ 796:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_CLEAR_FLAG(SPI_I2S_FLAG));
+ 1168              		.loc 1 796 3 view .LVU343
+ 797:./lib/src/at32f4xx_spi.c **** 
+ 798:./lib/src/at32f4xx_spi.c ****   /* Clear the selected SPI CRC Error (CRCERR) flag */
+ 799:./lib/src/at32f4xx_spi.c ****   SPIx->STS = (uint16_t)~SPI_I2S_FLAG;
+ 1169              		.loc 1 799 3 view .LVU344
+ 1170              		.loc 1 799 15 is_stmt 0 view .LVU345
+ 1171 0000 C943     		mvns	r1, r1
+ 1172              	.LVL90:
+ 1173              		.loc 1 799 15 view .LVU346
+ 1174 0002 89B2     		uxth	r1, r1
+ 1175              		.loc 1 799 13 view .LVU347
+ 1176 0004 0181     		strh	r1, [r0, #8]	@ movhi
+ 800:./lib/src/at32f4xx_spi.c **** }
+ 1177              		.loc 1 800 1 view .LVU348
+ 1178 0006 7047     		bx	lr
+ 1179              		.cfi_endproc
+ 1180              	.LFE143:
+ 1182              		.section	.text.SPI_I2S_GetITStatus,"ax",%progbits
+ 1183              		.align	1
+ 1184              		.global	SPI_I2S_GetITStatus
+ 1185              		.syntax unified
+ 1186              		.thumb
+ 1187              		.thumb_func
+ 1188              		.fpu fpv4-sp-d16
+ 1190              	SPI_I2S_GetITStatus:
+ 1191              	.LVL91:
+ 1192              	.LFB144:
+ 801:./lib/src/at32f4xx_spi.c **** 
+ 802:./lib/src/at32f4xx_spi.c **** /**
+ 803:./lib/src/at32f4xx_spi.c ****   * @brief  Checks whether the specified SPI/I2S interrupt has occurred or not.
+ 804:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 805:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ 806:./lib/src/at32f4xx_spi.c ****   *   - 2, 3, or 4 in I2S mode
+ 807:./lib/src/at32f4xx_spi.c ****   * @param  SPI_I2S_INT: specifies the SPI/I2S interrupt source to check.
+ 808:./lib/src/at32f4xx_spi.c ****   *   This parameter can be one of the following values:
+ 809:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_INT_TE: Transmit buffer empty interrupt.
+ 810:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_INT_RNE: Receive buffer not empty interrupt.
+ 811:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_I2S_INT_OVR: Overrun interrupt.
+ 812:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_INT_MODF: Mode Fault interrupt.
+ 813:./lib/src/at32f4xx_spi.c ****   *     @arg SPI_INT_CERR: CRC Error interrupt.
+ 814:./lib/src/at32f4xx_spi.c ****   *     @arg I2S_INT_UDR: Underrun Error interrupt.
+ 815:./lib/src/at32f4xx_spi.c ****   * @retval The new state of SPI_I2S_INT (SET or RESET).
+ 816:./lib/src/at32f4xx_spi.c ****   */
+ARM GAS  /tmp/cctmoqFu.s 			page 36
+
+
+ 817:./lib/src/at32f4xx_spi.c **** ITStatus SPI_I2S_GetITStatus(SPI_Type* SPIx, uint8_t SPI_I2S_INT)
+ 818:./lib/src/at32f4xx_spi.c **** {
+ 1193              		.loc 1 818 1 is_stmt 1 view -0
+ 1194              		.cfi_startproc
+ 1195              		@ args = 0, pretend = 0, frame = 0
+ 1196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1197              		@ link register save eliminated.
+ 819:./lib/src/at32f4xx_spi.c ****   ITStatus bitstatus = RESET;
+ 1198              		.loc 1 819 3 view .LVU350
+ 820:./lib/src/at32f4xx_spi.c ****   uint16_t itpos = 0, itmask = 0, enablestatus = 0;
+ 1199              		.loc 1 820 3 view .LVU351
+ 821:./lib/src/at32f4xx_spi.c **** 
+ 822:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 823:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1200              		.loc 1 823 3 view .LVU352
+ 824:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_GET_INT(SPI_I2S_INT));
+ 1201              		.loc 1 824 3 view .LVU353
+ 825:./lib/src/at32f4xx_spi.c **** 
+ 826:./lib/src/at32f4xx_spi.c ****   /* Get the SPI/I2S INT index */
+ 827:./lib/src/at32f4xx_spi.c ****   itpos = 0x01 << (SPI_I2S_INT & 0x0F);
+ 1202              		.loc 1 827 3 view .LVU354
+ 1203              		.loc 1 827 32 is_stmt 0 view .LVU355
+ 1204 0000 01F00F02 		and	r2, r1, #15
+ 1205              		.loc 1 827 16 view .LVU356
+ 1206 0004 0123     		movs	r3, #1
+ 1207 0006 03FA02F2 		lsl	r2, r3, r2
+ 1208              	.LVL92:
+ 828:./lib/src/at32f4xx_spi.c **** 
+ 829:./lib/src/at32f4xx_spi.c ****   /* Get the SPI/I2S INT mask */
+ 830:./lib/src/at32f4xx_spi.c ****   itmask = SPI_I2S_INT >> 4;
+ 1209              		.loc 1 830 3 is_stmt 1 view .LVU357
+ 1210              		.loc 1 830 10 is_stmt 0 view .LVU358
+ 1211 000a 0909     		lsrs	r1, r1, #4
+ 1212              	.LVL93:
+ 831:./lib/src/at32f4xx_spi.c **** 
+ 832:./lib/src/at32f4xx_spi.c ****   /* Set the INT mask */
+ 833:./lib/src/at32f4xx_spi.c ****   itmask = 0x01 << itmask;
+ 1213              		.loc 1 833 3 is_stmt 1 view .LVU359
+ 1214              		.loc 1 833 17 is_stmt 0 view .LVU360
+ 1215 000c 03FA01F1 		lsl	r1, r3, r1
+ 1216              	.LVL94:
+ 834:./lib/src/at32f4xx_spi.c **** 
+ 835:./lib/src/at32f4xx_spi.c ****   /* Get the SPI_I2S_INT enable bit status */
+ 836:./lib/src/at32f4xx_spi.c ****   enablestatus = (SPIx->CTRL2 & itmask) ;
+ 1217              		.loc 1 836 3 is_stmt 1 view .LVU361
+ 1218              		.loc 1 836 23 is_stmt 0 view .LVU362
+ 1219 0010 8388     		ldrh	r3, [r0, #4]
+ 1220 0012 9BB2     		uxth	r3, r3
+ 1221              		.loc 1 836 16 view .LVU363
+ 1222 0014 1940     		ands	r1, r1, r3
+ 1223              	.LVL95:
+ 837:./lib/src/at32f4xx_spi.c **** 
+ 838:./lib/src/at32f4xx_spi.c ****   /* Check the status of the specified SPI/I2S interrupt */
+ 839:./lib/src/at32f4xx_spi.c ****   if (((SPIx->STS & itpos) != (uint16_t)RESET) && enablestatus)
+ 1224              		.loc 1 839 3 is_stmt 1 view .LVU364
+ 1225              		.loc 1 839 13 is_stmt 0 view .LVU365
+ 1226 0016 0389     		ldrh	r3, [r0, #8]
+ARM GAS  /tmp/cctmoqFu.s 			page 37
+
+
+ 1227 0018 9BB2     		uxth	r3, r3
+ 1228              		.loc 1 839 6 view .LVU366
+ 1229 001a 1A42     		tst	r2, r3
+ 1230 001c 02D0     		beq	.L68
+ 1231              		.loc 1 839 48 discriminator 1 view .LVU367
+ 1232 001e 19B9     		cbnz	r1, .L69
+ 840:./lib/src/at32f4xx_spi.c ****   {
+ 841:./lib/src/at32f4xx_spi.c ****     /* SPI_I2S_INT is set */
+ 842:./lib/src/at32f4xx_spi.c ****     bitstatus = SET;
+ 843:./lib/src/at32f4xx_spi.c ****   }
+ 844:./lib/src/at32f4xx_spi.c ****   else
+ 845:./lib/src/at32f4xx_spi.c ****   {
+ 846:./lib/src/at32f4xx_spi.c ****     /* SPI_I2S_INT is reset */
+ 847:./lib/src/at32f4xx_spi.c ****     bitstatus = RESET;
+ 1233              		.loc 1 847 15 view .LVU368
+ 1234 0020 0020     		movs	r0, #0
+ 1235              	.LVL96:
+ 1236              		.loc 1 847 15 view .LVU369
+ 1237 0022 7047     		bx	lr
+ 1238              	.LVL97:
+ 1239              	.L68:
+ 1240              		.loc 1 847 15 view .LVU370
+ 1241 0024 0020     		movs	r0, #0
+ 1242              	.LVL98:
+ 1243              		.loc 1 847 15 view .LVU371
+ 1244 0026 7047     		bx	lr
+ 1245              	.LVL99:
+ 1246              	.L69:
+ 842:./lib/src/at32f4xx_spi.c ****   }
+ 1247              		.loc 1 842 15 view .LVU372
+ 1248 0028 0120     		movs	r0, #1
+ 1249              	.LVL100:
+ 848:./lib/src/at32f4xx_spi.c ****   }
+ 849:./lib/src/at32f4xx_spi.c **** 
+ 850:./lib/src/at32f4xx_spi.c ****   /* Return the SPI_I2S_INT status */
+ 851:./lib/src/at32f4xx_spi.c ****   return bitstatus;
+ 1250              		.loc 1 851 3 is_stmt 1 view .LVU373
+ 852:./lib/src/at32f4xx_spi.c **** }
+ 1251              		.loc 1 852 1 is_stmt 0 view .LVU374
+ 1252 002a 7047     		bx	lr
+ 1253              		.cfi_endproc
+ 1254              	.LFE144:
+ 1256              		.section	.text.SPI_I2S_ClearINTPendingBit,"ax",%progbits
+ 1257              		.align	1
+ 1258              		.global	SPI_I2S_ClearINTPendingBit
+ 1259              		.syntax unified
+ 1260              		.thumb
+ 1261              		.thumb_func
+ 1262              		.fpu fpv4-sp-d16
+ 1264              	SPI_I2S_ClearINTPendingBit:
+ 1265              	.LVL101:
+ 1266              	.LFB145:
+ 853:./lib/src/at32f4xx_spi.c **** 
+ 854:./lib/src/at32f4xx_spi.c **** /**
+ 855:./lib/src/at32f4xx_spi.c ****   * @brief  Clears the SPIx CRC Error (CRCERR) interrupt pending bit.
+ 856:./lib/src/at32f4xx_spi.c ****   * @param  SPIx: where x can be
+ 857:./lib/src/at32f4xx_spi.c ****   *   - 1, 2, 3, or 4 in SPI mode
+ARM GAS  /tmp/cctmoqFu.s 			page 38
+
+
+ 858:./lib/src/at32f4xx_spi.c ****   * @param  SPI_I2S_INT: specifies the SPI interrupt pending bit to clear.
+ 859:./lib/src/at32f4xx_spi.c ****   *   This function clears only CRCERR interrupt pending bit.
+ 860:./lib/src/at32f4xx_spi.c ****   * @note
+ 861:./lib/src/at32f4xx_spi.c ****   *   - OVR (OverRun Error) interrupt pending bit is cleared by software
+ 862:./lib/src/at32f4xx_spi.c ****   *     sequence: a read operation to SPI_DT register (SPI_I2S_RxData())
+ 863:./lib/src/at32f4xx_spi.c ****   *     followed by a read operation to SPI_STS register (SPI_I2S_GetITStatus()).
+ 864:./lib/src/at32f4xx_spi.c ****   *   - UDR (UnderRun Error) interrupt pending bit is cleared by a read
+ 865:./lib/src/at32f4xx_spi.c ****   *     operation to SPI_STS register (SPI_I2S_GetITStatus()).
+ 866:./lib/src/at32f4xx_spi.c ****   *   - MODF (Mode Fault) interrupt pending bit is cleared by software sequence:
+ 867:./lib/src/at32f4xx_spi.c ****   *     a read/write operation to SPI_STS register (SPI_I2S_GetITStatus())
+ 868:./lib/src/at32f4xx_spi.c ****   *     followed by a write operation to SPI_CTRL1 register (SPI_Enable() to enable
+ 869:./lib/src/at32f4xx_spi.c ****   *     the SPI).
+ 870:./lib/src/at32f4xx_spi.c ****   * @retval None
+ 871:./lib/src/at32f4xx_spi.c ****   */
+ 872:./lib/src/at32f4xx_spi.c **** void SPI_I2S_ClearINTPendingBit(SPI_Type* SPIx, uint8_t SPI_I2S_INT)
+ 873:./lib/src/at32f4xx_spi.c **** {
+ 1267              		.loc 1 873 1 is_stmt 1 view -0
+ 1268              		.cfi_startproc
+ 1269              		@ args = 0, pretend = 0, frame = 0
+ 1270              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1271              		@ link register save eliminated.
+ 874:./lib/src/at32f4xx_spi.c ****   uint16_t itpos = 0;
+ 1272              		.loc 1 874 3 view .LVU376
+ 875:./lib/src/at32f4xx_spi.c ****   /* Check the parameters */
+ 876:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_ALL_PERIPH(SPIx));
+ 1273              		.loc 1 876 3 view .LVU377
+ 877:./lib/src/at32f4xx_spi.c ****   assert_param(IS_SPI_I2S_CLEAR_INT(SPI_I2S_INT));
+ 1274              		.loc 1 877 3 view .LVU378
+ 878:./lib/src/at32f4xx_spi.c **** 
+ 879:./lib/src/at32f4xx_spi.c ****   /* Get the SPI INT index */
+ 880:./lib/src/at32f4xx_spi.c ****   itpos = 0x01 << (SPI_I2S_INT & 0x0F);
+ 1275              		.loc 1 880 3 view .LVU379
+ 1276              		.loc 1 880 32 is_stmt 0 view .LVU380
+ 1277 0000 01F00F01 		and	r1, r1, #15
+ 1278              	.LVL102:
+ 1279              		.loc 1 880 16 view .LVU381
+ 1280 0004 0123     		movs	r3, #1
+ 1281 0006 8B40     		lsls	r3, r3, r1
+ 1282              		.loc 1 880 9 view .LVU382
+ 1283 0008 9BB2     		uxth	r3, r3
+ 1284              	.LVL103:
+ 881:./lib/src/at32f4xx_spi.c **** 
+ 882:./lib/src/at32f4xx_spi.c ****   /* Clear the selected SPI CRC Error (CRCERR) interrupt pending bit */
+ 883:./lib/src/at32f4xx_spi.c ****   SPIx->STS = (uint16_t)~itpos;
+ 1285              		.loc 1 883 3 is_stmt 1 view .LVU383
+ 1286              		.loc 1 883 15 is_stmt 0 view .LVU384
+ 1287 000a DB43     		mvns	r3, r3
+ 1288              	.LVL104:
+ 1289              		.loc 1 883 15 view .LVU385
+ 1290 000c 9BB2     		uxth	r3, r3
+ 1291              	.LVL105:
+ 1292              		.loc 1 883 13 view .LVU386
+ 1293 000e 0381     		strh	r3, [r0, #8]	@ movhi
+ 884:./lib/src/at32f4xx_spi.c **** }
+ 1294              		.loc 1 884 1 view .LVU387
+ 1295 0010 7047     		bx	lr
+ 1296              		.cfi_endproc
+ARM GAS  /tmp/cctmoqFu.s 			page 39
+
+
+ 1297              	.LFE145:
+ 1299              		.text
+ 1300              	.Letext0:
+ 1301              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 1302              		.file 3 "CMSIS/at32f4xx.h"
+ 1303              		.file 4 "lib/inc/at32f4xx_rcc.h"
+ 1304              		.file 5 "lib/inc/at32f4xx_spi.h"
+ARM GAS  /tmp/cctmoqFu.s 			page 40
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 at32f4xx_spi.c
+     /tmp/cctmoqFu.s:18     .text.SPI_I2S_Reset:0000000000000000 $t
+     /tmp/cctmoqFu.s:26     .text.SPI_I2S_Reset:0000000000000000 SPI_I2S_Reset
+     /tmp/cctmoqFu.s:89     .text.SPI_I2S_Reset:000000000000003c $d
+     /tmp/cctmoqFu.s:95     .text.SPI_Init:0000000000000000 $t
+     /tmp/cctmoqFu.s:102    .text.SPI_Init:0000000000000000 SPI_Init
+     /tmp/cctmoqFu.s:216    .text.I2S_Init:0000000000000000 $t
+     /tmp/cctmoqFu.s:223    .text.I2S_Init:0000000000000000 I2S_Init
+     /tmp/cctmoqFu.s:460    .text.I2S_Init:00000000000000cc $d
+     /tmp/cctmoqFu.s:465    .text.SPI_DefaultInitParaConfig:0000000000000000 $t
+     /tmp/cctmoqFu.s:472    .text.SPI_DefaultInitParaConfig:0000000000000000 SPI_DefaultInitParaConfig
+     /tmp/cctmoqFu.s:515    .text.I2S_DefaultInit:0000000000000000 $t
+     /tmp/cctmoqFu.s:522    .text.I2S_DefaultInit:0000000000000000 I2S_DefaultInit
+     /tmp/cctmoqFu.s:556    .text.SPI_Enable:0000000000000000 $t
+     /tmp/cctmoqFu.s:563    .text.SPI_Enable:0000000000000000 SPI_Enable
+     /tmp/cctmoqFu.s:597    .text.I2S_Enable:0000000000000000 $t
+     /tmp/cctmoqFu.s:604    .text.I2S_Enable:0000000000000000 I2S_Enable
+     /tmp/cctmoqFu.s:638    .text.SPI_I2S_INTConfig:0000000000000000 $t
+     /tmp/cctmoqFu.s:645    .text.SPI_I2S_INTConfig:0000000000000000 SPI_I2S_INTConfig
+     /tmp/cctmoqFu.s:705    .text.SPI_I2S_DMAEnable:0000000000000000 $t
+     /tmp/cctmoqFu.s:712    .text.SPI_I2S_DMAEnable:0000000000000000 SPI_I2S_DMAEnable
+     /tmp/cctmoqFu.s:754    .text.SPI_I2S_TxData:0000000000000000 $t
+     /tmp/cctmoqFu.s:761    .text.SPI_I2S_TxData:0000000000000000 SPI_I2S_TxData
+     /tmp/cctmoqFu.s:779    .text.SPI_I2S_RxData:0000000000000000 $t
+     /tmp/cctmoqFu.s:786    .text.SPI_I2S_RxData:0000000000000000 SPI_I2S_RxData
+     /tmp/cctmoqFu.s:806    .text.SPI_NSSInternalSoftwareConfig:0000000000000000 $t
+     /tmp/cctmoqFu.s:813    .text.SPI_NSSInternalSoftwareConfig:0000000000000000 SPI_NSSInternalSoftwareConfig
+     /tmp/cctmoqFu.s:849    .text.SPI_NSSHardwareOutputEnable:0000000000000000 $t
+     /tmp/cctmoqFu.s:856    .text.SPI_NSSHardwareOutputEnable:0000000000000000 SPI_NSSHardwareOutputEnable
+     /tmp/cctmoqFu.s:890    .text.SPI_FrameSizeConfig:0000000000000000 $t
+     /tmp/cctmoqFu.s:897    .text.SPI_FrameSizeConfig:0000000000000000 SPI_FrameSizeConfig
+     /tmp/cctmoqFu.s:926    .text.SPI_TxCRC:0000000000000000 $t
+     /tmp/cctmoqFu.s:933    .text.SPI_TxCRC:0000000000000000 SPI_TxCRC
+     /tmp/cctmoqFu.s:954    .text.SPI_CRCEN:0000000000000000 $t
+     /tmp/cctmoqFu.s:961    .text.SPI_CRCEN:0000000000000000 SPI_CRCEN
+     /tmp/cctmoqFu.s:995    .text.SPI_GetCRC:0000000000000000 $t
+     /tmp/cctmoqFu.s:1002   .text.SPI_GetCRC:0000000000000000 SPI_GetCRC
+     /tmp/cctmoqFu.s:1042   .text.SPI_GetCRCPolynomial:0000000000000000 $t
+     /tmp/cctmoqFu.s:1049   .text.SPI_GetCRCPolynomial:0000000000000000 SPI_GetCRCPolynomial
+     /tmp/cctmoqFu.s:1069   .text.SPI_HalfDuplexTransModeConfig:0000000000000000 $t
+     /tmp/cctmoqFu.s:1076   .text.SPI_HalfDuplexTransModeConfig:0000000000000000 SPI_HalfDuplexTransModeConfig
+     /tmp/cctmoqFu.s:1111   .text.SPI_I2S_GetFlagStatus:0000000000000000 $t
+     /tmp/cctmoqFu.s:1118   .text.SPI_I2S_GetFlagStatus:0000000000000000 SPI_I2S_GetFlagStatus
+     /tmp/cctmoqFu.s:1152   .text.SPI_I2S_ClearFlag:0000000000000000 $t
+     /tmp/cctmoqFu.s:1159   .text.SPI_I2S_ClearFlag:0000000000000000 SPI_I2S_ClearFlag
+     /tmp/cctmoqFu.s:1183   .text.SPI_I2S_GetITStatus:0000000000000000 $t
+     /tmp/cctmoqFu.s:1190   .text.SPI_I2S_GetITStatus:0000000000000000 SPI_I2S_GetITStatus
+     /tmp/cctmoqFu.s:1257   .text.SPI_I2S_ClearINTPendingBit:0000000000000000 $t
+     /tmp/cctmoqFu.s:1264   .text.SPI_I2S_ClearINTPendingBit:0000000000000000 SPI_I2S_ClearINTPendingBit
+
+UNDEFINED SYMBOLS
+RCC_APB2PeriphResetCmd
+RCC_APB1PeriphResetCmd
+RCC_GetClocksFreq

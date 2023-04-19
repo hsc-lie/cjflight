@@ -1,0 +1,388 @@
+ARM GAS  /tmp/ccCSPGXe.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"dma_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.DMA_ConfigInitAll,"ax",%progbits
+  18              		.align	1
+  19              		.global	DMA_ConfigInitAll
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	DMA_ConfigInitAll:
+  27              	.LFB123:
+  28              		.file 1 "./hardware/dma/dma_config.c"
+   1:./hardware/dma/dma_config.c **** #include "dma_config.h"
+   2:./hardware/dma/dma_config.c **** 
+   3:./hardware/dma/dma_config.c **** #include "at32f4xx.h"
+   4:./hardware/dma/dma_config.c **** 
+   5:./hardware/dma/dma_config.c **** 
+   6:./hardware/dma/dma_config.c **** #include "usart_config.h"
+   7:./hardware/dma/dma_config.c **** 
+   8:./hardware/dma/dma_config.c **** 
+   9:./hardware/dma/dma_config.c **** uint8_t DMA_USARTRXBuffer[DMA_USART2_RX_BUFFER_SIZE];
+  10:./hardware/dma/dma_config.c **** 
+  11:./hardware/dma/dma_config.c **** 
+  12:./hardware/dma/dma_config.c **** void DMA_ConfigInitAll()
+  13:./hardware/dma/dma_config.c **** {
+  29              		.loc 1 13 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 48
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 30B5     		push	{r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 12
+  36              		.cfi_offset 4, -12
+  37              		.cfi_offset 5, -8
+  38              		.cfi_offset 14, -4
+  39 0002 8DB0     		sub	sp, sp, #52
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 64
+  14:./hardware/dma/dma_config.c **** 	DMA_InitType DMA_InitStruct;
+  42              		.loc 1 14 2 view .LVU1
+  15:./hardware/dma/dma_config.c **** 	NVIC_InitType NVIC_InitStructure;
+  43              		.loc 1 15 2 view .LVU2
+ARM GAS  /tmp/ccCSPGXe.s 			page 2
+
+
+  16:./hardware/dma/dma_config.c ****  
+  17:./hardware/dma/dma_config.c ****   	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)&USART2->DT;
+  44              		.loc 1 17 4 view .LVU3
+  45              		.loc 1 17 42 is_stmt 0 view .LVU4
+  46 0004 1A4B     		ldr	r3, .L3
+  47 0006 0193     		str	r3, [sp, #4]
+  18:./hardware/dma/dma_config.c ****   	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t)&DMA_USARTRXBuffer;
+  48              		.loc 1 18 4 is_stmt 1 view .LVU5
+  49              		.loc 1 18 40 is_stmt 0 view .LVU6
+  50 0008 1A4B     		ldr	r3, .L3+4
+  51              		.loc 1 18 38 view .LVU7
+  52 000a 0293     		str	r3, [sp, #8]
+  19:./hardware/dma/dma_config.c ****   	DMA_InitStruct.DMA_Direction = DMA_DIR_PERIPHERALSRC;
+  53              		.loc 1 19 4 is_stmt 1 view .LVU8
+  54              		.loc 1 19 33 is_stmt 0 view .LVU9
+  55 000c 0024     		movs	r4, #0
+  56 000e 0394     		str	r4, [sp, #12]
+  20:./hardware/dma/dma_config.c ****   	DMA_InitStruct.DMA_BufferSize = DMA_USART2_RX_BUFFER_SIZE;
+  57              		.loc 1 20 4 is_stmt 1 view .LVU10
+  58              		.loc 1 20 34 is_stmt 0 view .LVU11
+  59 0010 2023     		movs	r3, #32
+  60 0012 0493     		str	r3, [sp, #16]
+  21:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_PeripheralInc = DMA_PERIPHERALINC_DISABLE;
+  61              		.loc 1 21 2 is_stmt 1 view .LVU12
+  62              		.loc 1 21 35 is_stmt 0 view .LVU13
+  63 0014 0594     		str	r4, [sp, #20]
+  22:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_MemoryInc = DMA_MEMORYINC_ENABLE;
+  64              		.loc 1 22 2 is_stmt 1 view .LVU14
+  65              		.loc 1 22 31 is_stmt 0 view .LVU15
+  66 0016 8022     		movs	r2, #128
+  67 0018 0692     		str	r2, [sp, #24]
+  23:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_PeripheralDataWidth = DMA_PERIPHERALDATAWIDTH_BYTE;
+  68              		.loc 1 23 2 is_stmt 1 view .LVU16
+  69              		.loc 1 23 41 is_stmt 0 view .LVU17
+  70 001a 0794     		str	r4, [sp, #28]
+  24:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_MemoryDataWidth = DMA_MEMORYDATAWIDTH_BYTE;
+  71              		.loc 1 24 2 is_stmt 1 view .LVU18
+  72              		.loc 1 24 37 is_stmt 0 view .LVU19
+  73 001c 0894     		str	r4, [sp, #32]
+  25:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_Mode = DMA_MODE_CIRCULAR;
+  74              		.loc 1 25 2 is_stmt 1 view .LVU20
+  75              		.loc 1 25 26 is_stmt 0 view .LVU21
+  76 001e 0993     		str	r3, [sp, #36]
+  26:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_Priority = DMA_PRIORITY_VERYHIGH;
+  77              		.loc 1 26 2 is_stmt 1 view .LVU22
+  78              		.loc 1 26 30 is_stmt 0 view .LVU23
+  79 0020 4FF44053 		mov	r3, #12288
+  80 0024 0A93     		str	r3, [sp, #40]
+  27:./hardware/dma/dma_config.c **** 	DMA_InitStruct.DMA_MTOM = DMA_MEMTOMEM_DISABLE;
+  81              		.loc 1 27 2 is_stmt 1 view .LVU24
+  82              		.loc 1 27 26 is_stmt 0 view .LVU25
+  83 0026 0B94     		str	r4, [sp, #44]
+  28:./hardware/dma/dma_config.c **** 
+  29:./hardware/dma/dma_config.c **** 	
+  30:./hardware/dma/dma_config.c ****   	DMA_Init(DMA1_Channel5, &DMA_InitStruct);
+  84              		.loc 1 30 4 is_stmt 1 view .LVU26
+  85 0028 134D     		ldr	r5, .L3+8
+ARM GAS  /tmp/ccCSPGXe.s 			page 3
+
+
+  86 002a 01A9     		add	r1, sp, #4
+  87 002c 2846     		mov	r0, r5
+  88 002e FFF7FEFF 		bl	DMA_Init
+  89              	.LVL0:
+  31:./hardware/dma/dma_config.c **** 
+  32:./hardware/dma/dma_config.c **** 	DMA_INTConfig(DMA1_Channel5, DMA_INT_HT, ENABLE);
+  90              		.loc 1 32 2 view .LVU27
+  91 0032 0122     		movs	r2, #1
+  92 0034 0421     		movs	r1, #4
+  93 0036 2846     		mov	r0, r5
+  94 0038 FFF7FEFF 		bl	DMA_INTConfig
+  95              	.LVL1:
+  33:./hardware/dma/dma_config.c **** 	DMA_INTConfig(DMA1_Channel5, DMA_INT_TC, ENABLE);
+  96              		.loc 1 33 2 view .LVU28
+  97 003c 0122     		movs	r2, #1
+  98 003e 0221     		movs	r1, #2
+  99 0040 2846     		mov	r0, r5
+ 100 0042 FFF7FEFF 		bl	DMA_INTConfig
+ 101              	.LVL2:
+  34:./hardware/dma/dma_config.c **** 	
+  35:./hardware/dma/dma_config.c **** 
+  36:./hardware/dma/dma_config.c **** 	DMA_ChannelEnable(DMA1_Channel5, ENABLE);
+ 102              		.loc 1 36 2 view .LVU29
+ 103 0046 0121     		movs	r1, #1
+ 104 0048 2846     		mov	r0, r5
+ 105 004a FFF7FEFF 		bl	DMA_ChannelEnable
+ 106              	.LVL3:
+  37:./hardware/dma/dma_config.c **** 
+  38:./hardware/dma/dma_config.c **** 
+  39:./hardware/dma/dma_config.c **** 	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel7_4_IRQn;
+ 107              		.loc 1 39 2 view .LVU30
+ 108              		.loc 1 39 37 is_stmt 0 view .LVU31
+ 109 004e 0B23     		movs	r3, #11
+ 110 0050 8DF80030 		strb	r3, [sp]
+  40:./hardware/dma/dma_config.c **** 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 14;
+ 111              		.loc 1 40 2 is_stmt 1 view .LVU32
+ 112              		.loc 1 40 55 is_stmt 0 view .LVU33
+ 113 0054 0E23     		movs	r3, #14
+ 114 0056 8DF80130 		strb	r3, [sp, #1]
+  41:./hardware/dma/dma_config.c **** 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+ 115              		.loc 1 41 2 is_stmt 1 view .LVU34
+ 116              		.loc 1 41 48 is_stmt 0 view .LVU35
+ 117 005a 8DF80240 		strb	r4, [sp, #2]
+  42:./hardware/dma/dma_config.c **** 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 118              		.loc 1 42 2 is_stmt 1 view .LVU36
+ 119              		.loc 1 42 40 is_stmt 0 view .LVU37
+ 120 005e 0123     		movs	r3, #1
+ 121 0060 8DF80330 		strb	r3, [sp, #3]
+  43:./hardware/dma/dma_config.c **** 	NVIC_Init(&NVIC_InitStructure);
+ 122              		.loc 1 43 2 is_stmt 1 view .LVU38
+ 123 0064 6846     		mov	r0, sp
+ 124 0066 FFF7FEFF 		bl	NVIC_Init
+ 125              	.LVL4:
+  44:./hardware/dma/dma_config.c **** }
+ 126              		.loc 1 44 1 is_stmt 0 view .LVU39
+ 127 006a 0DB0     		add	sp, sp, #52
+ 128              	.LCFI2:
+ARM GAS  /tmp/ccCSPGXe.s 			page 4
+
+
+ 129              		.cfi_def_cfa_offset 12
+ 130              		@ sp needed
+ 131 006c 30BD     		pop	{r4, r5, pc}
+ 132              	.L4:
+ 133 006e 00BF     		.align	2
+ 134              	.L3:
+ 135 0070 04440040 		.word	1073759236
+ 136 0074 00000000 		.word	.LANCHOR0
+ 137 0078 58000240 		.word	1073872984
+ 138              		.cfi_endproc
+ 139              	.LFE123:
+ 141              		.section	.text.DMA1_CH5_HT_Transmission,"ax",%progbits
+ 142              		.align	1
+ 143              		.global	DMA1_CH5_HT_Transmission
+ 144              		.syntax unified
+ 145              		.thumb
+ 146              		.thumb_func
+ 147              		.fpu fpv4-sp-d16
+ 149              	DMA1_CH5_HT_Transmission:
+ 150              	.LFB124:
+  45:./hardware/dma/dma_config.c **** 
+  46:./hardware/dma/dma_config.c **** 
+  47:./hardware/dma/dma_config.c **** 
+  48:./hardware/dma/dma_config.c **** void DMA1_CH5_HT_Transmission()
+  49:./hardware/dma/dma_config.c **** {
+ 151              		.loc 1 49 1 is_stmt 1 view -0
+ 152              		.cfi_startproc
+ 153              		@ args = 0, pretend = 0, frame = 0
+ 154              		@ frame_needed = 0, uses_anonymous_args = 0
+ 155 0000 10B5     		push	{r4, lr}
+ 156              	.LCFI3:
+ 157              		.cfi_def_cfa_offset 8
+ 158              		.cfi_offset 4, -8
+ 159              		.cfi_offset 14, -4
+  50:./hardware/dma/dma_config.c **** 	uint32_t i;
+ 160              		.loc 1 50 2 view .LVU41
+  51:./hardware/dma/dma_config.c **** 	uint32_t halfSize = DMA_USART2_RX_BUFFER_SIZE >> 1;
+ 161              		.loc 1 51 2 view .LVU42
+ 162              	.LVL5:
+  52:./hardware/dma/dma_config.c **** 
+  53:./hardware/dma/dma_config.c **** 	for(i = 0;i < halfSize;++i)
+ 163              		.loc 1 53 2 view .LVU43
+ 164              		.loc 1 53 8 is_stmt 0 view .LVU44
+ 165 0002 0024     		movs	r4, #0
+ 166              		.loc 1 53 2 view .LVU45
+ 167 0004 05E0     		b	.L6
+ 168              	.LVL6:
+ 169              	.L7:
+ 170              	.LBB2:
+  54:./hardware/dma/dma_config.c **** 	{
+  55:./hardware/dma/dma_config.c **** 		CircularQueue_WriteByte(&USART2_Queue, DMA_USARTRXBuffer[i]);
+ 171              		.loc 1 55 3 is_stmt 1 discriminator 3 view .LVU46
+ 172 0006 044B     		ldr	r3, .L9
+ 173 0008 195D     		ldrb	r1, [r3, r4]	@ zero_extendqisi2
+ 174 000a 0448     		ldr	r0, .L9+4
+ 175 000c FFF7FEFF 		bl	CircularQueue_WriteByte
+ 176              	.LVL7:
+ARM GAS  /tmp/ccCSPGXe.s 			page 5
+
+
+ 177              	.LBE2:
+  53:./hardware/dma/dma_config.c **** 	{
+ 178              		.loc 1 53 25 discriminator 3 view .LVU47
+ 179 0010 0134     		adds	r4, r4, #1
+ 180              	.LVL8:
+ 181              	.L6:
+  53:./hardware/dma/dma_config.c **** 	{
+ 182              		.loc 1 53 12 discriminator 1 view .LVU48
+  53:./hardware/dma/dma_config.c **** 	{
+ 183              		.loc 1 53 2 is_stmt 0 discriminator 1 view .LVU49
+ 184 0012 0F2C     		cmp	r4, #15
+ 185 0014 F7D9     		bls	.L7
+  56:./hardware/dma/dma_config.c **** 	}
+  57:./hardware/dma/dma_config.c **** 		
+  58:./hardware/dma/dma_config.c **** }
+ 186              		.loc 1 58 1 view .LVU50
+ 187 0016 10BD     		pop	{r4, pc}
+ 188              	.LVL9:
+ 189              	.L10:
+ 190              		.loc 1 58 1 view .LVU51
+ 191              		.align	2
+ 192              	.L9:
+ 193 0018 00000000 		.word	.LANCHOR0
+ 194 001c 00000000 		.word	USART2_Queue
+ 195              		.cfi_endproc
+ 196              	.LFE124:
+ 198              		.section	.text.DMA1_CH5_TC_Transmission,"ax",%progbits
+ 199              		.align	1
+ 200              		.global	DMA1_CH5_TC_Transmission
+ 201              		.syntax unified
+ 202              		.thumb
+ 203              		.thumb_func
+ 204              		.fpu fpv4-sp-d16
+ 206              	DMA1_CH5_TC_Transmission:
+ 207              	.LFB125:
+  59:./hardware/dma/dma_config.c **** 
+  60:./hardware/dma/dma_config.c **** 
+  61:./hardware/dma/dma_config.c **** void DMA1_CH5_TC_Transmission()
+  62:./hardware/dma/dma_config.c **** {
+ 208              		.loc 1 62 1 is_stmt 1 view -0
+ 209              		.cfi_startproc
+ 210              		@ args = 0, pretend = 0, frame = 0
+ 211              		@ frame_needed = 0, uses_anonymous_args = 0
+ 212 0000 10B5     		push	{r4, lr}
+ 213              	.LCFI4:
+ 214              		.cfi_def_cfa_offset 8
+ 215              		.cfi_offset 4, -8
+ 216              		.cfi_offset 14, -4
+  63:./hardware/dma/dma_config.c **** 	uint32_t i;
+ 217              		.loc 1 63 2 view .LVU53
+  64:./hardware/dma/dma_config.c **** 	uint32_t halfSize = DMA_USART2_RX_BUFFER_SIZE >> 1;
+ 218              		.loc 1 64 2 view .LVU54
+ 219              	.LVL10:
+  65:./hardware/dma/dma_config.c **** 
+  66:./hardware/dma/dma_config.c **** 	for(i = halfSize;i < DMA_USART2_RX_BUFFER_SIZE;++i)
+ 220              		.loc 1 66 2 view .LVU55
+ 221              		.loc 1 66 8 is_stmt 0 view .LVU56
+ARM GAS  /tmp/ccCSPGXe.s 			page 6
+
+
+ 222 0002 1024     		movs	r4, #16
+ 223              		.loc 1 66 2 view .LVU57
+ 224 0004 05E0     		b	.L12
+ 225              	.LVL11:
+ 226              	.L13:
+ 227              	.LBB3:
+  67:./hardware/dma/dma_config.c **** 	{
+  68:./hardware/dma/dma_config.c **** 		CircularQueue_WriteByte(&USART2_Queue, DMA_USARTRXBuffer[i]);
+ 228              		.loc 1 68 3 is_stmt 1 discriminator 3 view .LVU58
+ 229 0006 044B     		ldr	r3, .L15
+ 230 0008 195D     		ldrb	r1, [r3, r4]	@ zero_extendqisi2
+ 231 000a 0448     		ldr	r0, .L15+4
+ 232 000c FFF7FEFF 		bl	CircularQueue_WriteByte
+ 233              	.LVL12:
+ 234              	.LBE3:
+  66:./hardware/dma/dma_config.c **** 	{
+ 235              		.loc 1 66 49 discriminator 3 view .LVU59
+ 236 0010 0134     		adds	r4, r4, #1
+ 237              	.LVL13:
+ 238              	.L12:
+  66:./hardware/dma/dma_config.c **** 	{
+ 239              		.loc 1 66 19 discriminator 1 view .LVU60
+  66:./hardware/dma/dma_config.c **** 	{
+ 240              		.loc 1 66 2 is_stmt 0 discriminator 1 view .LVU61
+ 241 0012 1F2C     		cmp	r4, #31
+ 242 0014 F7D9     		bls	.L13
+  69:./hardware/dma/dma_config.c **** 	}
+  70:./hardware/dma/dma_config.c **** }
+ 243              		.loc 1 70 1 view .LVU62
+ 244 0016 10BD     		pop	{r4, pc}
+ 245              	.LVL14:
+ 246              	.L16:
+ 247              		.loc 1 70 1 view .LVU63
+ 248              		.align	2
+ 249              	.L15:
+ 250 0018 00000000 		.word	.LANCHOR0
+ 251 001c 00000000 		.word	USART2_Queue
+ 252              		.cfi_endproc
+ 253              	.LFE125:
+ 255              		.global	DMA_USARTRXBuffer
+ 256              		.section	.bss.DMA_USARTRXBuffer,"aw",%nobits
+ 257              		.align	2
+ 258              		.set	.LANCHOR0,. + 0
+ 261              	DMA_USARTRXBuffer:
+ 262 0000 00000000 		.space	32
+ 262      00000000 
+ 262      00000000 
+ 262      00000000 
+ 262      00000000 
+ 263              		.text
+ 264              	.Letext0:
+ 265              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 266              		.file 3 "CMSIS/at32f4xx.h"
+ 267              		.file 4 "lib/inc/at32f4xx_dma.h"
+ 268              		.file 5 "lib/inc/misc.h"
+ 269              		.file 6 "common/circular_queue/circular_queue.h"
+ 270              		.file 7 "./hardware/dma/dma_config.h"
+ARM GAS  /tmp/ccCSPGXe.s 			page 7
+
+
+ 271              		.file 8 "hardware/usart/usart_config.h"
+ARM GAS  /tmp/ccCSPGXe.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 dma_config.c
+     /tmp/ccCSPGXe.s:18     .text.DMA_ConfigInitAll:0000000000000000 $t
+     /tmp/ccCSPGXe.s:26     .text.DMA_ConfigInitAll:0000000000000000 DMA_ConfigInitAll
+     /tmp/ccCSPGXe.s:135    .text.DMA_ConfigInitAll:0000000000000070 $d
+     /tmp/ccCSPGXe.s:142    .text.DMA1_CH5_HT_Transmission:0000000000000000 $t
+     /tmp/ccCSPGXe.s:149    .text.DMA1_CH5_HT_Transmission:0000000000000000 DMA1_CH5_HT_Transmission
+     /tmp/ccCSPGXe.s:193    .text.DMA1_CH5_HT_Transmission:0000000000000018 $d
+     /tmp/ccCSPGXe.s:199    .text.DMA1_CH5_TC_Transmission:0000000000000000 $t
+     /tmp/ccCSPGXe.s:206    .text.DMA1_CH5_TC_Transmission:0000000000000000 DMA1_CH5_TC_Transmission
+     /tmp/ccCSPGXe.s:250    .text.DMA1_CH5_TC_Transmission:0000000000000018 $d
+     /tmp/ccCSPGXe.s:261    .bss.DMA_USARTRXBuffer:0000000000000000 DMA_USARTRXBuffer
+     /tmp/ccCSPGXe.s:257    .bss.DMA_USARTRXBuffer:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+DMA_Init
+DMA_INTConfig
+DMA_ChannelEnable
+NVIC_Init
+CircularQueue_WriteByte
+USART2_Queue

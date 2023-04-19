@@ -1,0 +1,247 @@
+ARM GAS  /tmp/cc3YH94p.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"pwm_hal_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.PWM4_HALDutyOut,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	PWM4_HALDutyOut:
+  26              	.LVL0:
+  27              	.LFB126:
+  28              		.file 1 "./hal/pwm/pwm_hal_config.c"
+   1:./hal/pwm/pwm_hal_config.c **** #include "pwm_hal_config.h"
+   2:./hal/pwm/pwm_hal_config.c **** 
+   3:./hal/pwm/pwm_hal_config.c **** 
+   4:./hal/pwm/pwm_hal_config.c **** #include "at32f4xx_tim.h"
+   5:./hal/pwm/pwm_hal_config.c **** 
+   6:./hal/pwm/pwm_hal_config.c **** 
+   7:./hal/pwm/pwm_hal_config.c **** 
+   8:./hal/pwm/pwm_hal_config.c **** static void PWM1_HALDutyOut(uint32_t duty)
+   9:./hal/pwm/pwm_hal_config.c **** {
+  10:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare1(TMR3, duty);
+  11:./hal/pwm/pwm_hal_config.c **** }
+  12:./hal/pwm/pwm_hal_config.c **** 
+  13:./hal/pwm/pwm_hal_config.c **** static void PWM2_HALDutyOut(uint32_t duty)
+  14:./hal/pwm/pwm_hal_config.c **** {
+  15:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare2(TMR3, duty);
+  16:./hal/pwm/pwm_hal_config.c **** }
+  17:./hal/pwm/pwm_hal_config.c **** 
+  18:./hal/pwm/pwm_hal_config.c **** static void PWM3_HALDutyOut(uint32_t duty)
+  19:./hal/pwm/pwm_hal_config.c **** {
+  20:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare3(TMR3, duty);
+  21:./hal/pwm/pwm_hal_config.c **** }
+  22:./hal/pwm/pwm_hal_config.c **** 
+  23:./hal/pwm/pwm_hal_config.c **** static void PWM4_HALDutyOut(uint32_t duty)
+  24:./hal/pwm/pwm_hal_config.c **** {
+  29              		.loc 1 24 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 24 1 is_stmt 0 view .LVU1
+  34 0000 08B5     		push	{r3, lr}
+ARM GAS  /tmp/cc3YH94p.s 			page 2
+
+
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0146     		mov	r1, r0
+  25:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare4(TMR3, duty);
+  40              		.loc 1 25 2 is_stmt 1 view .LVU2
+  41 0004 0148     		ldr	r0, .L3
+  42              	.LVL1:
+  43              		.loc 1 25 2 is_stmt 0 view .LVU3
+  44 0006 FFF7FEFF 		bl	TMR_SetCompare4
+  45              	.LVL2:
+  26:./hal/pwm/pwm_hal_config.c **** }
+  46              		.loc 1 26 1 view .LVU4
+  47 000a 08BD     		pop	{r3, pc}
+  48              	.L4:
+  49              		.align	2
+  50              	.L3:
+  51 000c 00040040 		.word	1073742848
+  52              		.cfi_endproc
+  53              	.LFE126:
+  55              		.section	.text.PWM3_HALDutyOut,"ax",%progbits
+  56              		.align	1
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  60              		.fpu fpv4-sp-d16
+  62              	PWM3_HALDutyOut:
+  63              	.LVL3:
+  64              	.LFB125:
+  19:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare3(TMR3, duty);
+  65              		.loc 1 19 1 is_stmt 1 view -0
+  66              		.cfi_startproc
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  19:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare3(TMR3, duty);
+  69              		.loc 1 19 1 is_stmt 0 view .LVU6
+  70 0000 08B5     		push	{r3, lr}
+  71              	.LCFI1:
+  72              		.cfi_def_cfa_offset 8
+  73              		.cfi_offset 3, -8
+  74              		.cfi_offset 14, -4
+  75 0002 0146     		mov	r1, r0
+  20:./hal/pwm/pwm_hal_config.c **** }
+  76              		.loc 1 20 2 is_stmt 1 view .LVU7
+  77 0004 0148     		ldr	r0, .L7
+  78              	.LVL4:
+  20:./hal/pwm/pwm_hal_config.c **** }
+  79              		.loc 1 20 2 is_stmt 0 view .LVU8
+  80 0006 FFF7FEFF 		bl	TMR_SetCompare3
+  81              	.LVL5:
+  21:./hal/pwm/pwm_hal_config.c **** 
+  82              		.loc 1 21 1 view .LVU9
+  83 000a 08BD     		pop	{r3, pc}
+  84              	.L8:
+  85              		.align	2
+  86              	.L7:
+ARM GAS  /tmp/cc3YH94p.s 			page 3
+
+
+  87 000c 00040040 		.word	1073742848
+  88              		.cfi_endproc
+  89              	.LFE125:
+  91              		.section	.text.PWM2_HALDutyOut,"ax",%progbits
+  92              		.align	1
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  96              		.fpu fpv4-sp-d16
+  98              	PWM2_HALDutyOut:
+  99              	.LVL6:
+ 100              	.LFB124:
+  14:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare2(TMR3, duty);
+ 101              		.loc 1 14 1 is_stmt 1 view -0
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+  14:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare2(TMR3, duty);
+ 105              		.loc 1 14 1 is_stmt 0 view .LVU11
+ 106 0000 08B5     		push	{r3, lr}
+ 107              	.LCFI2:
+ 108              		.cfi_def_cfa_offset 8
+ 109              		.cfi_offset 3, -8
+ 110              		.cfi_offset 14, -4
+ 111 0002 0146     		mov	r1, r0
+  15:./hal/pwm/pwm_hal_config.c **** }
+ 112              		.loc 1 15 2 is_stmt 1 view .LVU12
+ 113 0004 0148     		ldr	r0, .L11
+ 114              	.LVL7:
+  15:./hal/pwm/pwm_hal_config.c **** }
+ 115              		.loc 1 15 2 is_stmt 0 view .LVU13
+ 116 0006 FFF7FEFF 		bl	TMR_SetCompare2
+ 117              	.LVL8:
+  16:./hal/pwm/pwm_hal_config.c **** 
+ 118              		.loc 1 16 1 view .LVU14
+ 119 000a 08BD     		pop	{r3, pc}
+ 120              	.L12:
+ 121              		.align	2
+ 122              	.L11:
+ 123 000c 00040040 		.word	1073742848
+ 124              		.cfi_endproc
+ 125              	.LFE124:
+ 127              		.section	.text.PWM1_HALDutyOut,"ax",%progbits
+ 128              		.align	1
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 132              		.fpu fpv4-sp-d16
+ 134              	PWM1_HALDutyOut:
+ 135              	.LVL9:
+ 136              	.LFB123:
+   9:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare1(TMR3, duty);
+ 137              		.loc 1 9 1 is_stmt 1 view -0
+ 138              		.cfi_startproc
+ 139              		@ args = 0, pretend = 0, frame = 0
+ 140              		@ frame_needed = 0, uses_anonymous_args = 0
+   9:./hal/pwm/pwm_hal_config.c **** 	TMR_SetCompare1(TMR3, duty);
+ARM GAS  /tmp/cc3YH94p.s 			page 4
+
+
+ 141              		.loc 1 9 1 is_stmt 0 view .LVU16
+ 142 0000 08B5     		push	{r3, lr}
+ 143              	.LCFI3:
+ 144              		.cfi_def_cfa_offset 8
+ 145              		.cfi_offset 3, -8
+ 146              		.cfi_offset 14, -4
+ 147 0002 0146     		mov	r1, r0
+  10:./hal/pwm/pwm_hal_config.c **** }
+ 148              		.loc 1 10 2 is_stmt 1 view .LVU17
+ 149 0004 0148     		ldr	r0, .L15
+ 150              	.LVL10:
+  10:./hal/pwm/pwm_hal_config.c **** }
+ 151              		.loc 1 10 2 is_stmt 0 view .LVU18
+ 152 0006 FFF7FEFF 		bl	TMR_SetCompare1
+ 153              	.LVL11:
+  11:./hal/pwm/pwm_hal_config.c **** 
+ 154              		.loc 1 11 1 view .LVU19
+ 155 000a 08BD     		pop	{r3, pc}
+ 156              	.L16:
+ 157              		.align	2
+ 158              	.L15:
+ 159 000c 00040040 		.word	1073742848
+ 160              		.cfi_endproc
+ 161              	.LFE123:
+ 163              		.global	PWM_HAL
+ 164              		.section	.data.PWM_HAL,"aw"
+ 165              		.align	2
+ 168              	PWM_HAL:
+ 169 0000 00000000 		.word	PWM1_HALDutyOut
+ 170 0004 00000000 		.word	PWM2_HALDutyOut
+ 171 0008 00000000 		.word	PWM3_HALDutyOut
+ 172 000c 00000000 		.word	PWM4_HALDutyOut
+ 173              		.text
+ 174              	.Letext0:
+ 175              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 176              		.file 3 "CMSIS/at32f4xx.h"
+ 177              		.file 4 "./hal/pwm/pwm_hal.h"
+ 178              		.file 5 "lib/inc/at32f4xx_tim.h"
+ 179              		.file 6 "./hal/pwm/pwm_hal_config.h"
+ARM GAS  /tmp/cc3YH94p.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 pwm_hal_config.c
+     /tmp/cc3YH94p.s:18     .text.PWM4_HALDutyOut:0000000000000000 $t
+     /tmp/cc3YH94p.s:25     .text.PWM4_HALDutyOut:0000000000000000 PWM4_HALDutyOut
+     /tmp/cc3YH94p.s:51     .text.PWM4_HALDutyOut:000000000000000c $d
+     /tmp/cc3YH94p.s:56     .text.PWM3_HALDutyOut:0000000000000000 $t
+     /tmp/cc3YH94p.s:62     .text.PWM3_HALDutyOut:0000000000000000 PWM3_HALDutyOut
+     /tmp/cc3YH94p.s:87     .text.PWM3_HALDutyOut:000000000000000c $d
+     /tmp/cc3YH94p.s:92     .text.PWM2_HALDutyOut:0000000000000000 $t
+     /tmp/cc3YH94p.s:98     .text.PWM2_HALDutyOut:0000000000000000 PWM2_HALDutyOut
+     /tmp/cc3YH94p.s:123    .text.PWM2_HALDutyOut:000000000000000c $d
+     /tmp/cc3YH94p.s:128    .text.PWM1_HALDutyOut:0000000000000000 $t
+     /tmp/cc3YH94p.s:134    .text.PWM1_HALDutyOut:0000000000000000 PWM1_HALDutyOut
+     /tmp/cc3YH94p.s:159    .text.PWM1_HALDutyOut:000000000000000c $d
+     /tmp/cc3YH94p.s:168    .data.PWM_HAL:0000000000000000 PWM_HAL
+     /tmp/cc3YH94p.s:165    .data.PWM_HAL:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+TMR_SetCompare4
+TMR_SetCompare3
+TMR_SetCompare2
+TMR_SetCompare1

@@ -1,0 +1,234 @@
+ARM GAS  /tmp/ccS38UQT.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"usart_hal_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.USART1_HAL_SendData,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	USART1_HAL_SendData:
+  26              	.LVL0:
+  27              	.LFB123:
+  28              		.file 1 "./hal/usart/usart_hal_config.c"
+   1:./hal/usart/usart_hal_config.c **** #include "usart_hal_config.h"
+   2:./hal/usart/usart_hal_config.c **** 
+   3:./hal/usart/usart_hal_config.c **** #include "usart_config.h"
+   4:./hal/usart/usart_hal_config.c **** #include "circular_queue.h"
+   5:./hal/usart/usart_hal_config.c **** 
+   6:./hal/usart/usart_hal_config.c **** 
+   7:./hal/usart/usart_hal_config.c **** 
+   8:./hal/usart/usart_hal_config.c **** //void (*SendData)(uint8_t data, uint32_t len);
+   9:./hal/usart/usart_hal_config.c **** //void (*ReadData)(uint8_t * data, uint32_t readLen, uint32_t * outLen);
+  10:./hal/usart/usart_hal_config.c **** 
+  11:./hal/usart/usart_hal_config.c **** 
+  12:./hal/usart/usart_hal_config.c **** static void USART1_HAL_SendData(uint8_t * data, uint32_t len)
+  13:./hal/usart/usart_hal_config.c **** {
+  29              		.loc 1 13 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 13 1 is_stmt 0 view .LVU1
+  34 0000 08B5     		push	{r3, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0A46     		mov	r2, r1
+  14:./hal/usart/usart_hal_config.c **** 	USART_TransmissionData(USART1, data, len);
+  40              		.loc 1 14 2 is_stmt 1 view .LVU2
+  41 0004 0146     		mov	r1, r0
+  42              	.LVL1:
+  43              		.loc 1 14 2 is_stmt 0 view .LVU3
+  44 0006 0248     		ldr	r0, .L3
+ARM GAS  /tmp/ccS38UQT.s 			page 2
+
+
+  45              	.LVL2:
+  46              		.loc 1 14 2 view .LVU4
+  47 0008 FFF7FEFF 		bl	USART_TransmissionData
+  48              	.LVL3:
+  15:./hal/usart/usart_hal_config.c **** }
+  49              		.loc 1 15 1 view .LVU5
+  50 000c 08BD     		pop	{r3, pc}
+  51              	.L4:
+  52 000e 00BF     		.align	2
+  53              	.L3:
+  54 0010 00380140 		.word	1073821696
+  55              		.cfi_endproc
+  56              	.LFE123:
+  58              		.section	.text.USART2_HAL_ReadData,"ax",%progbits
+  59              		.align	1
+  60              		.syntax unified
+  61              		.thumb
+  62              		.thumb_func
+  63              		.fpu fpv4-sp-d16
+  65              	USART2_HAL_ReadData:
+  66              	.LVL4:
+  67              	.LFB124:
+  16:./hal/usart/usart_hal_config.c **** 
+  17:./hal/usart/usart_hal_config.c **** 
+  18:./hal/usart/usart_hal_config.c **** 
+  19:./hal/usart/usart_hal_config.c **** USART_HAL_t USART1_HAL = 
+  20:./hal/usart/usart_hal_config.c **** {
+  21:./hal/usart/usart_hal_config.c **** 	.SendData = USART1_HAL_SendData,
+  22:./hal/usart/usart_hal_config.c **** 	.ReadData = NULL,
+  23:./hal/usart/usart_hal_config.c **** };
+  24:./hal/usart/usart_hal_config.c **** 
+  25:./hal/usart/usart_hal_config.c **** 
+  26:./hal/usart/usart_hal_config.c **** 
+  27:./hal/usart/usart_hal_config.c **** 
+  28:./hal/usart/usart_hal_config.c **** static void USART2_HAL_ReadData(uint8_t * data, uint32_t readLen, uint32_t * outLen)
+  29:./hal/usart/usart_hal_config.c **** {
+  68              		.loc 1 29 1 is_stmt 1 view -0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72              		.loc 1 29 1 is_stmt 0 view .LVU7
+  73 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  74              	.LCFI1:
+  75              		.cfi_def_cfa_offset 24
+  76              		.cfi_offset 3, -24
+  77              		.cfi_offset 4, -20
+  78              		.cfi_offset 5, -16
+  79              		.cfi_offset 6, -12
+  80              		.cfi_offset 7, -8
+  81              		.cfi_offset 14, -4
+  82 0002 0446     		mov	r4, r0
+  83 0004 0E46     		mov	r6, r1
+  84 0006 1746     		mov	r7, r2
+  30:./hal/usart/usart_hal_config.c **** 	uint32_t i;
+  85              		.loc 1 30 2 is_stmt 1 view .LVU8
+  31:./hal/usart/usart_hal_config.c **** 	
+  32:./hal/usart/usart_hal_config.c **** 	for(i = 0;i < readLen;++i)
+ARM GAS  /tmp/ccS38UQT.s 			page 3
+
+
+  86              		.loc 1 32 2 view .LVU9
+  87              	.LVL5:
+  88              		.loc 1 32 8 is_stmt 0 view .LVU10
+  89 0008 0025     		movs	r5, #0
+  90              		.loc 1 32 2 view .LVU11
+  91 000a 01E0     		b	.L6
+  92              	.LVL6:
+  93              	.L10:
+  94              	.LBB2:
+  33:./hal/usart/usart_hal_config.c **** 	{
+  34:./hal/usart/usart_hal_config.c **** 	
+  35:./hal/usart/usart_hal_config.c **** 		if(E_CIRCULAR_QUEUE_ERROR_OK != CircularQueue_ReadByte(&USART2_Queue, data))
+  36:./hal/usart/usart_hal_config.c **** 		{
+  37:./hal/usart/usart_hal_config.c **** 			break;
+  38:./hal/usart/usart_hal_config.c **** 		}
+  39:./hal/usart/usart_hal_config.c **** 		else
+  40:./hal/usart/usart_hal_config.c **** 		{
+  41:./hal/usart/usart_hal_config.c **** 			++data;
+  95              		.loc 1 41 4 is_stmt 1 discriminator 2 view .LVU12
+  96 000c 0134     		adds	r4, r4, #1
+  97              	.LVL7:
+  98              		.loc 1 41 4 is_stmt 0 discriminator 2 view .LVU13
+  99              	.LBE2:
+  32:./hal/usart/usart_hal_config.c **** 	{
+ 100              		.loc 1 32 24 is_stmt 1 discriminator 2 view .LVU14
+ 101 000e 0135     		adds	r5, r5, #1
+ 102              	.LVL8:
+ 103              	.L6:
+  32:./hal/usart/usart_hal_config.c **** 	{
+ 104              		.loc 1 32 12 discriminator 1 view .LVU15
+  32:./hal/usart/usart_hal_config.c **** 	{
+ 105              		.loc 1 32 2 is_stmt 0 discriminator 1 view .LVU16
+ 106 0010 B542     		cmp	r5, r6
+ 107 0012 05D2     		bcs	.L7
+  35:./hal/usart/usart_hal_config.c **** 		{
+ 108              		.loc 1 35 3 is_stmt 1 view .LVU17
+ 109              	.LBB3:
+  35:./hal/usart/usart_hal_config.c **** 		{
+ 110              		.loc 1 35 35 is_stmt 0 view .LVU18
+ 111 0014 2146     		mov	r1, r4
+ 112 0016 0348     		ldr	r0, .L11
+ 113 0018 FFF7FEFF 		bl	CircularQueue_ReadByte
+ 114              	.LVL9:
+  35:./hal/usart/usart_hal_config.c **** 		{
+ 115              		.loc 1 35 5 view .LVU19
+ 116 001c 0028     		cmp	r0, #0
+ 117 001e F5D0     		beq	.L10
+ 118              	.L7:
+ 119              	.LBE3:
+  42:./hal/usart/usart_hal_config.c **** 		}	
+  43:./hal/usart/usart_hal_config.c **** 		
+  44:./hal/usart/usart_hal_config.c **** 	}
+  45:./hal/usart/usart_hal_config.c **** 
+  46:./hal/usart/usart_hal_config.c **** 	*outLen = i;
+ 120              		.loc 1 46 2 is_stmt 1 view .LVU20
+ 121              		.loc 1 46 10 is_stmt 0 view .LVU21
+ 122 0020 3D60     		str	r5, [r7]
+ARM GAS  /tmp/ccS38UQT.s 			page 4
+
+
+  47:./hal/usart/usart_hal_config.c **** }
+ 123              		.loc 1 47 1 view .LVU22
+ 124 0022 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 125              	.LVL10:
+ 126              	.L12:
+ 127              		.loc 1 47 1 view .LVU23
+ 128              		.align	2
+ 129              	.L11:
+ 130 0024 00000000 		.word	USART2_Queue
+ 131              		.cfi_endproc
+ 132              	.LFE124:
+ 134              		.global	USART2_HAL
+ 135              		.global	USART1_HAL
+ 136              		.section	.data.USART1_HAL,"aw"
+ 137              		.align	2
+ 140              	USART1_HAL:
+ 141 0000 00000000 		.word	USART1_HAL_SendData
+ 142 0004 00000000 		.word	0
+ 143              		.section	.data.USART2_HAL,"aw"
+ 144              		.align	2
+ 147              	USART2_HAL:
+ 148 0000 00000000 		.word	0
+ 149 0004 00000000 		.word	USART2_HAL_ReadData
+ 150              		.text
+ 151              	.Letext0:
+ 152              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 153              		.file 3 "CMSIS/at32f4xx.h"
+ 154              		.file 4 "./hal/usart/usart_hal.h"
+ 155              		.file 5 "./hal/usart/usart_hal_config.h"
+ 156              		.file 6 "common/circular_queue/circular_queue.h"
+ 157              		.file 7 "hardware/usart/usart_config.h"
+ARM GAS  /tmp/ccS38UQT.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 usart_hal_config.c
+     /tmp/ccS38UQT.s:18     .text.USART1_HAL_SendData:0000000000000000 $t
+     /tmp/ccS38UQT.s:25     .text.USART1_HAL_SendData:0000000000000000 USART1_HAL_SendData
+     /tmp/ccS38UQT.s:54     .text.USART1_HAL_SendData:0000000000000010 $d
+     /tmp/ccS38UQT.s:59     .text.USART2_HAL_ReadData:0000000000000000 $t
+     /tmp/ccS38UQT.s:65     .text.USART2_HAL_ReadData:0000000000000000 USART2_HAL_ReadData
+     /tmp/ccS38UQT.s:130    .text.USART2_HAL_ReadData:0000000000000024 $d
+     /tmp/ccS38UQT.s:147    .data.USART2_HAL:0000000000000000 USART2_HAL
+     /tmp/ccS38UQT.s:140    .data.USART1_HAL:0000000000000000 USART1_HAL
+     /tmp/ccS38UQT.s:137    .data.USART1_HAL:0000000000000000 $d
+     /tmp/ccS38UQT.s:144    .data.USART2_HAL:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+USART_TransmissionData
+CircularQueue_ReadByte
+USART2_Queue

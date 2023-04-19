@@ -1,0 +1,284 @@
+ARM GAS  /tmp/cco1dfRZ.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"timer_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Timer3_ConfigInit,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	Timer3_ConfigInit:
+  26              	.LFB123:
+  27              		.file 1 "./hardware/timer/timer_config.c"
+   1:./hardware/timer/timer_config.c **** #include "timer_config.h"
+   2:./hardware/timer/timer_config.c **** 
+   3:./hardware/timer/timer_config.c **** #include "at32f4xx_tim.h"
+   4:./hardware/timer/timer_config.c **** 
+   5:./hardware/timer/timer_config.c **** 
+   6:./hardware/timer/timer_config.c **** #define TIMER3_PWM_HZ          (400)
+   7:./hardware/timer/timer_config.c **** #define TIMER3_PWM_DUTY_MAX    (10000)
+   8:./hardware/timer/timer_config.c **** 
+   9:./hardware/timer/timer_config.c **** 
+  10:./hardware/timer/timer_config.c **** 
+  11:./hardware/timer/timer_config.c **** static void Timer3_ConfigInit()
+  12:./hardware/timer/timer_config.c **** {
+  28              		.loc 1 12 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 40
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 70B5     		push	{r4, r5, r6, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 4, -16
+  36              		.cfi_offset 5, -12
+  37              		.cfi_offset 6, -8
+  38              		.cfi_offset 14, -4
+  39 0002 8AB0     		sub	sp, sp, #40
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 56
+  13:./hardware/timer/timer_config.c **** 	TMR_TimerBaseInitType TimerBaseInitStruct;
+  42              		.loc 1 13 2 view .LVU1
+  14:./hardware/timer/timer_config.c ****     TMR_OCInitType TMR_OCInitStructure;
+  43              		.loc 1 14 5 view .LVU2
+  15:./hardware/timer/timer_config.c **** 	
+ARM GAS  /tmp/cco1dfRZ.s 			page 2
+
+
+  16:./hardware/timer/timer_config.c **** 	TimerBaseInitStruct.TMR_DIV = 120000000/(TIMER3_PWM_DUTY_MAX * TIMER3_PWM_HZ) - 1;
+  44              		.loc 1 16 2 view .LVU3
+  45              		.loc 1 16 30 is_stmt 0 view .LVU4
+  46 0004 1D23     		movs	r3, #29
+  47 0006 ADF81830 		strh	r3, [sp, #24]	@ movhi
+  17:./hardware/timer/timer_config.c ****     TimerBaseInitStruct.TMR_CounterMode = TMR_CounterDIR_Up;
+  48              		.loc 1 17 5 is_stmt 1 view .LVU5
+  49              		.loc 1 17 41 is_stmt 0 view .LVU6
+  50 000a 0025     		movs	r5, #0
+  51 000c 0795     		str	r5, [sp, #28]
+  18:./hardware/timer/timer_config.c ****     TimerBaseInitStruct.TMR_Period = TIMER3_PWM_DUTY_MAX - 1;
+  52              		.loc 1 18 5 is_stmt 1 view .LVU7
+  53              		.loc 1 18 36 is_stmt 0 view .LVU8
+  54 000e 42F20F73 		movw	r3, #9999
+  55 0012 0893     		str	r3, [sp, #32]
+  19:./hardware/timer/timer_config.c **** 	TimerBaseInitStruct.TMR_ClockDivision = TMR_CKD_DIV1;
+  56              		.loc 1 19 2 is_stmt 1 view .LVU9
+  57              		.loc 1 19 40 is_stmt 0 view .LVU10
+  58 0014 ADF82450 		strh	r5, [sp, #36]	@ movhi
+  20:./hardware/timer/timer_config.c ****     TMR_TimeBaseInit(TMR3, &TimerBaseInitStruct);
+  59              		.loc 1 20 5 is_stmt 1 view .LVU11
+  60 0018 1B4C     		ldr	r4, .L3
+  61 001a 06A9     		add	r1, sp, #24
+  62 001c 2046     		mov	r0, r4
+  63 001e FFF7FEFF 		bl	TMR_TimeBaseInit
+  64              	.LVL0:
+  21:./hardware/timer/timer_config.c **** 
+  22:./hardware/timer/timer_config.c ****     TMR_OCStructInit(&TMR_OCInitStructure);
+  65              		.loc 1 22 5 view .LVU12
+  66 0022 01A8     		add	r0, sp, #4
+  67 0024 FFF7FEFF 		bl	TMR_OCStructInit
+  68              	.LVL1:
+  23:./hardware/timer/timer_config.c **** 	TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
+  69              		.loc 1 23 2 view .LVU13
+  70              		.loc 1 23 33 is_stmt 0 view .LVU14
+  71 0028 6023     		movs	r3, #96
+  72 002a ADF80430 		strh	r3, [sp, #4]	@ movhi
+  24:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
+  73              		.loc 1 24 5 is_stmt 1 view .LVU15
+  74              		.loc 1 24 41 is_stmt 0 view .LVU16
+  75 002e 0126     		movs	r6, #1
+  76 0030 ADF80660 		strh	r6, [sp, #6]	@ movhi
+  25:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_OutputNState = TMR_OutputNState_Enable;
+  77              		.loc 1 25 5 is_stmt 1 view .LVU17
+  78              		.loc 1 25 42 is_stmt 0 view .LVU18
+  79 0034 0423     		movs	r3, #4
+  80 0036 ADF80830 		strh	r3, [sp, #8]	@ movhi
+  26:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
+  81              		.loc 1 26 5 is_stmt 1 view .LVU19
+  82              		.loc 1 26 40 is_stmt 0 view .LVU20
+  83 003a ADF81050 		strh	r5, [sp, #16]	@ movhi
+  27:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_OCNPolarity = TMR_OCNPolarity_Low;
+  84              		.loc 1 27 5 is_stmt 1 view .LVU21
+  85              		.loc 1 27 41 is_stmt 0 view .LVU22
+  86 003e 0823     		movs	r3, #8
+  87 0040 ADF81230 		strh	r3, [sp, #18]	@ movhi
+  28:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_OCIdleState = TMR_OCIdleState_Set;
+ARM GAS  /tmp/cco1dfRZ.s 			page 3
+
+
+  88              		.loc 1 28 5 is_stmt 1 view .LVU23
+  89              		.loc 1 28 41 is_stmt 0 view .LVU24
+  90 0044 4FF48073 		mov	r3, #256
+  91 0048 ADF81430 		strh	r3, [sp, #20]	@ movhi
+  29:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_OCNIdleState = TMR_OCIdleState_Reset;
+  92              		.loc 1 29 5 is_stmt 1 view .LVU25
+  93              		.loc 1 29 42 is_stmt 0 view .LVU26
+  94 004c ADF81650 		strh	r5, [sp, #22]	@ movhi
+  30:./hardware/timer/timer_config.c **** 
+  31:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_Pulse = 4000;
+  95              		.loc 1 31 5 is_stmt 1 view .LVU27
+  96              		.loc 1 31 35 is_stmt 0 view .LVU28
+  97 0050 4FF47A65 		mov	r5, #4000
+  98 0054 0395     		str	r5, [sp, #12]
+  32:./hardware/timer/timer_config.c ****     TMR_OC1Init(TMR3, &TMR_OCInitStructure);
+  99              		.loc 1 32 5 is_stmt 1 view .LVU29
+ 100 0056 01A9     		add	r1, sp, #4
+ 101 0058 2046     		mov	r0, r4
+ 102 005a FFF7FEFF 		bl	TMR_OC1Init
+ 103              	.LVL2:
+  33:./hardware/timer/timer_config.c **** 
+  34:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_Pulse = 4000;
+ 104              		.loc 1 34 5 view .LVU30
+ 105              		.loc 1 34 35 is_stmt 0 view .LVU31
+ 106 005e 0395     		str	r5, [sp, #12]
+  35:./hardware/timer/timer_config.c ****     TMR_OC2Init(TMR3, &TMR_OCInitStructure);
+ 107              		.loc 1 35 5 is_stmt 1 view .LVU32
+ 108 0060 01A9     		add	r1, sp, #4
+ 109 0062 2046     		mov	r0, r4
+ 110 0064 FFF7FEFF 		bl	TMR_OC2Init
+ 111              	.LVL3:
+  36:./hardware/timer/timer_config.c **** 
+  37:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_Pulse = 4000;
+ 112              		.loc 1 37 5 view .LVU33
+ 113              		.loc 1 37 35 is_stmt 0 view .LVU34
+ 114 0068 0395     		str	r5, [sp, #12]
+  38:./hardware/timer/timer_config.c ****     TMR_OC3Init(TMR3, &TMR_OCInitStructure);
+ 115              		.loc 1 38 5 is_stmt 1 view .LVU35
+ 116 006a 01A9     		add	r1, sp, #4
+ 117 006c 2046     		mov	r0, r4
+ 118 006e FFF7FEFF 		bl	TMR_OC3Init
+ 119              	.LVL4:
+  39:./hardware/timer/timer_config.c **** 
+  40:./hardware/timer/timer_config.c ****     TMR_OCInitStructure.TMR_Pulse = 4000;
+ 120              		.loc 1 40 5 view .LVU36
+ 121              		.loc 1 40 35 is_stmt 0 view .LVU37
+ 122 0072 0395     		str	r5, [sp, #12]
+  41:./hardware/timer/timer_config.c ****     TMR_OC4Init(TMR3, &TMR_OCInitStructure);
+ 123              		.loc 1 41 5 is_stmt 1 view .LVU38
+ 124 0074 01A9     		add	r1, sp, #4
+ 125 0076 2046     		mov	r0, r4
+ 126 0078 FFF7FEFF 		bl	TMR_OC4Init
+ 127              	.LVL5:
+  42:./hardware/timer/timer_config.c **** 
+  43:./hardware/timer/timer_config.c ****     TMR_Cmd(TMR3, ENABLE);
+ 128              		.loc 1 43 5 view .LVU39
+ 129 007c 3146     		mov	r1, r6
+ARM GAS  /tmp/cco1dfRZ.s 			page 4
+
+
+ 130 007e 2046     		mov	r0, r4
+ 131 0080 FFF7FEFF 		bl	TMR_Cmd
+ 132              	.LVL6:
+  44:./hardware/timer/timer_config.c **** }
+ 133              		.loc 1 44 1 is_stmt 0 view .LVU40
+ 134 0084 0AB0     		add	sp, sp, #40
+ 135              	.LCFI2:
+ 136              		.cfi_def_cfa_offset 16
+ 137              		@ sp needed
+ 138 0086 70BD     		pop	{r4, r5, r6, pc}
+ 139              	.L4:
+ 140              		.align	2
+ 141              	.L3:
+ 142 0088 00040040 		.word	1073742848
+ 143              		.cfi_endproc
+ 144              	.LFE123:
+ 146              		.section	.text.Timer_ConfigInitAll,"ax",%progbits
+ 147              		.align	1
+ 148              		.global	Timer_ConfigInitAll
+ 149              		.syntax unified
+ 150              		.thumb
+ 151              		.thumb_func
+ 152              		.fpu fpv4-sp-d16
+ 154              	Timer_ConfigInitAll:
+ 155              	.LFB125:
+  45:./hardware/timer/timer_config.c **** 
+  46:./hardware/timer/timer_config.c **** static void Timer6_ConfigInit()
+  47:./hardware/timer/timer_config.c **** {
+  48:./hardware/timer/timer_config.c **** 	uint32_t ms = 500;
+  49:./hardware/timer/timer_config.c **** 	
+  50:./hardware/timer/timer_config.c **** 	TMR_TimerBaseInitType TimerBaseInitStruct;
+  51:./hardware/timer/timer_config.c ****     NVIC_InitType NVIC_InitStruct;
+  52:./hardware/timer/timer_config.c **** 
+  53:./hardware/timer/timer_config.c ****     RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR6, ENABLE);
+  54:./hardware/timer/timer_config.c **** 
+  55:./hardware/timer/timer_config.c ****     TimerBaseInitStruct.TMR_DIV = 120-1;
+  56:./hardware/timer/timer_config.c ****     TimerBaseInitStruct.TMR_CounterMode = TMR_CounterDIR_Up;
+  57:./hardware/timer/timer_config.c ****     TimerBaseInitStruct.TMR_Period = 1000*ms-1;
+  58:./hardware/timer/timer_config.c ****     TimerBaseInitStruct.TMR_ClockDivision = TMR_CKD_DIV1;
+  59:./hardware/timer/timer_config.c **** 
+  60:./hardware/timer/timer_config.c ****     TMR_TimeBaseInit(TMR6, &TimerBaseInitStruct);
+  61:./hardware/timer/timer_config.c ****     //TMR_INTConfig(TMR6, TMR_INT_Overflow, ENABLE);
+  62:./hardware/timer/timer_config.c **** 	TMR_Cmd(TMR6, ENABLE);
+  63:./hardware/timer/timer_config.c **** 
+  64:./hardware/timer/timer_config.c ****     NVIC_InitStruct.NVIC_IRQChannel = TMR6_GLOBAL_IRQn;
+  65:./hardware/timer/timer_config.c ****     NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+  66:./hardware/timer/timer_config.c ****     NVIC_InitStruct.NVIC_IRQChannelSubPriority = 3;
+  67:./hardware/timer/timer_config.c ****     NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+  68:./hardware/timer/timer_config.c **** 
+  69:./hardware/timer/timer_config.c ****     NVIC_Init(&NVIC_InitStruct);
+  70:./hardware/timer/timer_config.c **** }
+  71:./hardware/timer/timer_config.c **** 
+  72:./hardware/timer/timer_config.c **** void Timer_ConfigInitAll()
+  73:./hardware/timer/timer_config.c **** {
+ 156              		.loc 1 73 1 is_stmt 1 view -0
+ 157              		.cfi_startproc
+ 158              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /tmp/cco1dfRZ.s 			page 5
+
+
+ 159              		@ frame_needed = 0, uses_anonymous_args = 0
+ 160 0000 08B5     		push	{r3, lr}
+ 161              	.LCFI3:
+ 162              		.cfi_def_cfa_offset 8
+ 163              		.cfi_offset 3, -8
+ 164              		.cfi_offset 14, -4
+  74:./hardware/timer/timer_config.c **** 	Timer3_ConfigInit();
+ 165              		.loc 1 74 2 view .LVU42
+ 166 0002 FFF7FEFF 		bl	Timer3_ConfigInit
+ 167              	.LVL7:
+  75:./hardware/timer/timer_config.c **** 
+  76:./hardware/timer/timer_config.c **** 	//Timer6_ConfigInit();
+  77:./hardware/timer/timer_config.c **** }
+ 168              		.loc 1 77 1 is_stmt 0 view .LVU43
+ 169 0006 08BD     		pop	{r3, pc}
+ 170              		.cfi_endproc
+ 171              	.LFE125:
+ 173              		.text
+ 174              	.Letext0:
+ 175              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 176              		.file 3 "CMSIS/at32f4xx.h"
+ 177              		.file 4 "lib/inc/at32f4xx_tim.h"
+ARM GAS  /tmp/cco1dfRZ.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 timer_config.c
+     /tmp/cco1dfRZ.s:18     .text.Timer3_ConfigInit:0000000000000000 $t
+     /tmp/cco1dfRZ.s:25     .text.Timer3_ConfigInit:0000000000000000 Timer3_ConfigInit
+     /tmp/cco1dfRZ.s:142    .text.Timer3_ConfigInit:0000000000000088 $d
+     /tmp/cco1dfRZ.s:147    .text.Timer_ConfigInitAll:0000000000000000 $t
+     /tmp/cco1dfRZ.s:154    .text.Timer_ConfigInitAll:0000000000000000 Timer_ConfigInitAll
+
+UNDEFINED SYMBOLS
+TMR_TimeBaseInit
+TMR_OCStructInit
+TMR_OC1Init
+TMR_OC2Init
+TMR_OC3Init
+TMR_OC4Init
+TMR_Cmd

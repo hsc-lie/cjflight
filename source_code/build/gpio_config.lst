@@ -1,0 +1,608 @@
+ARM GAS  /tmp/ccL2p3Iu.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"gpio_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.GPIO_ConfigInit,"ax",%progbits
+  18              		.align	1
+  19              		.global	GPIO_ConfigInit
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	GPIO_ConfigInit:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./hardware/gpio/gpio_config.c"
+   1:./hardware/gpio/gpio_config.c **** #include "gpio_config.h"
+   2:./hardware/gpio/gpio_config.c **** #include "at32f4xx.h"
+   3:./hardware/gpio/gpio_config.c **** 
+   4:./hardware/gpio/gpio_config.c **** 
+   5:./hardware/gpio/gpio_config.c **** 
+   6:./hardware/gpio/gpio_config.c **** 
+   7:./hardware/gpio/gpio_config.c **** 
+   8:./hardware/gpio/gpio_config.c **** typedef struct
+   9:./hardware/gpio/gpio_config.c **** {
+  10:./hardware/gpio/gpio_config.c **** 	GPIO_Type * GPIOx;
+  11:./hardware/gpio/gpio_config.c **** 	uint16_t GPIO_PinSource; 
+  12:./hardware/gpio/gpio_config.c **** 	uint8_t GPIO_AF;
+  13:./hardware/gpio/gpio_config.c **** 	GPIO_InitType GPIO_InitType;
+  14:./hardware/gpio/gpio_config.c **** 	
+  15:./hardware/gpio/gpio_config.c **** 	
+  16:./hardware/gpio/gpio_config.c **** }GPIO_Config_t;
+  17:./hardware/gpio/gpio_config.c **** 
+  18:./hardware/gpio/gpio_config.c **** 
+  19:./hardware/gpio/gpio_config.c **** 
+  20:./hardware/gpio/gpio_config.c **** 
+  21:./hardware/gpio/gpio_config.c **** 
+  22:./hardware/gpio/gpio_config.c **** 
+  23:./hardware/gpio/gpio_config.c **** 
+  24:./hardware/gpio/gpio_config.c **** 
+  25:./hardware/gpio/gpio_config.c **** //LED GPIO
+  26:./hardware/gpio/gpio_config.c **** const GPIO_Config_t LED_GPIOConfigTable[] = 
+  27:./hardware/gpio/gpio_config.c **** {
+  28:./hardware/gpio/gpio_config.c **** 	//LED1
+  29:./hardware/gpio/gpio_config.c **** 	{
+ARM GAS  /tmp/ccL2p3Iu.s 			page 2
+
+
+  30:./hardware/gpio/gpio_config.c **** 		.GPIOx = LED1_GPIO,
+  31:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = 0,
+  32:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = 0,
+  33:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+  34:./hardware/gpio/gpio_config.c **** 		{
+  35:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = LED1_GPIO_PIN,
+  36:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_OUT,
+  37:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+  38:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+  39:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+  40:./hardware/gpio/gpio_config.c **** 		},
+  41:./hardware/gpio/gpio_config.c **** 	},
+  42:./hardware/gpio/gpio_config.c **** 
+  43:./hardware/gpio/gpio_config.c **** 	//LED2
+  44:./hardware/gpio/gpio_config.c **** 	{
+  45:./hardware/gpio/gpio_config.c **** 		.GPIOx = LED2_GPIO,
+  46:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = 0,
+  47:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = 0,
+  48:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+  49:./hardware/gpio/gpio_config.c **** 		{
+  50:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = LED2_GPIO_PIN,
+  51:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_OUT,
+  52:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+  53:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+  54:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+  55:./hardware/gpio/gpio_config.c **** 		},
+  56:./hardware/gpio/gpio_config.c **** 	},
+  57:./hardware/gpio/gpio_config.c **** 
+  58:./hardware/gpio/gpio_config.c **** 	//LED3
+  59:./hardware/gpio/gpio_config.c **** 	{
+  60:./hardware/gpio/gpio_config.c **** 		.GPIOx = LED3_GPIO,
+  61:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = 0,
+  62:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = 0,
+  63:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+  64:./hardware/gpio/gpio_config.c **** 		{
+  65:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = LED3_GPIO_PIN,
+  66:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_OUT,
+  67:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+  68:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+  69:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+  70:./hardware/gpio/gpio_config.c **** 		},
+  71:./hardware/gpio/gpio_config.c **** 	},
+  72:./hardware/gpio/gpio_config.c **** };
+  73:./hardware/gpio/gpio_config.c **** 
+  74:./hardware/gpio/gpio_config.c **** 
+  75:./hardware/gpio/gpio_config.c **** 
+  76:./hardware/gpio/gpio_config.c **** 
+  77:./hardware/gpio/gpio_config.c **** //USART1
+  78:./hardware/gpio/gpio_config.c **** const GPIO_Config_t USART1_GPIOConfigTable[] = 
+  79:./hardware/gpio/gpio_config.c **** {
+  80:./hardware/gpio/gpio_config.c **** 	//串口1 TX
+  81:./hardware/gpio/gpio_config.c **** 	{
+  82:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOB,
+  83:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource6,
+  84:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_0,
+  85:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+  86:./hardware/gpio/gpio_config.c **** 		{
+ARM GAS  /tmp/ccL2p3Iu.s 			page 3
+
+
+  87:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_6,
+  88:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+  89:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+  90:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+  91:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+  92:./hardware/gpio/gpio_config.c **** 		},
+  93:./hardware/gpio/gpio_config.c **** 	},
+  94:./hardware/gpio/gpio_config.c **** 	//串口1 RX
+  95:./hardware/gpio/gpio_config.c **** 	{
+  96:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOA,
+  97:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource6,
+  98:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_0,
+  99:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 100:./hardware/gpio/gpio_config.c **** 		{
+ 101:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_7,
+ 102:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+ 103:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+ 104:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 105:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 106:./hardware/gpio/gpio_config.c **** 		},
+ 107:./hardware/gpio/gpio_config.c **** 	},
+ 108:./hardware/gpio/gpio_config.c **** 
+ 109:./hardware/gpio/gpio_config.c **** };
+ 110:./hardware/gpio/gpio_config.c **** 
+ 111:./hardware/gpio/gpio_config.c **** //USART2
+ 112:./hardware/gpio/gpio_config.c **** const GPIO_Config_t USART2_GPIOConfigTable[] = 
+ 113:./hardware/gpio/gpio_config.c **** {
+ 114:./hardware/gpio/gpio_config.c **** 	//USART2 RX
+ 115:./hardware/gpio/gpio_config.c **** 	{
+ 116:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOA,
+ 117:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource3,
+ 118:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_1,
+ 119:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 120:./hardware/gpio/gpio_config.c **** 		{
+ 121:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_3,
+ 122:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+ 123:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+ 124:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 125:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 126:./hardware/gpio/gpio_config.c **** 		},
+ 127:./hardware/gpio/gpio_config.c **** 	},
+ 128:./hardware/gpio/gpio_config.c **** };
+ 129:./hardware/gpio/gpio_config.c **** 
+ 130:./hardware/gpio/gpio_config.c **** 
+ 131:./hardware/gpio/gpio_config.c **** //软件I2C
+ 132:./hardware/gpio/gpio_config.c **** const GPIO_Config_t SimulationI2C_GPIOConfigTable[] = 
+ 133:./hardware/gpio/gpio_config.c **** {
+ 134:./hardware/gpio/gpio_config.c **** 	//软件I2C SCL
+ 135:./hardware/gpio/gpio_config.c **** 	{
+ 136:./hardware/gpio/gpio_config.c **** 		.GPIOx = SIMULATION_I2C_SCL_GPIO,
+ 137:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 138:./hardware/gpio/gpio_config.c **** 		{
+ 139:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = SIMULATION_I2C_SCL_GPIO_PIN,
+ 140:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_OUT,
+ 141:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_OD,
+ 142:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 143:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ARM GAS  /tmp/ccL2p3Iu.s 			page 4
+
+
+ 144:./hardware/gpio/gpio_config.c **** 		},
+ 145:./hardware/gpio/gpio_config.c **** 	},
+ 146:./hardware/gpio/gpio_config.c **** 
+ 147:./hardware/gpio/gpio_config.c **** 	//软件I2C SDA
+ 148:./hardware/gpio/gpio_config.c **** 	{
+ 149:./hardware/gpio/gpio_config.c **** 		.GPIOx = SIMULATION_I2C_SDA_GPIO,
+ 150:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 151:./hardware/gpio/gpio_config.c **** 		{
+ 152:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins	= SIMULATION_I2C_SDA_GPIO_PIN,
+ 153:./hardware/gpio/gpio_config.c **** 			.GPIO_Mode = GPIO_Mode_OUT,
+ 154:./hardware/gpio/gpio_config.c **** 			.GPIO_OutType = GPIO_OutType_OD,
+ 155:./hardware/gpio/gpio_config.c **** 			.GPIO_Pull = GPIO_Pull_NOPULL,
+ 156:./hardware/gpio/gpio_config.c **** 			.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 157:./hardware/gpio/gpio_config.c **** 		},
+ 158:./hardware/gpio/gpio_config.c **** 	},
+ 159:./hardware/gpio/gpio_config.c **** 	
+ 160:./hardware/gpio/gpio_config.c **** 	
+ 161:./hardware/gpio/gpio_config.c **** };
+ 162:./hardware/gpio/gpio_config.c **** 
+ 163:./hardware/gpio/gpio_config.c **** //Timer3
+ 164:./hardware/gpio/gpio_config.c **** const GPIO_Config_t Timer3_GPIOConfigTable[] = 
+ 165:./hardware/gpio/gpio_config.c **** {
+ 166:./hardware/gpio/gpio_config.c **** 	//Timer3 PWM
+ 167:./hardware/gpio/gpio_config.c **** 	{
+ 168:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOB,
+ 169:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource0,
+ 170:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_1,
+ 171:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 172:./hardware/gpio/gpio_config.c **** 		{
+ 173:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_0,
+ 174:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+ 175:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+ 176:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 177:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 178:./hardware/gpio/gpio_config.c **** 		},
+ 179:./hardware/gpio/gpio_config.c **** 	},
+ 180:./hardware/gpio/gpio_config.c **** 
+ 181:./hardware/gpio/gpio_config.c **** 	//Timer3 PWM
+ 182:./hardware/gpio/gpio_config.c **** 	{
+ 183:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOB,
+ 184:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource1,
+ 185:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_1,
+ 186:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 187:./hardware/gpio/gpio_config.c **** 		{
+ 188:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_1,
+ 189:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+ 190:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+ 191:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 192:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 193:./hardware/gpio/gpio_config.c **** 		},
+ 194:./hardware/gpio/gpio_config.c **** 	},
+ 195:./hardware/gpio/gpio_config.c **** 
+ 196:./hardware/gpio/gpio_config.c **** 	//Timer3 PWM
+ 197:./hardware/gpio/gpio_config.c **** 	{
+ 198:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOB,
+ 199:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource4,
+ 200:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_1,
+ARM GAS  /tmp/ccL2p3Iu.s 			page 5
+
+
+ 201:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 202:./hardware/gpio/gpio_config.c **** 		{
+ 203:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_4,
+ 204:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+ 205:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+ 206:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 207:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 208:./hardware/gpio/gpio_config.c **** 		},
+ 209:./hardware/gpio/gpio_config.c **** 	},
+ 210:./hardware/gpio/gpio_config.c **** 
+ 211:./hardware/gpio/gpio_config.c **** 	//Timer3 PWM
+ 212:./hardware/gpio/gpio_config.c **** 	{
+ 213:./hardware/gpio/gpio_config.c **** 		.GPIOx = GPIOB,
+ 214:./hardware/gpio/gpio_config.c **** 		.GPIO_PinSource = GPIO_PinsSource5,
+ 215:./hardware/gpio/gpio_config.c **** 		.GPIO_AF = GPIO_AF_1,
+ 216:./hardware/gpio/gpio_config.c **** 		.GPIO_InitType = 
+ 217:./hardware/gpio/gpio_config.c **** 		{
+ 218:./hardware/gpio/gpio_config.c **** 			.GPIO_Pins  = GPIO_Pins_5,
+ 219:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Mode = GPIO_Mode_AF,
+ 220:./hardware/gpio/gpio_config.c **** 	    	.GPIO_OutType = GPIO_OutType_PP,
+ 221:./hardware/gpio/gpio_config.c **** 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+ 222:./hardware/gpio/gpio_config.c **** 	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+ 223:./hardware/gpio/gpio_config.c **** 		},
+ 224:./hardware/gpio/gpio_config.c **** 	},
+ 225:./hardware/gpio/gpio_config.c **** };
+ 226:./hardware/gpio/gpio_config.c **** 
+ 227:./hardware/gpio/gpio_config.c **** 
+ 228:./hardware/gpio/gpio_config.c **** 
+ 229:./hardware/gpio/gpio_config.c **** 
+ 230:./hardware/gpio/gpio_config.c **** void GPIO_ConfigInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
+ 231:./hardware/gpio/gpio_config.c **** {
+  30              		.loc 1 231 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 231 1 is_stmt 0 view .LVU1
+  35 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 24
+  38              		.cfi_offset 4, -24
+  39              		.cfi_offset 5, -20
+  40              		.cfi_offset 6, -16
+  41              		.cfi_offset 7, -12
+  42              		.cfi_offset 8, -8
+  43              		.cfi_offset 14, -4
+  44 0004 0646     		mov	r6, r0
+  45 0006 8846     		mov	r8, r1
+ 232:./hardware/gpio/gpio_config.c **** 	uint32_t i;
+  46              		.loc 1 232 2 is_stmt 1 view .LVU2
+ 233:./hardware/gpio/gpio_config.c **** 
+ 234:./hardware/gpio/gpio_config.c **** 	for(i = 0;i < len;++i)
+  47              		.loc 1 234 2 view .LVU3
+  48              	.LVL1:
+  49              		.loc 1 234 8 is_stmt 0 view .LVU4
+  50 0008 0024     		movs	r4, #0
+  51              		.loc 1 234 2 view .LVU5
+  52 000a 0DE0     		b	.L2
+ARM GAS  /tmp/ccL2p3Iu.s 			page 6
+
+
+  53              	.LVL2:
+  54              	.L3:
+ 235:./hardware/gpio/gpio_config.c **** 	{
+ 236:./hardware/gpio/gpio_config.c **** 		GPIO_Init(gpioConfigTable[i].GPIOx, (GPIO_Config_t *)&gpioConfigTable[i].GPIO_InitType);
+  55              		.loc 1 236 3 is_stmt 1 discriminator 3 view .LVU6
+  56              		.loc 1 236 28 is_stmt 0 discriminator 3 view .LVU7
+  57 000c 2701     		lsls	r7, r4, #4
+  58 000e 06EB0415 		add	r5, r6, r4, lsl #4
+  59              		.loc 1 236 3 discriminator 3 view .LVU8
+  60 0012 05F10801 		add	r1, r5, #8
+  61 0016 F059     		ldr	r0, [r6, r7]
+  62 0018 FFF7FEFF 		bl	GPIO_Init
+  63              	.LVL3:
+ 237:./hardware/gpio/gpio_config.c **** 		GPIO_PinAFConfig(gpioConfigTable[i].GPIOx, gpioConfigTable[i].GPIO_PinSource, gpioConfigTable[i].
+  64              		.loc 1 237 3 is_stmt 1 discriminator 3 view .LVU9
+  65 001c AA79     		ldrb	r2, [r5, #6]	@ zero_extendqisi2
+  66 001e A988     		ldrh	r1, [r5, #4]
+  67 0020 F059     		ldr	r0, [r6, r7]
+  68 0022 FFF7FEFF 		bl	GPIO_PinAFConfig
+  69              	.LVL4:
+ 234:./hardware/gpio/gpio_config.c **** 	{
+  70              		.loc 1 234 20 discriminator 3 view .LVU10
+  71 0026 0134     		adds	r4, r4, #1
+  72              	.LVL5:
+  73              	.L2:
+ 234:./hardware/gpio/gpio_config.c **** 	{
+  74              		.loc 1 234 12 discriminator 1 view .LVU11
+ 234:./hardware/gpio/gpio_config.c **** 	{
+  75              		.loc 1 234 2 is_stmt 0 discriminator 1 view .LVU12
+  76 0028 4445     		cmp	r4, r8
+  77 002a EFD3     		bcc	.L3
+ 238:./hardware/gpio/gpio_config.c **** 	}
+ 239:./hardware/gpio/gpio_config.c **** }
+  78              		.loc 1 239 1 view .LVU13
+  79 002c BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+  80              		.loc 1 239 1 view .LVU14
+  81              		.cfi_endproc
+  82              	.LFE123:
+  84              		.section	.text.GPIO_ConfigInitAll,"ax",%progbits
+  85              		.align	1
+  86              		.global	GPIO_ConfigInitAll
+  87              		.syntax unified
+  88              		.thumb
+  89              		.thumb_func
+  90              		.fpu fpv4-sp-d16
+  92              	GPIO_ConfigInitAll:
+  93              	.LFB124:
+ 240:./hardware/gpio/gpio_config.c **** 
+ 241:./hardware/gpio/gpio_config.c **** 
+ 242:./hardware/gpio/gpio_config.c **** void GPIO_ConfigInitAll(void)
+ 243:./hardware/gpio/gpio_config.c **** {
+  94              		.loc 1 243 1 is_stmt 1 view -0
+  95              		.cfi_startproc
+  96              		@ args = 0, pretend = 0, frame = 0
+  97              		@ frame_needed = 0, uses_anonymous_args = 0
+  98 0000 08B5     		push	{r3, lr}
+  99              	.LCFI1:
+ARM GAS  /tmp/ccL2p3Iu.s 			page 7
+
+
+ 100              		.cfi_def_cfa_offset 8
+ 101              		.cfi_offset 3, -8
+ 102              		.cfi_offset 14, -4
+ 244:./hardware/gpio/gpio_config.c **** 
+ 245:./hardware/gpio/gpio_config.c **** 
+ 246:./hardware/gpio/gpio_config.c **** 	//LED GPIO
+ 247:./hardware/gpio/gpio_config.c **** 	GPIO_ConfigInit(&LED_GPIOConfigTable, sizeof(LED_GPIOConfigTable)/sizeof(GPIO_Config_t));
+ 103              		.loc 1 247 2 view .LVU16
+ 104 0002 0321     		movs	r1, #3
+ 105 0004 0948     		ldr	r0, .L7
+ 106 0006 FFF7FEFF 		bl	GPIO_ConfigInit
+ 107              	.LVL6:
+ 248:./hardware/gpio/gpio_config.c **** 	//USART1
+ 249:./hardware/gpio/gpio_config.c **** 	GPIO_ConfigInit(&USART1_GPIOConfigTable, sizeof(USART1_GPIOConfigTable)/sizeof(GPIO_Config_t));
+ 108              		.loc 1 249 2 view .LVU17
+ 109 000a 0221     		movs	r1, #2
+ 110 000c 0848     		ldr	r0, .L7+4
+ 111 000e FFF7FEFF 		bl	GPIO_ConfigInit
+ 112              	.LVL7:
+ 250:./hardware/gpio/gpio_config.c **** 	//USART2
+ 251:./hardware/gpio/gpio_config.c **** 	GPIO_ConfigInit(&USART2_GPIOConfigTable, sizeof(USART2_GPIOConfigTable)/sizeof(GPIO_Config_t));
+ 113              		.loc 1 251 2 view .LVU18
+ 114 0012 0121     		movs	r1, #1
+ 115 0014 0748     		ldr	r0, .L7+8
+ 116 0016 FFF7FEFF 		bl	GPIO_ConfigInit
+ 117              	.LVL8:
+ 252:./hardware/gpio/gpio_config.c **** 
+ 253:./hardware/gpio/gpio_config.c **** 	//软件I2C
+ 254:./hardware/gpio/gpio_config.c **** 	GPIO_ConfigInit(&SimulationI2C_GPIOConfigTable, sizeof(SimulationI2C_GPIOConfigTable)/sizeof(GPIO_
+ 118              		.loc 1 254 2 view .LVU19
+ 119 001a 0221     		movs	r1, #2
+ 120 001c 0648     		ldr	r0, .L7+12
+ 121 001e FFF7FEFF 		bl	GPIO_ConfigInit
+ 122              	.LVL9:
+ 255:./hardware/gpio/gpio_config.c **** 
+ 256:./hardware/gpio/gpio_config.c **** 	//Timer3
+ 257:./hardware/gpio/gpio_config.c **** 	GPIO_ConfigInit(&Timer3_GPIOConfigTable, sizeof(Timer3_GPIOConfigTable)/sizeof(GPIO_Config_t));
+ 123              		.loc 1 257 2 view .LVU20
+ 124 0022 0421     		movs	r1, #4
+ 125 0024 0548     		ldr	r0, .L7+16
+ 126 0026 FFF7FEFF 		bl	GPIO_ConfigInit
+ 127              	.LVL10:
+ 258:./hardware/gpio/gpio_config.c **** 	
+ 259:./hardware/gpio/gpio_config.c **** 	/*
+ 260:./hardware/gpio/gpio_config.c **** 	uint32_t i;
+ 261:./hardware/gpio/gpio_config.c **** 	uint32_t len = sizeof(GPIO_ConfigTable)/sizeof(GPIO_Config_t);
+ 262:./hardware/gpio/gpio_config.c **** 
+ 263:./hardware/gpio/gpio_config.c **** 	for(i = 0;i < len;++i)
+ 264:./hardware/gpio/gpio_config.c **** 	{
+ 265:./hardware/gpio/gpio_config.c **** 		GPIO_Init(GPIO_ConfigTable[i].GPIOx, (GPIO_Config_t *)&GPIO_ConfigTable[i].GPIO_InitType);
+ 266:./hardware/gpio/gpio_config.c **** 		GPIO_PinAFConfig(GPIO_ConfigTable[i].GPIOx, GPIO_ConfigTable[i].GPIO_PinSource, GPIO_ConfigTable[
+ 267:./hardware/gpio/gpio_config.c **** 	}
+ 268:./hardware/gpio/gpio_config.c **** 	*/
+ 269:./hardware/gpio/gpio_config.c **** }
+ 128              		.loc 1 269 1 is_stmt 0 view .LVU21
+ 129 002a 08BD     		pop	{r3, pc}
+ 130              	.L8:
+ARM GAS  /tmp/ccL2p3Iu.s 			page 8
+
+
+ 131              		.align	2
+ 132              	.L7:
+ 133 002c 00000000 		.word	.LANCHOR0
+ 134 0030 00000000 		.word	.LANCHOR1
+ 135 0034 00000000 		.word	.LANCHOR2
+ 136 0038 00000000 		.word	.LANCHOR3
+ 137 003c 00000000 		.word	.LANCHOR4
+ 138              		.cfi_endproc
+ 139              	.LFE124:
+ 141              		.global	Timer3_GPIOConfigTable
+ 142              		.global	SimulationI2C_GPIOConfigTable
+ 143              		.global	USART2_GPIOConfigTable
+ 144              		.global	USART1_GPIOConfigTable
+ 145              		.global	LED_GPIOConfigTable
+ 146              		.section	.rodata.LED_GPIOConfigTable,"a"
+ 147              		.align	2
+ 148              		.set	.LANCHOR0,. + 0
+ 151              	LED_GPIOConfigTable:
+ 152 0000 00080048 		.word	1207961600
+ 153 0004 0000     		.short	0
+ 154 0006 00       		.byte	0
+ 155 0007 00       		.space	1
+ 156 0008 0040     		.short	16384
+ 157 000a 01       		.byte	1
+ 158 000b 01       		.byte	1
+ 159 000c 00       		.byte	0
+ 160 000d 00       		.byte	0
+ 161 000e 0000     		.space	2
+ 162 0010 00000048 		.word	1207959552
+ 163 0014 0000     		.short	0
+ 164 0016 00       		.byte	0
+ 165 0017 00       		.space	1
+ 166 0018 0004     		.short	1024
+ 167 001a 01       		.byte	1
+ 168 001b 01       		.byte	1
+ 169 001c 00       		.byte	0
+ 170 001d 00       		.byte	0
+ 171 001e 0000     		.space	2
+ 172 0020 00000048 		.word	1207959552
+ 173 0024 0000     		.short	0
+ 174 0026 00       		.byte	0
+ 175 0027 00       		.space	1
+ 176 0028 0008     		.short	2048
+ 177 002a 01       		.byte	1
+ 178 002b 01       		.byte	1
+ 179 002c 00       		.byte	0
+ 180 002d 00       		.byte	0
+ 181 002e 0000     		.space	2
+ 182              		.section	.rodata.SimulationI2C_GPIOConfigTable,"a"
+ 183              		.align	2
+ 184              		.set	.LANCHOR3,. + 0
+ 187              	SimulationI2C_GPIOConfigTable:
+ 188 0000 00000048 		.word	1207959552
+ 189 0004 00000000 		.space	4
+ 190 0008 0001     		.short	256
+ 191 000a 01       		.byte	1
+ 192 000b 01       		.byte	1
+ARM GAS  /tmp/ccL2p3Iu.s 			page 9
+
+
+ 193 000c 01       		.byte	1
+ 194 000d 00       		.byte	0
+ 195 000e 0000     		.space	2
+ 196 0010 00040048 		.word	1207960576
+ 197 0014 00000000 		.space	4
+ 198 0018 0080     		.short	-32768
+ 199 001a 01       		.byte	1
+ 200 001b 01       		.byte	1
+ 201 001c 01       		.byte	1
+ 202 001d 00       		.byte	0
+ 203 001e 0000     		.space	2
+ 204              		.section	.rodata.Timer3_GPIOConfigTable,"a"
+ 205              		.align	2
+ 206              		.set	.LANCHOR4,. + 0
+ 209              	Timer3_GPIOConfigTable:
+ 210 0000 00040048 		.word	1207960576
+ 211 0004 0000     		.short	0
+ 212 0006 01       		.byte	1
+ 213 0007 00       		.space	1
+ 214 0008 0100     		.short	1
+ 215 000a 01       		.byte	1
+ 216 000b 02       		.byte	2
+ 217 000c 00       		.byte	0
+ 218 000d 00       		.byte	0
+ 219 000e 0000     		.space	2
+ 220 0010 00040048 		.word	1207960576
+ 221 0014 0100     		.short	1
+ 222 0016 01       		.byte	1
+ 223 0017 00       		.space	1
+ 224 0018 0200     		.short	2
+ 225 001a 01       		.byte	1
+ 226 001b 02       		.byte	2
+ 227 001c 00       		.byte	0
+ 228 001d 00       		.byte	0
+ 229 001e 0000     		.space	2
+ 230 0020 00040048 		.word	1207960576
+ 231 0024 0400     		.short	4
+ 232 0026 01       		.byte	1
+ 233 0027 00       		.space	1
+ 234 0028 1000     		.short	16
+ 235 002a 01       		.byte	1
+ 236 002b 02       		.byte	2
+ 237 002c 00       		.byte	0
+ 238 002d 00       		.byte	0
+ 239 002e 0000     		.space	2
+ 240 0030 00040048 		.word	1207960576
+ 241 0034 0500     		.short	5
+ 242 0036 01       		.byte	1
+ 243 0037 00       		.space	1
+ 244 0038 2000     		.short	32
+ 245 003a 01       		.byte	1
+ 246 003b 02       		.byte	2
+ 247 003c 00       		.byte	0
+ 248 003d 00       		.byte	0
+ 249 003e 0000     		.space	2
+ 250              		.section	.rodata.USART1_GPIOConfigTable,"a"
+ 251              		.align	2
+ARM GAS  /tmp/ccL2p3Iu.s 			page 10
+
+
+ 252              		.set	.LANCHOR1,. + 0
+ 255              	USART1_GPIOConfigTable:
+ 256 0000 00040048 		.word	1207960576
+ 257 0004 0600     		.short	6
+ 258 0006 00       		.byte	0
+ 259 0007 00       		.space	1
+ 260 0008 4000     		.short	64
+ 261 000a 01       		.byte	1
+ 262 000b 02       		.byte	2
+ 263 000c 00       		.byte	0
+ 264 000d 00       		.byte	0
+ 265 000e 0000     		.space	2
+ 266 0010 00000048 		.word	1207959552
+ 267 0014 0600     		.short	6
+ 268 0016 00       		.byte	0
+ 269 0017 00       		.space	1
+ 270 0018 8000     		.short	128
+ 271 001a 01       		.byte	1
+ 272 001b 02       		.byte	2
+ 273 001c 00       		.byte	0
+ 274 001d 00       		.byte	0
+ 275 001e 0000     		.space	2
+ 276              		.section	.rodata.USART2_GPIOConfigTable,"a"
+ 277              		.align	2
+ 278              		.set	.LANCHOR2,. + 0
+ 281              	USART2_GPIOConfigTable:
+ 282 0000 00000048 		.word	1207959552
+ 283 0004 0300     		.short	3
+ 284 0006 01       		.byte	1
+ 285 0007 00       		.space	1
+ 286 0008 0800     		.short	8
+ 287 000a 01       		.byte	1
+ 288 000b 02       		.byte	2
+ 289 000c 00       		.byte	0
+ 290 000d 00       		.byte	0
+ 291 000e 0000     		.space	2
+ 292              		.text
+ 293              	.Letext0:
+ 294              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 295              		.file 3 "CMSIS/at32f4xx.h"
+ 296              		.file 4 "lib/inc/at32f4xx_gpio_ex.h"
+ARM GAS  /tmp/ccL2p3Iu.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 gpio_config.c
+     /tmp/ccL2p3Iu.s:18     .text.GPIO_ConfigInit:0000000000000000 $t
+     /tmp/ccL2p3Iu.s:26     .text.GPIO_ConfigInit:0000000000000000 GPIO_ConfigInit
+     /tmp/ccL2p3Iu.s:85     .text.GPIO_ConfigInitAll:0000000000000000 $t
+     /tmp/ccL2p3Iu.s:92     .text.GPIO_ConfigInitAll:0000000000000000 GPIO_ConfigInitAll
+     /tmp/ccL2p3Iu.s:133    .text.GPIO_ConfigInitAll:000000000000002c $d
+     /tmp/ccL2p3Iu.s:209    .rodata.Timer3_GPIOConfigTable:0000000000000000 Timer3_GPIOConfigTable
+     /tmp/ccL2p3Iu.s:187    .rodata.SimulationI2C_GPIOConfigTable:0000000000000000 SimulationI2C_GPIOConfigTable
+     /tmp/ccL2p3Iu.s:281    .rodata.USART2_GPIOConfigTable:0000000000000000 USART2_GPIOConfigTable
+     /tmp/ccL2p3Iu.s:255    .rodata.USART1_GPIOConfigTable:0000000000000000 USART1_GPIOConfigTable
+     /tmp/ccL2p3Iu.s:151    .rodata.LED_GPIOConfigTable:0000000000000000 LED_GPIOConfigTable
+     /tmp/ccL2p3Iu.s:147    .rodata.LED_GPIOConfigTable:0000000000000000 $d
+     /tmp/ccL2p3Iu.s:183    .rodata.SimulationI2C_GPIOConfigTable:0000000000000000 $d
+     /tmp/ccL2p3Iu.s:205    .rodata.Timer3_GPIOConfigTable:0000000000000000 $d
+     /tmp/ccL2p3Iu.s:251    .rodata.USART1_GPIOConfigTable:0000000000000000 $d
+     /tmp/ccL2p3Iu.s:277    .rodata.USART2_GPIOConfigTable:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+GPIO_Init
+GPIO_PinAFConfig

@@ -1,0 +1,1114 @@
+ARM GAS  /tmp/ccpWsxwz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"at32f4xx_comp.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.COMP_Reset,"ax",%progbits
+  18              		.align	1
+  19              		.global	COMP_Reset
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	COMP_Reset:
+  27              	.LFB123:
+  28              		.file 1 "./lib/src/at32f4xx_comp.c"
+   1:./lib/src/at32f4xx_comp.c **** /**
+   2:./lib/src/at32f4xx_comp.c ****   **************************************************************************
+   3:./lib/src/at32f4xx_comp.c ****   * File   : at32f4xx_comp.c
+   4:./lib/src/at32f4xx_comp.c ****   * Version: V1.2.4
+   5:./lib/src/at32f4xx_comp.c ****   * Date   : 2020-08-26
+   6:./lib/src/at32f4xx_comp.c ****   * Brief  : at32f4xx COMP source file
+   7:./lib/src/at32f4xx_comp.c ****   **************************************************************************
+   8:./lib/src/at32f4xx_comp.c ****   */
+   9:./lib/src/at32f4xx_comp.c **** 
+  10:./lib/src/at32f4xx_comp.c **** 
+  11:./lib/src/at32f4xx_comp.c **** /* Includes ------------------------------------------------------------------*/
+  12:./lib/src/at32f4xx_comp.c **** #include "at32f4xx_comp.h"
+  13:./lib/src/at32f4xx_comp.c **** 
+  14:./lib/src/at32f4xx_comp.c **** /** @addtogroup AT32F4xx_StdPeriph_Driver
+  15:./lib/src/at32f4xx_comp.c ****   * @{
+  16:./lib/src/at32f4xx_comp.c ****   */
+  17:./lib/src/at32f4xx_comp.c **** 
+  18:./lib/src/at32f4xx_comp.c **** /** @defgroup COMP 
+  19:./lib/src/at32f4xx_comp.c ****   * @brief COMP driver modules
+  20:./lib/src/at32f4xx_comp.c ****   * @{
+  21:./lib/src/at32f4xx_comp.c ****   */ 
+  22:./lib/src/at32f4xx_comp.c **** 
+  23:./lib/src/at32f4xx_comp.c **** #if defined (AT32F415xx) || defined (AT32F421xx)
+  24:./lib/src/at32f4xx_comp.c **** 
+  25:./lib/src/at32f4xx_comp.c **** /* Private typedef -----------------------------------------------------------*/
+  26:./lib/src/at32f4xx_comp.c **** /* Private define ------------------------------------------------------------*/
+  27:./lib/src/at32f4xx_comp.c **** /* CTRLSTS1 register Mask */
+  28:./lib/src/at32f4xx_comp.c **** #ifdef AT32F421xx
+  29:./lib/src/at32f4xx_comp.c **** #define COMP_CTRLSTS1_CLEAR_MASK              ((uint32_t)0x00039C7C)
+  30:./lib/src/at32f4xx_comp.c **** #define COMP_INPINPUT_CLEAR_MASK              ((uint32_t)0x00000180)
+ARM GAS  /tmp/ccpWsxwz.s 			page 2
+
+
+  31:./lib/src/at32f4xx_comp.c **** #else
+  32:./lib/src/at32f4xx_comp.c **** #define COMP_CTRLSTS1_CLEAR_MASK              ((uint32_t)0x00003F74)
+  33:./lib/src/at32f4xx_comp.c **** #define COMP_INPINPUT_CLEAR_MASK              ((uint32_t)0x00000003)
+  34:./lib/src/at32f4xx_comp.c **** #endif
+  35:./lib/src/at32f4xx_comp.c **** #define COMP_HIGH_PULSE_CLEAR_MASK            ((uint16_t)0x003F) 
+  36:./lib/src/at32f4xx_comp.c **** #define COMP_LOW_PULSE_CLEAR_MASK             ((uint16_t)0x003F)
+  37:./lib/src/at32f4xx_comp.c **** 
+  38:./lib/src/at32f4xx_comp.c **** /* Private macro -------------------------------------------------------------*/
+  39:./lib/src/at32f4xx_comp.c **** /* Private variables ---------------------------------------------------------*/
+  40:./lib/src/at32f4xx_comp.c **** /* Private function prototypes -----------------------------------------------*/
+  41:./lib/src/at32f4xx_comp.c **** /* Private functions ---------------------------------------------------------*/
+  42:./lib/src/at32f4xx_comp.c **** 
+  43:./lib/src/at32f4xx_comp.c **** /** @defgroup COMP_Private_Functions
+  44:./lib/src/at32f4xx_comp.c ****   * @{
+  45:./lib/src/at32f4xx_comp.c ****   */
+  46:./lib/src/at32f4xx_comp.c ****    
+  47:./lib/src/at32f4xx_comp.c **** /**
+  48:./lib/src/at32f4xx_comp.c ****   * @brief  Deinitializes COMP peripheral registers to their default reset values.
+  49:./lib/src/at32f4xx_comp.c ****   * @note   Deinitialization can't be performed if the COMP configuration is locked.
+  50:./lib/src/at32f4xx_comp.c ****   *         To unlock the configuration, perform a system reset.
+  51:./lib/src/at32f4xx_comp.c ****   * @param  None
+  52:./lib/src/at32f4xx_comp.c ****   * @retval None
+  53:./lib/src/at32f4xx_comp.c ****   */
+  54:./lib/src/at32f4xx_comp.c **** void COMP_Reset(void)
+  55:./lib/src/at32f4xx_comp.c **** {
+  29              		.loc 1 55 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  56:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS1 = ((uint32_t)0x00000080);    /*!< Set COMP_CTRLSTS register to reset value */
+  34              		.loc 1 56 3 view .LVU1
+  35              		.loc 1 56 18 is_stmt 0 view .LVU2
+  36 0000 014B     		ldr	r3, .L2
+  37 0002 8022     		movs	r2, #128
+  38 0004 DA61     		str	r2, [r3, #28]
+  57:./lib/src/at32f4xx_comp.c **** }
+  39              		.loc 1 57 1 view .LVU3
+  40 0006 7047     		bx	lr
+  41              	.L3:
+  42              		.align	2
+  43              	.L2:
+  44 0008 00000140 		.word	1073807360
+  45              		.cfi_endproc
+  46              	.LFE123:
+  48              		.section	.text.COMP_Init,"ax",%progbits
+  49              		.align	1
+  50              		.global	COMP_Init
+  51              		.syntax unified
+  52              		.thumb
+  53              		.thumb_func
+  54              		.fpu fpv4-sp-d16
+  56              	COMP_Init:
+  57              	.LVL0:
+  58              	.LFB124:
+  58:./lib/src/at32f4xx_comp.c **** 
+  59:./lib/src/at32f4xx_comp.c **** /**
+ARM GAS  /tmp/ccpWsxwz.s 			page 3
+
+
+  60:./lib/src/at32f4xx_comp.c ****   * @brief  Initializes the COMP peripheral according to the specified parameters
+  61:./lib/src/at32f4xx_comp.c ****   *         in COMP_InitStruct
+  62:./lib/src/at32f4xx_comp.c ****   * @note   If the selected comparator is locked, initialization can't be performed.
+  63:./lib/src/at32f4xx_comp.c ****   *         To unlock the configuration, perform a system reset.
+  64:./lib/src/at32f4xx_comp.c ****   * @note   By default, PA1 is selected as COMP1 non inverting input.
+  65:./lib/src/at32f4xx_comp.c ****   *         To use PA4 as COMP1 non inverting input call COMP_SwitchCmd() after COMP_Init()
+  66:./lib/src/at32f4xx_comp.c ****   * @param  COMP_Selection: the selected comparator. 
+  67:./lib/src/at32f4xx_comp.c ****   *          This parameter can be one of the following values:
+  68:./lib/src/at32f4xx_comp.c ****   *            @arg COMP1_Selection: COMP1 selected
+  69:./lib/src/at32f4xx_comp.c ****   *            @arg COMP2_Selection: COMP2 selected
+  70:./lib/src/at32f4xx_comp.c ****   * @param  COMP_InitStruct: pointer to an COMP_InitType structure that contains 
+  71:./lib/src/at32f4xx_comp.c ****   *         the configuration information for the specified COMP peripheral.
+  72:./lib/src/at32f4xx_comp.c ****   * @retval None
+  73:./lib/src/at32f4xx_comp.c ****   */
+  74:./lib/src/at32f4xx_comp.c **** void COMP_Init(uint32_t COMP_Selection, COMP_InitType* COMP_InitStruct)
+  75:./lib/src/at32f4xx_comp.c **** {
+  59              		.loc 1 75 1 is_stmt 1 view -0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              		@ link register save eliminated.
+  64              		.loc 1 75 1 is_stmt 0 view .LVU5
+  65 0000 30B4     		push	{r4, r5}
+  66              	.LCFI0:
+  67              		.cfi_def_cfa_offset 8
+  68              		.cfi_offset 4, -8
+  69              		.cfi_offset 5, -4
+  76:./lib/src/at32f4xx_comp.c ****   uint32_t tmpreg = 0;
+  70              		.loc 1 76 3 is_stmt 1 view .LVU6
+  71              	.LVL1:
+  77:./lib/src/at32f4xx_comp.c **** 
+  78:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+  79:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_ALL_PERIPH(COMP_Selection));
+  72              		.loc 1 79 3 view .LVU7
+  80:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_INVERTING_INPUT(COMP_InitStruct->COMP_INMInput));
+  73              		.loc 1 80 3 view .LVU8
+  81:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_OUTPUT(COMP_InitStruct->COMP_Output));
+  74              		.loc 1 81 3 view .LVU9
+  82:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_OUTPUT_POL(COMP_InitStruct->COMP_OutPolarity));
+  75              		.loc 1 82 3 view .LVU10
+  83:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_HYSTERESIS(COMP_InitStruct->COMP_Hysteresis));
+  76              		.loc 1 83 3 view .LVU11
+  84:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_MODE(COMP_InitStruct->COMP_Mode));
+  77              		.loc 1 84 3 view .LVU12
+  85:./lib/src/at32f4xx_comp.c **** 
+  86:./lib/src/at32f4xx_comp.c ****   /*!< Get the COMP_CTRLSTS register value */
+  87:./lib/src/at32f4xx_comp.c ****   tmpreg = COMP->CTRLSTS1;
+  78              		.loc 1 87 3 view .LVU13
+  79              		.loc 1 87 10 is_stmt 0 view .LVU14
+  80 0002 0A4C     		ldr	r4, .L6
+  81 0004 E269     		ldr	r2, [r4, #28]
+  82              	.LVL2:
+  88:./lib/src/at32f4xx_comp.c **** 
+  89:./lib/src/at32f4xx_comp.c ****   /*!< Clear the COMP1SW1, COMPx_IN_SEL, COMPx_OUT_TIM_SEL, COMPx_POL, COMPx_HYST and COMPx_PWR_MOD
+  90:./lib/src/at32f4xx_comp.c ****   tmpreg &= (uint32_t) ~(COMP_CTRLSTS1_CLEAR_MASK<<COMP_Selection);
+  83              		.loc 1 90 3 is_stmt 1 view .LVU15
+  84              		.loc 1 90 50 is_stmt 0 view .LVU16
+ARM GAS  /tmp/ccpWsxwz.s 			page 4
+
+
+  85 0006 0A4B     		ldr	r3, .L6+4
+  86 0008 8340     		lsls	r3, r3, r0
+  87              		.loc 1 90 10 view .LVU17
+  88 000a 22EA0302 		bic	r2, r2, r3
+  89              	.LVL3:
+  91:./lib/src/at32f4xx_comp.c **** 
+  92:./lib/src/at32f4xx_comp.c ****   /*!< Configure COMP: inverting input, output redirection, hysteresis value and power mode */
+  93:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPxINSEL bits according to COMP_InitStruct->COMP_InvertingInput value */
+  94:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPxOUTSEL bits according to COMP_InitStruct->COMP_Output value */
+  95:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPxPOL bit according to COMP_InitStruct->COMP_OutputPol value */
+  96:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPxHYST bits according to COMP_InitStruct->COMP_Hysteresis value */
+  97:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPxMODE bits according to COMP_InitStruct->COMP_Mode value */   
+  98:./lib/src/at32f4xx_comp.c ****   tmpreg |= (uint32_t)((COMP_InitStruct->COMP_INMInput | COMP_InitStruct->COMP_Output |
+  90              		.loc 1 98 3 is_stmt 1 view .LVU18
+  91              		.loc 1 98 40 is_stmt 0 view .LVU19
+  92 000e 0B68     		ldr	r3, [r1]
+  93              		.loc 1 98 56 view .LVU20
+  94 0010 4D68     		ldr	r5, [r1, #4]
+  95 0012 2B43     		orrs	r3, r3, r5
+  96              		.loc 1 98 87 view .LVU21
+  97 0014 8D68     		ldr	r5, [r1, #8]
+  98 0016 2B43     		orrs	r3, r3, r5
+  99:./lib/src/at32f4xx_comp.c ****                        COMP_InitStruct->COMP_OutPolarity | COMP_InitStruct->COMP_Hysteresis |
+  99              		.loc 1 99 58 view .LVU22
+ 100 0018 CD68     		ldr	r5, [r1, #12]
+ 101 001a 2B43     		orrs	r3, r3, r5
+ 100:./lib/src/at32f4xx_comp.c ****                        COMP_InitStruct->COMP_Mode)<<COMP_Selection);
+ 102              		.loc 1 100 39 view .LVU23
+ 103 001c 0969     		ldr	r1, [r1, #16]
+ 104              	.LVL4:
+  99:./lib/src/at32f4xx_comp.c ****                        COMP_InitStruct->COMP_OutPolarity | COMP_InitStruct->COMP_Hysteresis |
+ 105              		.loc 1 99 93 view .LVU24
+ 106 001e 0B43     		orrs	r3, r3, r1
+ 107              		.loc 1 100 51 view .LVU25
+ 108 0020 03FA00F0 		lsl	r0, r3, r0
+ 109              	.LVL5:
+  98:./lib/src/at32f4xx_comp.c ****                        COMP_InitStruct->COMP_OutPolarity | COMP_InitStruct->COMP_Hysteresis |
+ 110              		.loc 1 98 10 view .LVU26
+ 111 0024 1043     		orrs	r0, r0, r2
+ 112              	.LVL6:
+ 101:./lib/src/at32f4xx_comp.c **** 
+ 102:./lib/src/at32f4xx_comp.c ****   /*!< Write to COMP_CTRLSTS1 register */
+ 103:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS1 = tmpreg;  
+ 113              		.loc 1 103 3 is_stmt 1 view .LVU27
+ 114              		.loc 1 103 18 is_stmt 0 view .LVU28
+ 115 0026 E061     		str	r0, [r4, #28]
+ 104:./lib/src/at32f4xx_comp.c **** }
+ 116              		.loc 1 104 1 view .LVU29
+ 117 0028 30BC     		pop	{r4, r5}
+ 118              	.LCFI1:
+ 119              		.cfi_restore 5
+ 120              		.cfi_restore 4
+ 121              		.cfi_def_cfa_offset 0
+ 122 002a 7047     		bx	lr
+ 123              	.L7:
+ 124              		.align	2
+ 125              	.L6:
+ARM GAS  /tmp/ccpWsxwz.s 			page 5
+
+
+ 126 002c 00000140 		.word	1073807360
+ 127 0030 7C9C0300 		.word	236668
+ 128              		.cfi_endproc
+ 129              	.LFE124:
+ 131              		.section	.text.COMP_SelectINPInput,"ax",%progbits
+ 132              		.align	1
+ 133              		.global	COMP_SelectINPInput
+ 134              		.syntax unified
+ 135              		.thumb
+ 136              		.thumb_func
+ 137              		.fpu fpv4-sp-d16
+ 139              	COMP_SelectINPInput:
+ 140              	.LVL7:
+ 141              	.LFB125:
+ 105:./lib/src/at32f4xx_comp.c **** 
+ 106:./lib/src/at32f4xx_comp.c **** /**
+ 107:./lib/src/at32f4xx_comp.c ****   * @brief  Select the non-inverting input for COMP1/COMP2.
+ 108:./lib/src/at32f4xx_comp.c ****   * @param  COMP_Selection: the selected comparator. 
+ 109:./lib/src/at32f4xx_comp.c ****   *          This parameter can be one of the following values:
+ 110:./lib/src/at32f4xx_comp.c ****   *            @arg COMP1_Selection: COMP1 selected
+ 111:./lib/src/at32f4xx_comp.c ****   *            @arg COMP2_Selection: COMP2 selected
+ 112:./lib/src/at32f4xx_comp.c ****   * @param  COMP_INPInput: the selected COMP non-inverting input.
+ 113:./lib/src/at32f4xx_comp.c ****   *         This parameter can be one of the following values:
+ 114:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_INPInput_00: PA5/PA7 connected to comparator1/2 non-inverting input
+ 115:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_INPInput_01: PA1/PA3 connected to comparator1/2 non-inverting input
+ 116:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_INPInput_10: PA0/PA2 connected to comparator1/2 non-inverting input
+ 117:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 118:./lib/src/at32f4xx_comp.c ****   */
+ 119:./lib/src/at32f4xx_comp.c **** void COMP_SelectINPInput(uint32_t COMP_Selection, uint32_t COMP_INPInput)
+ 120:./lib/src/at32f4xx_comp.c **** {
+ 142              		.loc 1 120 1 is_stmt 1 view -0
+ 143              		.cfi_startproc
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146              		@ link register save eliminated.
+ 147              		.loc 1 120 1 is_stmt 0 view .LVU31
+ 148 0000 10B4     		push	{r4}
+ 149              	.LCFI2:
+ 150              		.cfi_def_cfa_offset 4
+ 151              		.cfi_offset 4, -4
+ 121:./lib/src/at32f4xx_comp.c ****   uint32_t tmpreg = 0;
+ 152              		.loc 1 121 3 is_stmt 1 view .LVU32
+ 153              	.LVL8:
+ 122:./lib/src/at32f4xx_comp.c **** 
+ 123:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 124:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_ALL_PERIPH(COMP_Selection));
+ 154              		.loc 1 124 3 view .LVU33
+ 125:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_NONINVERTING_INPUT(COMP_INPInput));
+ 155              		.loc 1 125 3 view .LVU34
+ 126:./lib/src/at32f4xx_comp.c **** 
+ 127:./lib/src/at32f4xx_comp.c **** #ifdef AT32F421xx
+ 128:./lib/src/at32f4xx_comp.c ****   /*!< Get the COMP_CTRLSTS register value */
+ 129:./lib/src/at32f4xx_comp.c ****   tmpreg = COMP->CTRLSTS1;
+ 156              		.loc 1 129 3 view .LVU35
+ 157              		.loc 1 129 10 is_stmt 0 view .LVU36
+ 158 0002 064C     		ldr	r4, .L10
+ 159 0004 E369     		ldr	r3, [r4, #28]
+ARM GAS  /tmp/ccpWsxwz.s 			page 6
+
+
+ 160              	.LVL9:
+ 130:./lib/src/at32f4xx_comp.c **** #else
+ 131:./lib/src/at32f4xx_comp.c ****   /*!< Get the COMP_CTRLSTS register value */
+ 132:./lib/src/at32f4xx_comp.c ****   tmpreg = COMP->CTRLSTS2;
+ 133:./lib/src/at32f4xx_comp.c **** #endif
+ 134:./lib/src/at32f4xx_comp.c ****   
+ 135:./lib/src/at32f4xx_comp.c ****   /*!< Clear the COMPxINPSEL bits */ 
+ 136:./lib/src/at32f4xx_comp.c ****   tmpreg &= (uint32_t) ~(COMP_INPINPUT_CLEAR_MASK<<COMP_Selection);
+ 161              		.loc 1 136 3 is_stmt 1 view .LVU37
+ 162              		.loc 1 136 50 is_stmt 0 view .LVU38
+ 163 0006 4FF4C072 		mov	r2, #384
+ 164 000a 8240     		lsls	r2, r2, r0
+ 165              		.loc 1 136 10 view .LVU39
+ 166 000c 23EA0203 		bic	r3, r3, r2
+ 167              	.LVL10:
+ 137:./lib/src/at32f4xx_comp.c **** 
+ 138:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPxINPSEL bits according to COMP_InitStruct->COMP_NonInvertingInput value */
+ 139:./lib/src/at32f4xx_comp.c ****   tmpreg |= (uint32_t)(COMP_INPInput<<COMP_Selection);
+ 168              		.loc 1 139 3 is_stmt 1 view .LVU40
+ 169              		.loc 1 139 37 is_stmt 0 view .LVU41
+ 170 0010 8140     		lsls	r1, r1, r0
+ 171              	.LVL11:
+ 172              		.loc 1 139 10 view .LVU42
+ 173 0012 1943     		orrs	r1, r1, r3
+ 174              	.LVL12:
+ 140:./lib/src/at32f4xx_comp.c **** 
+ 141:./lib/src/at32f4xx_comp.c **** #ifdef AT32F421xx
+ 142:./lib/src/at32f4xx_comp.c ****   /*!< Write to COMP_CTRLSTS2 register */
+ 143:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS1 = tmpreg;  
+ 175              		.loc 1 143 3 is_stmt 1 view .LVU43
+ 176              		.loc 1 143 18 is_stmt 0 view .LVU44
+ 177 0014 E161     		str	r1, [r4, #28]
+ 144:./lib/src/at32f4xx_comp.c **** #else
+ 145:./lib/src/at32f4xx_comp.c ****   /*!< Write to COMP_CTRLSTS2 register */
+ 146:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS2 = tmpreg;  
+ 147:./lib/src/at32f4xx_comp.c **** #endif
+ 148:./lib/src/at32f4xx_comp.c **** }
+ 178              		.loc 1 148 1 view .LVU45
+ 179 0016 5DF8044B 		ldr	r4, [sp], #4
+ 180              	.LCFI3:
+ 181              		.cfi_restore 4
+ 182              		.cfi_def_cfa_offset 0
+ 183 001a 7047     		bx	lr
+ 184              	.L11:
+ 185              		.align	2
+ 186              	.L10:
+ 187 001c 00000140 		.word	1073807360
+ 188              		.cfi_endproc
+ 189              	.LFE125:
+ 191              		.section	.text.COMP_StructInit,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	COMP_StructInit
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.fpu fpv4-sp-d16
+ 199              	COMP_StructInit:
+ARM GAS  /tmp/ccpWsxwz.s 			page 7
+
+
+ 200              	.LVL13:
+ 201              	.LFB126:
+ 149:./lib/src/at32f4xx_comp.c **** 
+ 150:./lib/src/at32f4xx_comp.c **** /**
+ 151:./lib/src/at32f4xx_comp.c ****   * @brief  Fills each COMP_InitStruct member with its default value.
+ 152:./lib/src/at32f4xx_comp.c ****   * @param  COMP_InitStruct: pointer to an COMP_InitType structure which will 
+ 153:./lib/src/at32f4xx_comp.c ****   *         be initialized.
+ 154:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 155:./lib/src/at32f4xx_comp.c ****   */
+ 156:./lib/src/at32f4xx_comp.c **** void COMP_StructInit(COMP_InitType* COMP_InitStruct)
+ 157:./lib/src/at32f4xx_comp.c **** {
+ 202              		.loc 1 157 1 is_stmt 1 view -0
+ 203              		.cfi_startproc
+ 204              		@ args = 0, pretend = 0, frame = 0
+ 205              		@ frame_needed = 0, uses_anonymous_args = 0
+ 206              		@ link register save eliminated.
+ 158:./lib/src/at32f4xx_comp.c ****   COMP_InitStruct->COMP_INMInput = COMP_INMInput_1_4VREFINT;
+ 207              		.loc 1 158 3 view .LVU47
+ 208              		.loc 1 158 34 is_stmt 0 view .LVU48
+ 209 0000 0023     		movs	r3, #0
+ 210 0002 0360     		str	r3, [r0]
+ 159:./lib/src/at32f4xx_comp.c ****   COMP_InitStruct->COMP_Output = COMP_Output_None;
+ 211              		.loc 1 159 3 is_stmt 1 view .LVU49
+ 212              		.loc 1 159 32 is_stmt 0 view .LVU50
+ 213 0004 4360     		str	r3, [r0, #4]
+ 160:./lib/src/at32f4xx_comp.c ****   COMP_InitStruct->COMP_OutPolarity = COMP_OutPolarity_NonInverted;
+ 214              		.loc 1 160 3 is_stmt 1 view .LVU51
+ 215              		.loc 1 160 37 is_stmt 0 view .LVU52
+ 216 0006 8360     		str	r3, [r0, #8]
+ 161:./lib/src/at32f4xx_comp.c ****   COMP_InitStruct->COMP_Hysteresis = COMP_Hysteresis_No;
+ 217              		.loc 1 161 3 is_stmt 1 view .LVU53
+ 218              		.loc 1 161 36 is_stmt 0 view .LVU54
+ 219 0008 C360     		str	r3, [r0, #12]
+ 162:./lib/src/at32f4xx_comp.c ****   COMP_InitStruct->COMP_Mode = COMP_Mode_Fast;
+ 220              		.loc 1 162 3 is_stmt 1 view .LVU55
+ 221              		.loc 1 162 30 is_stmt 0 view .LVU56
+ 222 000a 0361     		str	r3, [r0, #16]
+ 163:./lib/src/at32f4xx_comp.c **** }
+ 223              		.loc 1 163 1 view .LVU57
+ 224 000c 7047     		bx	lr
+ 225              		.cfi_endproc
+ 226              	.LFE126:
+ 228              		.section	.text.COMP_Cmd,"ax",%progbits
+ 229              		.align	1
+ 230              		.global	COMP_Cmd
+ 231              		.syntax unified
+ 232              		.thumb
+ 233              		.thumb_func
+ 234              		.fpu fpv4-sp-d16
+ 236              	COMP_Cmd:
+ 237              	.LVL14:
+ 238              	.LFB127:
+ 164:./lib/src/at32f4xx_comp.c **** 
+ 165:./lib/src/at32f4xx_comp.c **** /**
+ 166:./lib/src/at32f4xx_comp.c ****   * @brief  Enable or disable the COMP peripheral.
+ 167:./lib/src/at32f4xx_comp.c ****   * @note   If the selected comparator is locked, enable/disable can't be performed.
+ 168:./lib/src/at32f4xx_comp.c ****   *         To unlock the configuration, perform a system reset.
+ARM GAS  /tmp/ccpWsxwz.s 			page 8
+
+
+ 169:./lib/src/at32f4xx_comp.c ****   * @param  COMP_Selection: the selected comparator.
+ 170:./lib/src/at32f4xx_comp.c ****   *          This parameter can be one of the following values:
+ 171:./lib/src/at32f4xx_comp.c ****   *            @arg COMP1_Selection: COMP1 selected
+ 172:./lib/src/at32f4xx_comp.c ****   *            @arg COMP2_Selection: COMP2 selected
+ 173:./lib/src/at32f4xx_comp.c ****   * @param  NewState: new state of the COMP peripheral.
+ 174:./lib/src/at32f4xx_comp.c ****   *          This parameter can be: ENABLE or DISABLE.
+ 175:./lib/src/at32f4xx_comp.c ****   * @note   When enabled, the comparator compares the non inverting input with 
+ 176:./lib/src/at32f4xx_comp.c ****   *         the inverting input and the comparison result is available on comparator output.
+ 177:./lib/src/at32f4xx_comp.c ****   * @note   When disabled, the comparator doesn't perform comparison and the 
+ 178:./lib/src/at32f4xx_comp.c ****   *         output level is low.
+ 179:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 180:./lib/src/at32f4xx_comp.c ****   */
+ 181:./lib/src/at32f4xx_comp.c **** void COMP_Cmd(uint32_t COMP_Selection, FunctionalState NewState)
+ 182:./lib/src/at32f4xx_comp.c **** {
+ 239              		.loc 1 182 1 is_stmt 1 view -0
+ 240              		.cfi_startproc
+ 241              		@ args = 0, pretend = 0, frame = 0
+ 242              		@ frame_needed = 0, uses_anonymous_args = 0
+ 243              		@ link register save eliminated.
+ 183:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 184:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_ALL_PERIPH(COMP_Selection));
+ 244              		.loc 1 184 3 view .LVU59
+ 185:./lib/src/at32f4xx_comp.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 245              		.loc 1 185 3 view .LVU60
+ 186:./lib/src/at32f4xx_comp.c **** 
+ 187:./lib/src/at32f4xx_comp.c ****   if (NewState != DISABLE)
+ 246              		.loc 1 187 3 view .LVU61
+ 247              		.loc 1 187 6 is_stmt 0 view .LVU62
+ 248 0000 39B1     		cbz	r1, .L14
+ 188:./lib/src/at32f4xx_comp.c ****   {
+ 189:./lib/src/at32f4xx_comp.c ****     /* Enable the selected COMP peripheral */
+ 190:./lib/src/at32f4xx_comp.c ****     COMP->CTRLSTS1 |= (uint32_t) (1<<COMP_Selection);
+ 249              		.loc 1 190 5 is_stmt 1 view .LVU63
+ 250              		.loc 1 190 20 is_stmt 0 view .LVU64
+ 251 0002 0849     		ldr	r1, .L16
+ 252              	.LVL15:
+ 253              		.loc 1 190 20 view .LVU65
+ 254 0004 CB69     		ldr	r3, [r1, #28]
+ 255              		.loc 1 190 36 view .LVU66
+ 256 0006 0122     		movs	r2, #1
+ 257 0008 02FA00F0 		lsl	r0, r2, r0
+ 258              	.LVL16:
+ 259              		.loc 1 190 20 view .LVU67
+ 260 000c 1843     		orrs	r0, r0, r3
+ 261 000e C861     		str	r0, [r1, #28]
+ 262 0010 7047     		bx	lr
+ 263              	.LVL17:
+ 264              	.L14:
+ 191:./lib/src/at32f4xx_comp.c ****   }
+ 192:./lib/src/at32f4xx_comp.c ****   else
+ 193:./lib/src/at32f4xx_comp.c ****   {
+ 194:./lib/src/at32f4xx_comp.c ****     /* Disable the selected COMP peripheral  */
+ 195:./lib/src/at32f4xx_comp.c ****     COMP->CTRLSTS1 &= (uint32_t)(~((uint32_t)1<<COMP_Selection));
+ 265              		.loc 1 195 5 is_stmt 1 view .LVU68
+ 266              		.loc 1 195 20 is_stmt 0 view .LVU69
+ 267 0012 0449     		ldr	r1, .L16
+ 268              	.LVL18:
+ARM GAS  /tmp/ccpWsxwz.s 			page 9
+
+
+ 269              		.loc 1 195 20 view .LVU70
+ 270 0014 CB69     		ldr	r3, [r1, #28]
+ 271              		.loc 1 195 47 view .LVU71
+ 272 0016 0122     		movs	r2, #1
+ 273 0018 02FA00F0 		lsl	r0, r2, r0
+ 274              	.LVL19:
+ 275              		.loc 1 195 20 view .LVU72
+ 276 001c 23EA0000 		bic	r0, r3, r0
+ 277 0020 C861     		str	r0, [r1, #28]
+ 196:./lib/src/at32f4xx_comp.c ****   }
+ 197:./lib/src/at32f4xx_comp.c **** }
+ 278              		.loc 1 197 1 view .LVU73
+ 279 0022 7047     		bx	lr
+ 280              	.L17:
+ 281              		.align	2
+ 282              	.L16:
+ 283 0024 00000140 		.word	1073807360
+ 284              		.cfi_endproc
+ 285              	.LFE127:
+ 287              		.section	.text.COMP_SwitchCmd,"ax",%progbits
+ 288              		.align	1
+ 289              		.global	COMP_SwitchCmd
+ 290              		.syntax unified
+ 291              		.thumb
+ 292              		.thumb_func
+ 293              		.fpu fpv4-sp-d16
+ 295              	COMP_SwitchCmd:
+ 296              	.LVL20:
+ 297              	.LFB128:
+ 198:./lib/src/at32f4xx_comp.c **** 
+ 199:./lib/src/at32f4xx_comp.c **** /**
+ 200:./lib/src/at32f4xx_comp.c ****   * @brief  Close or Open the SW1 switch.
+ 201:./lib/src/at32f4xx_comp.c ****   * @note   This switch is solely intended to redirect signals onto high
+ 202:./lib/src/at32f4xx_comp.c ****   *         impedance input, such as COMP1 non-inverting input (highly resistive switch)
+ 203:./lib/src/at32f4xx_comp.c ****   * @param  NewState: New state of the analog switch.
+ 204:./lib/src/at32f4xx_comp.c ****   *          This parameter can be: ENABLE or DISABLE. 
+ 205:./lib/src/at32f4xx_comp.c ****   * @note   When enabled, the SW1 is closed; PA1 is connected to PA4
+ 206:./lib/src/at32f4xx_comp.c ****   * @note   When disabled, the SW1 switch is open; PA1 is disconnected from PA4
+ 207:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 208:./lib/src/at32f4xx_comp.c ****   */
+ 209:./lib/src/at32f4xx_comp.c **** void COMP_SwitchCmd(FunctionalState NewState)
+ 210:./lib/src/at32f4xx_comp.c **** {
+ 298              		.loc 1 210 1 is_stmt 1 view -0
+ 299              		.cfi_startproc
+ 300              		@ args = 0, pretend = 0, frame = 0
+ 301              		@ frame_needed = 0, uses_anonymous_args = 0
+ 302              		@ link register save eliminated.
+ 211:./lib/src/at32f4xx_comp.c ****   /* Check the parameter */
+ 212:./lib/src/at32f4xx_comp.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 303              		.loc 1 212 3 view .LVU75
+ 213:./lib/src/at32f4xx_comp.c **** 
+ 214:./lib/src/at32f4xx_comp.c ****   if (NewState != DISABLE)
+ 304              		.loc 1 214 3 view .LVU76
+ 305              		.loc 1 214 6 is_stmt 0 view .LVU77
+ 306 0000 28B1     		cbz	r0, .L19
+ 215:./lib/src/at32f4xx_comp.c ****   {
+ 216:./lib/src/at32f4xx_comp.c ****     /* Close SW1 switch */
+ARM GAS  /tmp/ccpWsxwz.s 			page 10
+
+
+ 217:./lib/src/at32f4xx_comp.c ****     COMP->CTRLSTS1 |= (uint32_t) (COMP_CTRLSTS_COMP1SW1);
+ 307              		.loc 1 217 5 is_stmt 1 view .LVU78
+ 308              		.loc 1 217 20 is_stmt 0 view .LVU79
+ 309 0002 064A     		ldr	r2, .L21
+ 310 0004 D369     		ldr	r3, [r2, #28]
+ 311 0006 43F00203 		orr	r3, r3, #2
+ 312 000a D361     		str	r3, [r2, #28]
+ 313 000c 7047     		bx	lr
+ 314              	.L19:
+ 218:./lib/src/at32f4xx_comp.c ****   }
+ 219:./lib/src/at32f4xx_comp.c ****   else
+ 220:./lib/src/at32f4xx_comp.c ****   {
+ 221:./lib/src/at32f4xx_comp.c ****     /* Open SW1 switch */
+ 222:./lib/src/at32f4xx_comp.c ****     COMP->CTRLSTS1 &= (uint32_t)(~COMP_CTRLSTS_COMP1SW1);
+ 315              		.loc 1 222 5 is_stmt 1 view .LVU80
+ 316              		.loc 1 222 20 is_stmt 0 view .LVU81
+ 317 000e 034A     		ldr	r2, .L21
+ 318 0010 D369     		ldr	r3, [r2, #28]
+ 319 0012 23F00203 		bic	r3, r3, #2
+ 320 0016 D361     		str	r3, [r2, #28]
+ 223:./lib/src/at32f4xx_comp.c ****   }
+ 224:./lib/src/at32f4xx_comp.c **** }
+ 321              		.loc 1 224 1 view .LVU82
+ 322 0018 7047     		bx	lr
+ 323              	.L22:
+ 324 001a 00BF     		.align	2
+ 325              	.L21:
+ 326 001c 00000140 		.word	1073807360
+ 327              		.cfi_endproc
+ 328              	.LFE128:
+ 330              		.section	.text.COMP_GetOutputState,"ax",%progbits
+ 331              		.align	1
+ 332              		.global	COMP_GetOutputState
+ 333              		.syntax unified
+ 334              		.thumb
+ 335              		.thumb_func
+ 336              		.fpu fpv4-sp-d16
+ 338              	COMP_GetOutputState:
+ 339              	.LVL21:
+ 340              	.LFB129:
+ 225:./lib/src/at32f4xx_comp.c **** 
+ 226:./lib/src/at32f4xx_comp.c **** /**
+ 227:./lib/src/at32f4xx_comp.c ****   * @brief  Return the output level (high or low) of the selected comparator. 
+ 228:./lib/src/at32f4xx_comp.c ****   * @note   The output level depends on the selected polarity.
+ 229:./lib/src/at32f4xx_comp.c ****   * @note   If the polarity is not inverted:
+ 230:./lib/src/at32f4xx_comp.c ****   *          - Comparator output is low when the non-inverting input is at a lower
+ 231:./lib/src/at32f4xx_comp.c ****   *            voltage than the inverting input
+ 232:./lib/src/at32f4xx_comp.c ****   *          - Comparator output is high when the non-inverting input is at a higher
+ 233:./lib/src/at32f4xx_comp.c ****   *            voltage than the inverting input
+ 234:./lib/src/at32f4xx_comp.c ****   * @note   If the polarity is inverted:
+ 235:./lib/src/at32f4xx_comp.c ****   *          - Comparator output is high when the non-inverting input is at a lower
+ 236:./lib/src/at32f4xx_comp.c ****   *            voltage than the inverting input
+ 237:./lib/src/at32f4xx_comp.c ****   *          - Comparator output is low when the non-inverting input is at a higher
+ 238:./lib/src/at32f4xx_comp.c ****   *            voltage than the inverting input
+ 239:./lib/src/at32f4xx_comp.c ****   * @param  COMP_Selection: the selected comparator. 
+ 240:./lib/src/at32f4xx_comp.c ****   *          This parameter can be one of the following values:
+ 241:./lib/src/at32f4xx_comp.c ****   *            @arg COMP1_Selection: COMP1 selected
+ARM GAS  /tmp/ccpWsxwz.s 			page 11
+
+
+ 242:./lib/src/at32f4xx_comp.c ****   *            @arg COMP2_Selection: COMP2 selected  
+ 243:./lib/src/at32f4xx_comp.c ****   * @retval Returns the selected comparator output level: low or high.
+ 244:./lib/src/at32f4xx_comp.c ****   *       
+ 245:./lib/src/at32f4xx_comp.c ****   */
+ 246:./lib/src/at32f4xx_comp.c **** uint32_t COMP_GetOutputState(uint32_t COMP_Selection)
+ 247:./lib/src/at32f4xx_comp.c **** {
+ 341              		.loc 1 247 1 is_stmt 1 view -0
+ 342              		.cfi_startproc
+ 343              		@ args = 0, pretend = 0, frame = 0
+ 344              		@ frame_needed = 0, uses_anonymous_args = 0
+ 345              		@ link register save eliminated.
+ 248:./lib/src/at32f4xx_comp.c ****   uint32_t compout = 0x0;
+ 346              		.loc 1 248 3 view .LVU84
+ 249:./lib/src/at32f4xx_comp.c **** 
+ 250:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 251:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_ALL_PERIPH(COMP_Selection));
+ 347              		.loc 1 251 3 view .LVU85
+ 252:./lib/src/at32f4xx_comp.c **** 
+ 253:./lib/src/at32f4xx_comp.c ****   /* Check if selected comparator output is high */
+ 254:./lib/src/at32f4xx_comp.c ****   if ((COMP->CTRLSTS1 & (COMP_CTRLSTS_COMP1OUT<<COMP_Selection)) != 0)
+ 348              		.loc 1 254 3 view .LVU86
+ 349              		.loc 1 254 12 is_stmt 0 view .LVU87
+ 350 0000 044B     		ldr	r3, .L25
+ 351 0002 DB69     		ldr	r3, [r3, #28]
+ 352              		.loc 1 254 47 view .LVU88
+ 353 0004 4FF08042 		mov	r2, #1073741824
+ 354 0008 02FA00F0 		lsl	r0, r2, r0
+ 355              	.LVL22:
+ 356              		.loc 1 254 6 view .LVU89
+ 357 000c 1840     		ands	r0, r3, r0
+ 358 000e 00D0     		beq	.L23
+ 255:./lib/src/at32f4xx_comp.c ****   {
+ 256:./lib/src/at32f4xx_comp.c ****     compout = SET;
+ 359              		.loc 1 256 13 view .LVU90
+ 360 0010 0120     		movs	r0, #1
+ 361              	.LVL23:
+ 257:./lib/src/at32f4xx_comp.c ****   }
+ 258:./lib/src/at32f4xx_comp.c ****   else
+ 259:./lib/src/at32f4xx_comp.c ****   {
+ 260:./lib/src/at32f4xx_comp.c ****     compout = RESET;
+ 261:./lib/src/at32f4xx_comp.c ****   }
+ 262:./lib/src/at32f4xx_comp.c **** 
+ 263:./lib/src/at32f4xx_comp.c ****   /* Return the comparator output level */
+ 264:./lib/src/at32f4xx_comp.c ****   return (uint32_t)(compout);
+ 362              		.loc 1 264 3 is_stmt 1 view .LVU91
+ 363              	.L23:
+ 265:./lib/src/at32f4xx_comp.c **** }
+ 364              		.loc 1 265 1 is_stmt 0 view .LVU92
+ 365 0012 7047     		bx	lr
+ 366              	.L26:
+ 367              		.align	2
+ 368              	.L25:
+ 369 0014 00000140 		.word	1073807360
+ 370              		.cfi_endproc
+ 371              	.LFE129:
+ 373              		.section	.text.COMP_LockConfig,"ax",%progbits
+ 374              		.align	1
+ARM GAS  /tmp/ccpWsxwz.s 			page 12
+
+
+ 375              		.global	COMP_LockConfig
+ 376              		.syntax unified
+ 377              		.thumb
+ 378              		.thumb_func
+ 379              		.fpu fpv4-sp-d16
+ 381              	COMP_LockConfig:
+ 382              	.LVL24:
+ 383              	.LFB130:
+ 266:./lib/src/at32f4xx_comp.c **** 
+ 267:./lib/src/at32f4xx_comp.c **** #ifdef AT32F415
+ 268:./lib/src/at32f4xx_comp.c **** /**
+ 269:./lib/src/at32f4xx_comp.c ****   * @brief  Enables or disables the window mode.
+ 270:./lib/src/at32f4xx_comp.c ****   * @note   In window mode, COMP1 and COMP2 non inverting inputs are connected
+ 271:./lib/src/at32f4xx_comp.c ****   *         together and only COMP1 non inverting input (PA1) can be used.
+ 272:./lib/src/at32f4xx_comp.c ****   * @param  NewState: new state of the window mode.
+ 273:./lib/src/at32f4xx_comp.c ****   *          This parameter can be :
+ 274:./lib/src/at32f4xx_comp.c ****   *           @arg ENABLE: COMP1 and COMP2 non inverting inputs are connected together.
+ 275:./lib/src/at32f4xx_comp.c ****   *           @arg DISABLE: OMP1 and COMP2 non inverting inputs are disconnected.
+ 276:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 277:./lib/src/at32f4xx_comp.c ****   */
+ 278:./lib/src/at32f4xx_comp.c **** void COMP_WindowCmd(FunctionalState NewState)
+ 279:./lib/src/at32f4xx_comp.c **** {
+ 280:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 281:./lib/src/at32f4xx_comp.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 282:./lib/src/at32f4xx_comp.c ****   
+ 283:./lib/src/at32f4xx_comp.c ****   if (NewState != DISABLE)
+ 284:./lib/src/at32f4xx_comp.c ****   {
+ 285:./lib/src/at32f4xx_comp.c ****     /* Enable the window mode */
+ 286:./lib/src/at32f4xx_comp.c ****     COMP->CTRLSTS1 |= (uint32_t)COMP_CTRLSTS_WNDWEN;
+ 287:./lib/src/at32f4xx_comp.c ****   }
+ 288:./lib/src/at32f4xx_comp.c ****   else
+ 289:./lib/src/at32f4xx_comp.c ****   {
+ 290:./lib/src/at32f4xx_comp.c ****     /* Disable the window mode */
+ 291:./lib/src/at32f4xx_comp.c ****     COMP->CTRLSTS1 &= (uint32_t)(~COMP_CTRLSTS_WNDWEN);
+ 292:./lib/src/at32f4xx_comp.c ****   }
+ 293:./lib/src/at32f4xx_comp.c **** }
+ 294:./lib/src/at32f4xx_comp.c **** #endif
+ 295:./lib/src/at32f4xx_comp.c **** 
+ 296:./lib/src/at32f4xx_comp.c **** /**
+ 297:./lib/src/at32f4xx_comp.c ****   * @brief  Lock the selected comparator (COMP1/COMP2) configuration.
+ 298:./lib/src/at32f4xx_comp.c ****   * @note   Locking the configuration means that all control bits are read-only.
+ 299:./lib/src/at32f4xx_comp.c ****   *         To unlock the comparator configuration, perform a system reset.
+ 300:./lib/src/at32f4xx_comp.c ****   * @param  COMP_Selection: selects the comparator to be locked 
+ 301:./lib/src/at32f4xx_comp.c ****   *          This parameter can be a value of the following values:
+ 302:./lib/src/at32f4xx_comp.c ****   *            @arg COMP1_Selection: COMP1 configuration is locked.
+ 303:./lib/src/at32f4xx_comp.c ****   *            @arg COMP2_Selection: COMP2 configuration is locked.  
+ 304:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 305:./lib/src/at32f4xx_comp.c ****   */
+ 306:./lib/src/at32f4xx_comp.c **** void COMP_LockConfig(uint32_t COMP_Selection)
+ 307:./lib/src/at32f4xx_comp.c **** {
+ 384              		.loc 1 307 1 is_stmt 1 view -0
+ 385              		.cfi_startproc
+ 386              		@ args = 0, pretend = 0, frame = 0
+ 387              		@ frame_needed = 0, uses_anonymous_args = 0
+ 388              		@ link register save eliminated.
+ 308:./lib/src/at32f4xx_comp.c ****   /* Check the parameter */
+ 309:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_ALL_PERIPH(COMP_Selection));
+ARM GAS  /tmp/ccpWsxwz.s 			page 13
+
+
+ 389              		.loc 1 309 3 view .LVU94
+ 310:./lib/src/at32f4xx_comp.c **** 
+ 311:./lib/src/at32f4xx_comp.c ****   /* Set the lock bit corresponding to selected comparator */
+ 312:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS1 |= (uint32_t) (COMP_CTRLSTS_COMP1LOCK<<COMP_Selection);
+ 390              		.loc 1 312 3 view .LVU95
+ 391              		.loc 1 312 18 is_stmt 0 view .LVU96
+ 392 0000 0349     		ldr	r1, .L28
+ 393 0002 CB69     		ldr	r3, [r1, #28]
+ 394              		.loc 1 312 21 view .LVU97
+ 395 0004 4FF00042 		mov	r2, #-2147483648
+ 396 0008 8240     		lsls	r2, r2, r0
+ 397              		.loc 1 312 18 view .LVU98
+ 398 000a 1343     		orrs	r3, r3, r2
+ 399 000c CB61     		str	r3, [r1, #28]
+ 313:./lib/src/at32f4xx_comp.c **** }
+ 400              		.loc 1 313 1 view .LVU99
+ 401 000e 7047     		bx	lr
+ 402              	.L29:
+ 403              		.align	2
+ 404              	.L28:
+ 405 0010 00000140 		.word	1073807360
+ 406              		.cfi_endproc
+ 407              	.LFE130:
+ 409              		.section	.text.COMP_FilterConfig,"ax",%progbits
+ 410              		.align	1
+ 411              		.global	COMP_FilterConfig
+ 412              		.syntax unified
+ 413              		.thumb
+ 414              		.thumb_func
+ 415              		.fpu fpv4-sp-d16
+ 417              	COMP_FilterConfig:
+ 418              	.LVL25:
+ 419              	.LFB131:
+ 314:./lib/src/at32f4xx_comp.c **** 
+ 315:./lib/src/at32f4xx_comp.c **** /**
+ 316:./lib/src/at32f4xx_comp.c ****   * @brief  Configure COMP Glitch Filter.
+ 317:./lib/src/at32f4xx_comp.c ****   * @note   G_FILTER_EN, HIGH_PULSE and LOW_PULSE registers will
+ 318:./lib/src/at32f4xx_comp.c ****   *         act on both COMP1 and COMP2.
+ 319:./lib/src/at32f4xx_comp.c ****   * @param  COMP_HighPulseCnt: COMP High Pulse Count.
+ 320:./lib/src/at32f4xx_comp.c ****   *         This parameter must be a value between 0x00 and 0x3F  
+ 321:./lib/src/at32f4xx_comp.c ****   * @param  COMP_LowPulseCnt: COMP Low Pulse Count.
+ 322:./lib/src/at32f4xx_comp.c ****   *         This parameter must be a value between 0x00 and 0x3F  
+ 323:./lib/src/at32f4xx_comp.c ****   * @param  NewState: new state of the Glitch Filter.
+ 324:./lib/src/at32f4xx_comp.c ****   *          This parameter can be :
+ 325:./lib/src/at32f4xx_comp.c ****   *           @arg ENABLE: COMP1 and COMP2 turn on glitch filter.
+ 326:./lib/src/at32f4xx_comp.c ****   *           @arg DISABLE: COMP1 and COMP2 turn off glitch filter.
+ 327:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 328:./lib/src/at32f4xx_comp.c ****   */
+ 329:./lib/src/at32f4xx_comp.c **** void COMP_FilterConfig(uint16_t COMP_HighPulseCnt, uint16_t COMP_LowPulseCnt, FunctionalState NewSt
+ 330:./lib/src/at32f4xx_comp.c **** {
+ 420              		.loc 1 330 1 is_stmt 1 view -0
+ 421              		.cfi_startproc
+ 422              		@ args = 0, pretend = 0, frame = 0
+ 423              		@ frame_needed = 0, uses_anonymous_args = 0
+ 424              		@ link register save eliminated.
+ 331:./lib/src/at32f4xx_comp.c ****   uint16_t tmphp = 0;
+ 425              		.loc 1 331 3 view .LVU101
+ARM GAS  /tmp/ccpWsxwz.s 			page 14
+
+
+ 332:./lib/src/at32f4xx_comp.c ****   uint16_t tmplp = 0;
+ 426              		.loc 1 332 3 view .LVU102
+ 333:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 334:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_HighPulseCnt(COMP_HighPulseCnt));
+ 427              		.loc 1 334 3 view .LVU103
+ 335:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_LowPulseCnt(COMP_LowPulseCnt));
+ 428              		.loc 1 335 3 view .LVU104
+ 336:./lib/src/at32f4xx_comp.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 429              		.loc 1 336 3 view .LVU105
+ 337:./lib/src/at32f4xx_comp.c ****   
+ 338:./lib/src/at32f4xx_comp.c ****   if (NewState != DISABLE)
+ 430              		.loc 1 338 3 view .LVU106
+ 431              		.loc 1 338 6 is_stmt 0 view .LVU107
+ 432 0000 A2B1     		cbz	r2, .L31
+ 330:./lib/src/at32f4xx_comp.c ****   uint16_t tmphp = 0;
+ 433              		.loc 1 330 1 view .LVU108
+ 434 0002 10B4     		push	{r4}
+ 435              	.LCFI4:
+ 436              		.cfi_def_cfa_offset 4
+ 437              		.cfi_offset 4, -4
+ 339:./lib/src/at32f4xx_comp.c ****   {
+ 340:./lib/src/at32f4xx_comp.c ****     /* Enable the glitch filter */
+ 341:./lib/src/at32f4xx_comp.c ****     COMP->G_FILTER_EN |= (uint16_t)COMP_G_FILTER_EN_GFE;
+ 438              		.loc 1 341 5 is_stmt 1 view .LVU109
+ 439              		.loc 1 341 23 is_stmt 0 view .LVU110
+ 440 0004 114C     		ldr	r4, .L37
+ 441 0006 636A     		ldr	r3, [r4, #36]
+ 442 0008 43F00103 		orr	r3, r3, #1
+ 443 000c 6362     		str	r3, [r4, #36]
+ 342:./lib/src/at32f4xx_comp.c ****     
+ 343:./lib/src/at32f4xx_comp.c ****     tmphp = COMP->HIGH_PULSE;
+ 444              		.loc 1 343 5 is_stmt 1 view .LVU111
+ 445              		.loc 1 343 17 is_stmt 0 view .LVU112
+ 446 000e A26A     		ldr	r2, [r4, #40]
+ 447              	.LVL26:
+ 448              		.loc 1 343 11 view .LVU113
+ 449 0010 92B2     		uxth	r2, r2
+ 450              	.LVL27:
+ 344:./lib/src/at32f4xx_comp.c ****     tmplp = COMP->LOW_PULSE;
+ 451              		.loc 1 344 5 is_stmt 1 view .LVU114
+ 452              		.loc 1 344 17 is_stmt 0 view .LVU115
+ 453 0012 E36A     		ldr	r3, [r4, #44]
+ 454              		.loc 1 344 11 view .LVU116
+ 455 0014 9BB2     		uxth	r3, r3
+ 456              	.LVL28:
+ 345:./lib/src/at32f4xx_comp.c ****     
+ 346:./lib/src/at32f4xx_comp.c ****     /* Reset the H_PULSE_CNT and L_PULSE_CNT Bits */
+ 347:./lib/src/at32f4xx_comp.c ****     tmphp &= ~COMP_HIGH_PULSE_CLEAR_MASK;
+ 457              		.loc 1 347 5 is_stmt 1 view .LVU117
+ 458              		.loc 1 347 11 is_stmt 0 view .LVU118
+ 459 0016 22F03F02 		bic	r2, r2, #63
+ 460              	.LVL29:
+ 348:./lib/src/at32f4xx_comp.c ****     tmplp &= ~COMP_LOW_PULSE_CLEAR_MASK;
+ 461              		.loc 1 348 5 is_stmt 1 view .LVU119
+ 462              		.loc 1 348 11 is_stmt 0 view .LVU120
+ 463 001a 23F03F03 		bic	r3, r3, #63
+ 464              	.LVL30:
+ARM GAS  /tmp/ccpWsxwz.s 			page 15
+
+
+ 349:./lib/src/at32f4xx_comp.c ****     
+ 350:./lib/src/at32f4xx_comp.c ****     /* Set the H_PULSE_CNT and L_PULSE_CNT Bits */
+ 351:./lib/src/at32f4xx_comp.c ****     tmphp |= COMP_HighPulseCnt;
+ 465              		.loc 1 351 5 is_stmt 1 view .LVU121
+ 466              		.loc 1 351 11 is_stmt 0 view .LVU122
+ 467 001e 1043     		orrs	r0, r0, r2
+ 468              	.LVL31:
+ 352:./lib/src/at32f4xx_comp.c ****     tmplp |= COMP_LowPulseCnt;
+ 469              		.loc 1 352 5 is_stmt 1 view .LVU123
+ 470              		.loc 1 352 11 is_stmt 0 view .LVU124
+ 471 0020 1943     		orrs	r1, r1, r3
+ 472              	.LVL32:
+ 353:./lib/src/at32f4xx_comp.c ****     
+ 354:./lib/src/at32f4xx_comp.c ****     /* Write to COMP HIGH_PULSE and LOW_PULSE */
+ 355:./lib/src/at32f4xx_comp.c ****     COMP->HIGH_PULSE = tmphp;
+ 473              		.loc 1 355 5 is_stmt 1 view .LVU125
+ 474              		.loc 1 355 22 is_stmt 0 view .LVU126
+ 475 0022 A062     		str	r0, [r4, #40]
+ 356:./lib/src/at32f4xx_comp.c ****     COMP->LOW_PULSE = tmplp;
+ 476              		.loc 1 356 5 is_stmt 1 view .LVU127
+ 477              		.loc 1 356 21 is_stmt 0 view .LVU128
+ 478 0024 E162     		str	r1, [r4, #44]
+ 357:./lib/src/at32f4xx_comp.c ****   }
+ 358:./lib/src/at32f4xx_comp.c ****   else
+ 359:./lib/src/at32f4xx_comp.c ****   {
+ 360:./lib/src/at32f4xx_comp.c ****     /* Disable the glitch filter */
+ 361:./lib/src/at32f4xx_comp.c ****     COMP->G_FILTER_EN &= (uint16_t)(~COMP_G_FILTER_EN_GFE);
+ 362:./lib/src/at32f4xx_comp.c ****     
+ 363:./lib/src/at32f4xx_comp.c ****     /* Reset the H_PULSE_CNT and L_PULSE_CNT Bits */
+ 364:./lib/src/at32f4xx_comp.c ****     COMP->HIGH_PULSE &= ~COMP_HIGH_PULSE_CLEAR_MASK;
+ 365:./lib/src/at32f4xx_comp.c ****     COMP->LOW_PULSE &= ~COMP_LOW_PULSE_CLEAR_MASK;
+ 366:./lib/src/at32f4xx_comp.c ****   }
+ 367:./lib/src/at32f4xx_comp.c **** }
+ 479              		.loc 1 367 1 view .LVU129
+ 480 0026 5DF8044B 		ldr	r4, [sp], #4
+ 481              	.LCFI5:
+ 482              		.cfi_restore 4
+ 483              		.cfi_def_cfa_offset 0
+ 484 002a 7047     		bx	lr
+ 485              	.LVL33:
+ 486              	.L31:
+ 361:./lib/src/at32f4xx_comp.c ****     
+ 487              		.loc 1 361 5 is_stmt 1 view .LVU130
+ 361:./lib/src/at32f4xx_comp.c ****     
+ 488              		.loc 1 361 23 is_stmt 0 view .LVU131
+ 489 002c 074B     		ldr	r3, .L37
+ 490 002e 5A6A     		ldr	r2, [r3, #36]
+ 491              	.LVL34:
+ 361:./lib/src/at32f4xx_comp.c ****     
+ 492              		.loc 1 361 23 view .LVU132
+ 493 0030 22F00102 		bic	r2, r2, #1
+ 494 0034 1204     		lsls	r2, r2, #16
+ 495 0036 120C     		lsrs	r2, r2, #16
+ 496 0038 5A62     		str	r2, [r3, #36]
+ 364:./lib/src/at32f4xx_comp.c ****     COMP->LOW_PULSE &= ~COMP_LOW_PULSE_CLEAR_MASK;
+ 497              		.loc 1 364 5 is_stmt 1 view .LVU133
+ 364:./lib/src/at32f4xx_comp.c ****     COMP->LOW_PULSE &= ~COMP_LOW_PULSE_CLEAR_MASK;
+ARM GAS  /tmp/ccpWsxwz.s 			page 16
+
+
+ 498              		.loc 1 364 22 is_stmt 0 view .LVU134
+ 499 003a 9A6A     		ldr	r2, [r3, #40]
+ 500 003c 22F03F02 		bic	r2, r2, #63
+ 501 0040 9A62     		str	r2, [r3, #40]
+ 365:./lib/src/at32f4xx_comp.c ****   }
+ 502              		.loc 1 365 5 is_stmt 1 view .LVU135
+ 365:./lib/src/at32f4xx_comp.c ****   }
+ 503              		.loc 1 365 21 is_stmt 0 view .LVU136
+ 504 0042 DA6A     		ldr	r2, [r3, #44]
+ 505 0044 22F03F02 		bic	r2, r2, #63
+ 506 0048 DA62     		str	r2, [r3, #44]
+ 507 004a 7047     		bx	lr
+ 508              	.L38:
+ 509              		.align	2
+ 510              	.L37:
+ 511 004c 00000140 		.word	1073807360
+ 512              		.cfi_endproc
+ 513              	.LFE131:
+ 515              		.section	.text.COMP_BlankingConfig,"ax",%progbits
+ 516              		.align	1
+ 517              		.global	COMP_BlankingConfig
+ 518              		.syntax unified
+ 519              		.thumb
+ 520              		.thumb_func
+ 521              		.fpu fpv4-sp-d16
+ 523              	COMP_BlankingConfig:
+ 524              	.LVL35:
+ 525              	.LFB132:
+ 368:./lib/src/at32f4xx_comp.c **** 
+ 369:./lib/src/at32f4xx_comp.c **** #ifdef AT32F421xx
+ 370:./lib/src/at32f4xx_comp.c **** /**
+ 371:./lib/src/at32f4xx_comp.c ****   * @brief  Configure COMP blanking source.
+ 372:./lib/src/at32f4xx_comp.c ****   * @param  Blank_Selection: COMP blanking source.
+ 373:./lib/src/at32f4xx_comp.c ****   *         This parameter can be one of the following values:
+ 374:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_Blanking_None: No blanking source
+ 375:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_Blanking_TMR1OC4: TMR1OC4 as the blanking source  
+ 376:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_Blanking_TMR3OC3: TMR3OC3 as the blanking source 
+ 377:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_Blanking_TMR15OC2: TMR15OC2 as the blanking source   
+ 378:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_Blanking_TMR15OC1: TMR15OC1 as the blanking source 
+ 379:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 380:./lib/src/at32f4xx_comp.c ****   */
+ 381:./lib/src/at32f4xx_comp.c **** void COMP_BlankingConfig(uint32_t Blank_Selection)
+ 382:./lib/src/at32f4xx_comp.c **** {
+ 526              		.loc 1 382 1 is_stmt 1 view -0
+ 527              		.cfi_startproc
+ 528              		@ args = 0, pretend = 0, frame = 0
+ 529              		@ frame_needed = 0, uses_anonymous_args = 0
+ 530              		@ link register save eliminated.
+ 383:./lib/src/at32f4xx_comp.c ****   uint32_t tmpreg = 0;
+ 531              		.loc 1 383 3 view .LVU138
+ 384:./lib/src/at32f4xx_comp.c ****   
+ 385:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 386:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_BLANKING(Blank_Selection));
+ 532              		.loc 1 386 3 view .LVU139
+ 387:./lib/src/at32f4xx_comp.c **** 
+ 388:./lib/src/at32f4xx_comp.c ****   /*!< Get the COMP_CTRLSTS register value */
+ 389:./lib/src/at32f4xx_comp.c ****   tmpreg = COMP->CTRLSTS1;
+ARM GAS  /tmp/ccpWsxwz.s 			page 17
+
+
+ 533              		.loc 1 389 3 view .LVU140
+ 534              		.loc 1 389 10 is_stmt 0 view .LVU141
+ 535 0000 034A     		ldr	r2, .L40
+ 536 0002 D369     		ldr	r3, [r2, #28]
+ 537              	.LVL36:
+ 390:./lib/src/at32f4xx_comp.c **** 
+ 391:./lib/src/at32f4xx_comp.c ****   /*!< Clear the COMPBLANKING bits */ 
+ 392:./lib/src/at32f4xx_comp.c ****   tmpreg &= (uint32_t) ~COMP_CTRLSTS_COMP1BLANKING;
+ 538              		.loc 1 392 3 is_stmt 1 view .LVU142
+ 539              		.loc 1 392 10 is_stmt 0 view .LVU143
+ 540 0004 23F4E013 		bic	r3, r3, #1835008
+ 541              	.LVL37:
+ 393:./lib/src/at32f4xx_comp.c **** 
+ 394:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPBLANKING bits according to Blank_Selection value */
+ 395:./lib/src/at32f4xx_comp.c ****   tmpreg |= (uint32_t)(Blank_Selection);
+ 542              		.loc 1 395 3 is_stmt 1 view .LVU144
+ 543              		.loc 1 395 10 is_stmt 0 view .LVU145
+ 544 0008 0343     		orrs	r3, r3, r0
+ 545              	.LVL38:
+ 396:./lib/src/at32f4xx_comp.c **** 
+ 397:./lib/src/at32f4xx_comp.c ****   /*!< Write to COMP_CTRLSTS1 register */
+ 398:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS1 = tmpreg; 
+ 546              		.loc 1 398 3 is_stmt 1 view .LVU146
+ 547              		.loc 1 398 18 is_stmt 0 view .LVU147
+ 548 000a D361     		str	r3, [r2, #28]
+ 399:./lib/src/at32f4xx_comp.c **** }
+ 549              		.loc 1 399 1 view .LVU148
+ 550 000c 7047     		bx	lr
+ 551              	.L41:
+ 552 000e 00BF     		.align	2
+ 553              	.L40:
+ 554 0010 00000140 		.word	1073807360
+ 555              		.cfi_endproc
+ 556              	.LFE132:
+ 558              		.section	.text.COMP_SCAL_BRGConfig,"ax",%progbits
+ 559              		.align	1
+ 560              		.global	COMP_SCAL_BRGConfig
+ 561              		.syntax unified
+ 562              		.thumb
+ 563              		.thumb_func
+ 564              		.fpu fpv4-sp-d16
+ 566              	COMP_SCAL_BRGConfig:
+ 567              	.LVL39:
+ 568              	.LFB133:
+ 400:./lib/src/at32f4xx_comp.c **** 
+ 401:./lib/src/at32f4xx_comp.c **** /**
+ 402:./lib/src/at32f4xx_comp.c ****   * @brief  Configure COMP internal equipartition voltage bridge.
+ 403:./lib/src/at32f4xx_comp.c ****   * @param  SCAL_BRG: COMP SCAL&BRG configure.
+ 404:./lib/src/at32f4xx_comp.c ****   *         This parameter can be one of the following values:
+ 405:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_SCAL_BRG_00: VREFINT = 3/4 VREFINT = 1/2 VREFINT = 1/4 VREFINT = 0V
+ 406:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_SCAL_BRG_10: VREFINT = 3/4 VREFINT = 1/2 VREFINT = 1/4 VREFINT = 1.2V  
+ 407:./lib/src/at32f4xx_comp.c ****   *            @arg COMP_SCAL_BRG_11: VREFINT = 1.2V, 3/4 VREFINT = 0.9V, 1/2 VREFINT = 0.6V, 1/4 V
+ 408:./lib/src/at32f4xx_comp.c ****   * @retval None
+ 409:./lib/src/at32f4xx_comp.c ****   */
+ 410:./lib/src/at32f4xx_comp.c **** void COMP_SCAL_BRGConfig(uint32_t SCAL_BRG)
+ 411:./lib/src/at32f4xx_comp.c **** {
+ 569              		.loc 1 411 1 is_stmt 1 view -0
+ARM GAS  /tmp/ccpWsxwz.s 			page 18
+
+
+ 570              		.cfi_startproc
+ 571              		@ args = 0, pretend = 0, frame = 0
+ 572              		@ frame_needed = 0, uses_anonymous_args = 0
+ 573              		@ link register save eliminated.
+ 412:./lib/src/at32f4xx_comp.c ****   uint32_t tmpreg = 0;
+ 574              		.loc 1 412 3 view .LVU150
+ 413:./lib/src/at32f4xx_comp.c ****   
+ 414:./lib/src/at32f4xx_comp.c ****   /* Check the parameters */
+ 415:./lib/src/at32f4xx_comp.c ****   assert_param(IS_COMP_SCAL_BRG(SCAL_BRG));
+ 575              		.loc 1 415 3 view .LVU151
+ 416:./lib/src/at32f4xx_comp.c **** 
+ 417:./lib/src/at32f4xx_comp.c ****   /*!< Get the COMP_CTRLSTS register value */
+ 418:./lib/src/at32f4xx_comp.c ****   tmpreg = COMP->CTRLSTS1;
+ 576              		.loc 1 418 3 view .LVU152
+ 577              		.loc 1 418 10 is_stmt 0 view .LVU153
+ 578 0000 034A     		ldr	r2, .L43
+ 579 0002 D369     		ldr	r3, [r2, #28]
+ 580              	.LVL40:
+ 419:./lib/src/at32f4xx_comp.c **** 
+ 420:./lib/src/at32f4xx_comp.c ****   /*!< Clear the COMPBLANKING bits */ 
+ 421:./lib/src/at32f4xx_comp.c ****   tmpreg &= (uint32_t) ~(COMP_CTRLSTS_COMP1SCALEN | COMP_CTRLSTS_COMP1BRGEN);
+ 581              		.loc 1 421 3 is_stmt 1 view .LVU154
+ 582              		.loc 1 421 10 is_stmt 0 view .LVU155
+ 583 0004 23F44003 		bic	r3, r3, #12582912
+ 584              	.LVL41:
+ 422:./lib/src/at32f4xx_comp.c **** 
+ 423:./lib/src/at32f4xx_comp.c ****   /*!< Set COMPBLANKING bits according to Blank_Selection value */
+ 424:./lib/src/at32f4xx_comp.c ****   tmpreg |= (uint32_t)(SCAL_BRG);
+ 585              		.loc 1 424 3 is_stmt 1 view .LVU156
+ 586              		.loc 1 424 10 is_stmt 0 view .LVU157
+ 587 0008 0343     		orrs	r3, r3, r0
+ 588              	.LVL42:
+ 425:./lib/src/at32f4xx_comp.c **** 
+ 426:./lib/src/at32f4xx_comp.c ****   /*!< Write to COMP_CTRLSTS1 register */
+ 427:./lib/src/at32f4xx_comp.c ****   COMP->CTRLSTS1 = tmpreg; 
+ 589              		.loc 1 427 3 is_stmt 1 view .LVU158
+ 590              		.loc 1 427 18 is_stmt 0 view .LVU159
+ 591 000a D361     		str	r3, [r2, #28]
+ 428:./lib/src/at32f4xx_comp.c **** }
+ 592              		.loc 1 428 1 view .LVU160
+ 593 000c 7047     		bx	lr
+ 594              	.L44:
+ 595 000e 00BF     		.align	2
+ 596              	.L43:
+ 597 0010 00000140 		.word	1073807360
+ 598              		.cfi_endproc
+ 599              	.LFE133:
+ 601              		.text
+ 602              	.Letext0:
+ 603              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 604              		.file 3 "CMSIS/at32f4xx.h"
+ 605              		.file 4 "lib/inc/at32f4xx_comp.h"
+ARM GAS  /tmp/ccpWsxwz.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 at32f4xx_comp.c
+     /tmp/ccpWsxwz.s:18     .text.COMP_Reset:0000000000000000 $t
+     /tmp/ccpWsxwz.s:26     .text.COMP_Reset:0000000000000000 COMP_Reset
+     /tmp/ccpWsxwz.s:44     .text.COMP_Reset:0000000000000008 $d
+     /tmp/ccpWsxwz.s:49     .text.COMP_Init:0000000000000000 $t
+     /tmp/ccpWsxwz.s:56     .text.COMP_Init:0000000000000000 COMP_Init
+     /tmp/ccpWsxwz.s:126    .text.COMP_Init:000000000000002c $d
+     /tmp/ccpWsxwz.s:132    .text.COMP_SelectINPInput:0000000000000000 $t
+     /tmp/ccpWsxwz.s:139    .text.COMP_SelectINPInput:0000000000000000 COMP_SelectINPInput
+     /tmp/ccpWsxwz.s:187    .text.COMP_SelectINPInput:000000000000001c $d
+     /tmp/ccpWsxwz.s:192    .text.COMP_StructInit:0000000000000000 $t
+     /tmp/ccpWsxwz.s:199    .text.COMP_StructInit:0000000000000000 COMP_StructInit
+     /tmp/ccpWsxwz.s:229    .text.COMP_Cmd:0000000000000000 $t
+     /tmp/ccpWsxwz.s:236    .text.COMP_Cmd:0000000000000000 COMP_Cmd
+     /tmp/ccpWsxwz.s:283    .text.COMP_Cmd:0000000000000024 $d
+     /tmp/ccpWsxwz.s:288    .text.COMP_SwitchCmd:0000000000000000 $t
+     /tmp/ccpWsxwz.s:295    .text.COMP_SwitchCmd:0000000000000000 COMP_SwitchCmd
+     /tmp/ccpWsxwz.s:326    .text.COMP_SwitchCmd:000000000000001c $d
+     /tmp/ccpWsxwz.s:331    .text.COMP_GetOutputState:0000000000000000 $t
+     /tmp/ccpWsxwz.s:338    .text.COMP_GetOutputState:0000000000000000 COMP_GetOutputState
+     /tmp/ccpWsxwz.s:369    .text.COMP_GetOutputState:0000000000000014 $d
+     /tmp/ccpWsxwz.s:374    .text.COMP_LockConfig:0000000000000000 $t
+     /tmp/ccpWsxwz.s:381    .text.COMP_LockConfig:0000000000000000 COMP_LockConfig
+     /tmp/ccpWsxwz.s:405    .text.COMP_LockConfig:0000000000000010 $d
+     /tmp/ccpWsxwz.s:410    .text.COMP_FilterConfig:0000000000000000 $t
+     /tmp/ccpWsxwz.s:417    .text.COMP_FilterConfig:0000000000000000 COMP_FilterConfig
+     /tmp/ccpWsxwz.s:511    .text.COMP_FilterConfig:000000000000004c $d
+     /tmp/ccpWsxwz.s:516    .text.COMP_BlankingConfig:0000000000000000 $t
+     /tmp/ccpWsxwz.s:523    .text.COMP_BlankingConfig:0000000000000000 COMP_BlankingConfig
+     /tmp/ccpWsxwz.s:554    .text.COMP_BlankingConfig:0000000000000010 $d
+     /tmp/ccpWsxwz.s:559    .text.COMP_SCAL_BRGConfig:0000000000000000 $t
+     /tmp/ccpWsxwz.s:566    .text.COMP_SCAL_BRGConfig:0000000000000000 COMP_SCAL_BRGConfig
+     /tmp/ccpWsxwz.s:597    .text.COMP_SCAL_BRGConfig:0000000000000010 $d
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,282 @@
+ARM GAS  /tmp/cciYRoLa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"heap_3.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.pvPortMalloc,"ax",%progbits
+  18              		.align	1
+  19              		.global	pvPortMalloc
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	pvPortMalloc:
+  27              	.LVL0:
+  28              	.LFB5:
+  29              		.file 1 "./freeRTOS/MemMang/heap_3.c"
+   1:./freeRTOS/MemMang/heap_3.c **** /*
+   2:./freeRTOS/MemMang/heap_3.c ****     FreeRTOS V9.0.0 - Copyright (C) 2016 Real Time Engineers Ltd.
+   3:./freeRTOS/MemMang/heap_3.c ****     All rights reserved
+   4:./freeRTOS/MemMang/heap_3.c **** 
+   5:./freeRTOS/MemMang/heap_3.c ****     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+   6:./freeRTOS/MemMang/heap_3.c **** 
+   7:./freeRTOS/MemMang/heap_3.c ****     This file is part of the FreeRTOS distribution.
+   8:./freeRTOS/MemMang/heap_3.c **** 
+   9:./freeRTOS/MemMang/heap_3.c ****     FreeRTOS is free software; you can redistribute it and/or modify it under
+  10:./freeRTOS/MemMang/heap_3.c ****     the terms of the GNU General Public License (version 2) as published by the
+  11:./freeRTOS/MemMang/heap_3.c ****     Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+  12:./freeRTOS/MemMang/heap_3.c **** 
+  13:./freeRTOS/MemMang/heap_3.c ****     ***************************************************************************
+  14:./freeRTOS/MemMang/heap_3.c ****     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+  15:./freeRTOS/MemMang/heap_3.c ****     >>!   distribute a combined work that includes FreeRTOS without being   !<<
+  16:./freeRTOS/MemMang/heap_3.c ****     >>!   obliged to provide the source code for proprietary components     !<<
+  17:./freeRTOS/MemMang/heap_3.c ****     >>!   outside of the FreeRTOS kernel.                                   !<<
+  18:./freeRTOS/MemMang/heap_3.c ****     ***************************************************************************
+  19:./freeRTOS/MemMang/heap_3.c **** 
+  20:./freeRTOS/MemMang/heap_3.c ****     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+  21:./freeRTOS/MemMang/heap_3.c ****     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  22:./freeRTOS/MemMang/heap_3.c ****     FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+  23:./freeRTOS/MemMang/heap_3.c ****     link: http://www.freertos.org/a00114.html
+  24:./freeRTOS/MemMang/heap_3.c **** 
+  25:./freeRTOS/MemMang/heap_3.c ****     ***************************************************************************
+  26:./freeRTOS/MemMang/heap_3.c ****      *                                                                       *
+  27:./freeRTOS/MemMang/heap_3.c ****      *    FreeRTOS provides completely free yet professionally developed,    *
+  28:./freeRTOS/MemMang/heap_3.c ****      *    robust, strictly quality controlled, supported, and cross          *
+  29:./freeRTOS/MemMang/heap_3.c ****      *    platform software that is more than just the market leader, it     *
+ARM GAS  /tmp/cciYRoLa.s 			page 2
+
+
+  30:./freeRTOS/MemMang/heap_3.c ****      *    is the industry's de facto standard.                               *
+  31:./freeRTOS/MemMang/heap_3.c ****      *                                                                       *
+  32:./freeRTOS/MemMang/heap_3.c ****      *    Help yourself get started quickly while simultaneously helping     *
+  33:./freeRTOS/MemMang/heap_3.c ****      *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+  34:./freeRTOS/MemMang/heap_3.c ****      *    tutorial book, reference manual, or both:                          *
+  35:./freeRTOS/MemMang/heap_3.c ****      *    http://www.FreeRTOS.org/Documentation                              *
+  36:./freeRTOS/MemMang/heap_3.c ****      *                                                                       *
+  37:./freeRTOS/MemMang/heap_3.c ****     ***************************************************************************
+  38:./freeRTOS/MemMang/heap_3.c **** 
+  39:./freeRTOS/MemMang/heap_3.c ****     http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+  40:./freeRTOS/MemMang/heap_3.c ****     the FAQ page "My application does not run, what could be wrong?".  Have you
+  41:./freeRTOS/MemMang/heap_3.c ****     defined configASSERT()?
+  42:./freeRTOS/MemMang/heap_3.c **** 
+  43:./freeRTOS/MemMang/heap_3.c ****     http://www.FreeRTOS.org/support - In return for receiving this top quality
+  44:./freeRTOS/MemMang/heap_3.c ****     embedded software for free we request you assist our global community by
+  45:./freeRTOS/MemMang/heap_3.c ****     participating in the support forum.
+  46:./freeRTOS/MemMang/heap_3.c **** 
+  47:./freeRTOS/MemMang/heap_3.c ****     http://www.FreeRTOS.org/training - Investing in training allows your team to
+  48:./freeRTOS/MemMang/heap_3.c ****     be as productive as possible as early as possible.  Now you can receive
+  49:./freeRTOS/MemMang/heap_3.c ****     FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+  50:./freeRTOS/MemMang/heap_3.c ****     Ltd, and the world's leading authority on the world's leading RTOS.
+  51:./freeRTOS/MemMang/heap_3.c **** 
+  52:./freeRTOS/MemMang/heap_3.c ****     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+  53:./freeRTOS/MemMang/heap_3.c ****     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+  54:./freeRTOS/MemMang/heap_3.c ****     compatible FAT file system, and our tiny thread aware UDP/IP stack.
+  55:./freeRTOS/MemMang/heap_3.c **** 
+  56:./freeRTOS/MemMang/heap_3.c ****     http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+  57:./freeRTOS/MemMang/heap_3.c ****     Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+  58:./freeRTOS/MemMang/heap_3.c **** 
+  59:./freeRTOS/MemMang/heap_3.c ****     http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+  60:./freeRTOS/MemMang/heap_3.c ****     Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+  61:./freeRTOS/MemMang/heap_3.c ****     licenses offer ticketed support, indemnification and commercial middleware.
+  62:./freeRTOS/MemMang/heap_3.c **** 
+  63:./freeRTOS/MemMang/heap_3.c ****     http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+  64:./freeRTOS/MemMang/heap_3.c ****     engineered and independently SIL3 certified version for use in safety and
+  65:./freeRTOS/MemMang/heap_3.c ****     mission critical applications that require provable dependability.
+  66:./freeRTOS/MemMang/heap_3.c **** 
+  67:./freeRTOS/MemMang/heap_3.c ****     1 tab == 4 spaces!
+  68:./freeRTOS/MemMang/heap_3.c **** */
+  69:./freeRTOS/MemMang/heap_3.c **** 
+  70:./freeRTOS/MemMang/heap_3.c **** 
+  71:./freeRTOS/MemMang/heap_3.c **** /*
+  72:./freeRTOS/MemMang/heap_3.c ****  * Implementation of pvPortMalloc() and vPortFree() that relies on the
+  73:./freeRTOS/MemMang/heap_3.c ****  * compilers own malloc() and free() implementations.
+  74:./freeRTOS/MemMang/heap_3.c ****  *
+  75:./freeRTOS/MemMang/heap_3.c ****  * This file can only be used if the linker is configured to to generate
+  76:./freeRTOS/MemMang/heap_3.c ****  * a heap memory area.
+  77:./freeRTOS/MemMang/heap_3.c ****  *
+  78:./freeRTOS/MemMang/heap_3.c ****  * See heap_1.c, heap_2.c and heap_4.c for alternative implementations, and the
+  79:./freeRTOS/MemMang/heap_3.c ****  * memory management pages of http://www.FreeRTOS.org for more information.
+  80:./freeRTOS/MemMang/heap_3.c ****  */
+  81:./freeRTOS/MemMang/heap_3.c **** 
+  82:./freeRTOS/MemMang/heap_3.c **** #include <stdlib.h>
+  83:./freeRTOS/MemMang/heap_3.c **** 
+  84:./freeRTOS/MemMang/heap_3.c **** /* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
+  85:./freeRTOS/MemMang/heap_3.c **** all the API functions to use the MPU wrappers.  That should only be done when
+  86:./freeRTOS/MemMang/heap_3.c **** task.h is included from an application file. */
+ARM GAS  /tmp/cciYRoLa.s 			page 3
+
+
+  87:./freeRTOS/MemMang/heap_3.c **** #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+  88:./freeRTOS/MemMang/heap_3.c **** 
+  89:./freeRTOS/MemMang/heap_3.c **** #include "FreeRTOS.h"
+  90:./freeRTOS/MemMang/heap_3.c **** #include "task.h"
+  91:./freeRTOS/MemMang/heap_3.c **** 
+  92:./freeRTOS/MemMang/heap_3.c **** #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+  93:./freeRTOS/MemMang/heap_3.c **** 
+  94:./freeRTOS/MemMang/heap_3.c **** #if( configSUPPORT_DYNAMIC_ALLOCATION == 0 )
+  95:./freeRTOS/MemMang/heap_3.c **** 	#error This file must not be used if configSUPPORT_DYNAMIC_ALLOCATION is 0
+  96:./freeRTOS/MemMang/heap_3.c **** #endif
+  97:./freeRTOS/MemMang/heap_3.c **** 
+  98:./freeRTOS/MemMang/heap_3.c **** /*-----------------------------------------------------------*/
+  99:./freeRTOS/MemMang/heap_3.c **** 
+ 100:./freeRTOS/MemMang/heap_3.c **** void *pvPortMalloc( size_t xWantedSize )
+ 101:./freeRTOS/MemMang/heap_3.c **** {
+  30              		.loc 1 101 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 101 1 is_stmt 0 view .LVU1
+  35 0000 10B5     		push	{r4, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 4, -8
+  39              		.cfi_offset 14, -4
+  40 0002 0446     		mov	r4, r0
+ 102:./freeRTOS/MemMang/heap_3.c **** void *pvReturn;
+  41              		.loc 1 102 1 is_stmt 1 view .LVU2
+ 103:./freeRTOS/MemMang/heap_3.c **** 
+ 104:./freeRTOS/MemMang/heap_3.c **** 	vTaskSuspendAll();
+  42              		.loc 1 104 2 view .LVU3
+  43 0004 FFF7FEFF 		bl	vTaskSuspendAll
+  44              	.LVL1:
+ 105:./freeRTOS/MemMang/heap_3.c **** 	{
+ 106:./freeRTOS/MemMang/heap_3.c **** 		pvReturn = malloc( xWantedSize );
+  45              		.loc 1 106 3 view .LVU4
+  46              		.loc 1 106 14 is_stmt 0 view .LVU5
+  47 0008 2046     		mov	r0, r4
+  48 000a FFF7FEFF 		bl	malloc
+  49              	.LVL2:
+  50 000e 0446     		mov	r4, r0
+  51              	.LVL3:
+ 107:./freeRTOS/MemMang/heap_3.c **** 		traceMALLOC( pvReturn, xWantedSize );
+  52              		.loc 1 107 39 is_stmt 1 view .LVU6
+ 108:./freeRTOS/MemMang/heap_3.c **** 	}
+ 109:./freeRTOS/MemMang/heap_3.c **** 	( void ) xTaskResumeAll();
+  53              		.loc 1 109 2 view .LVU7
+  54              		.loc 1 109 11 is_stmt 0 view .LVU8
+  55 0010 FFF7FEFF 		bl	xTaskResumeAll
+  56              	.LVL4:
+ 110:./freeRTOS/MemMang/heap_3.c **** 
+ 111:./freeRTOS/MemMang/heap_3.c **** 	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
+ 112:./freeRTOS/MemMang/heap_3.c **** 	{
+ 113:./freeRTOS/MemMang/heap_3.c **** 		if( pvReturn == NULL )
+ 114:./freeRTOS/MemMang/heap_3.c **** 		{
+ 115:./freeRTOS/MemMang/heap_3.c **** 			extern void vApplicationMallocFailedHook( void );
+ 116:./freeRTOS/MemMang/heap_3.c **** 			vApplicationMallocFailedHook();
+ARM GAS  /tmp/cciYRoLa.s 			page 4
+
+
+ 117:./freeRTOS/MemMang/heap_3.c **** 		}
+ 118:./freeRTOS/MemMang/heap_3.c **** 	}
+ 119:./freeRTOS/MemMang/heap_3.c **** 	#endif
+ 120:./freeRTOS/MemMang/heap_3.c **** 
+ 121:./freeRTOS/MemMang/heap_3.c **** 	return pvReturn;
+  57              		.loc 1 121 2 is_stmt 1 view .LVU9
+ 122:./freeRTOS/MemMang/heap_3.c **** }
+  58              		.loc 1 122 1 is_stmt 0 view .LVU10
+  59 0014 2046     		mov	r0, r4
+  60 0016 10BD     		pop	{r4, pc}
+  61              		.loc 1 122 1 view .LVU11
+  62              		.cfi_endproc
+  63              	.LFE5:
+  65              		.section	.text.vPortFree,"ax",%progbits
+  66              		.align	1
+  67              		.global	vPortFree
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  71              		.fpu fpv4-sp-d16
+  73              	vPortFree:
+  74              	.LVL5:
+  75              	.LFB6:
+ 123:./freeRTOS/MemMang/heap_3.c **** /*-----------------------------------------------------------*/
+ 124:./freeRTOS/MemMang/heap_3.c **** 
+ 125:./freeRTOS/MemMang/heap_3.c **** void vPortFree( void *pv )
+ 126:./freeRTOS/MemMang/heap_3.c **** {
+  76              		.loc 1 126 1 is_stmt 1 view -0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+ 127:./freeRTOS/MemMang/heap_3.c **** 	if( pv )
+  80              		.loc 1 127 2 view .LVU13
+  81              		.loc 1 127 4 is_stmt 0 view .LVU14
+  82 0000 48B1     		cbz	r0, .L6
+ 126:./freeRTOS/MemMang/heap_3.c **** 	if( pv )
+  83              		.loc 1 126 1 view .LVU15
+  84 0002 10B5     		push	{r4, lr}
+  85              	.LCFI1:
+  86              		.cfi_def_cfa_offset 8
+  87              		.cfi_offset 4, -8
+  88              		.cfi_offset 14, -4
+  89 0004 0446     		mov	r4, r0
+ 128:./freeRTOS/MemMang/heap_3.c **** 	{
+ 129:./freeRTOS/MemMang/heap_3.c **** 		vTaskSuspendAll();
+  90              		.loc 1 129 3 is_stmt 1 view .LVU16
+  91 0006 FFF7FEFF 		bl	vTaskSuspendAll
+  92              	.LVL6:
+ 130:./freeRTOS/MemMang/heap_3.c **** 		{
+ 131:./freeRTOS/MemMang/heap_3.c **** 			free( pv );
+  93              		.loc 1 131 4 view .LVU17
+  94 000a 2046     		mov	r0, r4
+  95 000c FFF7FEFF 		bl	free
+  96              	.LVL7:
+ 132:./freeRTOS/MemMang/heap_3.c **** 			traceFREE( pv, 0 );
+  97              		.loc 1 132 22 view .LVU18
+ 133:./freeRTOS/MemMang/heap_3.c **** 		}
+ARM GAS  /tmp/cciYRoLa.s 			page 5
+
+
+ 134:./freeRTOS/MemMang/heap_3.c **** 		( void ) xTaskResumeAll();
+  98              		.loc 1 134 3 view .LVU19
+  99              		.loc 1 134 12 is_stmt 0 view .LVU20
+ 100 0010 FFF7FEFF 		bl	xTaskResumeAll
+ 101              	.LVL8:
+ 135:./freeRTOS/MemMang/heap_3.c **** 	}
+ 136:./freeRTOS/MemMang/heap_3.c **** }
+ 102              		.loc 1 136 1 view .LVU21
+ 103 0014 10BD     		pop	{r4, pc}
+ 104              	.LVL9:
+ 105              	.L6:
+ 106              	.LCFI2:
+ 107              		.cfi_def_cfa_offset 0
+ 108              		.cfi_restore 4
+ 109              		.cfi_restore 14
+ 110              		.loc 1 136 1 view .LVU22
+ 111 0016 7047     		bx	lr
+ 112              		.cfi_endproc
+ 113              	.LFE6:
+ 115              		.text
+ 116              	.Letext0:
+ 117              		.file 2 "freeRTOS/include/task.h"
+ 118              		.file 3 "/usr/include/newlib/stdlib.h"
+ 119              		.file 4 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h"
+ARM GAS  /tmp/cciYRoLa.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 heap_3.c
+     /tmp/cciYRoLa.s:18     .text.pvPortMalloc:0000000000000000 $t
+     /tmp/cciYRoLa.s:26     .text.pvPortMalloc:0000000000000000 pvPortMalloc
+     /tmp/cciYRoLa.s:66     .text.vPortFree:0000000000000000 $t
+     /tmp/cciYRoLa.s:73     .text.vPortFree:0000000000000000 vPortFree
+
+UNDEFINED SYMBOLS
+vTaskSuspendAll
+malloc
+xTaskResumeAll
+free

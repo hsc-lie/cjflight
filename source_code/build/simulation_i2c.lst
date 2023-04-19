@@ -1,0 +1,1397 @@
+ARM GAS  /tmp/cccYOQv4.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"simulation_i2c.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.SimulationI2C_Start,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	SimulationI2C_Start:
+  26              	.LVL0:
+  27              	.LFB124:
+  28              		.file 1 "./hal/simulation_i2c/simulation_i2c.c"
+   1:./hal/simulation_i2c/simulation_i2c.c ****  #include "simulation_i2c.h"
+   2:./hal/simulation_i2c/simulation_i2c.c **** 
+   3:./hal/simulation_i2c/simulation_i2c.c **** 
+   4:./hal/simulation_i2c/simulation_i2c.c **** static void SimulationI2C_Delay(SimulationI2C_t * i2c) 
+   5:./hal/simulation_i2c/simulation_i2c.c **** {
+   6:./hal/simulation_i2c/simulation_i2c.c **** 	uint32_t i = i2c->DelayCount;
+   7:./hal/simulation_i2c/simulation_i2c.c **** 	while(--i);
+   8:./hal/simulation_i2c/simulation_i2c.c **** }
+   9:./hal/simulation_i2c/simulation_i2c.c **** 
+  10:./hal/simulation_i2c/simulation_i2c.c **** 
+  11:./hal/simulation_i2c/simulation_i2c.c **** 
+  12:./hal/simulation_i2c/simulation_i2c.c **** static uint8_t SimulationI2C_Start(SimulationI2C_t * i2c)
+  13:./hal/simulation_i2c/simulation_i2c.c **** {
+  29              		.loc 1 13 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 13 1 is_stmt 0 view .LVU1
+  34 0000 10B5     		push	{r4, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0446     		mov	r4, r0
+  14:./hal/simulation_i2c/simulation_i2c.c **** 
+  15:./hal/simulation_i2c/simulation_i2c.c **** 
+  16:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(1);
+  40              		.loc 1 16 2 is_stmt 1 view .LVU2
+  41              		.loc 1 16 5 is_stmt 0 view .LVU3
+  42 0004 8368     		ldr	r3, [r0, #8]
+ARM GAS  /tmp/cccYOQv4.s 			page 2
+
+
+  43              		.loc 1 16 2 view .LVU4
+  44 0006 0120     		movs	r0, #1
+  45              	.LVL1:
+  46              		.loc 1 16 2 view .LVU5
+  47 0008 9847     		blx	r3
+  48              	.LVL2:
+  17:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+  49              		.loc 1 17 2 is_stmt 1 view .LVU6
+  18:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(1);
+  50              		.loc 1 18 2 view .LVU7
+  51              		.loc 1 18 5 is_stmt 0 view .LVU8
+  52 000a 6368     		ldr	r3, [r4, #4]
+  53              		.loc 1 18 2 view .LVU9
+  54 000c 0120     		movs	r0, #1
+  55 000e 9847     		blx	r3
+  56              	.LVL3:
+  19:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+  57              		.loc 1 19 2 is_stmt 1 view .LVU10
+  20:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(0);
+  58              		.loc 1 20 2 view .LVU11
+  59              		.loc 1 20 5 is_stmt 0 view .LVU12
+  60 0010 A368     		ldr	r3, [r4, #8]
+  61              		.loc 1 20 2 view .LVU13
+  62 0012 0020     		movs	r0, #0
+  63 0014 9847     		blx	r3
+  64              	.LVL4:
+  21:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+  65              		.loc 1 21 2 is_stmt 1 view .LVU14
+  22:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(0);
+  66              		.loc 1 22 2 view .LVU15
+  67              		.loc 1 22 5 is_stmt 0 view .LVU16
+  68 0016 6368     		ldr	r3, [r4, #4]
+  69              		.loc 1 22 2 view .LVU17
+  70 0018 0020     		movs	r0, #0
+  71 001a 9847     		blx	r3
+  72              	.LVL5:
+  23:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+  73              		.loc 1 23 2 is_stmt 1 view .LVU18
+  24:./hal/simulation_i2c/simulation_i2c.c **** 
+  25:./hal/simulation_i2c/simulation_i2c.c **** }
+  74              		.loc 1 25 1 is_stmt 0 view .LVU19
+  75 001c 10BD     		pop	{r4, pc}
+  76              		.loc 1 25 1 view .LVU20
+  77              		.cfi_endproc
+  78              	.LFE124:
+  80              		.section	.text.SimulationI2C_Stop,"ax",%progbits
+  81              		.align	1
+  82              		.syntax unified
+  83              		.thumb
+  84              		.thumb_func
+  85              		.fpu fpv4-sp-d16
+  87              	SimulationI2C_Stop:
+  88              	.LVL6:
+  89              	.LFB125:
+  26:./hal/simulation_i2c/simulation_i2c.c **** 
+  27:./hal/simulation_i2c/simulation_i2c.c **** 
+  28:./hal/simulation_i2c/simulation_i2c.c **** static void SimulationI2C_Stop(SimulationI2C_t * i2c)
+ARM GAS  /tmp/cccYOQv4.s 			page 3
+
+
+  29:./hal/simulation_i2c/simulation_i2c.c **** {
+  90              		.loc 1 29 1 is_stmt 1 view -0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		.loc 1 29 1 is_stmt 0 view .LVU22
+  95 0000 10B5     		push	{r4, lr}
+  96              	.LCFI1:
+  97              		.cfi_def_cfa_offset 8
+  98              		.cfi_offset 4, -8
+  99              		.cfi_offset 14, -4
+ 100 0002 0446     		mov	r4, r0
+  30:./hal/simulation_i2c/simulation_i2c.c **** 
+  31:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(0);
+ 101              		.loc 1 31 2 is_stmt 1 view .LVU23
+ 102              		.loc 1 31 5 is_stmt 0 view .LVU24
+ 103 0004 8368     		ldr	r3, [r0, #8]
+ 104              		.loc 1 31 2 view .LVU25
+ 105 0006 0020     		movs	r0, #0
+ 106              	.LVL7:
+ 107              		.loc 1 31 2 view .LVU26
+ 108 0008 9847     		blx	r3
+ 109              	.LVL8:
+  32:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 110              		.loc 1 32 2 is_stmt 1 view .LVU27
+  33:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(1);
+ 111              		.loc 1 33 2 view .LVU28
+ 112              		.loc 1 33 5 is_stmt 0 view .LVU29
+ 113 000a 6368     		ldr	r3, [r4, #4]
+ 114              		.loc 1 33 2 view .LVU30
+ 115 000c 0120     		movs	r0, #1
+ 116 000e 9847     		blx	r3
+ 117              	.LVL9:
+  34:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 118              		.loc 1 34 2 is_stmt 1 view .LVU31
+  35:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(1);
+ 119              		.loc 1 35 2 view .LVU32
+ 120              		.loc 1 35 5 is_stmt 0 view .LVU33
+ 121 0010 A368     		ldr	r3, [r4, #8]
+ 122              		.loc 1 35 2 view .LVU34
+ 123 0012 0120     		movs	r0, #1
+ 124 0014 9847     		blx	r3
+ 125              	.LVL10:
+  36:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 126              		.loc 1 36 2 is_stmt 1 view .LVU35
+  37:./hal/simulation_i2c/simulation_i2c.c **** 
+  38:./hal/simulation_i2c/simulation_i2c.c **** }
+ 127              		.loc 1 38 1 is_stmt 0 view .LVU36
+ 128 0016 10BD     		pop	{r4, pc}
+ 129              		.loc 1 38 1 view .LVU37
+ 130              		.cfi_endproc
+ 131              	.LFE125:
+ 133              		.section	.text.SimulationI2C_Ack,"ax",%progbits
+ 134              		.align	1
+ 135              		.syntax unified
+ 136              		.thumb
+ 137              		.thumb_func
+ARM GAS  /tmp/cccYOQv4.s 			page 4
+
+
+ 138              		.fpu fpv4-sp-d16
+ 140              	SimulationI2C_Ack:
+ 141              	.LVL11:
+ 142              	.LFB126:
+  39:./hal/simulation_i2c/simulation_i2c.c **** 
+  40:./hal/simulation_i2c/simulation_i2c.c **** /*
+  41:./hal/simulation_i2c/simulation_i2c.c **** void simulation_i2c_init()
+  42:./hal/simulation_i2c/simulation_i2c.c **** {
+  43:./hal/simulation_i2c/simulation_i2c.c **** 	GPIO_InitType GPIO_InitStructure;
+  44:./hal/simulation_i2c/simulation_i2c.c ****     RCC_AHBPeriphClockCmd(I2C_GPIO_CLK, ENABLE);
+  45:./hal/simulation_i2c/simulation_i2c.c **** 
+  46:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_InitStructure.GPIO_Pins  = I2C_SCL_PIN;
+  47:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  48:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_InitStructure.GPIO_OutType = GPIO_OutType_OD;
+  49:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_InitStructure.GPIO_Pull = GPIO_Pull_NOPULL;
+  50:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz;
+  51:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_Init(I2C_GPIO_SCL_PROT, &GPIO_InitStructure);
+  52:./hal/simulation_i2c/simulation_i2c.c **** 
+  53:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_InitStructure.GPIO_Pins  = I2C_SDA_PIN;
+  54:./hal/simulation_i2c/simulation_i2c.c ****     GPIO_Init(I2C_GPIO_SDA_PROT, &GPIO_InitStructure);
+  55:./hal/simulation_i2c/simulation_i2c.c **** 
+  56:./hal/simulation_i2c/simulation_i2c.c **** 	
+  57:./hal/simulation_i2c/simulation_i2c.c **** 	simulation_i2c_stop();
+  58:./hal/simulation_i2c/simulation_i2c.c **** 	//i2c_sck_0();
+  59:./hal/simulation_i2c/simulation_i2c.c **** 	//i2c->SDASet(0);
+  60:./hal/simulation_i2c/simulation_i2c.c **** }
+  61:./hal/simulation_i2c/simulation_i2c.c **** */
+  62:./hal/simulation_i2c/simulation_i2c.c **** 
+  63:./hal/simulation_i2c/simulation_i2c.c **** static void SimulationI2C_Ack(SimulationI2C_t * i2c)
+  64:./hal/simulation_i2c/simulation_i2c.c **** {
+ 143              		.loc 1 64 1 is_stmt 1 view -0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147              		.loc 1 64 1 is_stmt 0 view .LVU39
+ 148 0000 10B5     		push	{r4, lr}
+ 149              	.LCFI2:
+ 150              		.cfi_def_cfa_offset 8
+ 151              		.cfi_offset 4, -8
+ 152              		.cfi_offset 14, -4
+ 153 0002 0446     		mov	r4, r0
+  65:./hal/simulation_i2c/simulation_i2c.c **** 
+  66:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(0);
+ 154              		.loc 1 66 2 is_stmt 1 view .LVU40
+ 155              		.loc 1 66 5 is_stmt 0 view .LVU41
+ 156 0004 8368     		ldr	r3, [r0, #8]
+ 157              		.loc 1 66 2 view .LVU42
+ 158 0006 0020     		movs	r0, #0
+ 159              	.LVL12:
+ 160              		.loc 1 66 2 view .LVU43
+ 161 0008 9847     		blx	r3
+ 162              	.LVL13:
+  67:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 163              		.loc 1 67 2 is_stmt 1 view .LVU44
+  68:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(1);
+ 164              		.loc 1 68 2 view .LVU45
+ 165              		.loc 1 68 5 is_stmt 0 view .LVU46
+ARM GAS  /tmp/cccYOQv4.s 			page 5
+
+
+ 166 000a 6368     		ldr	r3, [r4, #4]
+ 167              		.loc 1 68 2 view .LVU47
+ 168 000c 0120     		movs	r0, #1
+ 169 000e 9847     		blx	r3
+ 170              	.LVL14:
+  69:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 171              		.loc 1 69 2 is_stmt 1 view .LVU48
+  70:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(0);
+ 172              		.loc 1 70 2 view .LVU49
+ 173              		.loc 1 70 5 is_stmt 0 view .LVU50
+ 174 0010 6368     		ldr	r3, [r4, #4]
+ 175              		.loc 1 70 2 view .LVU51
+ 176 0012 0020     		movs	r0, #0
+ 177 0014 9847     		blx	r3
+ 178              	.LVL15:
+  71:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 179              		.loc 1 71 2 is_stmt 1 view .LVU52
+  72:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(1);
+ 180              		.loc 1 72 2 view .LVU53
+ 181              		.loc 1 72 5 is_stmt 0 view .LVU54
+ 182 0016 A368     		ldr	r3, [r4, #8]
+ 183              		.loc 1 72 2 view .LVU55
+ 184 0018 0120     		movs	r0, #1
+ 185 001a 9847     		blx	r3
+ 186              	.LVL16:
+  73:./hal/simulation_i2c/simulation_i2c.c **** 
+  74:./hal/simulation_i2c/simulation_i2c.c **** 
+  75:./hal/simulation_i2c/simulation_i2c.c **** }
+ 187              		.loc 1 75 1 view .LVU56
+ 188 001c 10BD     		pop	{r4, pc}
+ 189              		.loc 1 75 1 view .LVU57
+ 190              		.cfi_endproc
+ 191              	.LFE126:
+ 193              		.section	.text.SimulationI2C_NAck,"ax",%progbits
+ 194              		.align	1
+ 195              		.syntax unified
+ 196              		.thumb
+ 197              		.thumb_func
+ 198              		.fpu fpv4-sp-d16
+ 200              	SimulationI2C_NAck:
+ 201              	.LVL17:
+ 202              	.LFB127:
+  76:./hal/simulation_i2c/simulation_i2c.c **** 
+  77:./hal/simulation_i2c/simulation_i2c.c **** static void SimulationI2C_NAck(SimulationI2C_t * i2c)
+  78:./hal/simulation_i2c/simulation_i2c.c **** {
+ 203              		.loc 1 78 1 is_stmt 1 view -0
+ 204              		.cfi_startproc
+ 205              		@ args = 0, pretend = 0, frame = 0
+ 206              		@ frame_needed = 0, uses_anonymous_args = 0
+ 207              		.loc 1 78 1 is_stmt 0 view .LVU59
+ 208 0000 10B5     		push	{r4, lr}
+ 209              	.LCFI3:
+ 210              		.cfi_def_cfa_offset 8
+ 211              		.cfi_offset 4, -8
+ 212              		.cfi_offset 14, -4
+ 213 0002 0446     		mov	r4, r0
+  79:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDASet(1);
+ARM GAS  /tmp/cccYOQv4.s 			page 6
+
+
+ 214              		.loc 1 79 2 is_stmt 1 view .LVU60
+ 215              		.loc 1 79 5 is_stmt 0 view .LVU61
+ 216 0004 8368     		ldr	r3, [r0, #8]
+ 217              		.loc 1 79 2 view .LVU62
+ 218 0006 0120     		movs	r0, #1
+ 219              	.LVL18:
+ 220              		.loc 1 79 2 view .LVU63
+ 221 0008 9847     		blx	r3
+ 222              	.LVL19:
+  80:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 223              		.loc 1 80 2 is_stmt 1 view .LVU64
+  81:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(1);
+ 224              		.loc 1 81 2 view .LVU65
+ 225              		.loc 1 81 5 is_stmt 0 view .LVU66
+ 226 000a 6368     		ldr	r3, [r4, #4]
+ 227              		.loc 1 81 2 view .LVU67
+ 228 000c 0120     		movs	r0, #1
+ 229 000e 9847     		blx	r3
+ 230              	.LVL20:
+  82:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 231              		.loc 1 82 2 is_stmt 1 view .LVU68
+  83:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(0);
+ 232              		.loc 1 83 2 view .LVU69
+ 233              		.loc 1 83 5 is_stmt 0 view .LVU70
+ 234 0010 6368     		ldr	r3, [r4, #4]
+ 235              		.loc 1 83 2 view .LVU71
+ 236 0012 0020     		movs	r0, #0
+ 237 0014 9847     		blx	r3
+ 238              	.LVL21:
+  84:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 239              		.loc 1 84 2 is_stmt 1 view .LVU72
+  85:./hal/simulation_i2c/simulation_i2c.c **** }
+ 240              		.loc 1 85 1 is_stmt 0 view .LVU73
+ 241 0016 10BD     		pop	{r4, pc}
+ 242              		.loc 1 85 1 view .LVU74
+ 243              		.cfi_endproc
+ 244              	.LFE127:
+ 246              		.section	.text.SimulationI2C_ReadAck,"ax",%progbits
+ 247              		.align	1
+ 248              		.syntax unified
+ 249              		.thumb
+ 250              		.thumb_func
+ 251              		.fpu fpv4-sp-d16
+ 253              	SimulationI2C_ReadAck:
+ 254              	.LVL22:
+ 255              	.LFB128:
+  86:./hal/simulation_i2c/simulation_i2c.c **** 
+  87:./hal/simulation_i2c/simulation_i2c.c **** static uint8_t SimulationI2C_ReadAck(SimulationI2C_t * i2c)
+  88:./hal/simulation_i2c/simulation_i2c.c **** {
+ 256              		.loc 1 88 1 is_stmt 1 view -0
+ 257              		.cfi_startproc
+ 258              		@ args = 0, pretend = 0, frame = 0
+ 259              		@ frame_needed = 0, uses_anonymous_args = 0
+ 260              		.loc 1 88 1 is_stmt 0 view .LVU76
+ 261 0000 38B5     		push	{r3, r4, r5, lr}
+ 262              	.LCFI4:
+ 263              		.cfi_def_cfa_offset 16
+ARM GAS  /tmp/cccYOQv4.s 			page 7
+
+
+ 264              		.cfi_offset 3, -16
+ 265              		.cfi_offset 4, -12
+ 266              		.cfi_offset 5, -8
+ 267              		.cfi_offset 14, -4
+ 268 0002 0446     		mov	r4, r0
+  89:./hal/simulation_i2c/simulation_i2c.c **** 	uint8_t ack;
+ 269              		.loc 1 89 2 is_stmt 1 view .LVU77
+  90:./hal/simulation_i2c/simulation_i2c.c **** 
+  91:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDADirSet(E_SIMULATION_I2C_SDA_RX);	
+ 270              		.loc 1 91 2 view .LVU78
+ 271              		.loc 1 91 5 is_stmt 0 view .LVU79
+ 272 0004 C368     		ldr	r3, [r0, #12]
+ 273              		.loc 1 91 2 view .LVU80
+ 274 0006 0020     		movs	r0, #0
+ 275              	.LVL23:
+ 276              		.loc 1 91 2 view .LVU81
+ 277 0008 9847     		blx	r3
+ 278              	.LVL24:
+  92:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(1);
+ 279              		.loc 1 92 2 is_stmt 1 view .LVU82
+ 280              		.loc 1 92 5 is_stmt 0 view .LVU83
+ 281 000a 6368     		ldr	r3, [r4, #4]
+ 282              		.loc 1 92 2 view .LVU84
+ 283 000c 0120     		movs	r0, #1
+ 284 000e 9847     		blx	r3
+ 285              	.LVL25:
+  93:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 286              		.loc 1 93 2 is_stmt 1 view .LVU85
+  94:./hal/simulation_i2c/simulation_i2c.c **** 	ack = i2c->SDARead();
+ 287              		.loc 1 94 2 view .LVU86
+ 288              		.loc 1 94 11 is_stmt 0 view .LVU87
+ 289 0010 2369     		ldr	r3, [r4, #16]
+ 290              		.loc 1 94 8 view .LVU88
+ 291 0012 9847     		blx	r3
+ 292              	.LVL26:
+ 293 0014 0546     		mov	r5, r0
+ 294              	.LVL27:
+  95:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SCLSet(0);
+ 295              		.loc 1 95 2 is_stmt 1 view .LVU89
+ 296              		.loc 1 95 5 is_stmt 0 view .LVU90
+ 297 0016 6368     		ldr	r3, [r4, #4]
+ 298              		.loc 1 95 2 view .LVU91
+ 299 0018 0020     		movs	r0, #0
+ 300 001a 9847     		blx	r3
+ 301              	.LVL28:
+  96:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDADirSet(E_SIMULATION_I2C_SDA_TX);
+ 302              		.loc 1 96 2 is_stmt 1 view .LVU92
+ 303              		.loc 1 96 5 is_stmt 0 view .LVU93
+ 304 001c E368     		ldr	r3, [r4, #12]
+ 305              		.loc 1 96 2 view .LVU94
+ 306 001e 0120     		movs	r0, #1
+ 307 0020 9847     		blx	r3
+ 308              	.LVL29:
+  97:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Delay(i2c);
+ 309              		.loc 1 97 2 is_stmt 1 view .LVU95
+  98:./hal/simulation_i2c/simulation_i2c.c **** 	
+  99:./hal/simulation_i2c/simulation_i2c.c **** 	
+ARM GAS  /tmp/cccYOQv4.s 			page 8
+
+
+ 100:./hal/simulation_i2c/simulation_i2c.c **** 	return ack;
+ 310              		.loc 1 100 2 view .LVU96
+ 101:./hal/simulation_i2c/simulation_i2c.c **** }
+ 311              		.loc 1 101 1 is_stmt 0 view .LVU97
+ 312 0022 2846     		mov	r0, r5
+ 313 0024 38BD     		pop	{r3, r4, r5, pc}
+ 314              		.loc 1 101 1 view .LVU98
+ 315              		.cfi_endproc
+ 316              	.LFE128:
+ 318              		.section	.text.SimulationI2C_SendByte,"ax",%progbits
+ 319              		.align	1
+ 320              		.syntax unified
+ 321              		.thumb
+ 322              		.thumb_func
+ 323              		.fpu fpv4-sp-d16
+ 325              	SimulationI2C_SendByte:
+ 326              	.LVL30:
+ 327              	.LFB129:
+ 102:./hal/simulation_i2c/simulation_i2c.c **** 
+ 103:./hal/simulation_i2c/simulation_i2c.c **** 
+ 104:./hal/simulation_i2c/simulation_i2c.c **** static void SimulationI2C_SendByte(SimulationI2C_t * i2c, uint8_t data)
+ 105:./hal/simulation_i2c/simulation_i2c.c **** {
+ 328              		.loc 1 105 1 is_stmt 1 view -0
+ 329              		.cfi_startproc
+ 330              		@ args = 0, pretend = 0, frame = 0
+ 331              		@ frame_needed = 0, uses_anonymous_args = 0
+ 332              		.loc 1 105 1 is_stmt 0 view .LVU100
+ 333 0000 70B5     		push	{r4, r5, r6, lr}
+ 334              	.LCFI5:
+ 335              		.cfi_def_cfa_offset 16
+ 336              		.cfi_offset 4, -16
+ 337              		.cfi_offset 5, -12
+ 338              		.cfi_offset 6, -8
+ 339              		.cfi_offset 14, -4
+ 340 0002 0646     		mov	r6, r0
+ 341 0004 0D46     		mov	r5, r1
+ 106:./hal/simulation_i2c/simulation_i2c.c **** 	uint8_t i;
+ 342              		.loc 1 106 2 is_stmt 1 view .LVU101
+ 107:./hal/simulation_i2c/simulation_i2c.c **** 	for(i = 0;i < 8;++i)
+ 343              		.loc 1 107 2 view .LVU102
+ 344              	.LVL31:
+ 345              		.loc 1 107 8 is_stmt 0 view .LVU103
+ 346 0006 0024     		movs	r4, #0
+ 347              		.loc 1 107 2 view .LVU104
+ 348 0008 0EE0     		b	.L12
+ 349              	.LVL32:
+ 350              	.L13:
+ 108:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 109:./hal/simulation_i2c/simulation_i2c.c **** 		if(data & 0x80)
+ 110:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 111:./hal/simulation_i2c/simulation_i2c.c **** 			i2c->SDASet(1);
+ 112:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 113:./hal/simulation_i2c/simulation_i2c.c **** 		else
+ 114:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 115:./hal/simulation_i2c/simulation_i2c.c **** 			i2c->SDASet(0);
+ 351              		.loc 1 115 4 is_stmt 1 view .LVU105
+ 352              		.loc 1 115 7 is_stmt 0 view .LVU106
+ARM GAS  /tmp/cccYOQv4.s 			page 9
+
+
+ 353 000a B368     		ldr	r3, [r6, #8]
+ 354              		.loc 1 115 4 view .LVU107
+ 355 000c 0020     		movs	r0, #0
+ 356 000e 9847     		blx	r3
+ 357              	.LVL33:
+ 358              	.L14:
+ 116:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 117:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Delay(i2c);
+ 359              		.loc 1 117 3 is_stmt 1 view .LVU108
+ 118:./hal/simulation_i2c/simulation_i2c.c **** 		i2c->SCLSet(1);
+ 360              		.loc 1 118 3 view .LVU109
+ 361              		.loc 1 118 6 is_stmt 0 view .LVU110
+ 362 0010 7368     		ldr	r3, [r6, #4]
+ 363              		.loc 1 118 3 view .LVU111
+ 364 0012 0120     		movs	r0, #1
+ 365 0014 9847     		blx	r3
+ 366              	.LVL34:
+ 119:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Delay(i2c);
+ 367              		.loc 1 119 3 is_stmt 1 view .LVU112
+ 120:./hal/simulation_i2c/simulation_i2c.c **** 		i2c->SCLSet(0);
+ 368              		.loc 1 120 3 view .LVU113
+ 369              		.loc 1 120 6 is_stmt 0 view .LVU114
+ 370 0016 7368     		ldr	r3, [r6, #4]
+ 371              		.loc 1 120 3 view .LVU115
+ 372 0018 0020     		movs	r0, #0
+ 373 001a 9847     		blx	r3
+ 374              	.LVL35:
+ 121:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Delay(i2c);
+ 375              		.loc 1 121 3 is_stmt 1 view .LVU116
+ 122:./hal/simulation_i2c/simulation_i2c.c **** 		data <<= 1;
+ 376              		.loc 1 122 3 view .LVU117
+ 377              		.loc 1 122 8 is_stmt 0 view .LVU118
+ 378 001c 6D00     		lsls	r5, r5, #1
+ 379              	.LVL36:
+ 380              		.loc 1 122 8 view .LVU119
+ 381 001e EDB2     		uxtb	r5, r5
+ 382              	.LVL37:
+ 123:./hal/simulation_i2c/simulation_i2c.c **** 		if(i == 7)
+ 383              		.loc 1 123 3 is_stmt 1 view .LVU120
+ 384              		.loc 1 123 5 is_stmt 0 view .LVU121
+ 385 0020 072C     		cmp	r4, #7
+ 386 0022 0AD0     		beq	.L18
+ 387              	.L15:
+ 107:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 388              		.loc 1 107 18 is_stmt 1 discriminator 2 view .LVU122
+ 389 0024 0134     		adds	r4, r4, #1
+ 390              	.LVL38:
+ 107:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 391              		.loc 1 107 18 is_stmt 0 discriminator 2 view .LVU123
+ 392 0026 E4B2     		uxtb	r4, r4
+ 393              	.LVL39:
+ 394              	.L12:
+ 107:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 395              		.loc 1 107 12 is_stmt 1 discriminator 1 view .LVU124
+ 107:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 396              		.loc 1 107 2 is_stmt 0 discriminator 1 view .LVU125
+ 397 0028 072C     		cmp	r4, #7
+ARM GAS  /tmp/cccYOQv4.s 			page 10
+
+
+ 398 002a 0AD8     		bhi	.L19
+ 109:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 399              		.loc 1 109 3 is_stmt 1 view .LVU126
+ 109:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 400              		.loc 1 109 5 is_stmt 0 view .LVU127
+ 401 002c 15F0800F 		tst	r5, #128
+ 402 0030 EBD0     		beq	.L13
+ 111:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 403              		.loc 1 111 4 is_stmt 1 view .LVU128
+ 111:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 404              		.loc 1 111 7 is_stmt 0 view .LVU129
+ 405 0032 B368     		ldr	r3, [r6, #8]
+ 111:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 406              		.loc 1 111 4 view .LVU130
+ 407 0034 0120     		movs	r0, #1
+ 408 0036 9847     		blx	r3
+ 409              	.LVL40:
+ 410 0038 EAE7     		b	.L14
+ 411              	.L18:
+ 124:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 125:./hal/simulation_i2c/simulation_i2c.c **** 			i2c->SDASet(1);
+ 412              		.loc 1 125 4 is_stmt 1 view .LVU131
+ 413              		.loc 1 125 7 is_stmt 0 view .LVU132
+ 414 003a B368     		ldr	r3, [r6, #8]
+ 415              		.loc 1 125 4 view .LVU133
+ 416 003c 0120     		movs	r0, #1
+ 417 003e 9847     		blx	r3
+ 418              	.LVL41:
+ 419 0040 F0E7     		b	.L15
+ 420              	.L19:
+ 126:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 127:./hal/simulation_i2c/simulation_i2c.c **** 		
+ 128:./hal/simulation_i2c/simulation_i2c.c **** 		
+ 129:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 130:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 131:./hal/simulation_i2c/simulation_i2c.c **** }
+ 421              		.loc 1 131 1 view .LVU134
+ 422 0042 70BD     		pop	{r4, r5, r6, pc}
+ 423              		.loc 1 131 1 view .LVU135
+ 424              		.cfi_endproc
+ 425              	.LFE129:
+ 427              		.section	.text.SimulationI2C_ReadByte,"ax",%progbits
+ 428              		.align	1
+ 429              		.syntax unified
+ 430              		.thumb
+ 431              		.thumb_func
+ 432              		.fpu fpv4-sp-d16
+ 434              	SimulationI2C_ReadByte:
+ 435              	.LVL42:
+ 436              	.LFB130:
+ 132:./hal/simulation_i2c/simulation_i2c.c **** 
+ 133:./hal/simulation_i2c/simulation_i2c.c **** static uint8_t SimulationI2C_ReadByte(SimulationI2C_t * i2c, uint8_t ack)
+ 134:./hal/simulation_i2c/simulation_i2c.c **** {
+ 437              		.loc 1 134 1 is_stmt 1 view -0
+ 438              		.cfi_startproc
+ 439              		@ args = 0, pretend = 0, frame = 0
+ 440              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  /tmp/cccYOQv4.s 			page 11
+
+
+ 441              		.loc 1 134 1 is_stmt 0 view .LVU137
+ 442 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 443              	.LCFI6:
+ 444              		.cfi_def_cfa_offset 24
+ 445              		.cfi_offset 3, -24
+ 446              		.cfi_offset 4, -20
+ 447              		.cfi_offset 5, -16
+ 448              		.cfi_offset 6, -12
+ 449              		.cfi_offset 7, -8
+ 450              		.cfi_offset 14, -4
+ 451 0002 0646     		mov	r6, r0
+ 452 0004 0F46     		mov	r7, r1
+ 135:./hal/simulation_i2c/simulation_i2c.c **** 	uint8_t i;
+ 453              		.loc 1 135 2 is_stmt 1 view .LVU138
+ 136:./hal/simulation_i2c/simulation_i2c.c **** 	uint8_t data = 0;
+ 454              		.loc 1 136 2 view .LVU139
+ 455              	.LVL43:
+ 137:./hal/simulation_i2c/simulation_i2c.c **** 
+ 138:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDADirSet(E_SIMULATION_I2C_SDA_RX);
+ 456              		.loc 1 138 2 view .LVU140
+ 457              		.loc 1 138 5 is_stmt 0 view .LVU141
+ 458 0006 C368     		ldr	r3, [r0, #12]
+ 459              		.loc 1 138 2 view .LVU142
+ 460 0008 0020     		movs	r0, #0
+ 461              	.LVL44:
+ 462              		.loc 1 138 2 view .LVU143
+ 463 000a 9847     		blx	r3
+ 464              	.LVL45:
+ 139:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 140:./hal/simulation_i2c/simulation_i2c.c **** 	for(i = 0;i < 8;++i)
+ 465              		.loc 1 140 2 is_stmt 1 view .LVU144
+ 136:./hal/simulation_i2c/simulation_i2c.c **** 
+ 466              		.loc 1 136 10 is_stmt 0 view .LVU145
+ 467 000c 0024     		movs	r4, #0
+ 468              		.loc 1 140 8 view .LVU146
+ 469 000e 2546     		mov	r5, r4
+ 470              		.loc 1 140 2 view .LVU147
+ 471 0010 0DE0     		b	.L21
+ 472              	.LVL46:
+ 473              	.L22:
+ 141:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 142:./hal/simulation_i2c/simulation_i2c.c **** 		data <<= 1;
+ 474              		.loc 1 142 3 is_stmt 1 discriminator 3 view .LVU148
+ 475              		.loc 1 142 8 is_stmt 0 discriminator 3 view .LVU149
+ 476 0012 6400     		lsls	r4, r4, #1
+ 477              	.LVL47:
+ 478              		.loc 1 142 8 discriminator 3 view .LVU150
+ 479 0014 E4B2     		uxtb	r4, r4
+ 480              	.LVL48:
+ 143:./hal/simulation_i2c/simulation_i2c.c **** 		i2c->SCLSet(1);
+ 481              		.loc 1 143 3 is_stmt 1 discriminator 3 view .LVU151
+ 482              		.loc 1 143 6 is_stmt 0 discriminator 3 view .LVU152
+ 483 0016 7368     		ldr	r3, [r6, #4]
+ 484              		.loc 1 143 3 discriminator 3 view .LVU153
+ 485 0018 0120     		movs	r0, #1
+ 486 001a 9847     		blx	r3
+ 487              	.LVL49:
+ARM GAS  /tmp/cccYOQv4.s 			page 12
+
+
+ 144:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Delay(i2c);
+ 488              		.loc 1 144 3 is_stmt 1 discriminator 3 view .LVU154
+ 145:./hal/simulation_i2c/simulation_i2c.c **** 		data |= i2c->SDARead();
+ 489              		.loc 1 145 3 discriminator 3 view .LVU155
+ 490              		.loc 1 145 14 is_stmt 0 discriminator 3 view .LVU156
+ 491 001c 3369     		ldr	r3, [r6, #16]
+ 492              		.loc 1 145 11 discriminator 3 view .LVU157
+ 493 001e 9847     		blx	r3
+ 494              	.LVL50:
+ 495              		.loc 1 145 8 discriminator 3 view .LVU158
+ 496 0020 0443     		orrs	r4, r4, r0
+ 497              	.LVL51:
+ 498              		.loc 1 145 8 discriminator 3 view .LVU159
+ 499 0022 E4B2     		uxtb	r4, r4
+ 500              	.LVL52:
+ 146:./hal/simulation_i2c/simulation_i2c.c **** 		i2c->SCLSet(0);
+ 501              		.loc 1 146 3 is_stmt 1 discriminator 3 view .LVU160
+ 502              		.loc 1 146 6 is_stmt 0 discriminator 3 view .LVU161
+ 503 0024 7368     		ldr	r3, [r6, #4]
+ 504              		.loc 1 146 3 discriminator 3 view .LVU162
+ 505 0026 0020     		movs	r0, #0
+ 506 0028 9847     		blx	r3
+ 507              	.LVL53:
+ 147:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Delay(i2c);
+ 508              		.loc 1 147 3 is_stmt 1 discriminator 3 view .LVU163
+ 140:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 509              		.loc 1 140 18 discriminator 3 view .LVU164
+ 510 002a 0135     		adds	r5, r5, #1
+ 511              	.LVL54:
+ 140:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 512              		.loc 1 140 18 is_stmt 0 discriminator 3 view .LVU165
+ 513 002c EDB2     		uxtb	r5, r5
+ 514              	.LVL55:
+ 515              	.L21:
+ 140:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 516              		.loc 1 140 12 is_stmt 1 discriminator 1 view .LVU166
+ 140:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 517              		.loc 1 140 2 is_stmt 0 discriminator 1 view .LVU167
+ 518 002e 072D     		cmp	r5, #7
+ 519 0030 EFD9     		bls	.L22
+ 148:./hal/simulation_i2c/simulation_i2c.c **** 
+ 149:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 150:./hal/simulation_i2c/simulation_i2c.c **** 
+ 151:./hal/simulation_i2c/simulation_i2c.c **** 	i2c->SDADirSet(E_SIMULATION_I2C_SDA_TX);
+ 520              		.loc 1 151 2 is_stmt 1 view .LVU168
+ 521              		.loc 1 151 5 is_stmt 0 view .LVU169
+ 522 0032 F368     		ldr	r3, [r6, #12]
+ 523              		.loc 1 151 2 view .LVU170
+ 524 0034 0120     		movs	r0, #1
+ 525 0036 9847     		blx	r3
+ 526              	.LVL56:
+ 152:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 153:./hal/simulation_i2c/simulation_i2c.c **** 	if(ack == 0)
+ 527              		.loc 1 153 2 is_stmt 1 view .LVU171
+ 528              		.loc 1 153 4 is_stmt 0 view .LVU172
+ 529 0038 27B9     		cbnz	r7, .L23
+ 154:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ARM GAS  /tmp/cccYOQv4.s 			page 13
+
+
+ 155:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_NAck(i2c);
+ 530              		.loc 1 155 3 is_stmt 1 view .LVU173
+ 531 003a 3046     		mov	r0, r6
+ 532 003c FFF7FEFF 		bl	SimulationI2C_NAck
+ 533              	.LVL57:
+ 534              	.L24:
+ 156:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 157:./hal/simulation_i2c/simulation_i2c.c **** 	else
+ 158:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 159:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Ack(i2c);
+ 160:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 161:./hal/simulation_i2c/simulation_i2c.c **** 	return data;
+ 535              		.loc 1 161 2 view .LVU174
+ 162:./hal/simulation_i2c/simulation_i2c.c **** }
+ 536              		.loc 1 162 1 is_stmt 0 view .LVU175
+ 537 0040 2046     		mov	r0, r4
+ 538 0042 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 539              	.LVL58:
+ 540              	.L23:
+ 159:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 541              		.loc 1 159 3 is_stmt 1 view .LVU176
+ 542 0044 3046     		mov	r0, r6
+ 543 0046 FFF7FEFF 		bl	SimulationI2C_Ack
+ 544              	.LVL59:
+ 545 004a F9E7     		b	.L24
+ 546              		.cfi_endproc
+ 547              	.LFE130:
+ 549              		.section	.text.SimulationI2C_SendData,"ax",%progbits
+ 550              		.align	1
+ 551              		.global	SimulationI2C_SendData
+ 552              		.syntax unified
+ 553              		.thumb
+ 554              		.thumb_func
+ 555              		.fpu fpv4-sp-d16
+ 557              	SimulationI2C_SendData:
+ 558              	.LVL60:
+ 559              	.LFB131:
+ 163:./hal/simulation_i2c/simulation_i2c.c **** 
+ 164:./hal/simulation_i2c/simulation_i2c.c **** 
+ 165:./hal/simulation_i2c/simulation_i2c.c **** 
+ 166:./hal/simulation_i2c/simulation_i2c.c **** E_SIMULATION_I2C_ERROR SimulationI2C_SendData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, u
+ 167:./hal/simulation_i2c/simulation_i2c.c **** {
+ 560              		.loc 1 167 1 view -0
+ 561              		.cfi_startproc
+ 562              		@ args = 8, pretend = 0, frame = 0
+ 563              		@ frame_needed = 0, uses_anonymous_args = 0
+ 564              		.loc 1 167 1 is_stmt 0 view .LVU178
+ 565 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 566              	.LCFI7:
+ 567              		.cfi_def_cfa_offset 32
+ 568              		.cfi_offset 3, -32
+ 569              		.cfi_offset 4, -28
+ 570              		.cfi_offset 5, -24
+ 571              		.cfi_offset 6, -20
+ 572              		.cfi_offset 7, -16
+ 573              		.cfi_offset 8, -12
+ 574              		.cfi_offset 9, -8
+ARM GAS  /tmp/cccYOQv4.s 			page 14
+
+
+ 575              		.cfi_offset 14, -4
+ 576 0004 DDF82080 		ldr	r8, [sp, #32]
+ 577 0008 9DF82490 		ldrb	r9, [sp, #36]	@ zero_extendqisi2
+ 168:./hal/simulation_i2c/simulation_i2c.c **** 	uint32_t i;
+ 578              		.loc 1 168 2 is_stmt 1 view .LVU179
+ 169:./hal/simulation_i2c/simulation_i2c.c **** 	uint8_t ack;
+ 579              		.loc 1 169 2 view .LVU180
+ 170:./hal/simulation_i2c/simulation_i2c.c **** 
+ 171:./hal/simulation_i2c/simulation_i2c.c **** 	if((NULL == i2c)
+ 580              		.loc 1 171 2 view .LVU181
+ 581              		.loc 1 171 4 is_stmt 0 view .LVU182
+ 582 000c C8B3     		cbz	r0, .L32
+ 583 000e 0E46     		mov	r6, r1
+ 584 0010 1546     		mov	r5, r2
+ 585 0012 1F46     		mov	r7, r3
+ 586 0014 0446     		mov	r4, r0
+ 172:./hal/simulation_i2c/simulation_i2c.c **** 		|| (NULL == i2c->SCLSet)
+ 587              		.loc 1 172 18 view .LVU183
+ 588 0016 4368     		ldr	r3, [r0, #4]
+ 589              	.LVL61:
+ 590              		.loc 1 172 3 view .LVU184
+ 591 0018 ABB3     		cbz	r3, .L33
+ 173:./hal/simulation_i2c/simulation_i2c.c **** 		|| (NULL == i2c->SDASet)
+ 592              		.loc 1 173 18 view .LVU185
+ 593 001a 8368     		ldr	r3, [r0, #8]
+ 594              		.loc 1 173 3 view .LVU186
+ 595 001c ABB3     		cbz	r3, .L34
+ 174:./hal/simulation_i2c/simulation_i2c.c **** 	)
+ 175:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 176:./hal/simulation_i2c/simulation_i2c.c **** 		return E_SIMULATION_I2C_ERROR_NULL;
+ 177:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 178:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 179:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Start(i2c);
+ 596              		.loc 1 179 2 is_stmt 1 view .LVU187
+ 597 001e FFF7FEFF 		bl	SimulationI2C_Start
+ 598              	.LVL62:
+ 180:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
+ 599              		.loc 1 180 2 view .LVU188
+ 600 0022 7100     		lsls	r1, r6, #1
+ 601 0024 01F0FE01 		and	r1, r1, #254
+ 602 0028 2046     		mov	r0, r4
+ 603 002a FFF7FEFF 		bl	SimulationI2C_SendByte
+ 604              	.LVL63:
+ 181:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 182:./hal/simulation_i2c/simulation_i2c.c **** 	ack = SimulationI2C_ReadAck(i2c);
+ 605              		.loc 1 182 2 view .LVU189
+ 606              		.loc 1 182 8 is_stmt 0 view .LVU190
+ 607 002e 2046     		mov	r0, r4
+ 608 0030 FFF7FEFF 		bl	SimulationI2C_ReadAck
+ 609              	.LVL64:
+ 183:./hal/simulation_i2c/simulation_i2c.c **** 	if(1 == ack)
+ 610              		.loc 1 183 2 is_stmt 1 view .LVU191
+ 611              		.loc 1 183 4 is_stmt 0 view .LVU192
+ 612 0034 0128     		cmp	r0, #1
+ 613 0036 2BD0     		beq	.L35
+ 184:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 185:./hal/simulation_i2c/simulation_i2c.c **** 		return E_SIMULATION_I2C_ERROR_NACK;
+ARM GAS  /tmp/cccYOQv4.s 			page 15
+
+
+ 186:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 187:./hal/simulation_i2c/simulation_i2c.c **** 
+ 188:./hal/simulation_i2c/simulation_i2c.c **** 
+ 189:./hal/simulation_i2c/simulation_i2c.c **** 
+ 190:./hal/simulation_i2c/simulation_i2c.c **** 	for(i = 0;i < regLen;++i)
+ 614              		.loc 1 190 8 view .LVU193
+ 615 0038 0026     		movs	r6, #0
+ 616              	.L28:
+ 617              	.LVL65:
+ 618              		.loc 1 190 12 is_stmt 1 discriminator 1 view .LVU194
+ 619              		.loc 1 190 2 is_stmt 0 discriminator 1 view .LVU195
+ 620 003a BE42     		cmp	r6, r7
+ 621 003c 0BD2     		bcs	.L39
+ 191:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 192:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_SendByte(i2c, *reg);
+ 622              		.loc 1 192 3 is_stmt 1 view .LVU196
+ 623 003e 2978     		ldrb	r1, [r5]	@ zero_extendqisi2
+ 624 0040 2046     		mov	r0, r4
+ 625              	.LVL66:
+ 626              		.loc 1 192 3 is_stmt 0 view .LVU197
+ 627 0042 FFF7FEFF 		bl	SimulationI2C_SendByte
+ 628              	.LVL67:
+ 193:./hal/simulation_i2c/simulation_i2c.c **** 		
+ 194:./hal/simulation_i2c/simulation_i2c.c **** 		ack = SimulationI2C_ReadAck(i2c);
+ 629              		.loc 1 194 3 is_stmt 1 view .LVU198
+ 630              		.loc 1 194 9 is_stmt 0 view .LVU199
+ 631 0046 2046     		mov	r0, r4
+ 632 0048 FFF7FEFF 		bl	SimulationI2C_ReadAck
+ 633              	.LVL68:
+ 195:./hal/simulation_i2c/simulation_i2c.c **** 		if(1 == ack)
+ 634              		.loc 1 195 3 is_stmt 1 view .LVU200
+ 635              		.loc 1 195 5 is_stmt 0 view .LVU201
+ 636 004c 0128     		cmp	r0, #1
+ 637 004e 21D0     		beq	.L36
+ 196:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 197:./hal/simulation_i2c/simulation_i2c.c **** 			return E_SIMULATION_I2C_ERROR_NACK;
+ 198:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 199:./hal/simulation_i2c/simulation_i2c.c **** 
+ 200:./hal/simulation_i2c/simulation_i2c.c **** 		reg++;
+ 638              		.loc 1 200 3 is_stmt 1 discriminator 2 view .LVU202
+ 639              		.loc 1 200 6 is_stmt 0 discriminator 2 view .LVU203
+ 640 0050 0135     		adds	r5, r5, #1
+ 641              	.LVL69:
+ 190:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 642              		.loc 1 190 23 is_stmt 1 discriminator 2 view .LVU204
+ 643 0052 0136     		adds	r6, r6, #1
+ 644              	.LVL70:
+ 190:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 645              		.loc 1 190 23 is_stmt 0 discriminator 2 view .LVU205
+ 646 0054 F1E7     		b	.L28
+ 647              	.L39:
+ 201:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 202:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 203:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 204:./hal/simulation_i2c/simulation_i2c.c **** 	for(i = 0;i < dataLen;++i)
+ 648              		.loc 1 204 8 view .LVU206
+ 649 0056 0025     		movs	r5, #0
+ARM GAS  /tmp/cccYOQv4.s 			page 16
+
+
+ 650              	.LVL71:
+ 651              	.L30:
+ 652              		.loc 1 204 12 is_stmt 1 discriminator 1 view .LVU207
+ 653              		.loc 1 204 2 is_stmt 0 discriminator 1 view .LVU208
+ 654 0058 A945     		cmp	r9, r5
+ 655 005a 0DD9     		bls	.L40
+ 205:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 206:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_SendByte(i2c, *data);
+ 656              		.loc 1 206 3 is_stmt 1 view .LVU209
+ 657 005c 98F80010 		ldrb	r1, [r8]	@ zero_extendqisi2
+ 658 0060 2046     		mov	r0, r4
+ 659              	.LVL72:
+ 660              		.loc 1 206 3 is_stmt 0 view .LVU210
+ 661 0062 FFF7FEFF 		bl	SimulationI2C_SendByte
+ 662              	.LVL73:
+ 207:./hal/simulation_i2c/simulation_i2c.c **** 		
+ 208:./hal/simulation_i2c/simulation_i2c.c **** 		ack = SimulationI2C_ReadAck(i2c);
+ 663              		.loc 1 208 3 is_stmt 1 view .LVU211
+ 664              		.loc 1 208 9 is_stmt 0 view .LVU212
+ 665 0066 2046     		mov	r0, r4
+ 666 0068 FFF7FEFF 		bl	SimulationI2C_ReadAck
+ 667              	.LVL74:
+ 209:./hal/simulation_i2c/simulation_i2c.c **** 		if(1 == ack)
+ 668              		.loc 1 209 3 is_stmt 1 view .LVU213
+ 669              		.loc 1 209 5 is_stmt 0 view .LVU214
+ 670 006c 0128     		cmp	r0, #1
+ 671 006e 13D0     		beq	.L37
+ 210:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 211:./hal/simulation_i2c/simulation_i2c.c **** 			return E_SIMULATION_I2C_ERROR_NACK;
+ 212:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 213:./hal/simulation_i2c/simulation_i2c.c **** 
+ 214:./hal/simulation_i2c/simulation_i2c.c **** 		data++;
+ 672              		.loc 1 214 3 is_stmt 1 discriminator 2 view .LVU215
+ 673              		.loc 1 214 7 is_stmt 0 discriminator 2 view .LVU216
+ 674 0070 08F10108 		add	r8, r8, #1
+ 675              	.LVL75:
+ 204:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 676              		.loc 1 204 24 is_stmt 1 discriminator 2 view .LVU217
+ 677 0074 0135     		adds	r5, r5, #1
+ 678              	.LVL76:
+ 204:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 679              		.loc 1 204 24 is_stmt 0 discriminator 2 view .LVU218
+ 680 0076 EFE7     		b	.L30
+ 681              	.L40:
+ 215:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 216:./hal/simulation_i2c/simulation_i2c.c **** 
+ 217:./hal/simulation_i2c/simulation_i2c.c **** 
+ 218:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Stop(i2c);
+ 682              		.loc 1 218 2 is_stmt 1 view .LVU219
+ 683 0078 2046     		mov	r0, r4
+ 684              	.LVL77:
+ 685              		.loc 1 218 2 is_stmt 0 view .LVU220
+ 686 007a FFF7FEFF 		bl	SimulationI2C_Stop
+ 687              	.LVL78:
+ 219:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 220:./hal/simulation_i2c/simulation_i2c.c **** 	return E_SIMULATION_I2C_ERROR_OK;
+ 688              		.loc 1 220 2 is_stmt 1 view .LVU221
+ARM GAS  /tmp/cccYOQv4.s 			page 17
+
+
+ 689              		.loc 1 220 9 is_stmt 0 view .LVU222
+ 690 007e 0020     		movs	r0, #0
+ 691 0080 04E0     		b	.L27
+ 692              	.LVL79:
+ 693              	.L32:
+ 176:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 694              		.loc 1 176 10 view .LVU223
+ 695 0082 0120     		movs	r0, #1
+ 696              	.LVL80:
+ 176:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 697              		.loc 1 176 10 view .LVU224
+ 698 0084 02E0     		b	.L27
+ 699              	.LVL81:
+ 700              	.L33:
+ 176:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 701              		.loc 1 176 10 view .LVU225
+ 702 0086 0120     		movs	r0, #1
+ 703              	.LVL82:
+ 176:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 704              		.loc 1 176 10 view .LVU226
+ 705 0088 00E0     		b	.L27
+ 706              	.LVL83:
+ 707              	.L34:
+ 176:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 708              		.loc 1 176 10 view .LVU227
+ 709 008a 0120     		movs	r0, #1
+ 710              	.LVL84:
+ 711              	.L27:
+ 221:./hal/simulation_i2c/simulation_i2c.c **** }
+ 712              		.loc 1 221 1 view .LVU228
+ 713 008c BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 714              	.LVL85:
+ 715              	.L35:
+ 185:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 716              		.loc 1 185 10 view .LVU229
+ 717 0090 0220     		movs	r0, #2
+ 718              	.LVL86:
+ 185:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 719              		.loc 1 185 10 view .LVU230
+ 720 0092 FBE7     		b	.L27
+ 721              	.LVL87:
+ 722              	.L36:
+ 197:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 723              		.loc 1 197 11 view .LVU231
+ 724 0094 0220     		movs	r0, #2
+ 725              	.LVL88:
+ 197:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 726              		.loc 1 197 11 view .LVU232
+ 727 0096 F9E7     		b	.L27
+ 728              	.LVL89:
+ 729              	.L37:
+ 211:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 730              		.loc 1 211 11 view .LVU233
+ 731 0098 0220     		movs	r0, #2
+ 732              	.LVL90:
+ 211:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 733              		.loc 1 211 11 view .LVU234
+ARM GAS  /tmp/cccYOQv4.s 			page 18
+
+
+ 734 009a F7E7     		b	.L27
+ 735              		.cfi_endproc
+ 736              	.LFE131:
+ 738              		.section	.text.SimulationI2C_ReadData,"ax",%progbits
+ 739              		.align	1
+ 740              		.global	SimulationI2C_ReadData
+ 741              		.syntax unified
+ 742              		.thumb
+ 743              		.thumb_func
+ 744              		.fpu fpv4-sp-d16
+ 746              	SimulationI2C_ReadData:
+ 747              	.LVL91:
+ 748              	.LFB132:
+ 222:./hal/simulation_i2c/simulation_i2c.c **** 
+ 223:./hal/simulation_i2c/simulation_i2c.c **** 
+ 224:./hal/simulation_i2c/simulation_i2c.c **** E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, u
+ 225:./hal/simulation_i2c/simulation_i2c.c **** {
+ 749              		.loc 1 225 1 is_stmt 1 view -0
+ 750              		.cfi_startproc
+ 751              		@ args = 8, pretend = 0, frame = 0
+ 752              		@ frame_needed = 0, uses_anonymous_args = 0
+ 753              		.loc 1 225 1 is_stmt 0 view .LVU236
+ 754 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 755              	.LCFI8:
+ 756              		.cfi_def_cfa_offset 32
+ 757              		.cfi_offset 4, -32
+ 758              		.cfi_offset 5, -28
+ 759              		.cfi_offset 6, -24
+ 760              		.cfi_offset 7, -20
+ 761              		.cfi_offset 8, -16
+ 762              		.cfi_offset 9, -12
+ 763              		.cfi_offset 10, -8
+ 764              		.cfi_offset 14, -4
+ 765 0004 089E     		ldr	r6, [sp, #32]
+ 766 0006 9DF824A0 		ldrb	r10, [sp, #36]	@ zero_extendqisi2
+ 226:./hal/simulation_i2c/simulation_i2c.c **** 	uint32_t i;
+ 767              		.loc 1 226 2 is_stmt 1 view .LVU237
+ 227:./hal/simulation_i2c/simulation_i2c.c **** 	uint8_t ack;
+ 768              		.loc 1 227 2 view .LVU238
+ 228:./hal/simulation_i2c/simulation_i2c.c **** 
+ 229:./hal/simulation_i2c/simulation_i2c.c **** 	if((NULL == i2c)
+ 769              		.loc 1 229 2 view .LVU239
+ 770              		.loc 1 229 4 is_stmt 0 view .LVU240
+ 771 000a 0028     		cmp	r0, #0
+ 772 000c 57D0     		beq	.L48
+ 773 000e 8846     		mov	r8, r1
+ 774 0010 1546     		mov	r5, r2
+ 775 0012 1F46     		mov	r7, r3
+ 776 0014 0446     		mov	r4, r0
+ 230:./hal/simulation_i2c/simulation_i2c.c **** 		|| (NULL == i2c->SCLSet)
+ 777              		.loc 1 230 18 view .LVU241
+ 778 0016 4368     		ldr	r3, [r0, #4]
+ 779              	.LVL92:
+ 780              		.loc 1 230 3 view .LVU242
+ 781 0018 002B     		cmp	r3, #0
+ 782 001a 52D0     		beq	.L49
+ 231:./hal/simulation_i2c/simulation_i2c.c **** 		|| (NULL == i2c->SDASet)
+ARM GAS  /tmp/cccYOQv4.s 			page 19
+
+
+ 783              		.loc 1 231 18 view .LVU243
+ 784 001c 8368     		ldr	r3, [r0, #8]
+ 785              		.loc 1 231 3 view .LVU244
+ 786 001e 002B     		cmp	r3, #0
+ 787 0020 51D0     		beq	.L50
+ 232:./hal/simulation_i2c/simulation_i2c.c **** 		|| (NULL == i2c->SDADirSet)
+ 788              		.loc 1 232 18 view .LVU245
+ 789 0022 C368     		ldr	r3, [r0, #12]
+ 790              		.loc 1 232 3 view .LVU246
+ 791 0024 002B     		cmp	r3, #0
+ 792 0026 50D0     		beq	.L51
+ 233:./hal/simulation_i2c/simulation_i2c.c **** 		|| (NULL == i2c->SDARead)
+ 793              		.loc 1 233 18 view .LVU247
+ 794 0028 0369     		ldr	r3, [r0, #16]
+ 795              		.loc 1 233 3 view .LVU248
+ 796 002a 002B     		cmp	r3, #0
+ 797 002c 4FD0     		beq	.L52
+ 234:./hal/simulation_i2c/simulation_i2c.c **** 	)
+ 235:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 		return E_SIMULATION_I2C_ERROR_NULL;
+ 237:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 238:./hal/simulation_i2c/simulation_i2c.c **** 
+ 239:./hal/simulation_i2c/simulation_i2c.c **** 	if(0 != regLen)
+ 798              		.loc 1 239 2 is_stmt 1 view .LVU249
+ 799              		.loc 1 239 4 is_stmt 0 view .LVU250
+ 800 002e F7B1     		cbz	r7, .L43
+ 240:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 241:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_Start(i2c);
+ 801              		.loc 1 241 3 is_stmt 1 view .LVU251
+ 802 0030 FFF7FEFF 		bl	SimulationI2C_Start
+ 803              	.LVL93:
+ 242:./hal/simulation_i2c/simulation_i2c.c **** 		SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
+ 804              		.loc 1 242 3 view .LVU252
+ 805 0034 4FEA4801 		lsl	r1, r8, #1
+ 806 0038 01F0FE01 		and	r1, r1, #254
+ 807 003c 2046     		mov	r0, r4
+ 808 003e FFF7FEFF 		bl	SimulationI2C_SendByte
+ 809              	.LVL94:
+ 243:./hal/simulation_i2c/simulation_i2c.c **** 		
+ 244:./hal/simulation_i2c/simulation_i2c.c **** 		ack = SimulationI2C_ReadAck(i2c);
+ 810              		.loc 1 244 3 view .LVU253
+ 811              		.loc 1 244 9 is_stmt 0 view .LVU254
+ 812 0042 2046     		mov	r0, r4
+ 813 0044 FFF7FEFF 		bl	SimulationI2C_ReadAck
+ 814              	.LVL95:
+ 245:./hal/simulation_i2c/simulation_i2c.c **** 		if(1 == ack)
+ 815              		.loc 1 245 3 is_stmt 1 view .LVU255
+ 816              		.loc 1 245 5 is_stmt 0 view .LVU256
+ 817 0048 0128     		cmp	r0, #1
+ 818 004a 42D0     		beq	.L53
+ 246:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 247:./hal/simulation_i2c/simulation_i2c.c **** 			return E_SIMULATION_I2C_ERROR_NACK;
+ 248:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 249:./hal/simulation_i2c/simulation_i2c.c **** 
+ 250:./hal/simulation_i2c/simulation_i2c.c **** 		for(i = 0;i < regLen;++i)
+ 819              		.loc 1 250 9 view .LVU257
+ 820 004c 4FF00009 		mov	r9, #0
+ARM GAS  /tmp/cccYOQv4.s 			page 20
+
+
+ 821              	.L44:
+ 822              	.LVL96:
+ 823              		.loc 1 250 13 is_stmt 1 discriminator 1 view .LVU258
+ 824              		.loc 1 250 3 is_stmt 0 discriminator 1 view .LVU259
+ 825 0050 4F45     		cmp	r7, r9
+ 826 0052 0CD9     		bls	.L43
+ 251:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 252:./hal/simulation_i2c/simulation_i2c.c **** 			SimulationI2C_SendByte(i2c, *reg);
+ 827              		.loc 1 252 4 is_stmt 1 view .LVU260
+ 828 0054 2978     		ldrb	r1, [r5]	@ zero_extendqisi2
+ 829 0056 2046     		mov	r0, r4
+ 830              	.LVL97:
+ 831              		.loc 1 252 4 is_stmt 0 view .LVU261
+ 832 0058 FFF7FEFF 		bl	SimulationI2C_SendByte
+ 833              	.LVL98:
+ 253:./hal/simulation_i2c/simulation_i2c.c **** 			
+ 254:./hal/simulation_i2c/simulation_i2c.c **** 			ack = SimulationI2C_ReadAck(i2c);
+ 834              		.loc 1 254 4 is_stmt 1 view .LVU262
+ 835              		.loc 1 254 10 is_stmt 0 view .LVU263
+ 836 005c 2046     		mov	r0, r4
+ 837 005e FFF7FEFF 		bl	SimulationI2C_ReadAck
+ 838              	.LVL99:
+ 255:./hal/simulation_i2c/simulation_i2c.c **** 			if(1 == ack)
+ 839              		.loc 1 255 4 is_stmt 1 view .LVU264
+ 840              		.loc 1 255 6 is_stmt 0 view .LVU265
+ 841 0062 0128     		cmp	r0, #1
+ 842 0064 37D0     		beq	.L54
+ 256:./hal/simulation_i2c/simulation_i2c.c **** 			{
+ 257:./hal/simulation_i2c/simulation_i2c.c **** 				return E_SIMULATION_I2C_ERROR_NACK;
+ 258:./hal/simulation_i2c/simulation_i2c.c **** 			}
+ 259:./hal/simulation_i2c/simulation_i2c.c **** 			reg++;
+ 843              		.loc 1 259 4 is_stmt 1 discriminator 2 view .LVU266
+ 844              		.loc 1 259 7 is_stmt 0 discriminator 2 view .LVU267
+ 845 0066 0135     		adds	r5, r5, #1
+ 846              	.LVL100:
+ 250:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 847              		.loc 1 250 24 is_stmt 1 discriminator 2 view .LVU268
+ 848 0068 09F10109 		add	r9, r9, #1
+ 849              	.LVL101:
+ 250:./hal/simulation_i2c/simulation_i2c.c **** 		{
+ 850              		.loc 1 250 24 is_stmt 0 discriminator 2 view .LVU269
+ 851 006c F0E7     		b	.L44
+ 852              	.LVL102:
+ 853              	.L43:
+ 260:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 261:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 262:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 263:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 264:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 265:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Start(i2c);
+ 854              		.loc 1 265 2 is_stmt 1 view .LVU270
+ 855 006e 2046     		mov	r0, r4
+ 856 0070 FFF7FEFF 		bl	SimulationI2C_Start
+ 857              	.LVL103:
+ 266:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_SendByte(i2c, (addr << 1) | 0x01);
+ 858              		.loc 1 266 2 view .LVU271
+ 859              		.loc 1 266 36 is_stmt 0 view .LVU272
+ARM GAS  /tmp/cccYOQv4.s 			page 21
+
+
+ 860 0074 4FEA4801 		lsl	r1, r8, #1
+ 861              		.loc 1 266 42 view .LVU273
+ 862 0078 41F00101 		orr	r1, r1, #1
+ 863              		.loc 1 266 2 view .LVU274
+ 864 007c C9B2     		uxtb	r1, r1
+ 865 007e 2046     		mov	r0, r4
+ 866 0080 FFF7FEFF 		bl	SimulationI2C_SendByte
+ 867              	.LVL104:
+ 267:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 268:./hal/simulation_i2c/simulation_i2c.c **** 	ack = SimulationI2C_ReadAck(i2c);
+ 868              		.loc 1 268 2 is_stmt 1 view .LVU275
+ 869              		.loc 1 268 8 is_stmt 0 view .LVU276
+ 870 0084 2046     		mov	r0, r4
+ 871 0086 FFF7FEFF 		bl	SimulationI2C_ReadAck
+ 872              	.LVL105:
+ 269:./hal/simulation_i2c/simulation_i2c.c **** 	if(1 == ack)
+ 873              		.loc 1 269 2 is_stmt 1 view .LVU277
+ 874              		.loc 1 269 4 is_stmt 0 view .LVU278
+ 875 008a 0128     		cmp	r0, #1
+ 876 008c 25D0     		beq	.L55
+ 270:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 271:./hal/simulation_i2c/simulation_i2c.c **** 		return E_SIMULATION_I2C_ERROR_NACK;
+ 272:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 273:./hal/simulation_i2c/simulation_i2c.c **** 
+ 274:./hal/simulation_i2c/simulation_i2c.c **** 		
+ 275:./hal/simulation_i2c/simulation_i2c.c **** 	for(i = 0;i < (dataLen - 1);++i)
+ 877              		.loc 1 275 8 view .LVU279
+ 878 008e 0025     		movs	r5, #0
+ 879              	.LVL106:
+ 880              		.loc 1 275 8 view .LVU280
+ 881 0090 06E0     		b	.L46
+ 882              	.LVL107:
+ 883              	.L47:
+ 276:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 277:./hal/simulation_i2c/simulation_i2c.c **** 		*data = SimulationI2C_ReadByte(i2c, 1);
+ 884              		.loc 1 277 3 is_stmt 1 discriminator 3 view .LVU281
+ 885              		.loc 1 277 11 is_stmt 0 discriminator 3 view .LVU282
+ 886 0092 0121     		movs	r1, #1
+ 887 0094 2046     		mov	r0, r4
+ 888 0096 FFF7FEFF 		bl	SimulationI2C_ReadByte
+ 889              	.LVL108:
+ 890              		.loc 1 277 9 discriminator 3 view .LVU283
+ 891 009a 06F8010B 		strb	r0, [r6], #1
+ 892              	.LVL109:
+ 278:./hal/simulation_i2c/simulation_i2c.c **** 		data++;
+ 893              		.loc 1 278 3 is_stmt 1 discriminator 3 view .LVU284
+ 275:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 894              		.loc 1 275 30 discriminator 3 view .LVU285
+ 895 009e 0135     		adds	r5, r5, #1
+ 896              	.LVL110:
+ 897              	.L46:
+ 275:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 898              		.loc 1 275 12 discriminator 1 view .LVU286
+ 275:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ 899              		.loc 1 275 25 is_stmt 0 discriminator 1 view .LVU287
+ 900 00a0 0AF1FF33 		add	r3, r10, #-1
+ 275:./hal/simulation_i2c/simulation_i2c.c **** 	{
+ARM GAS  /tmp/cccYOQv4.s 			page 22
+
+
+ 901              		.loc 1 275 2 discriminator 1 view .LVU288
+ 902 00a4 AB42     		cmp	r3, r5
+ 903 00a6 F4D8     		bhi	.L47
+ 279:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 280:./hal/simulation_i2c/simulation_i2c.c **** 	*data = SimulationI2C_ReadByte(i2c, 0);
+ 904              		.loc 1 280 2 is_stmt 1 view .LVU289
+ 905              		.loc 1 280 10 is_stmt 0 view .LVU290
+ 906 00a8 0021     		movs	r1, #0
+ 907 00aa 2046     		mov	r0, r4
+ 908 00ac FFF7FEFF 		bl	SimulationI2C_ReadByte
+ 909              	.LVL111:
+ 910              		.loc 1 280 8 view .LVU291
+ 911 00b0 3070     		strb	r0, [r6]
+ 281:./hal/simulation_i2c/simulation_i2c.c **** 	SimulationI2C_Stop(i2c);
+ 912              		.loc 1 281 2 is_stmt 1 view .LVU292
+ 913 00b2 2046     		mov	r0, r4
+ 914 00b4 FFF7FEFF 		bl	SimulationI2C_Stop
+ 915              	.LVL112:
+ 282:./hal/simulation_i2c/simulation_i2c.c **** 	
+ 283:./hal/simulation_i2c/simulation_i2c.c **** 	return E_SIMULATION_I2C_ERROR_OK;
+ 916              		.loc 1 283 2 view .LVU293
+ 917              		.loc 1 283 9 is_stmt 0 view .LVU294
+ 918 00b8 0020     		movs	r0, #0
+ 919              	.LVL113:
+ 920              	.L42:
+ 284:./hal/simulation_i2c/simulation_i2c.c **** }
+ 921              		.loc 1 284 1 view .LVU295
+ 922 00ba BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 923              	.LVL114:
+ 924              	.L48:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 925              		.loc 1 236 10 view .LVU296
+ 926 00be 0120     		movs	r0, #1
+ 927              	.LVL115:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 928              		.loc 1 236 10 view .LVU297
+ 929 00c0 FBE7     		b	.L42
+ 930              	.LVL116:
+ 931              	.L49:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 932              		.loc 1 236 10 view .LVU298
+ 933 00c2 0120     		movs	r0, #1
+ 934              	.LVL117:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 935              		.loc 1 236 10 view .LVU299
+ 936 00c4 F9E7     		b	.L42
+ 937              	.LVL118:
+ 938              	.L50:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 939              		.loc 1 236 10 view .LVU300
+ 940 00c6 0120     		movs	r0, #1
+ 941              	.LVL119:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 942              		.loc 1 236 10 view .LVU301
+ 943 00c8 F7E7     		b	.L42
+ 944              	.LVL120:
+ 945              	.L51:
+ARM GAS  /tmp/cccYOQv4.s 			page 23
+
+
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 946              		.loc 1 236 10 view .LVU302
+ 947 00ca 0120     		movs	r0, #1
+ 948              	.LVL121:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 949              		.loc 1 236 10 view .LVU303
+ 950 00cc F5E7     		b	.L42
+ 951              	.LVL122:
+ 952              	.L52:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 953              		.loc 1 236 10 view .LVU304
+ 954 00ce 0120     		movs	r0, #1
+ 955              	.LVL123:
+ 236:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 956              		.loc 1 236 10 view .LVU305
+ 957 00d0 F3E7     		b	.L42
+ 958              	.LVL124:
+ 959              	.L53:
+ 247:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 960              		.loc 1 247 11 view .LVU306
+ 961 00d2 0220     		movs	r0, #2
+ 962              	.LVL125:
+ 247:./hal/simulation_i2c/simulation_i2c.c **** 		}
+ 963              		.loc 1 247 11 view .LVU307
+ 964 00d4 F1E7     		b	.L42
+ 965              	.LVL126:
+ 966              	.L54:
+ 257:./hal/simulation_i2c/simulation_i2c.c **** 			}
+ 967              		.loc 1 257 12 view .LVU308
+ 968 00d6 0220     		movs	r0, #2
+ 969              	.LVL127:
+ 257:./hal/simulation_i2c/simulation_i2c.c **** 			}
+ 970              		.loc 1 257 12 view .LVU309
+ 971 00d8 EFE7     		b	.L42
+ 972              	.LVL128:
+ 973              	.L55:
+ 271:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 974              		.loc 1 271 10 view .LVU310
+ 975 00da 0220     		movs	r0, #2
+ 976              	.LVL129:
+ 271:./hal/simulation_i2c/simulation_i2c.c **** 	}
+ 977              		.loc 1 271 10 view .LVU311
+ 978 00dc EDE7     		b	.L42
+ 979              		.cfi_endproc
+ 980              	.LFE132:
+ 982              		.text
+ 983              	.Letext0:
+ 984              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 985              		.file 3 "./hal/simulation_i2c/simulation_i2c.h"
+ARM GAS  /tmp/cccYOQv4.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 simulation_i2c.c
+     /tmp/cccYOQv4.s:18     .text.SimulationI2C_Start:0000000000000000 $t
+     /tmp/cccYOQv4.s:25     .text.SimulationI2C_Start:0000000000000000 SimulationI2C_Start
+     /tmp/cccYOQv4.s:81     .text.SimulationI2C_Stop:0000000000000000 $t
+     /tmp/cccYOQv4.s:87     .text.SimulationI2C_Stop:0000000000000000 SimulationI2C_Stop
+     /tmp/cccYOQv4.s:134    .text.SimulationI2C_Ack:0000000000000000 $t
+     /tmp/cccYOQv4.s:140    .text.SimulationI2C_Ack:0000000000000000 SimulationI2C_Ack
+     /tmp/cccYOQv4.s:194    .text.SimulationI2C_NAck:0000000000000000 $t
+     /tmp/cccYOQv4.s:200    .text.SimulationI2C_NAck:0000000000000000 SimulationI2C_NAck
+     /tmp/cccYOQv4.s:247    .text.SimulationI2C_ReadAck:0000000000000000 $t
+     /tmp/cccYOQv4.s:253    .text.SimulationI2C_ReadAck:0000000000000000 SimulationI2C_ReadAck
+     /tmp/cccYOQv4.s:319    .text.SimulationI2C_SendByte:0000000000000000 $t
+     /tmp/cccYOQv4.s:325    .text.SimulationI2C_SendByte:0000000000000000 SimulationI2C_SendByte
+     /tmp/cccYOQv4.s:428    .text.SimulationI2C_ReadByte:0000000000000000 $t
+     /tmp/cccYOQv4.s:434    .text.SimulationI2C_ReadByte:0000000000000000 SimulationI2C_ReadByte
+     /tmp/cccYOQv4.s:550    .text.SimulationI2C_SendData:0000000000000000 $t
+     /tmp/cccYOQv4.s:557    .text.SimulationI2C_SendData:0000000000000000 SimulationI2C_SendData
+     /tmp/cccYOQv4.s:739    .text.SimulationI2C_ReadData:0000000000000000 $t
+     /tmp/cccYOQv4.s:746    .text.SimulationI2C_ReadData:0000000000000000 SimulationI2C_ReadData
+
+NO UNDEFINED SYMBOLS

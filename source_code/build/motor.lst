@@ -1,0 +1,127 @@
+ARM GAS  /tmp/ccFjAjwu.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"motor.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Motor_Out,"ax",%progbits
+  18              		.align	1
+  19              		.global	Motor_Out
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	Motor_Out:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./dev/motor/motor.c"
+   1:./dev/motor/motor.c **** #include "motor.h"
+   2:./dev/motor/motor.c **** 
+   3:./dev/motor/motor.c **** 
+   4:./dev/motor/motor.c **** 
+   5:./dev/motor/motor.c **** void Motor_Out(Motor_t * motor, int32_t outValue)
+   6:./dev/motor/motor.c **** {
+  30              		.loc 1 6 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+   7:./dev/motor/motor.c **** 
+   8:./dev/motor/motor.c **** 	if((NULL != motor)
+  34              		.loc 1 8 2 view .LVU1
+  35              		.loc 1 8 4 is_stmt 0 view .LVU2
+  36 0000 68B1     		cbz	r0, .L6
+   6:./dev/motor/motor.c **** 
+  37              		.loc 1 6 1 view .LVU3
+  38 0002 10B5     		push	{r4, lr}
+  39              	.LCFI0:
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 4, -8
+  42              		.cfi_offset 14, -4
+  43 0004 0346     		mov	r3, r0
+   9:./dev/motor/motor.c **** 		&& (NULL != motor->Out)
+  44              		.loc 1 9 20 view .LVU4
+  45 0006 8468     		ldr	r4, [r0, #8]
+  46              		.loc 1 9 3 view .LVU5
+  47 0008 44B1     		cbz	r4, .L1
+  10:./dev/motor/motor.c **** 	)
+ARM GAS  /tmp/ccFjAjwu.s 			page 2
+
+
+  11:./dev/motor/motor.c **** 	{
+  12:./dev/motor/motor.c **** 
+  13:./dev/motor/motor.c **** 		if(outValue < motor->OutMin)
+  48              		.loc 1 13 3 is_stmt 1 view .LVU6
+  49              		.loc 1 13 22 is_stmt 0 view .LVU7
+  50 000a 0268     		ldr	r2, [r0]
+  51              		.loc 1 13 5 view .LVU8
+  52 000c 8A42     		cmp	r2, r1
+  53 000e 00DC     		bgt	.L3
+  54 0010 0A46     		mov	r2, r1
+  55              	.L3:
+  56              	.LVL1:
+  14:./dev/motor/motor.c **** 		{
+  15:./dev/motor/motor.c **** 			outValue = motor->OutMin;
+  16:./dev/motor/motor.c **** 		}
+  17:./dev/motor/motor.c **** 	
+  18:./dev/motor/motor.c **** 		if(outValue > motor->OutMax)
+  57              		.loc 1 18 3 is_stmt 1 view .LVU9
+  58              		.loc 1 18 22 is_stmt 0 view .LVU10
+  59 0012 5868     		ldr	r0, [r3, #4]
+  60              	.LVL2:
+  61              		.loc 1 18 5 view .LVU11
+  62 0014 9042     		cmp	r0, r2
+  63 0016 00DB     		blt	.L4
+  64 0018 1046     		mov	r0, r2
+  65              	.L4:
+  66              	.LVL3:
+  19:./dev/motor/motor.c **** 		{
+  20:./dev/motor/motor.c **** 			outValue = motor->OutMax;
+  21:./dev/motor/motor.c **** 		}
+  22:./dev/motor/motor.c **** 
+  23:./dev/motor/motor.c **** 		
+  24:./dev/motor/motor.c **** 		motor->Out(outValue);
+  67              		.loc 1 24 3 is_stmt 1 view .LVU12
+  68 001a A047     		blx	r4
+  69              	.LVL4:
+  70              	.L1:
+  25:./dev/motor/motor.c **** 	}
+  26:./dev/motor/motor.c **** }
+  71              		.loc 1 26 1 is_stmt 0 view .LVU13
+  72 001c 10BD     		pop	{r4, pc}
+  73              	.LVL5:
+  74              	.L6:
+  75              	.LCFI1:
+  76              		.cfi_def_cfa_offset 0
+  77              		.cfi_restore 4
+  78              		.cfi_restore 14
+  79              		.loc 1 26 1 view .LVU14
+  80 001e 7047     		bx	lr
+  81              		.cfi_endproc
+  82              	.LFE123:
+  84              		.text
+  85              	.Letext0:
+  86              		.file 2 "./dev/motor/motor.h"
+  87              		.file 3 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ARM GAS  /tmp/ccFjAjwu.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 motor.c
+     /tmp/ccFjAjwu.s:18     .text.Motor_Out:0000000000000000 $t
+     /tmp/ccFjAjwu.s:26     .text.Motor_Out:0000000000000000 Motor_Out
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,787 @@
+ARM GAS  /tmp/ccvY79g5.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"mpu6050.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.MPU6050_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	MPU6050_Init
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	MPU6050_Init:
+  27              	.LVL0:
+  28              	.LFB124:
+  29              		.file 1 "./dev/mpu6050/mpu6050.c"
+   1:./dev/mpu6050/mpu6050.c **** #include "mpu6050.h"
+   2:./dev/mpu6050/mpu6050.c **** 
+   3:./dev/mpu6050/mpu6050.c **** 
+   4:./dev/mpu6050/mpu6050.c **** 
+   5:./dev/mpu6050/mpu6050.c **** #define SAMPLE_RATE_DIVIDER               0x19        //陀螺仪采样频率寄存器地址
+   6:./dev/mpu6050/mpu6050.c **** #define CONFIGURATION                     0x1a        //低通滤波频率
+   7:./dev/mpu6050/mpu6050.c **** #define GYROSCOPE_CONFIGURATION           0x1b        //陀螺仪量程  0<<3 250度/s  1<<3 500度
+   8:./dev/mpu6050/mpu6050.c **** #define ACCELEROMETER_CONFIGURATION       0x1c        //加速度量程 0<<3 2g   1<<3 4g   2<<3 8g
+   9:./dev/mpu6050/mpu6050.c **** #define	ACCEL_XOUT_H	        0x3B
+  10:./dev/mpu6050/mpu6050.c **** #define	ACCEL_XOUT_L	        0x3C
+  11:./dev/mpu6050/mpu6050.c **** #define	ACCEL_YOUT_H	        0x3D
+  12:./dev/mpu6050/mpu6050.c **** #define	ACCEL_YOUT_L	        0x3E
+  13:./dev/mpu6050/mpu6050.c **** #define	ACCEL_ZOUT_H	        0x3F
+  14:./dev/mpu6050/mpu6050.c **** #define	ACCEL_ZOUT_L	        0x40
+  15:./dev/mpu6050/mpu6050.c **** #define	GYRO_XOUT_H				0x43
+  16:./dev/mpu6050/mpu6050.c **** #define	GYRO_XOUT_L				0x44	
+  17:./dev/mpu6050/mpu6050.c **** #define	GYRO_YOUT_H				0x45
+  18:./dev/mpu6050/mpu6050.c **** #define	GYRO_YOUT_L				0x46
+  19:./dev/mpu6050/mpu6050.c **** #define	GYRO_ZOUT_H				0x47
+  20:./dev/mpu6050/mpu6050.c **** #define	GYRO_ZOUT_L				0x48
+  21:./dev/mpu6050/mpu6050.c **** #define TEMP_OUT_H      0x41
+  22:./dev/mpu6050/mpu6050.c **** #define TEMP_OUT_L      0x42
+  23:./dev/mpu6050/mpu6050.c **** #define POWER_MANAGEMENT1       0x6b         //电源管理1
+  24:./dev/mpu6050/mpu6050.c **** #define WHO_AM_I                0x75         //我是谁
+  25:./dev/mpu6050/mpu6050.c **** 
+  26:./dev/mpu6050/mpu6050.c **** 
+  27:./dev/mpu6050/mpu6050.c **** static void mpu6050_delay()
+  28:./dev/mpu6050/mpu6050.c **** {
+  29:./dev/mpu6050/mpu6050.c **** 	uint32_t i = 100000;
+ARM GAS  /tmp/ccvY79g5.s 			page 2
+
+
+  30:./dev/mpu6050/mpu6050.c **** 	while(--i);
+  31:./dev/mpu6050/mpu6050.c **** }
+  32:./dev/mpu6050/mpu6050.c **** 
+  33:./dev/mpu6050/mpu6050.c **** 
+  34:./dev/mpu6050/mpu6050.c **** E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
+  35:./dev/mpu6050/mpu6050.c **** {
+  30              		.loc 1 35 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 8
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 35 1 is_stmt 0 view .LVU1
+  35 0000 70B5     		push	{r4, r5, r6, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 16
+  38              		.cfi_offset 4, -16
+  39              		.cfi_offset 5, -12
+  40              		.cfi_offset 6, -8
+  41              		.cfi_offset 14, -4
+  42 0002 82B0     		sub	sp, sp, #8
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 24
+  36:./dev/mpu6050/mpu6050.c **** 	uint32_t count = 0;
+  45              		.loc 1 36 2 is_stmt 1 view .LVU2
+  46              	.LVL1:
+  37:./dev/mpu6050/mpu6050.c **** 	uint8_t writeData;
+  47              		.loc 1 37 2 view .LVU3
+  38:./dev/mpu6050/mpu6050.c **** 	uint8_t readData = 0xff;
+  48              		.loc 1 38 2 view .LVU4
+  49              		.loc 1 38 10 is_stmt 0 view .LVU5
+  50 0004 FF23     		movs	r3, #255
+  51 0006 8DF80630 		strb	r3, [sp, #6]
+  39:./dev/mpu6050/mpu6050.c **** 
+  40:./dev/mpu6050/mpu6050.c **** 	if((NULL == mpu6050)
+  52              		.loc 1 40 2 is_stmt 1 view .LVU6
+  53              		.loc 1 40 4 is_stmt 0 view .LVU7
+  54 000a 20B1     		cbz	r0, .L2
+  55 000c 0446     		mov	r4, r0
+  41:./dev/mpu6050/mpu6050.c **** 		|| (NULL == mpu6050->I2CReadReg)
+  56              		.loc 1 41 22 view .LVU8
+  57 000e 8368     		ldr	r3, [r0, #8]
+  58              		.loc 1 41 3 view .LVU9
+  59 0010 0BB1     		cbz	r3, .L2
+  42:./dev/mpu6050/mpu6050.c **** 		|| (NULL == mpu6050->I2CWriteReg)
+  60              		.loc 1 42 22 view .LVU10
+  61 0012 4368     		ldr	r3, [r0, #4]
+  62              		.loc 1 42 3 view .LVU11
+  63 0014 43B9     		cbnz	r3, .L3
+  64              	.L2:
+  43:./dev/mpu6050/mpu6050.c **** 	)
+  44:./dev/mpu6050/mpu6050.c **** 	{
+  45:./dev/mpu6050/mpu6050.c **** 		return E_MPU6050_ERROR_NULL;
+  65              		.loc 1 45 3 is_stmt 1 view .LVU12
+  66              		.loc 1 45 10 is_stmt 0 view .LVU13
+  67 0016 0120     		movs	r0, #1
+  68              	.LVL2:
+  69              		.loc 1 45 10 view .LVU14
+  70 0018 3EE0     		b	.L1
+ARM GAS  /tmp/ccvY79g5.s 			page 3
+
+
+  71              	.LVL3:
+  72              	.L4:
+  46:./dev/mpu6050/mpu6050.c **** 	}
+  47:./dev/mpu6050/mpu6050.c **** 	
+  48:./dev/mpu6050/mpu6050.c **** 	mpu6050_delay();
+  49:./dev/mpu6050/mpu6050.c **** 	
+  50:./dev/mpu6050/mpu6050.c **** 	
+  51:./dev/mpu6050/mpu6050.c **** 	//检测陀螺仪	
+  52:./dev/mpu6050/mpu6050.c **** 	while(readData != 0x98)
+  53:./dev/mpu6050/mpu6050.c **** 	{	
+  54:./dev/mpu6050/mpu6050.c **** 		//writeData
+  55:./dev/mpu6050/mpu6050.c **** 		//mpu6050->I2CWriteReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
+  56:./dev/mpu6050/mpu6050.c **** 		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
+  73              		.loc 1 56 3 is_stmt 1 view .LVU15
+  74 001a 0123     		movs	r3, #1
+  75 001c 0DF10602 		add	r2, sp, #6
+  76 0020 7521     		movs	r1, #117
+  77 0022 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+  78 0024 A568     		ldr	r5, [r4, #8]
+  79 0026 A847     		blx	r5
+  80              	.LVL4:
+  57:./dev/mpu6050/mpu6050.c **** 		mpu6050_delay();
+  81              		.loc 1 57 3 view .LVU16
+  82              	.L3:
+  52:./dev/mpu6050/mpu6050.c **** 	{	
+  83              		.loc 1 52 7 view .LVU17
+  52:./dev/mpu6050/mpu6050.c **** 	{	
+  84              		.loc 1 52 17 is_stmt 0 view .LVU18
+  85 0028 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+  52:./dev/mpu6050/mpu6050.c **** 	{	
+  86              		.loc 1 52 7 view .LVU19
+  87 002c 982B     		cmp	r3, #152
+  88 002e F4D1     		bne	.L4
+  58:./dev/mpu6050/mpu6050.c **** 	}
+  59:./dev/mpu6050/mpu6050.c **** 	
+  60:./dev/mpu6050/mpu6050.c **** 		
+  61:./dev/mpu6050/mpu6050.c **** 	writeData = 0x00;
+  89              		.loc 1 61 2 is_stmt 1 view .LVU20
+  90              		.loc 1 61 12 is_stmt 0 view .LVU21
+  91 0030 0023     		movs	r3, #0
+  92 0032 8DF80730 		strb	r3, [sp, #7]
+  62:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CWriteReg(mpu6050->DevAddr, POWER_MANAGEMENT1, &writeData, 1);      //MPU6050电源管�
+  93              		.loc 1 62 2 is_stmt 1 view .LVU22
+  94              		.loc 1 62 9 is_stmt 0 view .LVU23
+  95 0036 6568     		ldr	r5, [r4, #4]
+  96              		.loc 1 62 2 view .LVU24
+  97 0038 0123     		movs	r3, #1
+  98 003a 0DF10702 		add	r2, sp, #7
+  99 003e 6B21     		movs	r1, #107
+ 100 0040 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 101 0042 A847     		blx	r5
+ 102              	.LVL5:
+  63:./dev/mpu6050/mpu6050.c **** 
+  64:./dev/mpu6050/mpu6050.c **** 	writeData = 0x01;
+ 103              		.loc 1 64 2 is_stmt 1 view .LVU25
+ 104              		.loc 1 64 12 is_stmt 0 view .LVU26
+ 105 0044 0125     		movs	r5, #1
+ARM GAS  /tmp/ccvY79g5.s 			page 4
+
+
+ 106 0046 8DF80750 		strb	r5, [sp, #7]
+  65:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CWriteReg(mpu6050->DevAddr, SAMPLE_RATE_DIVIDER, &writeData, 1);   //陀螺仪采样频
+ 107              		.loc 1 65 2 is_stmt 1 view .LVU27
+ 108              		.loc 1 65 9 is_stmt 0 view .LVU28
+ 109 004a 6668     		ldr	r6, [r4, #4]
+ 110              		.loc 1 65 2 view .LVU29
+ 111 004c 2B46     		mov	r3, r5
+ 112 004e 0DF10702 		add	r2, sp, #7
+ 113 0052 1921     		movs	r1, #25
+ 114 0054 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 115 0056 B047     		blx	r6
+ 116              	.LVL6:
+  66:./dev/mpu6050/mpu6050.c **** 
+  67:./dev/mpu6050/mpu6050.c **** 	writeData = 0x02;
+ 117              		.loc 1 67 2 is_stmt 1 view .LVU30
+ 118              		.loc 1 67 12 is_stmt 0 view .LVU31
+ 119 0058 0223     		movs	r3, #2
+ 120 005a 8DF80730 		strb	r3, [sp, #7]
+  68:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CWriteReg(mpu6050->DevAddr, CONFIGURATION, &writeData, 1);         //低通滤波 
+ 121              		.loc 1 68 2 is_stmt 1 view .LVU32
+ 122              		.loc 1 68 9 is_stmt 0 view .LVU33
+ 123 005e 6668     		ldr	r6, [r4, #4]
+ 124              		.loc 1 68 2 view .LVU34
+ 125 0060 2B46     		mov	r3, r5
+ 126 0062 0DF10702 		add	r2, sp, #7
+ 127 0066 1A21     		movs	r1, #26
+ 128 0068 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 129 006a B047     		blx	r6
+ 130              	.LVL7:
+  69:./dev/mpu6050/mpu6050.c **** 		
+  70:./dev/mpu6050/mpu6050.c **** 	//陀螺仪量程  0<<3 250度/s  1<<3 500度/s 2<<3 1000度/s 3<<3 2000度/s
+  71:./dev/mpu6050/mpu6050.c **** 	writeData = mpu6050->GyroRange << 3;
+ 131              		.loc 1 71 2 is_stmt 1 view .LVU35
+ 132              		.loc 1 71 21 is_stmt 0 view .LVU36
+ 133 006c 6378     		ldrb	r3, [r4, #1]	@ zero_extendqisi2
+ 134              		.loc 1 71 33 view .LVU37
+ 135 006e DB00     		lsls	r3, r3, #3
+ 136              		.loc 1 71 12 view .LVU38
+ 137 0070 8DF80730 		strb	r3, [sp, #7]
+  72:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CWriteReg(mpu6050->DevAddr,GYROSCOPE_CONFIGURATION, &writeData, 1);
+ 138              		.loc 1 72 2 is_stmt 1 view .LVU39
+ 139              		.loc 1 72 9 is_stmt 0 view .LVU40
+ 140 0074 6668     		ldr	r6, [r4, #4]
+ 141              		.loc 1 72 2 view .LVU41
+ 142 0076 2B46     		mov	r3, r5
+ 143 0078 0DF10702 		add	r2, sp, #7
+ 144 007c 1B21     		movs	r1, #27
+ 145 007e 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 146 0080 B047     		blx	r6
+ 147              	.LVL8:
+  73:./dev/mpu6050/mpu6050.c **** 	
+  74:./dev/mpu6050/mpu6050.c **** 	//加速度量程 0<<3 2g   1<<3 4g   2<<3 8g   3<<3 16g
+  75:./dev/mpu6050/mpu6050.c **** 	writeData = mpu6050->AccRange << 3;
+ 148              		.loc 1 75 2 is_stmt 1 view .LVU42
+ 149              		.loc 1 75 21 is_stmt 0 view .LVU43
+ 150 0082 A378     		ldrb	r3, [r4, #2]	@ zero_extendqisi2
+ 151              		.loc 1 75 32 view .LVU44
+ARM GAS  /tmp/ccvY79g5.s 			page 5
+
+
+ 152 0084 DB00     		lsls	r3, r3, #3
+ 153              		.loc 1 75 12 view .LVU45
+ 154 0086 8DF80730 		strb	r3, [sp, #7]
+  76:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CWriteReg(mpu6050->DevAddr,ACCELEROMETER_CONFIGURATION, &writeData, 1);
+ 155              		.loc 1 76 2 is_stmt 1 view .LVU46
+ 156              		.loc 1 76 9 is_stmt 0 view .LVU47
+ 157 008a 6668     		ldr	r6, [r4, #4]
+ 158              		.loc 1 76 2 view .LVU48
+ 159 008c 2B46     		mov	r3, r5
+ 160 008e 0DF10702 		add	r2, sp, #7
+ 161 0092 1C21     		movs	r1, #28
+ 162 0094 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 163 0096 B047     		blx	r6
+ 164              	.LVL9:
+ 165              	.LVL10:
+ 166              	.L1:
+  77:./dev/mpu6050/mpu6050.c **** 	
+  78:./dev/mpu6050/mpu6050.c **** 	
+  79:./dev/mpu6050/mpu6050.c **** }
+ 167              		.loc 1 79 1 view .LVU49
+ 168 0098 02B0     		add	sp, sp, #8
+ 169              	.LCFI2:
+ 170              		.cfi_def_cfa_offset 16
+ 171              		@ sp needed
+ 172 009a 70BD     		pop	{r4, r5, r6, pc}
+ 173              		.cfi_endproc
+ 174              	.LFE124:
+ 176              		.section	.text.MPU6050_GetBaseGyro,"ax",%progbits
+ 177              		.align	1
+ 178              		.global	MPU6050_GetBaseGyro
+ 179              		.syntax unified
+ 180              		.thumb
+ 181              		.thumb_func
+ 182              		.fpu fpv4-sp-d16
+ 184              	MPU6050_GetBaseGyro:
+ 185              	.LVL11:
+ 186              	.LFB125:
+  80:./dev/mpu6050/mpu6050.c **** 
+  81:./dev/mpu6050/mpu6050.c **** //获得所有轴的角速度
+  82:./dev/mpu6050/mpu6050.c **** E_MPU6050_ERROR MPU6050_GetBaseGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * gyro)
+  83:./dev/mpu6050/mpu6050.c **** {
+ 187              		.loc 1 83 1 is_stmt 1 view -0
+ 188              		.cfi_startproc
+ 189              		@ args = 0, pretend = 0, frame = 8
+ 190              		@ frame_needed = 0, uses_anonymous_args = 0
+ 191              		.loc 1 83 1 is_stmt 0 view .LVU51
+ 192 0000 70B5     		push	{r4, r5, r6, lr}
+ 193              	.LCFI3:
+ 194              		.cfi_def_cfa_offset 16
+ 195              		.cfi_offset 4, -16
+ 196              		.cfi_offset 5, -12
+ 197              		.cfi_offset 6, -8
+ 198              		.cfi_offset 14, -4
+ 199 0002 82B0     		sub	sp, sp, #8
+ 200              	.LCFI4:
+ 201              		.cfi_def_cfa_offset 24
+  84:./dev/mpu6050/mpu6050.c **** 	uint8_t data[6] = {0};
+ARM GAS  /tmp/ccvY79g5.s 			page 6
+
+
+ 202              		.loc 1 84 2 is_stmt 1 view .LVU52
+ 203              		.loc 1 84 10 is_stmt 0 view .LVU53
+ 204 0004 0023     		movs	r3, #0
+ 205 0006 0093     		str	r3, [sp]
+ 206 0008 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  85:./dev/mpu6050/mpu6050.c **** 
+  86:./dev/mpu6050/mpu6050.c **** 	if((NULL == mpu6050)
+ 207              		.loc 1 86 2 is_stmt 1 view .LVU54
+ 208              		.loc 1 86 4 is_stmt 0 view .LVU55
+ 209 000c 30B3     		cbz	r0, .L8
+ 210 000e 0C46     		mov	r4, r1
+ 211 0010 0546     		mov	r5, r0
+  87:./dev/mpu6050/mpu6050.c **** 		|| (NULL == mpu6050->I2CReadReg)
+ 212              		.loc 1 87 22 view .LVU56
+ 213 0012 8668     		ldr	r6, [r0, #8]
+ 214              		.loc 1 87 3 view .LVU57
+ 215 0014 26B3     		cbz	r6, .L9
+  88:./dev/mpu6050/mpu6050.c **** 	)
+  89:./dev/mpu6050/mpu6050.c **** 	{
+  90:./dev/mpu6050/mpu6050.c **** 		return E_MPU6050_ERROR_NULL;
+  91:./dev/mpu6050/mpu6050.c **** 	}
+  92:./dev/mpu6050/mpu6050.c **** 
+  93:./dev/mpu6050/mpu6050.c **** 	
+  94:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CReadReg(mpu6050->DevAddr, GYRO_XOUT_H, data, 6);
+ 216              		.loc 1 94 2 is_stmt 1 view .LVU58
+ 217 0016 0623     		movs	r3, #6
+ 218 0018 6A46     		mov	r2, sp
+ 219 001a 4321     		movs	r1, #67
+ 220              	.LVL12:
+ 221              		.loc 1 94 2 is_stmt 0 view .LVU59
+ 222 001c 0078     		ldrb	r0, [r0]	@ zero_extendqisi2
+ 223              	.LVL13:
+ 224              		.loc 1 94 2 view .LVU60
+ 225 001e B047     		blx	r6
+ 226              	.LVL14:
+  95:./dev/mpu6050/mpu6050.c **** 
+  96:./dev/mpu6050/mpu6050.c **** 	gyro->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]) - mpu6050->GyroZero.X;
+ 227              		.loc 1 96 2 is_stmt 1 view .LVU61
+ 228              		.loc 1 96 37 is_stmt 0 view .LVU62
+ 229 0020 9DF80020 		ldrb	r2, [sp]	@ zero_extendqisi2
+ 230              		.loc 1 96 53 view .LVU63
+ 231 0024 9DF80130 		ldrb	r3, [sp, #1]	@ zero_extendqisi2
+ 232              		.loc 1 96 47 view .LVU64
+ 233 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 234              		.loc 1 96 77 view .LVU65
+ 235 002c AA89     		ldrh	r2, [r5, #12]
+ 236              		.loc 1 96 58 view .LVU66
+ 237 002e 9B1A     		subs	r3, r3, r2
+ 238              		.loc 1 96 10 view .LVU67
+ 239 0030 2380     		strh	r3, [r4]	@ movhi
+  97:./dev/mpu6050/mpu6050.c **** 	gyro->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]) - mpu6050->GyroZero.Y;
+ 240              		.loc 1 97 2 is_stmt 1 view .LVU68
+ 241              		.loc 1 97 37 is_stmt 0 view .LVU69
+ 242 0032 9DF80220 		ldrb	r2, [sp, #2]	@ zero_extendqisi2
+ 243              		.loc 1 97 53 view .LVU70
+ 244 0036 9DF80330 		ldrb	r3, [sp, #3]	@ zero_extendqisi2
+ 245              		.loc 1 97 47 view .LVU71
+ARM GAS  /tmp/ccvY79g5.s 			page 7
+
+
+ 246 003a 43EA0223 		orr	r3, r3, r2, lsl #8
+ 247              		.loc 1 97 77 view .LVU72
+ 248 003e EA89     		ldrh	r2, [r5, #14]
+ 249              		.loc 1 97 58 view .LVU73
+ 250 0040 9B1A     		subs	r3, r3, r2
+ 251              		.loc 1 97 10 view .LVU74
+ 252 0042 6380     		strh	r3, [r4, #2]	@ movhi
+  98:./dev/mpu6050/mpu6050.c **** 	gyro->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]) - mpu6050->GyroZero.Z;
+ 253              		.loc 1 98 2 is_stmt 1 view .LVU75
+ 254              		.loc 1 98 37 is_stmt 0 view .LVU76
+ 255 0044 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 256              		.loc 1 98 53 view .LVU77
+ 257 0048 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 258              		.loc 1 98 47 view .LVU78
+ 259 004c 43EA0223 		orr	r3, r3, r2, lsl #8
+ 260              		.loc 1 98 77 view .LVU79
+ 261 0050 2A8A     		ldrh	r2, [r5, #16]
+ 262              		.loc 1 98 58 view .LVU80
+ 263 0052 9B1A     		subs	r3, r3, r2
+ 264              		.loc 1 98 10 view .LVU81
+ 265 0054 A380     		strh	r3, [r4, #4]	@ movhi
+  99:./dev/mpu6050/mpu6050.c **** 
+ 100:./dev/mpu6050/mpu6050.c **** 	return E_MPU6050_ERROR_OK;
+ 266              		.loc 1 100 2 is_stmt 1 view .LVU82
+ 267              		.loc 1 100 9 is_stmt 0 view .LVU83
+ 268 0056 0020     		movs	r0, #0
+ 269              	.LVL15:
+ 270              	.L7:
+ 101:./dev/mpu6050/mpu6050.c **** }
+ 271              		.loc 1 101 1 view .LVU84
+ 272 0058 02B0     		add	sp, sp, #8
+ 273              	.LCFI5:
+ 274              		.cfi_remember_state
+ 275              		.cfi_def_cfa_offset 16
+ 276              		@ sp needed
+ 277 005a 70BD     		pop	{r4, r5, r6, pc}
+ 278              	.LVL16:
+ 279              	.L8:
+ 280              	.LCFI6:
+ 281              		.cfi_restore_state
+  90:./dev/mpu6050/mpu6050.c **** 	}
+ 282              		.loc 1 90 10 view .LVU85
+ 283 005c 0120     		movs	r0, #1
+ 284              	.LVL17:
+  90:./dev/mpu6050/mpu6050.c **** 	}
+ 285              		.loc 1 90 10 view .LVU86
+ 286 005e FBE7     		b	.L7
+ 287              	.LVL18:
+ 288              	.L9:
+  90:./dev/mpu6050/mpu6050.c **** 	}
+ 289              		.loc 1 90 10 view .LVU87
+ 290 0060 0120     		movs	r0, #1
+ 291              	.LVL19:
+  90:./dev/mpu6050/mpu6050.c **** 	}
+ 292              		.loc 1 90 10 view .LVU88
+ 293 0062 F9E7     		b	.L7
+ 294              		.cfi_endproc
+ARM GAS  /tmp/ccvY79g5.s 			page 8
+
+
+ 295              	.LFE125:
+ 297              		.section	.text.MPU6050_GetBaseAcc,"ax",%progbits
+ 298              		.align	1
+ 299              		.global	MPU6050_GetBaseAcc
+ 300              		.syntax unified
+ 301              		.thumb
+ 302              		.thumb_func
+ 303              		.fpu fpv4-sp-d16
+ 305              	MPU6050_GetBaseAcc:
+ 306              	.LVL20:
+ 307              	.LFB126:
+ 102:./dev/mpu6050/mpu6050.c **** 
+ 103:./dev/mpu6050/mpu6050.c **** 
+ 104:./dev/mpu6050/mpu6050.c **** //获得所有轴的加速度
+ 105:./dev/mpu6050/mpu6050.c **** E_MPU6050_ERROR MPU6050_GetBaseAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * acc)
+ 106:./dev/mpu6050/mpu6050.c **** {
+ 308              		.loc 1 106 1 is_stmt 1 view -0
+ 309              		.cfi_startproc
+ 310              		@ args = 0, pretend = 0, frame = 8
+ 311              		@ frame_needed = 0, uses_anonymous_args = 0
+ 312              		.loc 1 106 1 is_stmt 0 view .LVU90
+ 313 0000 30B5     		push	{r4, r5, lr}
+ 314              	.LCFI7:
+ 315              		.cfi_def_cfa_offset 12
+ 316              		.cfi_offset 4, -12
+ 317              		.cfi_offset 5, -8
+ 318              		.cfi_offset 14, -4
+ 319 0002 83B0     		sub	sp, sp, #12
+ 320              	.LCFI8:
+ 321              		.cfi_def_cfa_offset 24
+ 107:./dev/mpu6050/mpu6050.c **** 	uint8_t data[6] = {0};
+ 322              		.loc 1 107 2 is_stmt 1 view .LVU91
+ 323              		.loc 1 107 10 is_stmt 0 view .LVU92
+ 324 0004 0023     		movs	r3, #0
+ 325 0006 0093     		str	r3, [sp]
+ 326 0008 ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 108:./dev/mpu6050/mpu6050.c **** 
+ 109:./dev/mpu6050/mpu6050.c **** 	if((NULL == mpu6050)
+ 327              		.loc 1 109 2 is_stmt 1 view .LVU93
+ 328              		.loc 1 109 4 is_stmt 0 view .LVU94
+ 329 000c F8B1     		cbz	r0, .L13
+ 330 000e 0C46     		mov	r4, r1
+ 110:./dev/mpu6050/mpu6050.c **** 		|| (NULL == mpu6050->I2CReadReg)
+ 331              		.loc 1 110 22 view .LVU95
+ 332 0010 8568     		ldr	r5, [r0, #8]
+ 333              		.loc 1 110 3 view .LVU96
+ 334 0012 F5B1     		cbz	r5, .L14
+ 111:./dev/mpu6050/mpu6050.c **** 	)
+ 112:./dev/mpu6050/mpu6050.c **** 	{
+ 113:./dev/mpu6050/mpu6050.c **** 		return E_MPU6050_ERROR_NULL;
+ 114:./dev/mpu6050/mpu6050.c **** 	}
+ 115:./dev/mpu6050/mpu6050.c **** 
+ 116:./dev/mpu6050/mpu6050.c **** 	
+ 117:./dev/mpu6050/mpu6050.c **** 	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 6);
+ 335              		.loc 1 117 2 is_stmt 1 view .LVU97
+ 336 0014 0623     		movs	r3, #6
+ 337 0016 6A46     		mov	r2, sp
+ARM GAS  /tmp/ccvY79g5.s 			page 9
+
+
+ 338 0018 3B21     		movs	r1, #59
+ 339              	.LVL21:
+ 340              		.loc 1 117 2 is_stmt 0 view .LVU98
+ 341 001a 0078     		ldrb	r0, [r0]	@ zero_extendqisi2
+ 342              	.LVL22:
+ 343              		.loc 1 117 2 view .LVU99
+ 344 001c A847     		blx	r5
+ 345              	.LVL23:
+ 118:./dev/mpu6050/mpu6050.c **** 
+ 119:./dev/mpu6050/mpu6050.c **** 	acc->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]);
+ 346              		.loc 1 119 2 is_stmt 1 view .LVU100
+ 347              		.loc 1 119 36 is_stmt 0 view .LVU101
+ 348 001e 9DF80020 		ldrb	r2, [sp]	@ zero_extendqisi2
+ 349              		.loc 1 119 52 view .LVU102
+ 350 0022 9DF80130 		ldrb	r3, [sp, #1]	@ zero_extendqisi2
+ 351              		.loc 1 119 46 view .LVU103
+ 352 0026 43EA0223 		orr	r3, r3, r2, lsl #8
+ 353              		.loc 1 119 9 view .LVU104
+ 354 002a 2380     		strh	r3, [r4]	@ movhi
+ 120:./dev/mpu6050/mpu6050.c **** 	acc->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]);
+ 355              		.loc 1 120 2 is_stmt 1 view .LVU105
+ 356              		.loc 1 120 36 is_stmt 0 view .LVU106
+ 357 002c 9DF80220 		ldrb	r2, [sp, #2]	@ zero_extendqisi2
+ 358              		.loc 1 120 52 view .LVU107
+ 359 0030 9DF80330 		ldrb	r3, [sp, #3]	@ zero_extendqisi2
+ 360              		.loc 1 120 46 view .LVU108
+ 361 0034 43EA0223 		orr	r3, r3, r2, lsl #8
+ 362              		.loc 1 120 9 view .LVU109
+ 363 0038 6380     		strh	r3, [r4, #2]	@ movhi
+ 121:./dev/mpu6050/mpu6050.c **** 	acc->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]);
+ 364              		.loc 1 121 2 is_stmt 1 view .LVU110
+ 365              		.loc 1 121 36 is_stmt 0 view .LVU111
+ 366 003a 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 367              		.loc 1 121 52 view .LVU112
+ 368 003e 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 369              		.loc 1 121 46 view .LVU113
+ 370 0042 43EA0223 		orr	r3, r3, r2, lsl #8
+ 371              		.loc 1 121 9 view .LVU114
+ 372 0046 A380     		strh	r3, [r4, #4]	@ movhi
+ 122:./dev/mpu6050/mpu6050.c **** 
+ 123:./dev/mpu6050/mpu6050.c **** 	return E_MPU6050_ERROR_OK;
+ 373              		.loc 1 123 2 is_stmt 1 view .LVU115
+ 374              		.loc 1 123 9 is_stmt 0 view .LVU116
+ 375 0048 0020     		movs	r0, #0
+ 376              	.LVL24:
+ 377              	.L12:
+ 124:./dev/mpu6050/mpu6050.c **** }
+ 378              		.loc 1 124 1 view .LVU117
+ 379 004a 03B0     		add	sp, sp, #12
+ 380              	.LCFI9:
+ 381              		.cfi_remember_state
+ 382              		.cfi_def_cfa_offset 12
+ 383              		@ sp needed
+ 384 004c 30BD     		pop	{r4, r5, pc}
+ 385              	.LVL25:
+ 386              	.L13:
+ 387              	.LCFI10:
+ARM GAS  /tmp/ccvY79g5.s 			page 10
+
+
+ 388              		.cfi_restore_state
+ 113:./dev/mpu6050/mpu6050.c **** 	}
+ 389              		.loc 1 113 10 view .LVU118
+ 390 004e 0120     		movs	r0, #1
+ 391              	.LVL26:
+ 113:./dev/mpu6050/mpu6050.c **** 	}
+ 392              		.loc 1 113 10 view .LVU119
+ 393 0050 FBE7     		b	.L12
+ 394              	.LVL27:
+ 395              	.L14:
+ 113:./dev/mpu6050/mpu6050.c **** 	}
+ 396              		.loc 1 113 10 view .LVU120
+ 397 0052 0120     		movs	r0, #1
+ 398              	.LVL28:
+ 113:./dev/mpu6050/mpu6050.c **** 	}
+ 399              		.loc 1 113 10 view .LVU121
+ 400 0054 F9E7     		b	.L12
+ 401              		.cfi_endproc
+ 402              	.LFE126:
+ 404              		.section	.text.MPU6050_ConvertDataGyro,"ax",%progbits
+ 405              		.align	1
+ 406              		.global	MPU6050_ConvertDataGyro
+ 407              		.syntax unified
+ 408              		.thumb
+ 409              		.thumb_func
+ 410              		.fpu fpv4-sp-d16
+ 412              	MPU6050_ConvertDataGyro:
+ 413              	.LVL29:
+ 414              	.LFB127:
+ 125:./dev/mpu6050/mpu6050.c **** 
+ 126:./dev/mpu6050/mpu6050.c **** //陀螺仪角速度单位转换
+ 127:./dev/mpu6050/mpu6050.c **** E_MPU6050_ERROR MPU6050_ConvertDataGyro(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_Conve
+ 128:./dev/mpu6050/mpu6050.c **** {
+ 415              		.loc 1 128 1 is_stmt 1 view -0
+ 416              		.cfi_startproc
+ 417              		@ args = 0, pretend = 0, frame = 0
+ 418              		@ frame_needed = 0, uses_anonymous_args = 0
+ 419              		@ link register save eliminated.
+ 129:./dev/mpu6050/mpu6050.c **** 	float gyroConvertBase;
+ 420              		.loc 1 129 2 view .LVU123
+ 130:./dev/mpu6050/mpu6050.c **** 
+ 131:./dev/mpu6050/mpu6050.c **** 	if(NULL == mpu6050)
+ 421              		.loc 1 131 2 view .LVU124
+ 422              		.loc 1 131 4 is_stmt 0 view .LVU125
+ 423 0000 50B3     		cbz	r0, .L18
+ 132:./dev/mpu6050/mpu6050.c **** 	{
+ 133:./dev/mpu6050/mpu6050.c **** 		return E_MPU6050_ERROR_NULL;
+ 134:./dev/mpu6050/mpu6050.c **** 	}
+ 135:./dev/mpu6050/mpu6050.c **** 
+ 136:./dev/mpu6050/mpu6050.c **** 	gyroConvertBase = (float)(32768.0f / (250u << mpu6050->GyroRange));
+ 424              		.loc 1 136 2 is_stmt 1 view .LVU126
+ 425              		.loc 1 136 55 is_stmt 0 view .LVU127
+ 426 0002 4078     		ldrb	r0, [r0, #1]	@ zero_extendqisi2
+ 427              	.LVL30:
+ 428              		.loc 1 136 45 view .LVU128
+ 429 0004 FA23     		movs	r3, #250
+ 430 0006 8340     		lsls	r3, r3, r0
+ARM GAS  /tmp/ccvY79g5.s 			page 11
+
+
+ 431              		.loc 1 136 20 view .LVU129
+ 432 0008 07EE903A 		vmov	s15, r3	@ int
+ 433 000c F8EE677A 		vcvt.f32.u32	s15, s15
+ 434              		.loc 1 136 18 view .LVU130
+ 435 0010 DFED126A 		vldr.32	s13, .L19
+ 436 0014 86EEA77A 		vdiv.f32	s14, s13, s15
+ 437              	.LVL31:
+ 137:./dev/mpu6050/mpu6050.c **** 
+ 138:./dev/mpu6050/mpu6050.c **** 	out->X = (float)in->X/gyroConvertBase;
+ 438              		.loc 1 138 2 is_stmt 1 view .LVU131
+ 439              		.loc 1 138 20 is_stmt 0 view .LVU132
+ 440 0018 B1F90030 		ldrsh	r3, [r1]
+ 441 001c 07EE903A 		vmov	s15, r3	@ int
+ 442              		.loc 1 138 11 view .LVU133
+ 443 0020 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 444              		.loc 1 138 23 view .LVU134
+ 445 0024 C7EE876A 		vdiv.f32	s13, s15, s14
+ 446              		.loc 1 138 9 view .LVU135
+ 447 0028 C2ED006A 		vstr.32	s13, [r2]
+ 139:./dev/mpu6050/mpu6050.c **** 	out->Y = (float)in->Y/gyroConvertBase;
+ 448              		.loc 1 139 2 is_stmt 1 view .LVU136
+ 449              		.loc 1 139 20 is_stmt 0 view .LVU137
+ 450 002c B1F90230 		ldrsh	r3, [r1, #2]
+ 451 0030 07EE903A 		vmov	s15, r3	@ int
+ 452              		.loc 1 139 11 view .LVU138
+ 453 0034 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 454              		.loc 1 139 23 view .LVU139
+ 455 0038 C7EE876A 		vdiv.f32	s13, s15, s14
+ 456              		.loc 1 139 9 view .LVU140
+ 457 003c C2ED016A 		vstr.32	s13, [r2, #4]
+ 140:./dev/mpu6050/mpu6050.c **** 	out->Z = (float)in->Z/gyroConvertBase;
+ 458              		.loc 1 140 2 is_stmt 1 view .LVU141
+ 459              		.loc 1 140 20 is_stmt 0 view .LVU142
+ 460 0040 B1F90430 		ldrsh	r3, [r1, #4]
+ 461 0044 07EE903A 		vmov	s15, r3	@ int
+ 462              		.loc 1 140 11 view .LVU143
+ 463 0048 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 464              		.loc 1 140 23 view .LVU144
+ 465 004c C7EE876A 		vdiv.f32	s13, s15, s14
+ 466              		.loc 1 140 9 view .LVU145
+ 467 0050 C2ED026A 		vstr.32	s13, [r2, #8]
+ 141:./dev/mpu6050/mpu6050.c **** 
+ 142:./dev/mpu6050/mpu6050.c **** 	return E_MPU6050_ERROR_OK;
+ 468              		.loc 1 142 2 is_stmt 1 view .LVU146
+ 469              		.loc 1 142 9 is_stmt 0 view .LVU147
+ 470 0054 0020     		movs	r0, #0
+ 471 0056 7047     		bx	lr
+ 472              	.LVL32:
+ 473              	.L18:
+ 133:./dev/mpu6050/mpu6050.c **** 	}
+ 474              		.loc 1 133 10 view .LVU148
+ 475 0058 0120     		movs	r0, #1
+ 476              	.LVL33:
+ 143:./dev/mpu6050/mpu6050.c **** }
+ 477              		.loc 1 143 1 view .LVU149
+ 478 005a 7047     		bx	lr
+ 479              	.L20:
+ARM GAS  /tmp/ccvY79g5.s 			page 12
+
+
+ 480              		.align	2
+ 481              	.L19:
+ 482 005c 00000047 		.word	1191182336
+ 483              		.cfi_endproc
+ 484              	.LFE127:
+ 486              		.section	.text.MPU6050_ConvertDataAcc,"ax",%progbits
+ 487              		.align	1
+ 488              		.global	MPU6050_ConvertDataAcc
+ 489              		.syntax unified
+ 490              		.thumb
+ 491              		.thumb_func
+ 492              		.fpu fpv4-sp-d16
+ 494              	MPU6050_ConvertDataAcc:
+ 495              	.LVL34:
+ 496              	.LFB128:
+ 144:./dev/mpu6050/mpu6050.c **** 
+ 145:./dev/mpu6050/mpu6050.c **** //加速度单位转换
+ 146:./dev/mpu6050/mpu6050.c **** E_MPU6050_ERROR MPU6050_ConvertDataAcc(MPU6050_t * mpu6050, MPU6050_BaseData_t * in, MPU6050_Conver
+ 147:./dev/mpu6050/mpu6050.c **** {
+ 497              		.loc 1 147 1 is_stmt 1 view -0
+ 498              		.cfi_startproc
+ 499              		@ args = 0, pretend = 0, frame = 0
+ 500              		@ frame_needed = 0, uses_anonymous_args = 0
+ 501              		@ link register save eliminated.
+ 148:./dev/mpu6050/mpu6050.c **** 	float accConvertBase;
+ 502              		.loc 1 148 2 view .LVU151
+ 149:./dev/mpu6050/mpu6050.c **** 
+ 150:./dev/mpu6050/mpu6050.c **** 
+ 151:./dev/mpu6050/mpu6050.c **** 	if(NULL == mpu6050)
+ 503              		.loc 1 151 2 view .LVU152
+ 504              		.loc 1 151 4 is_stmt 0 view .LVU153
+ 505 0000 08B3     		cbz	r0, .L23
+ 152:./dev/mpu6050/mpu6050.c **** 	{
+ 153:./dev/mpu6050/mpu6050.c **** 		return E_MPU6050_ERROR_NULL;
+ 154:./dev/mpu6050/mpu6050.c **** 	}
+ 155:./dev/mpu6050/mpu6050.c **** 
+ 156:./dev/mpu6050/mpu6050.c **** 	//accConvertBase = (float)(32768u >> (mpu6050->AccRange + 1));
+ 157:./dev/mpu6050/mpu6050.c **** 	accConvertBase = 2048 / 0.98;
+ 506              		.loc 1 157 2 is_stmt 1 view .LVU154
+ 507              	.LVL35:
+ 158:./dev/mpu6050/mpu6050.c **** 
+ 159:./dev/mpu6050/mpu6050.c **** 	out->X = (float)in->X/accConvertBase;
+ 508              		.loc 1 159 2 view .LVU155
+ 509              		.loc 1 159 20 is_stmt 0 view .LVU156
+ 510 0002 B1F90030 		ldrsh	r3, [r1]
+ 511 0006 07EE103A 		vmov	s14, r3	@ int
+ 512              		.loc 1 159 11 view .LVU157
+ 513 000a B8EEC77A 		vcvt.f32.s32	s14, s14
+ 514              		.loc 1 159 23 view .LVU158
+ 515 000e DFED0F7A 		vldr.32	s15, .L24
+ 516 0012 C7EE276A 		vdiv.f32	s13, s14, s15
+ 517              		.loc 1 159 9 view .LVU159
+ 518 0016 C2ED006A 		vstr.32	s13, [r2]
+ 160:./dev/mpu6050/mpu6050.c **** 	out->Y = (float)in->Y/accConvertBase;
+ 519              		.loc 1 160 2 is_stmt 1 view .LVU160
+ 520              		.loc 1 160 20 is_stmt 0 view .LVU161
+ 521 001a B1F90230 		ldrsh	r3, [r1, #2]
+ARM GAS  /tmp/ccvY79g5.s 			page 13
+
+
+ 522 001e 07EE103A 		vmov	s14, r3	@ int
+ 523              		.loc 1 160 11 view .LVU162
+ 524 0022 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 525              		.loc 1 160 23 view .LVU163
+ 526 0026 C7EE276A 		vdiv.f32	s13, s14, s15
+ 527              		.loc 1 160 9 view .LVU164
+ 528 002a C2ED016A 		vstr.32	s13, [r2, #4]
+ 161:./dev/mpu6050/mpu6050.c **** 	out->Z = (float)in->Z/accConvertBase;
+ 529              		.loc 1 161 2 is_stmt 1 view .LVU165
+ 530              		.loc 1 161 20 is_stmt 0 view .LVU166
+ 531 002e B1F90430 		ldrsh	r3, [r1, #4]
+ 532 0032 07EE103A 		vmov	s14, r3	@ int
+ 533              		.loc 1 161 11 view .LVU167
+ 534 0036 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 535              		.loc 1 161 23 view .LVU168
+ 536 003a C7EE276A 		vdiv.f32	s13, s14, s15
+ 537              		.loc 1 161 9 view .LVU169
+ 538 003e C2ED026A 		vstr.32	s13, [r2, #8]
+ 162:./dev/mpu6050/mpu6050.c **** 
+ 163:./dev/mpu6050/mpu6050.c **** 	return E_MPU6050_ERROR_OK;
+ 539              		.loc 1 163 2 is_stmt 1 view .LVU170
+ 540              		.loc 1 163 9 is_stmt 0 view .LVU171
+ 541 0042 0020     		movs	r0, #0
+ 542              	.LVL36:
+ 543              		.loc 1 163 9 view .LVU172
+ 544 0044 7047     		bx	lr
+ 545              	.LVL37:
+ 546              	.L23:
+ 153:./dev/mpu6050/mpu6050.c **** 	}
+ 547              		.loc 1 153 10 view .LVU173
+ 548 0046 0120     		movs	r0, #1
+ 549              	.LVL38:
+ 164:./dev/mpu6050/mpu6050.c **** }
+ 550              		.loc 1 164 1 view .LVU174
+ 551 0048 7047     		bx	lr
+ 552              	.L25:
+ 553 004a 00BF     		.align	2
+ 554              	.L24:
+ 555 004c BC9C0245 		.word	1157799100
+ 556              		.cfi_endproc
+ 557              	.LFE128:
+ 559              		.text
+ 560              	.Letext0:
+ 561              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 562              		.file 3 "./dev/mpu6050/mpu6050.h"
+ARM GAS  /tmp/ccvY79g5.s 			page 14
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 mpu6050.c
+     /tmp/ccvY79g5.s:18     .text.MPU6050_Init:0000000000000000 $t
+     /tmp/ccvY79g5.s:26     .text.MPU6050_Init:0000000000000000 MPU6050_Init
+     /tmp/ccvY79g5.s:177    .text.MPU6050_GetBaseGyro:0000000000000000 $t
+     /tmp/ccvY79g5.s:184    .text.MPU6050_GetBaseGyro:0000000000000000 MPU6050_GetBaseGyro
+     /tmp/ccvY79g5.s:298    .text.MPU6050_GetBaseAcc:0000000000000000 $t
+     /tmp/ccvY79g5.s:305    .text.MPU6050_GetBaseAcc:0000000000000000 MPU6050_GetBaseAcc
+     /tmp/ccvY79g5.s:405    .text.MPU6050_ConvertDataGyro:0000000000000000 $t
+     /tmp/ccvY79g5.s:412    .text.MPU6050_ConvertDataGyro:0000000000000000 MPU6050_ConvertDataGyro
+     /tmp/ccvY79g5.s:482    .text.MPU6050_ConvertDataGyro:000000000000005c $d
+     /tmp/ccvY79g5.s:487    .text.MPU6050_ConvertDataAcc:0000000000000000 $t
+     /tmp/ccvY79g5.s:494    .text.MPU6050_ConvertDataAcc:0000000000000000 MPU6050_ConvertDataAcc
+     /tmp/ccvY79g5.s:555    .text.MPU6050_ConvertDataAcc:000000000000004c $d
+
+NO UNDEFINED SYMBOLS

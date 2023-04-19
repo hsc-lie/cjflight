@@ -1,0 +1,94 @@
+ARM GAS  /tmp/cckVpLpP.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"pwm_hal.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.PWM_HALDutyOut,"ax",%progbits
+  18              		.align	1
+  19              		.global	PWM_HALDutyOut
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	PWM_HALDutyOut:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./hal/pwm/pwm_hal.c"
+   1:./hal/pwm/pwm_hal.c **** #include "pwm_hal.h"
+   2:./hal/pwm/pwm_hal.c **** 
+   3:./hal/pwm/pwm_hal.c **** 
+   4:./hal/pwm/pwm_hal.c **** 
+   5:./hal/pwm/pwm_hal.c **** 
+   6:./hal/pwm/pwm_hal.c **** void PWM_HALDutyOut(PWM_HAL_t * pwm, uint32_t duty)
+   7:./hal/pwm/pwm_hal.c **** {
+  30              		.loc 1 7 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+   8:./hal/pwm/pwm_hal.c **** 	if(NULL != pwm)
+  34              		.loc 1 8 2 view .LVU1
+  35              		.loc 1 8 4 is_stmt 0 view .LVU2
+  36 0000 20B1     		cbz	r0, .L4
+   7:./hal/pwm/pwm_hal.c **** 	{
+  37              		.loc 1 7 1 view .LVU3
+  38 0002 08B5     		push	{r3, lr}
+  39              	.LCFI0:
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 3, -8
+  42              		.cfi_offset 14, -4
+   9:./hal/pwm/pwm_hal.c **** 	{
+  10:./hal/pwm/pwm_hal.c **** 		pwm->DutyOut(duty);
+  43              		.loc 1 10 3 is_stmt 1 view .LVU4
+  44              		.loc 1 10 6 is_stmt 0 view .LVU5
+  45 0004 0368     		ldr	r3, [r0]
+  46              		.loc 1 10 3 view .LVU6
+  47 0006 0846     		mov	r0, r1
+ARM GAS  /tmp/cckVpLpP.s 			page 2
+
+
+  48              	.LVL1:
+  49              		.loc 1 10 3 view .LVU7
+  50 0008 9847     		blx	r3
+  51              	.LVL2:
+  11:./hal/pwm/pwm_hal.c **** 	}
+  12:./hal/pwm/pwm_hal.c **** }
+  52              		.loc 1 12 1 view .LVU8
+  53 000a 08BD     		pop	{r3, pc}
+  54              	.LVL3:
+  55              	.L4:
+  56              	.LCFI1:
+  57              		.cfi_def_cfa_offset 0
+  58              		.cfi_restore 3
+  59              		.cfi_restore 14
+  60              		.loc 1 12 1 view .LVU9
+  61 000c 7047     		bx	lr
+  62              		.cfi_endproc
+  63              	.LFE123:
+  65              		.text
+  66              	.Letext0:
+  67              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+  68              		.file 3 "./hal/pwm/pwm_hal.h"
+ARM GAS  /tmp/cckVpLpP.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 pwm_hal.c
+     /tmp/cckVpLpP.s:18     .text.PWM_HALDutyOut:0000000000000000 $t
+     /tmp/cckVpLpP.s:26     .text.PWM_HALDutyOut:0000000000000000 PWM_HALDutyOut
+
+NO UNDEFINED SYMBOLS

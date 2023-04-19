@@ -1,0 +1,2856 @@
+ARM GAS  /tmp/ccbIHlMU.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"at32f4xx_usart.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.USART_Reset,"ax",%progbits
+  18              		.align	1
+  19              		.global	USART_Reset
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	USART_Reset:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./lib/src/at32f4xx_usart.c"
+   1:./lib/src/at32f4xx_usart.c **** /**
+   2:./lib/src/at32f4xx_usart.c ****   **************************************************************************
+   3:./lib/src/at32f4xx_usart.c ****   * File   : at32f4xx_usart.c
+   4:./lib/src/at32f4xx_usart.c ****   * Version: V1.2.4
+   5:./lib/src/at32f4xx_usart.c ****   * Date   : 2020-08-26
+   6:./lib/src/at32f4xx_usart.c ****   * Brief  : at32f4xx USART source file
+   7:./lib/src/at32f4xx_usart.c ****   **************************************************************************
+   8:./lib/src/at32f4xx_usart.c ****   */
+   9:./lib/src/at32f4xx_usart.c **** 
+  10:./lib/src/at32f4xx_usart.c **** 
+  11:./lib/src/at32f4xx_usart.c **** /* Includes ------------------------------------------------------------------*/
+  12:./lib/src/at32f4xx_usart.c **** #include "at32f4xx_usart.h"
+  13:./lib/src/at32f4xx_usart.c **** #include "at32f4xx_rcc.h"
+  14:./lib/src/at32f4xx_usart.c **** 
+  15:./lib/src/at32f4xx_usart.c **** /** @addtogroup at32f4xx_StdPeriph_Driver
+  16:./lib/src/at32f4xx_usart.c ****   * @{
+  17:./lib/src/at32f4xx_usart.c ****   */
+  18:./lib/src/at32f4xx_usart.c **** 
+  19:./lib/src/at32f4xx_usart.c **** /** @defgroup USART
+  20:./lib/src/at32f4xx_usart.c ****   * @brief USART driver modules
+  21:./lib/src/at32f4xx_usart.c ****   * @{
+  22:./lib/src/at32f4xx_usart.c ****   */
+  23:./lib/src/at32f4xx_usart.c **** 
+  24:./lib/src/at32f4xx_usart.c **** /** @defgroup USART_Private_TypesDefinitions
+  25:./lib/src/at32f4xx_usart.c ****   * @{
+  26:./lib/src/at32f4xx_usart.c ****   */
+  27:./lib/src/at32f4xx_usart.c **** 
+  28:./lib/src/at32f4xx_usart.c **** /**
+  29:./lib/src/at32f4xx_usart.c ****   * @}
+ARM GAS  /tmp/ccbIHlMU.s 			page 2
+
+
+  30:./lib/src/at32f4xx_usart.c ****   */
+  31:./lib/src/at32f4xx_usart.c **** 
+  32:./lib/src/at32f4xx_usart.c **** /** @defgroup USART_Private_Defines
+  33:./lib/src/at32f4xx_usart.c ****   * @{
+  34:./lib/src/at32f4xx_usart.c ****   */
+  35:./lib/src/at32f4xx_usart.c **** 
+  36:./lib/src/at32f4xx_usart.c **** #define CTRL1_UEN_Set               ((uint16_t)0x2000)  /*!< USART Enable Mask */
+  37:./lib/src/at32f4xx_usart.c **** #define CTRL1_UEN_Reset             ((uint16_t)0xDFFF)  /*!< USART Disable Mask */
+  38:./lib/src/at32f4xx_usart.c **** 
+  39:./lib/src/at32f4xx_usart.c **** #define CTRL1_WUMODE_Mask           ((uint16_t)0xF7FF)  /*!< USART WakeUp Method Mask */
+  40:./lib/src/at32f4xx_usart.c **** 
+  41:./lib/src/at32f4xx_usart.c **** #define CTRL1_RECMUTE_Set           ((uint16_t)0x0002)  /*!< USART mute mode Enable Mask */
+  42:./lib/src/at32f4xx_usart.c **** #define CTRL1_RECMUTE_Reset         ((uint16_t)0xFFFD)  /*!< USART mute mode Enable Mask */
+  43:./lib/src/at32f4xx_usart.c **** #define CTRL1_SBRK_Set              ((uint16_t)0x0001)  /*!< USART Break Character send Mask */
+  44:./lib/src/at32f4xx_usart.c **** #define CTRL1_CLEAR_MASK            ((uint16_t)0xE9F3)  /*!< USART CTRL1 Mask */
+  45:./lib/src/at32f4xx_usart.c **** #define CTRL2_ADDRESS_Mask          ((uint16_t)0xFFF0)  /*!< USART address Mask */
+  46:./lib/src/at32f4xx_usart.c **** 
+  47:./lib/src/at32f4xx_usart.c **** #define CTRL2_LINEN_Set             ((uint16_t)0x4000)  /*!< USART LIN Enable Mask */
+  48:./lib/src/at32f4xx_usart.c **** #define CTRL2_LINEN_Reset           ((uint16_t)0xBFFF)  /*!< USART LIN Disable Mask */
+  49:./lib/src/at32f4xx_usart.c **** 
+  50:./lib/src/at32f4xx_usart.c **** #define CTRL2_LBDLEN_Mask           ((uint16_t)0xFFDF)  /*!< USART LIN Break detection Mask */
+  51:./lib/src/at32f4xx_usart.c **** #define CTRL2_STOPB_CLEAR_Mask      ((uint16_t)0xCFFF)  /*!< USART CTRL2 STOP Bits Mask */
+  52:./lib/src/at32f4xx_usart.c **** #define CTRL2_CLOCK_CLEAR_Mask      ((uint16_t)0xF0FF)  /*!< USART CTRL2 Clock Mask */
+  53:./lib/src/at32f4xx_usart.c **** 
+  54:./lib/src/at32f4xx_usart.c **** #define CTRL3_SCMEN_Set             ((uint16_t)0x0020)  /*!< USART SC Enable Mask */
+  55:./lib/src/at32f4xx_usart.c **** #define CTRL3_SCMEN_Reset           ((uint16_t)0xFFDF)  /*!< USART SC Disable Mask */
+  56:./lib/src/at32f4xx_usart.c **** 
+  57:./lib/src/at32f4xx_usart.c **** #define CTRL3_NACKEN_Set            ((uint16_t)0x0010)  /*!< USART SC NACK Enable Mask */
+  58:./lib/src/at32f4xx_usart.c **** #define CTRL3_NACKEN_Reset          ((uint16_t)0xFFEF)  /*!< USART SC NACK Disable Mask */
+  59:./lib/src/at32f4xx_usart.c **** 
+  60:./lib/src/at32f4xx_usart.c **** #define CTRL3_HALFSEL_Set           ((uint16_t)0x0008)  /*!< USART Half-Duplex Enable Mask */
+  61:./lib/src/at32f4xx_usart.c **** #define CTRL3_HALFSEL_Reset         ((uint16_t)0xFFF7)  /*!< USART Half-Duplex Disable Mask */
+  62:./lib/src/at32f4xx_usart.c **** 
+  63:./lib/src/at32f4xx_usart.c **** #define CTRL3_IRDALP_Mask           ((uint16_t)0xFFFB)  /*!< USART IrDA LowPower mode Mask */
+  64:./lib/src/at32f4xx_usart.c **** #define CTRL3_CLEAR_Mask            ((uint16_t)0xFCFF)  /*!< USART CR3 Mask */
+  65:./lib/src/at32f4xx_usart.c **** 
+  66:./lib/src/at32f4xx_usart.c **** #define CTRL3_IRDAEN_Set            ((uint16_t)0x0002)  /*!< USART IrDA Enable Mask */
+  67:./lib/src/at32f4xx_usart.c **** #define CTRL3_IRDAEN_Reset          ((uint16_t)0xFFFD)  /*!< USART IrDA Disable Mask */
+  68:./lib/src/at32f4xx_usart.c **** #define GTPR_LSB_Mask               ((uint16_t)0x00FF)  /*!< Guard Time Register LSB Mask */
+  69:./lib/src/at32f4xx_usart.c **** #define GTPR_MSB_Mask               ((uint16_t)0xFF00)  /*!< Guard Time Register MSB Mask */
+  70:./lib/src/at32f4xx_usart.c **** #define INT_Mask                    ((uint16_t)0x001F)  /*!< USART Interrupt Mask */
+  71:./lib/src/at32f4xx_usart.c **** 
+  72:./lib/src/at32f4xx_usart.c **** /* USART OverSampling-8 Mask */
+  73:./lib/src/at32f4xx_usart.c **** #define CTRL1_OVER8_Set             ((u16)0x8000)  /* USART OVER8 mode Enable Mask */
+  74:./lib/src/at32f4xx_usart.c **** #define CTRL1_OVER8_Reset           ((u16)0x7FFF)  /* USART OVER8 mode Disable Mask */
+  75:./lib/src/at32f4xx_usart.c **** 
+  76:./lib/src/at32f4xx_usart.c **** /* USART One Bit Sampling Mask */
+  77:./lib/src/at32f4xx_usart.c **** #define CTRL3_ONEBITE_Set           ((u16)0x0800)  /* USART ONEBITE mode Enable Mask */
+  78:./lib/src/at32f4xx_usart.c **** #define CTRL3_ONEBITE_Reset         ((u16)0xF7FF)  /* USART ONEBITE mode Disable Mask */
+  79:./lib/src/at32f4xx_usart.c **** 
+  80:./lib/src/at32f4xx_usart.c **** /* USART Swap Mask */
+  81:./lib/src/at32f4xx_usart.c **** #define CTRL2_SWAP_Set             ((u16)0x8000)  /* USART OVER8 mode Enable Mask */
+  82:./lib/src/at32f4xx_usart.c **** #define CTRL2_SWAP_Reset           ((u16)0x7FFF)  /* USART OVER8 mode Disable Mask */
+  83:./lib/src/at32f4xx_usart.c **** /**
+  84:./lib/src/at32f4xx_usart.c ****   * @}
+  85:./lib/src/at32f4xx_usart.c ****   */
+  86:./lib/src/at32f4xx_usart.c **** 
+ARM GAS  /tmp/ccbIHlMU.s 			page 3
+
+
+  87:./lib/src/at32f4xx_usart.c **** /** @defgroup USART_Private_Macros
+  88:./lib/src/at32f4xx_usart.c ****   * @{
+  89:./lib/src/at32f4xx_usart.c ****   */
+  90:./lib/src/at32f4xx_usart.c **** 
+  91:./lib/src/at32f4xx_usart.c **** /**
+  92:./lib/src/at32f4xx_usart.c ****   * @}
+  93:./lib/src/at32f4xx_usart.c ****   */
+  94:./lib/src/at32f4xx_usart.c **** 
+  95:./lib/src/at32f4xx_usart.c **** /** @defgroup USART_Private_Variables
+  96:./lib/src/at32f4xx_usart.c ****   * @{
+  97:./lib/src/at32f4xx_usart.c ****   */
+  98:./lib/src/at32f4xx_usart.c **** 
+  99:./lib/src/at32f4xx_usart.c **** /**
+ 100:./lib/src/at32f4xx_usart.c ****   * @}
+ 101:./lib/src/at32f4xx_usart.c ****   */
+ 102:./lib/src/at32f4xx_usart.c **** 
+ 103:./lib/src/at32f4xx_usart.c **** /** @defgroup USART_Private_FunctionPrototypes
+ 104:./lib/src/at32f4xx_usart.c ****   * @{
+ 105:./lib/src/at32f4xx_usart.c ****   */
+ 106:./lib/src/at32f4xx_usart.c **** 
+ 107:./lib/src/at32f4xx_usart.c **** /**
+ 108:./lib/src/at32f4xx_usart.c ****   * @}
+ 109:./lib/src/at32f4xx_usart.c ****   */
+ 110:./lib/src/at32f4xx_usart.c **** 
+ 111:./lib/src/at32f4xx_usart.c **** /** @defgroup USART_Private_Functions
+ 112:./lib/src/at32f4xx_usart.c ****   * @{
+ 113:./lib/src/at32f4xx_usart.c ****   */
+ 114:./lib/src/at32f4xx_usart.c **** 
+ 115:./lib/src/at32f4xx_usart.c **** /**
+ 116:./lib/src/at32f4xx_usart.c ****   * @brief  Deinitializes the USARTx peripheral registers to their default reset values.
+ 117:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 118:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 119:./lib/src/at32f4xx_usart.c ****   *      USART1, USART2, USART3, UART4 or UART5.
+ 120:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 121:./lib/src/at32f4xx_usart.c ****   */
+ 122:./lib/src/at32f4xx_usart.c **** void USART_Reset(USART_Type* USARTx)
+ 123:./lib/src/at32f4xx_usart.c **** {
+  30              		.loc 1 123 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 123 1 is_stmt 0 view .LVU1
+  35 0000 08B5     		push	{r3, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+ 124:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 125:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+  40              		.loc 1 125 3 is_stmt 1 view .LVU2
+ 126:./lib/src/at32f4xx_usart.c **** 
+ 127:./lib/src/at32f4xx_usart.c ****   if (USARTx == USART1)
+  41              		.loc 1 127 3 view .LVU3
+  42              		.loc 1 127 6 is_stmt 0 view .LVU4
+  43 0002 0E4B     		ldr	r3, .L7
+  44 0004 9842     		cmp	r0, r3
+  45 0006 03D0     		beq	.L5
+ARM GAS  /tmp/ccbIHlMU.s 			page 4
+
+
+ 128:./lib/src/at32f4xx_usart.c ****   {
+ 129:./lib/src/at32f4xx_usart.c ****     RCC_APB2PeriphResetCmd(RCC_APB2PERIPH_USART1, ENABLE);
+ 130:./lib/src/at32f4xx_usart.c ****     RCC_APB2PeriphResetCmd(RCC_APB2PERIPH_USART1, DISABLE);
+ 131:./lib/src/at32f4xx_usart.c ****   }
+ 132:./lib/src/at32f4xx_usart.c ****   else if (USARTx == USART2)
+  46              		.loc 1 132 8 is_stmt 1 view .LVU5
+  47              		.loc 1 132 11 is_stmt 0 view .LVU6
+  48 0008 0D4B     		ldr	r3, .L7+4
+  49 000a 9842     		cmp	r0, r3
+  50 000c 0BD0     		beq	.L6
+  51              	.LVL1:
+  52              	.L1:
+ 133:./lib/src/at32f4xx_usart.c ****   {
+ 134:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_USART2, ENABLE);
+ 135:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_USART2, DISABLE);
+ 136:./lib/src/at32f4xx_usart.c ****   }
+ 137:./lib/src/at32f4xx_usart.c **** #if !defined (AT32F421xx)
+ 138:./lib/src/at32f4xx_usart.c ****   else if (USARTx == USART3)
+ 139:./lib/src/at32f4xx_usart.c ****   {
+ 140:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_USART3, ENABLE);
+ 141:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_USART3, DISABLE);
+ 142:./lib/src/at32f4xx_usart.c ****   }
+ 143:./lib/src/at32f4xx_usart.c ****   else if (USARTx == UART4)
+ 144:./lib/src/at32f4xx_usart.c ****   {
+ 145:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_UART4, ENABLE);
+ 146:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_UART4, DISABLE);
+ 147:./lib/src/at32f4xx_usart.c ****   }
+ 148:./lib/src/at32f4xx_usart.c ****   else if (USARTx == UART5)
+ 149:./lib/src/at32f4xx_usart.c ****   {
+ 150:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_UART5, ENABLE);
+ 151:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_UART5, DISABLE);
+ 152:./lib/src/at32f4xx_usart.c ****   }
+ 153:./lib/src/at32f4xx_usart.c **** #endif
+ 154:./lib/src/at32f4xx_usart.c **** #if defined (AT32F403Axx)|| defined (AT32F407xx)  
+ 155:./lib/src/at32f4xx_usart.c ****   else if (USARTx == USART6)
+ 156:./lib/src/at32f4xx_usart.c ****   {
+ 157:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB2PERIPH_USART6, ENABLE);
+ 158:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB2PERIPH_USART6, DISABLE);
+ 159:./lib/src/at32f4xx_usart.c ****   }
+ 160:./lib/src/at32f4xx_usart.c ****   else if (USARTx == UART7)
+ 161:./lib/src/at32f4xx_usart.c ****   {
+ 162:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB2PERIPH_UART7, ENABLE);
+ 163:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB2PERIPH_UART7, DISABLE);
+ 164:./lib/src/at32f4xx_usart.c ****   }
+ 165:./lib/src/at32f4xx_usart.c ****   else if (USARTx == UART8)
+ 166:./lib/src/at32f4xx_usart.c ****   {
+ 167:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB2PERIPH_UART8, ENABLE);
+ 168:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB2PERIPH_UART8, DISABLE);
+ 169:./lib/src/at32f4xx_usart.c ****   }
+ 170:./lib/src/at32f4xx_usart.c **** #endif
+ 171:./lib/src/at32f4xx_usart.c **** }
+  53              		.loc 1 171 1 view .LVU7
+  54 000e 08BD     		pop	{r3, pc}
+  55              	.LVL2:
+  56              	.L5:
+ 129:./lib/src/at32f4xx_usart.c ****     RCC_APB2PeriphResetCmd(RCC_APB2PERIPH_USART1, DISABLE);
+  57              		.loc 1 129 5 is_stmt 1 view .LVU8
+ARM GAS  /tmp/ccbIHlMU.s 			page 5
+
+
+  58 0010 0121     		movs	r1, #1
+  59 0012 4FF48040 		mov	r0, #16384
+  60              	.LVL3:
+ 129:./lib/src/at32f4xx_usart.c ****     RCC_APB2PeriphResetCmd(RCC_APB2PERIPH_USART1, DISABLE);
+  61              		.loc 1 129 5 is_stmt 0 view .LVU9
+  62 0016 FFF7FEFF 		bl	RCC_APB2PeriphResetCmd
+  63              	.LVL4:
+ 130:./lib/src/at32f4xx_usart.c ****   }
+  64              		.loc 1 130 5 is_stmt 1 view .LVU10
+  65 001a 0021     		movs	r1, #0
+  66 001c 4FF48040 		mov	r0, #16384
+  67 0020 FFF7FEFF 		bl	RCC_APB2PeriphResetCmd
+  68              	.LVL5:
+  69 0024 F3E7     		b	.L1
+  70              	.LVL6:
+  71              	.L6:
+ 134:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_USART2, DISABLE);
+  72              		.loc 1 134 5 view .LVU11
+  73 0026 0121     		movs	r1, #1
+  74 0028 4FF40030 		mov	r0, #131072
+  75              	.LVL7:
+ 134:./lib/src/at32f4xx_usart.c ****     RCC_APB1PeriphResetCmd(RCC_APB1PERIPH_USART2, DISABLE);
+  76              		.loc 1 134 5 is_stmt 0 view .LVU12
+  77 002c FFF7FEFF 		bl	RCC_APB1PeriphResetCmd
+  78              	.LVL8:
+ 135:./lib/src/at32f4xx_usart.c ****   }
+  79              		.loc 1 135 5 is_stmt 1 view .LVU13
+  80 0030 0021     		movs	r1, #0
+  81 0032 4FF40030 		mov	r0, #131072
+  82 0036 FFF7FEFF 		bl	RCC_APB1PeriphResetCmd
+  83              	.LVL9:
+  84              		.loc 1 171 1 is_stmt 0 view .LVU14
+  85 003a E8E7     		b	.L1
+  86              	.L8:
+  87              		.align	2
+  88              	.L7:
+  89 003c 00380140 		.word	1073821696
+  90 0040 00440040 		.word	1073759232
+  91              		.cfi_endproc
+  92              	.LFE123:
+  94              		.section	.text.USART_Init,"ax",%progbits
+  95              		.align	1
+  96              		.global	USART_Init
+  97              		.syntax unified
+  98              		.thumb
+  99              		.thumb_func
+ 100              		.fpu fpv4-sp-d16
+ 102              	USART_Init:
+ 103              	.LVL10:
+ 104              	.LFB124:
+ 172:./lib/src/at32f4xx_usart.c **** 
+ 173:./lib/src/at32f4xx_usart.c **** /**
+ 174:./lib/src/at32f4xx_usart.c ****   * @brief  Initializes the USARTx peripheral according to the specified
+ 175:./lib/src/at32f4xx_usart.c ****   *         parameters in the USART_InitStruct .
+ 176:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 177:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 178:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4 ,UART5, USART6, UART7 or UART8.
+ARM GAS  /tmp/ccbIHlMU.s 			page 6
+
+
+ 179:./lib/src/at32f4xx_usart.c ****   * @param  USART_InitStruct: pointer to a USART_InitType structure
+ 180:./lib/src/at32f4xx_usart.c ****   *         that contains the configuration information for the specified USART
+ 181:./lib/src/at32f4xx_usart.c ****   *         peripheral.
+ 182:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 183:./lib/src/at32f4xx_usart.c ****   */
+ 184:./lib/src/at32f4xx_usart.c **** void USART_Init(USART_Type* USARTx, USART_InitType* USART_InitStruct)
+ 185:./lib/src/at32f4xx_usart.c **** {
+ 105              		.loc 1 185 1 is_stmt 1 view -0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 24
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		.loc 1 185 1 is_stmt 0 view .LVU16
+ 110 0000 30B5     		push	{r4, r5, lr}
+ 111              	.LCFI1:
+ 112              		.cfi_def_cfa_offset 12
+ 113              		.cfi_offset 4, -12
+ 114              		.cfi_offset 5, -8
+ 115              		.cfi_offset 14, -4
+ 116 0002 87B0     		sub	sp, sp, #28
+ 117              	.LCFI2:
+ 118              		.cfi_def_cfa_offset 40
+ 119 0004 0446     		mov	r4, r0
+ 120 0006 0D46     		mov	r5, r1
+ 186:./lib/src/at32f4xx_usart.c ****   uint32_t tmpreg = 0x00, apbclock = 0x00;
+ 121              		.loc 1 186 3 is_stmt 1 view .LVU17
+ 122              	.LVL11:
+ 187:./lib/src/at32f4xx_usart.c ****   uint32_t integerdivider = 0x00;
+ 123              		.loc 1 187 3 view .LVU18
+ 188:./lib/src/at32f4xx_usart.c ****   uint32_t fractionaldivider = 0x00;
+ 124              		.loc 1 188 3 view .LVU19
+ 189:./lib/src/at32f4xx_usart.c ****   uint32_t usartxbase = 0;
+ 125              		.loc 1 189 3 view .LVU20
+ 190:./lib/src/at32f4xx_usart.c ****   RCC_ClockType RCC_ClocksStatus;
+ 126              		.loc 1 190 3 view .LVU21
+ 191:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 192:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 127              		.loc 1 192 3 view .LVU22
+ 193:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_BAUDRATE(USART_InitStruct->USART_BaudRate));
+ 128              		.loc 1 193 3 view .LVU23
+ 194:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_WORD_LENGTH(USART_InitStruct->USART_WordLength));
+ 129              		.loc 1 194 3 view .LVU24
+ 195:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_STOPBITS(USART_InitStruct->USART_StopBits));
+ 130              		.loc 1 195 3 view .LVU25
+ 196:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_PARITY(USART_InitStruct->USART_Parity));
+ 131              		.loc 1 196 3 view .LVU26
+ 197:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_MODE(USART_InitStruct->USART_Mode));
+ 132              		.loc 1 197 3 view .LVU27
+ 198:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_HARDWARE_FLOW_CONTROL(USART_InitStruct->USART_HardwareFlowControl));
+ 133              		.loc 1 198 3 view .LVU28
+ 199:./lib/src/at32f4xx_usart.c **** 
+ 200:./lib/src/at32f4xx_usart.c ****   /* The hardware flow control is available only for USART1, USART2 and USART3 */
+ 201:./lib/src/at32f4xx_usart.c ****   if (USART_InitStruct->USART_HardwareFlowControl != USART_HardwareFlowControl_None)
+ 134              		.loc 1 201 3 view .LVU29
+ 202:./lib/src/at32f4xx_usart.c ****   {
+ 203:./lib/src/at32f4xx_usart.c ****     assert_param(IS_USART_123_PERIPH(USARTx));
+ 135              		.loc 1 203 5 view .LVU30
+ 204:./lib/src/at32f4xx_usart.c ****   }
+ARM GAS  /tmp/ccbIHlMU.s 			page 7
+
+
+ 205:./lib/src/at32f4xx_usart.c **** 
+ 206:./lib/src/at32f4xx_usart.c ****   usartxbase = (uint32_t)USARTx;
+ 136              		.loc 1 206 3 view .LVU31
+ 207:./lib/src/at32f4xx_usart.c **** 
+ 208:./lib/src/at32f4xx_usart.c ****   /*---------------------------- USART CTRL2 Configuration -----------------------*/
+ 209:./lib/src/at32f4xx_usart.c ****   tmpreg = USARTx->CTRL2;
+ 137              		.loc 1 209 3 view .LVU32
+ 138              		.loc 1 209 18 is_stmt 0 view .LVU33
+ 139 0008 038A     		ldrh	r3, [r0, #16]
+ 140 000a 9BB2     		uxth	r3, r3
+ 141              	.LVL12:
+ 210:./lib/src/at32f4xx_usart.c ****   /* Clear STOP[13:12] bits */
+ 211:./lib/src/at32f4xx_usart.c ****   tmpreg &= CTRL2_STOPB_CLEAR_Mask;
+ 142              		.loc 1 211 3 is_stmt 1 view .LVU34
+ 212:./lib/src/at32f4xx_usart.c ****   /* Configure the USART Stop Bits, Clock, CPOL, CPHA and LastBit ------------*/
+ 213:./lib/src/at32f4xx_usart.c ****   /* Set STOP[13:12] bits according to USART_StopBits value */
+ 214:./lib/src/at32f4xx_usart.c ****   tmpreg |= (uint32_t)USART_InitStruct->USART_StopBits;
+ 143              		.loc 1 214 3 view .LVU35
+ 144              		.loc 1 214 39 is_stmt 0 view .LVU36
+ 145 000c CA88     		ldrh	r2, [r1, #6]
+ 146 000e 23F44053 		bic	r3, r3, #12288
+ 147              	.LVL13:
+ 148              		.loc 1 214 39 view .LVU37
+ 149 0012 1343     		orrs	r3, r3, r2
+ 150              	.LVL14:
+ 215:./lib/src/at32f4xx_usart.c **** 
+ 216:./lib/src/at32f4xx_usart.c ****   /* Write to USART CTRL2 */
+ 217:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL2 = (uint16_t)tmpreg;
+ 151              		.loc 1 217 3 is_stmt 1 view .LVU38
+ 152              		.loc 1 217 17 is_stmt 0 view .LVU39
+ 153 0014 0382     		strh	r3, [r0, #16]	@ movhi
+ 218:./lib/src/at32f4xx_usart.c **** 
+ 219:./lib/src/at32f4xx_usart.c ****   /*---------------------------- USART CTRL1 Configuration -----------------------*/
+ 220:./lib/src/at32f4xx_usart.c ****   tmpreg = USARTx->CTRL1;
+ 154              		.loc 1 220 3 is_stmt 1 view .LVU40
+ 155              		.loc 1 220 18 is_stmt 0 view .LVU41
+ 156 0016 8389     		ldrh	r3, [r0, #12]
+ 157              	.LVL15:
+ 158              		.loc 1 220 18 view .LVU42
+ 159 0018 9BB2     		uxth	r3, r3
+ 160              	.LVL16:
+ 221:./lib/src/at32f4xx_usart.c ****   /* Clear M, PCE, PS, TE and RE bits */
+ 222:./lib/src/at32f4xx_usart.c ****   tmpreg &= CTRL1_CLEAR_MASK;
+ 161              		.loc 1 222 3 is_stmt 1 view .LVU43
+ 223:./lib/src/at32f4xx_usart.c ****   /* Configure the USART Word Length, Parity and mode ----------------------- */
+ 224:./lib/src/at32f4xx_usart.c ****   /* Set the M bits according to USART_WordLength value */
+ 225:./lib/src/at32f4xx_usart.c ****   /* Set PCE and PS bits according to USART_Parity value */
+ 226:./lib/src/at32f4xx_usart.c ****   /* Set TE and RE bits according to USART_Mode value */
+ 227:./lib/src/at32f4xx_usart.c ****   tmpreg |= (uint32_t)USART_InitStruct->USART_WordLength | USART_InitStruct->USART_Parity |
+ 162              		.loc 1 227 3 view .LVU44
+ 163              		.loc 1 227 39 is_stmt 0 view .LVU45
+ 164 001a 8988     		ldrh	r1, [r1, #4]
+ 165              	.LVL17:
+ 166              		.loc 1 227 76 view .LVU46
+ 167 001c 2889     		ldrh	r0, [r5, #8]
+ 168              	.LVL18:
+ 228:./lib/src/at32f4xx_usart.c ****             USART_InitStruct->USART_Mode;
+ARM GAS  /tmp/ccbIHlMU.s 			page 8
+
+
+ 169              		.loc 1 228 29 view .LVU47
+ 170 001e 6A89     		ldrh	r2, [r5, #10]
+ 227:./lib/src/at32f4xx_usart.c ****             USART_InitStruct->USART_Mode;
+ 171              		.loc 1 227 91 view .LVU48
+ 172 0020 0143     		orrs	r1, r1, r0
+ 173 0022 0A43     		orrs	r2, r2, r1
+ 174 0024 23F4B053 		bic	r3, r3, #5632
+ 175              	.LVL19:
+ 227:./lib/src/at32f4xx_usart.c ****             USART_InitStruct->USART_Mode;
+ 176              		.loc 1 227 91 view .LVU49
+ 177 0028 23F00C03 		bic	r3, r3, #12
+ 178 002c 1343     		orrs	r3, r3, r2
+ 179              	.LVL20:
+ 229:./lib/src/at32f4xx_usart.c ****   /* Write to USART CTRL1 */
+ 230:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL1 = (uint16_t)tmpreg;
+ 180              		.loc 1 230 3 is_stmt 1 view .LVU50
+ 181              		.loc 1 230 17 is_stmt 0 view .LVU51
+ 182 002e A381     		strh	r3, [r4, #12]	@ movhi
+ 231:./lib/src/at32f4xx_usart.c **** 
+ 232:./lib/src/at32f4xx_usart.c ****   /*---------------------------- USART CR3 Configuration -----------------------*/
+ 233:./lib/src/at32f4xx_usart.c ****   tmpreg = USARTx->CTRL3;
+ 183              		.loc 1 233 3 is_stmt 1 view .LVU52
+ 184              		.loc 1 233 18 is_stmt 0 view .LVU53
+ 185 0030 A38A     		ldrh	r3, [r4, #20]
+ 186              	.LVL21:
+ 187              		.loc 1 233 18 view .LVU54
+ 188 0032 9BB2     		uxth	r3, r3
+ 189              	.LVL22:
+ 234:./lib/src/at32f4xx_usart.c ****   /* Clear CTSE and RTSE bits */
+ 235:./lib/src/at32f4xx_usart.c ****   tmpreg &= CTRL3_CLEAR_Mask;
+ 190              		.loc 1 235 3 is_stmt 1 view .LVU55
+ 236:./lib/src/at32f4xx_usart.c ****   /* Configure the USART HFC -------------------------------------------------*/
+ 237:./lib/src/at32f4xx_usart.c ****   /* Set CTSE and RTSE bits according to USART_HardwareFlowControl value */
+ 238:./lib/src/at32f4xx_usart.c ****   tmpreg |= USART_InitStruct->USART_HardwareFlowControl;
+ 191              		.loc 1 238 3 view .LVU56
+ 192              		.loc 1 238 29 is_stmt 0 view .LVU57
+ 193 0034 AA89     		ldrh	r2, [r5, #12]
+ 194 0036 23F44073 		bic	r3, r3, #768
+ 195              	.LVL23:
+ 196              		.loc 1 238 29 view .LVU58
+ 197 003a 1343     		orrs	r3, r3, r2
+ 198              	.LVL24:
+ 239:./lib/src/at32f4xx_usart.c ****   /* Write to USART CR3 */
+ 240:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL3 = (uint16_t)tmpreg;
+ 199              		.loc 1 240 3 is_stmt 1 view .LVU59
+ 200              		.loc 1 240 17 is_stmt 0 view .LVU60
+ 201 003c A382     		strh	r3, [r4, #20]	@ movhi
+ 241:./lib/src/at32f4xx_usart.c **** 
+ 242:./lib/src/at32f4xx_usart.c ****   /*---------------------------- USART BRR Configuration -----------------------*/
+ 243:./lib/src/at32f4xx_usart.c ****   /* Configure the USART Baud Rate -------------------------------------------*/
+ 244:./lib/src/at32f4xx_usart.c ****   RCC_GetClocksFreq(&RCC_ClocksStatus);
+ 202              		.loc 1 244 3 is_stmt 1 view .LVU61
+ 203 003e 01A8     		add	r0, sp, #4
+ 204 0040 FFF7FEFF 		bl	RCC_GetClocksFreq
+ 205              	.LVL25:
+ 245:./lib/src/at32f4xx_usart.c **** 
+ 246:./lib/src/at32f4xx_usart.c ****   if (usartxbase == USART1_BASE)
+ARM GAS  /tmp/ccbIHlMU.s 			page 9
+
+
+ 206              		.loc 1 246 3 view .LVU62
+ 207              		.loc 1 246 6 is_stmt 0 view .LVU63
+ 208 0044 1D4B     		ldr	r3, .L20
+ 209 0046 9C42     		cmp	r4, r3
+ 210 0048 24D0     		beq	.L17
+ 247:./lib/src/at32f4xx_usart.c ****   {
+ 248:./lib/src/at32f4xx_usart.c ****     apbclock = RCC_ClocksStatus.APB2CLK_Freq;
+ 249:./lib/src/at32f4xx_usart.c ****   }
+ 250:./lib/src/at32f4xx_usart.c ****   else
+ 251:./lib/src/at32f4xx_usart.c ****   {
+ 252:./lib/src/at32f4xx_usart.c ****     apbclock = RCC_ClocksStatus.APB1CLK_Freq;
+ 211              		.loc 1 252 5 is_stmt 1 view .LVU64
+ 212              		.loc 1 252 14 is_stmt 0 view .LVU65
+ 213 004a 039B     		ldr	r3, [sp, #12]
+ 214              	.LVL26:
+ 215              	.L11:
+ 253:./lib/src/at32f4xx_usart.c ****   }
+ 254:./lib/src/at32f4xx_usart.c **** 
+ 255:./lib/src/at32f4xx_usart.c ****   /* Determine the integer part */
+ 256:./lib/src/at32f4xx_usart.c ****   if ((USARTx->CTRL1 & CTRL1_OVER8_Set) != 0)
+ 216              		.loc 1 256 3 is_stmt 1 view .LVU66
+ 217              		.loc 1 256 14 is_stmt 0 view .LVU67
+ 218 004c A289     		ldrh	r2, [r4, #12]
+ 219              		.loc 1 256 6 view .LVU68
+ 220 004e 12F4004F 		tst	r2, #32768
+ 221 0052 21D1     		bne	.L18
+ 257:./lib/src/at32f4xx_usart.c ****   {
+ 258:./lib/src/at32f4xx_usart.c ****     /* Integer part computing in case Oversampling mode is 8 Samples */
+ 259:./lib/src/at32f4xx_usart.c ****     integerdivider = ((25 * apbclock) / (2 * (USART_InitStruct->USART_BaudRate)));
+ 260:./lib/src/at32f4xx_usart.c ****   }
+ 261:./lib/src/at32f4xx_usart.c ****   else /* if ((USARTx->CTRL1 & CTRL1_OVER8_Set) == 0) */
+ 262:./lib/src/at32f4xx_usart.c ****   {
+ 263:./lib/src/at32f4xx_usart.c ****     /* Integer part computing in case Oversampling mode is 16 Samples */
+ 264:./lib/src/at32f4xx_usart.c ****     integerdivider = ((25 * apbclock) / (4 * (USART_InitStruct->USART_BaudRate)));
+ 222              		.loc 1 264 5 is_stmt 1 view .LVU69
+ 223              		.loc 1 264 27 is_stmt 0 view .LVU70
+ 224 0054 03EB8303 		add	r3, r3, r3, lsl #2
+ 225              	.LVL27:
+ 226              		.loc 1 264 27 view .LVU71
+ 227 0058 03EB8303 		add	r3, r3, r3, lsl #2
+ 228              		.loc 1 264 63 view .LVU72
+ 229 005c 2A68     		ldr	r2, [r5]
+ 230              		.loc 1 264 44 view .LVU73
+ 231 005e 9200     		lsls	r2, r2, #2
+ 232              		.loc 1 264 20 view .LVU74
+ 233 0060 B3FBF2F3 		udiv	r3, r3, r2
+ 234              	.LVL28:
+ 235              	.L13:
+ 265:./lib/src/at32f4xx_usart.c ****   }
+ 266:./lib/src/at32f4xx_usart.c **** 
+ 267:./lib/src/at32f4xx_usart.c ****   tmpreg = (integerdivider / 100) << 4;
+ 236              		.loc 1 267 3 is_stmt 1 view .LVU75
+ 237              		.loc 1 267 28 is_stmt 0 view .LVU76
+ 238 0064 164A     		ldr	r2, .L20+4
+ 239 0066 A2FB0312 		umull	r1, r2, r2, r3
+ 240 006a 5209     		lsrs	r2, r2, #5
+ 241              		.loc 1 267 10 view .LVU77
+ARM GAS  /tmp/ccbIHlMU.s 			page 10
+
+
+ 242 006c 1101     		lsls	r1, r2, #4
+ 243              	.LVL29:
+ 268:./lib/src/at32f4xx_usart.c **** 
+ 269:./lib/src/at32f4xx_usart.c ****   /* Determine the fractional part */
+ 270:./lib/src/at32f4xx_usart.c ****   fractionaldivider = integerdivider - (100 * (tmpreg >> 4));
+ 244              		.loc 1 270 3 is_stmt 1 view .LVU78
+ 245              		.loc 1 270 21 is_stmt 0 view .LVU79
+ 246 006e 6420     		movs	r0, #100
+ 247 0070 02FB1033 		mls	r3, r2, r0, r3
+ 248              	.LVL30:
+ 271:./lib/src/at32f4xx_usart.c **** 
+ 272:./lib/src/at32f4xx_usart.c ****   /* Implement the fractional part in the register */
+ 273:./lib/src/at32f4xx_usart.c ****   if ((USARTx->CTRL1 & CTRL1_OVER8_Set) != 0)
+ 249              		.loc 1 273 3 is_stmt 1 view .LVU80
+ 250              		.loc 1 273 14 is_stmt 0 view .LVU81
+ 251 0074 A289     		ldrh	r2, [r4, #12]
+ 252              		.loc 1 273 6 view .LVU82
+ 253 0076 12F4004F 		tst	r2, #32768
+ 254 007a 16D1     		bne	.L19
+ 274:./lib/src/at32f4xx_usart.c ****   {
+ 275:./lib/src/at32f4xx_usart.c ****     tmpreg |= ((((fractionaldivider * 8) + 50) / 100)) & ((uint8_t)0x07);
+ 276:./lib/src/at32f4xx_usart.c ****   }
+ 277:./lib/src/at32f4xx_usart.c ****   else /* if ((USARTx->CTRL1 & CTRL1_OVER8_Set) == 0) */
+ 278:./lib/src/at32f4xx_usart.c ****   {
+ 279:./lib/src/at32f4xx_usart.c ****     tmpreg |= ((((fractionaldivider * 16) + 50) / 100)) & ((uint8_t)0x0F);
+ 255              		.loc 1 279 5 is_stmt 1 view .LVU83
+ 256              		.loc 1 279 37 is_stmt 0 view .LVU84
+ 257 007c 1B01     		lsls	r3, r3, #4
+ 258              	.LVL31:
+ 259              		.loc 1 279 43 view .LVU85
+ 260 007e 3233     		adds	r3, r3, #50
+ 261              		.loc 1 279 49 view .LVU86
+ 262 0080 0F4A     		ldr	r2, .L20+4
+ 263 0082 A2FB0323 		umull	r2, r3, r2, r3
+ 264              		.loc 1 279 57 view .LVU87
+ 265 0086 C3F34313 		ubfx	r3, r3, #5, #4
+ 266              		.loc 1 279 12 view .LVU88
+ 267 008a 0B43     		orrs	r3, r3, r1
+ 268              	.LVL32:
+ 269              	.L15:
+ 280:./lib/src/at32f4xx_usart.c ****   }
+ 281:./lib/src/at32f4xx_usart.c **** 
+ 282:./lib/src/at32f4xx_usart.c ****   /* Write to USART BRR */
+ 283:./lib/src/at32f4xx_usart.c ****   USARTx->BAUDR = (uint16_t)tmpreg;
+ 270              		.loc 1 283 3 is_stmt 1 view .LVU89
+ 271              		.loc 1 283 19 is_stmt 0 view .LVU90
+ 272 008c 9BB2     		uxth	r3, r3
+ 273              	.LVL33:
+ 274              		.loc 1 283 17 view .LVU91
+ 275 008e 2381     		strh	r3, [r4, #8]	@ movhi
+ 284:./lib/src/at32f4xx_usart.c **** }
+ 276              		.loc 1 284 1 view .LVU92
+ 277 0090 07B0     		add	sp, sp, #28
+ 278              	.LCFI3:
+ 279              		.cfi_remember_state
+ 280              		.cfi_def_cfa_offset 12
+ 281              		@ sp needed
+ARM GAS  /tmp/ccbIHlMU.s 			page 11
+
+
+ 282 0092 30BD     		pop	{r4, r5, pc}
+ 283              	.LVL34:
+ 284              	.L17:
+ 285              	.LCFI4:
+ 286              		.cfi_restore_state
+ 248:./lib/src/at32f4xx_usart.c ****   }
+ 287              		.loc 1 248 5 is_stmt 1 view .LVU93
+ 248:./lib/src/at32f4xx_usart.c ****   }
+ 288              		.loc 1 248 14 is_stmt 0 view .LVU94
+ 289 0094 049B     		ldr	r3, [sp, #16]
+ 290              	.LVL35:
+ 248:./lib/src/at32f4xx_usart.c ****   }
+ 291              		.loc 1 248 14 view .LVU95
+ 292 0096 D9E7     		b	.L11
+ 293              	.L18:
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 294              		.loc 1 259 5 is_stmt 1 view .LVU96
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 295              		.loc 1 259 27 is_stmt 0 view .LVU97
+ 296 0098 03EB8303 		add	r3, r3, r3, lsl #2
+ 297              	.LVL36:
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 298              		.loc 1 259 27 view .LVU98
+ 299 009c 03EB8303 		add	r3, r3, r3, lsl #2
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 300              		.loc 1 259 63 view .LVU99
+ 301 00a0 2A68     		ldr	r2, [r5]
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 302              		.loc 1 259 44 view .LVU100
+ 303 00a2 5200     		lsls	r2, r2, #1
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 304              		.loc 1 259 20 view .LVU101
+ 305 00a4 B3FBF2F3 		udiv	r3, r3, r2
+ 306              	.LVL37:
+ 259:./lib/src/at32f4xx_usart.c ****   }
+ 307              		.loc 1 259 20 view .LVU102
+ 308 00a8 DCE7     		b	.L13
+ 309              	.LVL38:
+ 310              	.L19:
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 311              		.loc 1 275 5 is_stmt 1 view .LVU103
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 312              		.loc 1 275 37 is_stmt 0 view .LVU104
+ 313 00aa DB00     		lsls	r3, r3, #3
+ 314              	.LVL39:
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 315              		.loc 1 275 42 view .LVU105
+ 316 00ac 3233     		adds	r3, r3, #50
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 317              		.loc 1 275 48 view .LVU106
+ 318 00ae 044A     		ldr	r2, .L20+4
+ 319 00b0 A2FB0323 		umull	r2, r3, r2, r3
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 320              		.loc 1 275 56 view .LVU107
+ 321 00b4 C3F34213 		ubfx	r3, r3, #5, #3
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 322              		.loc 1 275 12 view .LVU108
+ARM GAS  /tmp/ccbIHlMU.s 			page 12
+
+
+ 323 00b8 0B43     		orrs	r3, r3, r1
+ 324              	.LVL40:
+ 275:./lib/src/at32f4xx_usart.c ****   }
+ 325              		.loc 1 275 12 view .LVU109
+ 326 00ba E7E7     		b	.L15
+ 327              	.L21:
+ 328              		.align	2
+ 329              	.L20:
+ 330 00bc 00380140 		.word	1073821696
+ 331 00c0 1F85EB51 		.word	1374389535
+ 332              		.cfi_endproc
+ 333              	.LFE124:
+ 335              		.section	.text.USART_StructInit,"ax",%progbits
+ 336              		.align	1
+ 337              		.global	USART_StructInit
+ 338              		.syntax unified
+ 339              		.thumb
+ 340              		.thumb_func
+ 341              		.fpu fpv4-sp-d16
+ 343              	USART_StructInit:
+ 344              	.LVL41:
+ 345              	.LFB125:
+ 285:./lib/src/at32f4xx_usart.c **** 
+ 286:./lib/src/at32f4xx_usart.c **** /**
+ 287:./lib/src/at32f4xx_usart.c ****   * @brief  Fills each USART_InitStruct member with its default value.
+ 288:./lib/src/at32f4xx_usart.c ****   * @param  USART_InitStruct: pointer to a USART_InitType structure
+ 289:./lib/src/at32f4xx_usart.c ****   *         which will be initialized.
+ 290:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 291:./lib/src/at32f4xx_usart.c ****   */
+ 292:./lib/src/at32f4xx_usart.c **** void USART_StructInit(USART_InitType* USART_InitStruct)
+ 293:./lib/src/at32f4xx_usart.c **** {
+ 346              		.loc 1 293 1 is_stmt 1 view -0
+ 347              		.cfi_startproc
+ 348              		@ args = 0, pretend = 0, frame = 0
+ 349              		@ frame_needed = 0, uses_anonymous_args = 0
+ 350              		@ link register save eliminated.
+ 294:./lib/src/at32f4xx_usart.c ****   /* USART_InitStruct members default value */
+ 295:./lib/src/at32f4xx_usart.c ****   USART_InitStruct->USART_BaudRate = 9600;
+ 351              		.loc 1 295 3 view .LVU111
+ 352              		.loc 1 295 36 is_stmt 0 view .LVU112
+ 353 0000 4FF41653 		mov	r3, #9600
+ 354 0004 0360     		str	r3, [r0]
+ 296:./lib/src/at32f4xx_usart.c ****   USART_InitStruct->USART_WordLength = USART_WordLength_8b;
+ 355              		.loc 1 296 3 is_stmt 1 view .LVU113
+ 356              		.loc 1 296 38 is_stmt 0 view .LVU114
+ 357 0006 0023     		movs	r3, #0
+ 358 0008 8380     		strh	r3, [r0, #4]	@ movhi
+ 297:./lib/src/at32f4xx_usart.c ****   USART_InitStruct->USART_StopBits = USART_StopBits_1;
+ 359              		.loc 1 297 3 is_stmt 1 view .LVU115
+ 360              		.loc 1 297 36 is_stmt 0 view .LVU116
+ 361 000a C380     		strh	r3, [r0, #6]	@ movhi
+ 298:./lib/src/at32f4xx_usart.c ****   USART_InitStruct->USART_Parity = USART_Parity_No ;
+ 362              		.loc 1 298 3 is_stmt 1 view .LVU117
+ 363              		.loc 1 298 34 is_stmt 0 view .LVU118
+ 364 000c 0381     		strh	r3, [r0, #8]	@ movhi
+ 299:./lib/src/at32f4xx_usart.c ****   USART_InitStruct->USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+ 365              		.loc 1 299 3 is_stmt 1 view .LVU119
+ARM GAS  /tmp/ccbIHlMU.s 			page 13
+
+
+ 366              		.loc 1 299 32 is_stmt 0 view .LVU120
+ 367 000e 0C22     		movs	r2, #12
+ 368 0010 4281     		strh	r2, [r0, #10]	@ movhi
+ 300:./lib/src/at32f4xx_usart.c ****   USART_InitStruct->USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+ 369              		.loc 1 300 3 is_stmt 1 view .LVU121
+ 370              		.loc 1 300 47 is_stmt 0 view .LVU122
+ 371 0012 8381     		strh	r3, [r0, #12]	@ movhi
+ 301:./lib/src/at32f4xx_usart.c **** }
+ 372              		.loc 1 301 1 view .LVU123
+ 373 0014 7047     		bx	lr
+ 374              		.cfi_endproc
+ 375              	.LFE125:
+ 377              		.section	.text.USART_ClockInit,"ax",%progbits
+ 378              		.align	1
+ 379              		.global	USART_ClockInit
+ 380              		.syntax unified
+ 381              		.thumb
+ 382              		.thumb_func
+ 383              		.fpu fpv4-sp-d16
+ 385              	USART_ClockInit:
+ 386              	.LVL42:
+ 387              	.LFB126:
+ 302:./lib/src/at32f4xx_usart.c **** 
+ 303:./lib/src/at32f4xx_usart.c **** /**
+ 304:./lib/src/at32f4xx_usart.c ****   * @brief  Initializes the USARTx peripheral Clock according to the
+ 305:./lib/src/at32f4xx_usart.c ****   *          specified parameters in the USART_ClockInitStruct .
+ 306:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: where x can be 1, 2, 3, 6 to select the USART peripheral.
+ 307:./lib/src/at32f4xx_usart.c ****   * @param  USART_ClockInitStruct: pointer to a USART_ClockInitType
+ 308:./lib/src/at32f4xx_usart.c ****   *         structure that contains the configuration information for the specified
+ 309:./lib/src/at32f4xx_usart.c ****   *         USART peripheral.
+ 310:./lib/src/at32f4xx_usart.c ****   * @note The Smart Card and Synchronous modes are not available for UART4, UART5, UART7 and UART8.
+ 311:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 312:./lib/src/at32f4xx_usart.c ****   */
+ 313:./lib/src/at32f4xx_usart.c **** void USART_ClockInit(USART_Type* USARTx, USART_ClockInitType* USART_ClockInitStruct)
+ 314:./lib/src/at32f4xx_usart.c **** {
+ 388              		.loc 1 314 1 is_stmt 1 view -0
+ 389              		.cfi_startproc
+ 390              		@ args = 0, pretend = 0, frame = 0
+ 391              		@ frame_needed = 0, uses_anonymous_args = 0
+ 392              		.loc 1 314 1 is_stmt 0 view .LVU125
+ 393 0000 10B5     		push	{r4, lr}
+ 394              	.LCFI5:
+ 395              		.cfi_def_cfa_offset 8
+ 396              		.cfi_offset 4, -8
+ 397              		.cfi_offset 14, -4
+ 315:./lib/src/at32f4xx_usart.c ****   uint32_t tmpreg = 0x00;
+ 398              		.loc 1 315 3 is_stmt 1 view .LVU126
+ 399              	.LVL43:
+ 316:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 317:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_123_PERIPH(USARTx));
+ 400              		.loc 1 317 3 view .LVU127
+ 318:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_CLOCK(USART_ClockInitStruct->USART_Clock));
+ 401              		.loc 1 318 3 view .LVU128
+ 319:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_CPOL(USART_ClockInitStruct->USART_CPOL));
+ 402              		.loc 1 319 3 view .LVU129
+ 320:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_CPHA(USART_ClockInitStruct->USART_CPHA));
+ 403              		.loc 1 320 3 view .LVU130
+ARM GAS  /tmp/ccbIHlMU.s 			page 14
+
+
+ 321:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_LASTBIT(USART_ClockInitStruct->USART_LastBit));
+ 404              		.loc 1 321 3 view .LVU131
+ 322:./lib/src/at32f4xx_usart.c **** 
+ 323:./lib/src/at32f4xx_usart.c ****   /*---------------------------- USART CTRL2 Configuration -----------------------*/
+ 324:./lib/src/at32f4xx_usart.c ****   tmpreg = USARTx->CTRL2;
+ 405              		.loc 1 324 3 view .LVU132
+ 406              		.loc 1 324 18 is_stmt 0 view .LVU133
+ 407 0002 028A     		ldrh	r2, [r0, #16]
+ 408 0004 92B2     		uxth	r2, r2
+ 409              	.LVL44:
+ 325:./lib/src/at32f4xx_usart.c ****   /* Clear CLKEN, CPOL, CPHA and LBCL bits */
+ 326:./lib/src/at32f4xx_usart.c ****   tmpreg &= CTRL2_CLOCK_CLEAR_Mask;
+ 410              		.loc 1 326 3 is_stmt 1 view .LVU134
+ 327:./lib/src/at32f4xx_usart.c ****   /* Configure the USART Clock, CPOL, CPHA and LastBit ------------*/
+ 328:./lib/src/at32f4xx_usart.c ****   /* Set CLKEN bit according to USART_Clock value */
+ 329:./lib/src/at32f4xx_usart.c ****   /* Set CPOL bit according to USART_CPOL value */
+ 330:./lib/src/at32f4xx_usart.c ****   /* Set CPHA bit according to USART_CPHA value */
+ 331:./lib/src/at32f4xx_usart.c ****   /* Set LBCL bit according to USART_LastBit value */
+ 332:./lib/src/at32f4xx_usart.c ****   tmpreg |= (uint32_t)USART_ClockInitStruct->USART_Clock | USART_ClockInitStruct->USART_CPOL |
+ 411              		.loc 1 332 3 view .LVU135
+ 412              		.loc 1 332 44 is_stmt 0 view .LVU136
+ 413 0006 B1F800E0 		ldrh	lr, [r1]
+ 414              		.loc 1 332 81 view .LVU137
+ 415 000a 4C88     		ldrh	r4, [r1, #2]
+ 333:./lib/src/at32f4xx_usart.c ****             USART_ClockInitStruct->USART_CPHA | USART_ClockInitStruct->USART_LastBit;
+ 416              		.loc 1 333 34 view .LVU138
+ 417 000c B1F804C0 		ldrh	ip, [r1, #4]
+ 418              		.loc 1 333 70 view .LVU139
+ 419 0010 CB88     		ldrh	r3, [r1, #6]
+ 420              		.loc 1 333 47 view .LVU140
+ 421 0012 4EEA0401 		orr	r1, lr, r4
+ 422              	.LVL45:
+ 423              		.loc 1 333 47 view .LVU141
+ 424 0016 4CEA0101 		orr	r1, ip, r1
+ 425 001a 0B43     		orrs	r3, r3, r1
+ 426 001c 22F47062 		bic	r2, r2, #3840
+ 427              	.LVL46:
+ 428              		.loc 1 333 47 view .LVU142
+ 429 0020 1343     		orrs	r3, r3, r2
+ 430              	.LVL47:
+ 334:./lib/src/at32f4xx_usart.c ****   /* Write to USART CTRL2 */
+ 335:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL2 = (uint16_t)tmpreg;
+ 431              		.loc 1 335 3 is_stmt 1 view .LVU143
+ 432              		.loc 1 335 17 is_stmt 0 view .LVU144
+ 433 0022 0382     		strh	r3, [r0, #16]	@ movhi
+ 336:./lib/src/at32f4xx_usart.c **** }
+ 434              		.loc 1 336 1 view .LVU145
+ 435 0024 10BD     		pop	{r4, pc}
+ 436              		.cfi_endproc
+ 437              	.LFE126:
+ 439              		.section	.text.USART_ClockStructInit,"ax",%progbits
+ 440              		.align	1
+ 441              		.global	USART_ClockStructInit
+ 442              		.syntax unified
+ 443              		.thumb
+ 444              		.thumb_func
+ 445              		.fpu fpv4-sp-d16
+ARM GAS  /tmp/ccbIHlMU.s 			page 15
+
+
+ 447              	USART_ClockStructInit:
+ 448              	.LVL48:
+ 449              	.LFB127:
+ 337:./lib/src/at32f4xx_usart.c **** 
+ 338:./lib/src/at32f4xx_usart.c **** /**
+ 339:./lib/src/at32f4xx_usart.c ****   * @brief  Fills each USART_ClockInitStruct member with its default value.
+ 340:./lib/src/at32f4xx_usart.c ****   * @param  USART_ClockInitStruct: pointer to a USART_ClockInitType
+ 341:./lib/src/at32f4xx_usart.c ****   *         structure which will be initialized.
+ 342:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 343:./lib/src/at32f4xx_usart.c ****   */
+ 344:./lib/src/at32f4xx_usart.c **** void USART_ClockStructInit(USART_ClockInitType* USART_ClockInitStruct)
+ 345:./lib/src/at32f4xx_usart.c **** {
+ 450              		.loc 1 345 1 is_stmt 1 view -0
+ 451              		.cfi_startproc
+ 452              		@ args = 0, pretend = 0, frame = 0
+ 453              		@ frame_needed = 0, uses_anonymous_args = 0
+ 454              		@ link register save eliminated.
+ 346:./lib/src/at32f4xx_usart.c ****   /* USART_ClockInitStruct members default value */
+ 347:./lib/src/at32f4xx_usart.c ****   USART_ClockInitStruct->USART_Clock = USART_Clock_Disable;
+ 455              		.loc 1 347 3 view .LVU147
+ 456              		.loc 1 347 38 is_stmt 0 view .LVU148
+ 457 0000 0023     		movs	r3, #0
+ 458 0002 0380     		strh	r3, [r0]	@ movhi
+ 348:./lib/src/at32f4xx_usart.c ****   USART_ClockInitStruct->USART_CPOL = USART_CPOL_Low;
+ 459              		.loc 1 348 3 is_stmt 1 view .LVU149
+ 460              		.loc 1 348 37 is_stmt 0 view .LVU150
+ 461 0004 4380     		strh	r3, [r0, #2]	@ movhi
+ 349:./lib/src/at32f4xx_usart.c ****   USART_ClockInitStruct->USART_CPHA = USART_CPHA_1Edge;
+ 462              		.loc 1 349 3 is_stmt 1 view .LVU151
+ 463              		.loc 1 349 37 is_stmt 0 view .LVU152
+ 464 0006 8380     		strh	r3, [r0, #4]	@ movhi
+ 350:./lib/src/at32f4xx_usart.c ****   USART_ClockInitStruct->USART_LastBit = USART_LastBit_Disable;
+ 465              		.loc 1 350 3 is_stmt 1 view .LVU153
+ 466              		.loc 1 350 40 is_stmt 0 view .LVU154
+ 467 0008 C380     		strh	r3, [r0, #6]	@ movhi
+ 351:./lib/src/at32f4xx_usart.c **** }
+ 468              		.loc 1 351 1 view .LVU155
+ 469 000a 7047     		bx	lr
+ 470              		.cfi_endproc
+ 471              	.LFE127:
+ 473              		.section	.text.USART_Cmd,"ax",%progbits
+ 474              		.align	1
+ 475              		.global	USART_Cmd
+ 476              		.syntax unified
+ 477              		.thumb
+ 478              		.thumb_func
+ 479              		.fpu fpv4-sp-d16
+ 481              	USART_Cmd:
+ 482              	.LVL49:
+ 483              	.LFB128:
+ 352:./lib/src/at32f4xx_usart.c **** 
+ 353:./lib/src/at32f4xx_usart.c **** /**
+ 354:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the specified USART peripheral.
+ 355:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 356:./lib/src/at32f4xx_usart.c ****   *         This parameter can be one of the following values:
+ 357:./lib/src/at32f4xx_usart.c ****   *           USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 358:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the USARTx peripheral.
+ARM GAS  /tmp/ccbIHlMU.s 			page 16
+
+
+ 359:./lib/src/at32f4xx_usart.c ****   *         This parameter can be: ENABLE or DISABLE.
+ 360:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 361:./lib/src/at32f4xx_usart.c ****   */
+ 362:./lib/src/at32f4xx_usart.c **** void USART_Cmd(USART_Type* USARTx, FunctionalState NewState)
+ 363:./lib/src/at32f4xx_usart.c **** {
+ 484              		.loc 1 363 1 is_stmt 1 view -0
+ 485              		.cfi_startproc
+ 486              		@ args = 0, pretend = 0, frame = 0
+ 487              		@ frame_needed = 0, uses_anonymous_args = 0
+ 488              		@ link register save eliminated.
+ 364:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 365:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 489              		.loc 1 365 3 view .LVU157
+ 366:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 490              		.loc 1 366 3 view .LVU158
+ 367:./lib/src/at32f4xx_usart.c **** 
+ 368:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 491              		.loc 1 368 3 view .LVU159
+ 492              		.loc 1 368 6 is_stmt 0 view .LVU160
+ 493 0000 29B1     		cbz	r1, .L27
+ 369:./lib/src/at32f4xx_usart.c ****   {
+ 370:./lib/src/at32f4xx_usart.c ****     /* Enable the selected USART by setting the UE bit in the CTRL1 register */
+ 371:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL1 |= CTRL1_UEN_Set;
+ 494              		.loc 1 371 5 is_stmt 1 view .LVU161
+ 495              		.loc 1 371 19 is_stmt 0 view .LVU162
+ 496 0002 8389     		ldrh	r3, [r0, #12]
+ 497 0004 9BB2     		uxth	r3, r3
+ 498 0006 43F40053 		orr	r3, r3, #8192
+ 499 000a 8381     		strh	r3, [r0, #12]	@ movhi
+ 500 000c 7047     		bx	lr
+ 501              	.L27:
+ 372:./lib/src/at32f4xx_usart.c ****   }
+ 373:./lib/src/at32f4xx_usart.c ****   else
+ 374:./lib/src/at32f4xx_usart.c ****   {
+ 375:./lib/src/at32f4xx_usart.c ****     /* Disable the selected USART by clearing the UE bit in the CTRL1 register */
+ 376:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL1 &= CTRL1_UEN_Reset;
+ 502              		.loc 1 376 5 is_stmt 1 view .LVU163
+ 503              		.loc 1 376 19 is_stmt 0 view .LVU164
+ 504 000e 8389     		ldrh	r3, [r0, #12]
+ 505 0010 9BB2     		uxth	r3, r3
+ 506 0012 23F40053 		bic	r3, r3, #8192
+ 507 0016 9BB2     		uxth	r3, r3
+ 508 0018 8381     		strh	r3, [r0, #12]	@ movhi
+ 377:./lib/src/at32f4xx_usart.c ****   }
+ 378:./lib/src/at32f4xx_usart.c **** }
+ 509              		.loc 1 378 1 view .LVU165
+ 510 001a 7047     		bx	lr
+ 511              		.cfi_endproc
+ 512              	.LFE128:
+ 514              		.section	.text.USART_INTConfig,"ax",%progbits
+ 515              		.align	1
+ 516              		.global	USART_INTConfig
+ 517              		.syntax unified
+ 518              		.thumb
+ 519              		.thumb_func
+ 520              		.fpu fpv4-sp-d16
+ 522              	USART_INTConfig:
+ARM GAS  /tmp/ccbIHlMU.s 			page 17
+
+
+ 523              	.LVL50:
+ 524              	.LFB129:
+ 379:./lib/src/at32f4xx_usart.c **** 
+ 380:./lib/src/at32f4xx_usart.c **** /**
+ 381:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the specified USART interrupts.
+ 382:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 383:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 384:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 385:./lib/src/at32f4xx_usart.c ****   * @param  USART_INT: specifies the USART interrupt sources to be enabled or disabled.
+ 386:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 387:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_CTSF:  CTS change interrupt (not available for UART4, UART5, USART6, UART7 a
+ 388:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_LBDF:  LIN Break detection interrupt
+ 389:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_TDE:  Transmit Data Register empty interrupt
+ 390:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_TRAC:   Transmission complete interrupt
+ 391:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_RDNE: Receive Data register not empty interrupt
+ 392:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_IDLEF: Idle line detection interrupt
+ 393:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_PERR:   Parity Error interrupt
+ 394:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_ERR:  Error interrupt(Frame error, noise error, overrun error)
+ 395:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the specified USARTx interrupts.
+ 396:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 397:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 398:./lib/src/at32f4xx_usart.c ****   */
+ 399:./lib/src/at32f4xx_usart.c **** void USART_INTConfig(USART_Type* USARTx, uint16_t USART_INT, FunctionalState NewState)
+ 400:./lib/src/at32f4xx_usart.c **** {
+ 525              		.loc 1 400 1 is_stmt 1 view -0
+ 526              		.cfi_startproc
+ 527              		@ args = 0, pretend = 0, frame = 0
+ 528              		@ frame_needed = 0, uses_anonymous_args = 0
+ 529              		@ link register save eliminated.
+ 401:./lib/src/at32f4xx_usart.c ****   uint32_t usartreg = 0x00, itpos = 0x00, itmask = 0x00;
+ 530              		.loc 1 401 3 view .LVU167
+ 402:./lib/src/at32f4xx_usart.c ****   uint32_t usartxbase = 0x00;
+ 531              		.loc 1 402 3 view .LVU168
+ 403:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 404:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 532              		.loc 1 404 3 view .LVU169
+ 405:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_CONFIG_INT(USART_INT));
+ 533              		.loc 1 405 3 view .LVU170
+ 406:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 534              		.loc 1 406 3 view .LVU171
+ 407:./lib/src/at32f4xx_usart.c **** 
+ 408:./lib/src/at32f4xx_usart.c ****   /* The CTS interrupt is not available for UART4 and UART5 */
+ 409:./lib/src/at32f4xx_usart.c ****   if (USART_INT == USART_INT_CTSF)
+ 535              		.loc 1 409 3 view .LVU172
+ 410:./lib/src/at32f4xx_usart.c ****   {
+ 411:./lib/src/at32f4xx_usart.c ****     assert_param(IS_USART_123_PERIPH(USARTx));
+ 536              		.loc 1 411 5 view .LVU173
+ 412:./lib/src/at32f4xx_usart.c ****   }
+ 413:./lib/src/at32f4xx_usart.c **** 
+ 414:./lib/src/at32f4xx_usart.c ****   usartxbase = (uint32_t)USARTx;
+ 537              		.loc 1 414 3 view .LVU174
+ 415:./lib/src/at32f4xx_usart.c **** 
+ 416:./lib/src/at32f4xx_usart.c ****   /* Get the USART register index */
+ 417:./lib/src/at32f4xx_usart.c ****   usartreg = (((uint8_t)USART_INT) >> 0x05);
+ 538              		.loc 1 417 3 view .LVU175
+ 539              		.loc 1 417 36 is_stmt 0 view .LVU176
+ 540 0000 C1F3421C 		ubfx	ip, r1, #5, #3
+ARM GAS  /tmp/ccbIHlMU.s 			page 18
+
+
+ 541              	.LVL51:
+ 418:./lib/src/at32f4xx_usart.c **** 
+ 419:./lib/src/at32f4xx_usart.c ****   /* Get the interrupt position */
+ 420:./lib/src/at32f4xx_usart.c ****   itpos = USART_INT & INT_Mask;
+ 542              		.loc 1 420 3 is_stmt 1 view .LVU177
+ 543              		.loc 1 420 9 is_stmt 0 view .LVU178
+ 544 0004 01F01F01 		and	r1, r1, #31
+ 545              	.LVL52:
+ 421:./lib/src/at32f4xx_usart.c ****   itmask = (((uint32_t)0x01) << itpos);
+ 546              		.loc 1 421 3 is_stmt 1 view .LVU179
+ 547              		.loc 1 421 10 is_stmt 0 view .LVU180
+ 548 0008 0123     		movs	r3, #1
+ 549 000a 03FA01F1 		lsl	r1, r3, r1
+ 550              	.LVL53:
+ 422:./lib/src/at32f4xx_usart.c **** 
+ 423:./lib/src/at32f4xx_usart.c ****   if (usartreg == 0x01) /* The INT is in CTRL1 register */
+ 551              		.loc 1 423 3 is_stmt 1 view .LVU181
+ 552              		.loc 1 423 6 is_stmt 0 view .LVU182
+ 553 000e 9C45     		cmp	ip, r3
+ 554 0010 08D0     		beq	.L35
+ 424:./lib/src/at32f4xx_usart.c ****   {
+ 425:./lib/src/at32f4xx_usart.c ****     usartxbase += 0x0C;
+ 426:./lib/src/at32f4xx_usart.c ****   }
+ 427:./lib/src/at32f4xx_usart.c ****   else if (usartreg == 0x02) /* The INT is in CTRL2 register */
+ 555              		.loc 1 427 8 is_stmt 1 view .LVU183
+ 556              		.loc 1 427 11 is_stmt 0 view .LVU184
+ 557 0012 BCF1020F 		cmp	ip, #2
+ 558 0016 07D0     		beq	.L36
+ 428:./lib/src/at32f4xx_usart.c ****   {
+ 429:./lib/src/at32f4xx_usart.c ****     usartxbase += 0x10;
+ 430:./lib/src/at32f4xx_usart.c ****   }
+ 431:./lib/src/at32f4xx_usart.c ****   else /* The INT is in CR3 register */
+ 432:./lib/src/at32f4xx_usart.c ****   {
+ 433:./lib/src/at32f4xx_usart.c ****     usartxbase += 0x14;
+ 559              		.loc 1 433 5 is_stmt 1 view .LVU185
+ 560              		.loc 1 433 16 is_stmt 0 view .LVU186
+ 561 0018 1430     		adds	r0, r0, #20
+ 562              	.LVL54:
+ 563              	.L31:
+ 434:./lib/src/at32f4xx_usart.c ****   }
+ 435:./lib/src/at32f4xx_usart.c **** 
+ 436:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 564              		.loc 1 436 3 is_stmt 1 view .LVU187
+ 565              		.loc 1 436 6 is_stmt 0 view .LVU188
+ 566 001a 3AB1     		cbz	r2, .L33
+ 437:./lib/src/at32f4xx_usart.c ****   {
+ 438:./lib/src/at32f4xx_usart.c ****     *(__IO uint32_t*)usartxbase  |= itmask;
+ 567              		.loc 1 438 5 is_stmt 1 view .LVU189
+ 568              		.loc 1 438 34 is_stmt 0 view .LVU190
+ 569 001c 0368     		ldr	r3, [r0]
+ 570 001e 1943     		orrs	r1, r1, r3
+ 571              	.LVL55:
+ 572              		.loc 1 438 34 view .LVU191
+ 573 0020 0160     		str	r1, [r0]
+ 574 0022 7047     		bx	lr
+ 575              	.LVL56:
+ 576              	.L35:
+ARM GAS  /tmp/ccbIHlMU.s 			page 19
+
+
+ 425:./lib/src/at32f4xx_usart.c ****   }
+ 577              		.loc 1 425 5 is_stmt 1 view .LVU192
+ 425:./lib/src/at32f4xx_usart.c ****   }
+ 578              		.loc 1 425 16 is_stmt 0 view .LVU193
+ 579 0024 0C30     		adds	r0, r0, #12
+ 580              	.LVL57:
+ 425:./lib/src/at32f4xx_usart.c ****   }
+ 581              		.loc 1 425 16 view .LVU194
+ 582 0026 F8E7     		b	.L31
+ 583              	.LVL58:
+ 584              	.L36:
+ 429:./lib/src/at32f4xx_usart.c ****   }
+ 585              		.loc 1 429 5 is_stmt 1 view .LVU195
+ 429:./lib/src/at32f4xx_usart.c ****   }
+ 586              		.loc 1 429 16 is_stmt 0 view .LVU196
+ 587 0028 1030     		adds	r0, r0, #16
+ 588              	.LVL59:
+ 429:./lib/src/at32f4xx_usart.c ****   }
+ 589              		.loc 1 429 16 view .LVU197
+ 590 002a F6E7     		b	.L31
+ 591              	.LVL60:
+ 592              	.L33:
+ 439:./lib/src/at32f4xx_usart.c ****   }
+ 440:./lib/src/at32f4xx_usart.c ****   else
+ 441:./lib/src/at32f4xx_usart.c ****   {
+ 442:./lib/src/at32f4xx_usart.c ****     *(__IO uint32_t*)usartxbase &= ~itmask;
+ 593              		.loc 1 442 5 is_stmt 1 view .LVU198
+ 594              		.loc 1 442 33 is_stmt 0 view .LVU199
+ 595 002c 0368     		ldr	r3, [r0]
+ 596 002e 23EA0101 		bic	r1, r3, r1
+ 597              	.LVL61:
+ 598              		.loc 1 442 33 view .LVU200
+ 599 0032 0160     		str	r1, [r0]
+ 443:./lib/src/at32f4xx_usart.c ****   }
+ 444:./lib/src/at32f4xx_usart.c **** }
+ 600              		.loc 1 444 1 view .LVU201
+ 601 0034 7047     		bx	lr
+ 602              		.cfi_endproc
+ 603              	.LFE129:
+ 605              		.section	.text.USART_DMACmd,"ax",%progbits
+ 606              		.align	1
+ 607              		.global	USART_DMACmd
+ 608              		.syntax unified
+ 609              		.thumb
+ 610              		.thumb_func
+ 611              		.fpu fpv4-sp-d16
+ 613              	USART_DMACmd:
+ 614              	.LVL62:
+ 615              	.LFB130:
+ 445:./lib/src/at32f4xx_usart.c **** 
+ 446:./lib/src/at32f4xx_usart.c **** /**
+ 447:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART's DMA interface.
+ 448:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 449:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 450:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 451:./lib/src/at32f4xx_usart.c ****   * @param  USART_DMAReq: specifies the DMA request.
+ 452:./lib/src/at32f4xx_usart.c ****   *   This parameter can be any combination of the following values:
+ARM GAS  /tmp/ccbIHlMU.s 			page 20
+
+
+ 453:./lib/src/at32f4xx_usart.c ****   *     @arg USART_DMAReq_Tx: USART DMA transmit request
+ 454:./lib/src/at32f4xx_usart.c ****   *     @arg USART_DMAReq_Rx: USART DMA receive request
+ 455:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the DMA Request sources.
+ 456:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 457:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 458:./lib/src/at32f4xx_usart.c ****   */
+ 459:./lib/src/at32f4xx_usart.c **** void USART_DMACmd(USART_Type* USARTx, uint16_t USART_DMAReq, FunctionalState NewState)
+ 460:./lib/src/at32f4xx_usart.c **** {
+ 616              		.loc 1 460 1 is_stmt 1 view -0
+ 617              		.cfi_startproc
+ 618              		@ args = 0, pretend = 0, frame = 0
+ 619              		@ frame_needed = 0, uses_anonymous_args = 0
+ 620              		@ link register save eliminated.
+ 461:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 462:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 621              		.loc 1 462 3 view .LVU203
+ 463:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_DMAREQ(USART_DMAReq));
+ 622              		.loc 1 463 3 view .LVU204
+ 464:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 623              		.loc 1 464 3 view .LVU205
+ 465:./lib/src/at32f4xx_usart.c **** 
+ 466:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 624              		.loc 1 466 3 view .LVU206
+ 625              		.loc 1 466 6 is_stmt 0 view .LVU207
+ 626 0000 22B1     		cbz	r2, .L38
+ 467:./lib/src/at32f4xx_usart.c ****   {
+ 468:./lib/src/at32f4xx_usart.c ****     /* Enable the DMA transfer for selected requests by setting the DMAT and/or
+ 469:./lib/src/at32f4xx_usart.c ****        DMAR bits in the USART CR3 register */
+ 470:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 |= USART_DMAReq;
+ 627              		.loc 1 470 5 is_stmt 1 view .LVU208
+ 628              		.loc 1 470 19 is_stmt 0 view .LVU209
+ 629 0002 838A     		ldrh	r3, [r0, #20]
+ 630 0004 9BB2     		uxth	r3, r3
+ 631 0006 1943     		orrs	r1, r1, r3
+ 632              	.LVL63:
+ 633              		.loc 1 470 19 view .LVU210
+ 634 0008 8182     		strh	r1, [r0, #20]	@ movhi
+ 635 000a 7047     		bx	lr
+ 636              	.LVL64:
+ 637              	.L38:
+ 471:./lib/src/at32f4xx_usart.c ****   }
+ 472:./lib/src/at32f4xx_usart.c ****   else
+ 473:./lib/src/at32f4xx_usart.c ****   {
+ 474:./lib/src/at32f4xx_usart.c ****     /* Disable the DMA transfer for selected requests by clearing the DMAT and/or
+ 475:./lib/src/at32f4xx_usart.c ****        DMAR bits in the USART CR3 register */
+ 476:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 &= (uint16_t)~USART_DMAReq;
+ 638              		.loc 1 476 5 is_stmt 1 view .LVU211
+ 639              		.loc 1 476 19 is_stmt 0 view .LVU212
+ 640 000c 838A     		ldrh	r3, [r0, #20]
+ 641              		.loc 1 476 22 view .LVU213
+ 642 000e C943     		mvns	r1, r1
+ 643              	.LVL65:
+ 644              		.loc 1 476 22 view .LVU214
+ 645 0010 89B2     		uxth	r1, r1
+ 646              		.loc 1 476 19 view .LVU215
+ 647 0012 1940     		ands	r1, r1, r3
+ 648 0014 8182     		strh	r1, [r0, #20]	@ movhi
+ARM GAS  /tmp/ccbIHlMU.s 			page 21
+
+
+ 477:./lib/src/at32f4xx_usart.c ****   }
+ 478:./lib/src/at32f4xx_usart.c **** }
+ 649              		.loc 1 478 1 view .LVU216
+ 650 0016 7047     		bx	lr
+ 651              		.cfi_endproc
+ 652              	.LFE130:
+ 654              		.section	.text.USART_SetAddress,"ax",%progbits
+ 655              		.align	1
+ 656              		.global	USART_SetAddress
+ 657              		.syntax unified
+ 658              		.thumb
+ 659              		.thumb_func
+ 660              		.fpu fpv4-sp-d16
+ 662              	USART_SetAddress:
+ 663              	.LVL66:
+ 664              	.LFB131:
+ 479:./lib/src/at32f4xx_usart.c **** 
+ 480:./lib/src/at32f4xx_usart.c **** /**
+ 481:./lib/src/at32f4xx_usart.c ****   * @brief  Sets the address of the USART node.
+ 482:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 483:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 484:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 485:./lib/src/at32f4xx_usart.c ****   * @param  USART_Address: Indicates the address of the USART node.
+ 486:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 487:./lib/src/at32f4xx_usart.c ****   */
+ 488:./lib/src/at32f4xx_usart.c **** void USART_SetAddress(USART_Type* USARTx, uint8_t USART_Address)
+ 489:./lib/src/at32f4xx_usart.c **** {
+ 665              		.loc 1 489 1 is_stmt 1 view -0
+ 666              		.cfi_startproc
+ 667              		@ args = 0, pretend = 0, frame = 0
+ 668              		@ frame_needed = 0, uses_anonymous_args = 0
+ 669              		@ link register save eliminated.
+ 490:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 491:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 670              		.loc 1 491 3 view .LVU218
+ 492:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ADDRESS(USART_Address));
+ 671              		.loc 1 492 3 view .LVU219
+ 493:./lib/src/at32f4xx_usart.c **** 
+ 494:./lib/src/at32f4xx_usart.c ****   /* Clear the USART address */
+ 495:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL2 &= CTRL2_ADDRESS_Mask;
+ 672              		.loc 1 495 3 view .LVU220
+ 673              		.loc 1 495 17 is_stmt 0 view .LVU221
+ 674 0000 038A     		ldrh	r3, [r0, #16]
+ 675 0002 9BB2     		uxth	r3, r3
+ 676 0004 23F00F03 		bic	r3, r3, #15
+ 677 0008 9BB2     		uxth	r3, r3
+ 678 000a 0382     		strh	r3, [r0, #16]	@ movhi
+ 496:./lib/src/at32f4xx_usart.c ****   /* Set the USART address node */
+ 497:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL2 |= USART_Address;
+ 679              		.loc 1 497 3 is_stmt 1 view .LVU222
+ 680              		.loc 1 497 17 is_stmt 0 view .LVU223
+ 681 000c 038A     		ldrh	r3, [r0, #16]
+ 682 000e 9BB2     		uxth	r3, r3
+ 683 0010 0B43     		orrs	r3, r3, r1
+ 684 0012 0382     		strh	r3, [r0, #16]	@ movhi
+ 498:./lib/src/at32f4xx_usart.c **** }
+ 685              		.loc 1 498 1 view .LVU224
+ARM GAS  /tmp/ccbIHlMU.s 			page 22
+
+
+ 686 0014 7047     		bx	lr
+ 687              		.cfi_endproc
+ 688              	.LFE131:
+ 690              		.section	.text.USART_WakeUpConfig,"ax",%progbits
+ 691              		.align	1
+ 692              		.global	USART_WakeUpConfig
+ 693              		.syntax unified
+ 694              		.thumb
+ 695              		.thumb_func
+ 696              		.fpu fpv4-sp-d16
+ 698              	USART_WakeUpConfig:
+ 699              	.LVL67:
+ 700              	.LFB132:
+ 499:./lib/src/at32f4xx_usart.c **** 
+ 500:./lib/src/at32f4xx_usart.c **** /**
+ 501:./lib/src/at32f4xx_usart.c ****   * @brief  Selects the USART WakeUp method.
+ 502:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 503:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 504:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 505:./lib/src/at32f4xx_usart.c ****   * @param  USART_WakeUp: specifies the USART wakeup method.
+ 506:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 507:./lib/src/at32f4xx_usart.c ****   *     @arg USART_WakeUp_IdleLine: WakeUp by an idle line detection
+ 508:./lib/src/at32f4xx_usart.c ****   *     @arg USART_WakeUp_AddressMark: WakeUp by an address mark
+ 509:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 510:./lib/src/at32f4xx_usart.c ****   */
+ 511:./lib/src/at32f4xx_usart.c **** void USART_WakeUpConfig(USART_Type* USARTx, uint16_t USART_WakeUp)
+ 512:./lib/src/at32f4xx_usart.c **** {
+ 701              		.loc 1 512 1 is_stmt 1 view -0
+ 702              		.cfi_startproc
+ 703              		@ args = 0, pretend = 0, frame = 0
+ 704              		@ frame_needed = 0, uses_anonymous_args = 0
+ 705              		@ link register save eliminated.
+ 513:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 514:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 706              		.loc 1 514 3 view .LVU226
+ 515:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_WAKEUP(USART_WakeUp));
+ 707              		.loc 1 515 3 view .LVU227
+ 516:./lib/src/at32f4xx_usart.c **** 
+ 517:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL1 &= CTRL1_WUMODE_Mask;
+ 708              		.loc 1 517 3 view .LVU228
+ 709              		.loc 1 517 17 is_stmt 0 view .LVU229
+ 710 0000 8389     		ldrh	r3, [r0, #12]
+ 711 0002 9BB2     		uxth	r3, r3
+ 712 0004 23F40063 		bic	r3, r3, #2048
+ 713 0008 9BB2     		uxth	r3, r3
+ 714 000a 8381     		strh	r3, [r0, #12]	@ movhi
+ 518:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL1 |= USART_WakeUp;
+ 715              		.loc 1 518 3 is_stmt 1 view .LVU230
+ 716              		.loc 1 518 17 is_stmt 0 view .LVU231
+ 717 000c 8389     		ldrh	r3, [r0, #12]
+ 718 000e 9BB2     		uxth	r3, r3
+ 719 0010 0B43     		orrs	r3, r3, r1
+ 720 0012 8381     		strh	r3, [r0, #12]	@ movhi
+ 519:./lib/src/at32f4xx_usart.c **** }
+ 721              		.loc 1 519 1 view .LVU232
+ 722 0014 7047     		bx	lr
+ 723              		.cfi_endproc
+ARM GAS  /tmp/ccbIHlMU.s 			page 23
+
+
+ 724              	.LFE132:
+ 726              		.section	.text.USART_ReceiverWakeUpCmd,"ax",%progbits
+ 727              		.align	1
+ 728              		.global	USART_ReceiverWakeUpCmd
+ 729              		.syntax unified
+ 730              		.thumb
+ 731              		.thumb_func
+ 732              		.fpu fpv4-sp-d16
+ 734              	USART_ReceiverWakeUpCmd:
+ 735              	.LVL68:
+ 736              	.LFB133:
+ 520:./lib/src/at32f4xx_usart.c **** 
+ 521:./lib/src/at32f4xx_usart.c **** /**
+ 522:./lib/src/at32f4xx_usart.c ****   * @brief  Determines if the USART is in mute mode or not.
+ 523:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 524:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 525:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 526:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the USART mute mode.
+ 527:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 528:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 529:./lib/src/at32f4xx_usart.c ****   */
+ 530:./lib/src/at32f4xx_usart.c **** void USART_ReceiverWakeUpCmd(USART_Type* USARTx, FunctionalState NewState)
+ 531:./lib/src/at32f4xx_usart.c **** {
+ 737              		.loc 1 531 1 is_stmt 1 view -0
+ 738              		.cfi_startproc
+ 739              		@ args = 0, pretend = 0, frame = 0
+ 740              		@ frame_needed = 0, uses_anonymous_args = 0
+ 741              		@ link register save eliminated.
+ 532:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 533:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 742              		.loc 1 533 3 view .LVU234
+ 534:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 743              		.loc 1 534 3 view .LVU235
+ 535:./lib/src/at32f4xx_usart.c **** 
+ 536:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 744              		.loc 1 536 3 view .LVU236
+ 745              		.loc 1 536 6 is_stmt 0 view .LVU237
+ 746 0000 29B1     		cbz	r1, .L43
+ 537:./lib/src/at32f4xx_usart.c ****   {
+ 538:./lib/src/at32f4xx_usart.c ****     /* Enable the USART mute mode  by setting the RWU bit in the CTRL1 register */
+ 539:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL1 |= CTRL1_RECMUTE_Set;
+ 747              		.loc 1 539 5 is_stmt 1 view .LVU238
+ 748              		.loc 1 539 19 is_stmt 0 view .LVU239
+ 749 0002 8389     		ldrh	r3, [r0, #12]
+ 750 0004 9BB2     		uxth	r3, r3
+ 751 0006 43F00203 		orr	r3, r3, #2
+ 752 000a 8381     		strh	r3, [r0, #12]	@ movhi
+ 753 000c 7047     		bx	lr
+ 754              	.L43:
+ 540:./lib/src/at32f4xx_usart.c ****   }
+ 541:./lib/src/at32f4xx_usart.c ****   else
+ 542:./lib/src/at32f4xx_usart.c ****   {
+ 543:./lib/src/at32f4xx_usart.c ****     /* Disable the USART mute mode by clearing the RWU bit in the CTRL1 register */
+ 544:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL1 &= CTRL1_RECMUTE_Reset;
+ 755              		.loc 1 544 5 is_stmt 1 view .LVU240
+ 756              		.loc 1 544 19 is_stmt 0 view .LVU241
+ 757 000e 8389     		ldrh	r3, [r0, #12]
+ARM GAS  /tmp/ccbIHlMU.s 			page 24
+
+
+ 758 0010 9BB2     		uxth	r3, r3
+ 759 0012 23F00203 		bic	r3, r3, #2
+ 760 0016 9BB2     		uxth	r3, r3
+ 761 0018 8381     		strh	r3, [r0, #12]	@ movhi
+ 545:./lib/src/at32f4xx_usart.c ****   }
+ 546:./lib/src/at32f4xx_usart.c **** }
+ 762              		.loc 1 546 1 view .LVU242
+ 763 001a 7047     		bx	lr
+ 764              		.cfi_endproc
+ 765              	.LFE133:
+ 767              		.section	.text.USART_LINBreakDetectLengthConfig,"ax",%progbits
+ 768              		.align	1
+ 769              		.global	USART_LINBreakDetectLengthConfig
+ 770              		.syntax unified
+ 771              		.thumb
+ 772              		.thumb_func
+ 773              		.fpu fpv4-sp-d16
+ 775              	USART_LINBreakDetectLengthConfig:
+ 776              	.LVL69:
+ 777              	.LFB134:
+ 547:./lib/src/at32f4xx_usart.c **** 
+ 548:./lib/src/at32f4xx_usart.c **** /**
+ 549:./lib/src/at32f4xx_usart.c ****   * @brief  Sets the USART LIN Break detection length.
+ 550:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 551:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 552:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 553:./lib/src/at32f4xx_usart.c ****   * @param  USART_LINBreakDetectLength: specifies the LIN break detection length.
+ 554:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 555:./lib/src/at32f4xx_usart.c ****   *     @arg USART_LINBreakDetectLength_10b: 10-bit break detection
+ 556:./lib/src/at32f4xx_usart.c ****   *     @arg USART_LINBreakDetectLength_11b: 11-bit break detection
+ 557:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 558:./lib/src/at32f4xx_usart.c ****   */
+ 559:./lib/src/at32f4xx_usart.c **** void USART_LINBreakDetectLengthConfig(USART_Type* USARTx, uint16_t USART_LINBreakDetectLength)
+ 560:./lib/src/at32f4xx_usart.c **** {
+ 778              		.loc 1 560 1 is_stmt 1 view -0
+ 779              		.cfi_startproc
+ 780              		@ args = 0, pretend = 0, frame = 0
+ 781              		@ frame_needed = 0, uses_anonymous_args = 0
+ 782              		@ link register save eliminated.
+ 561:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 562:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 783              		.loc 1 562 3 view .LVU244
+ 563:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_LIN_BREAK_DETECT_LENGTH(USART_LINBreakDetectLength));
+ 784              		.loc 1 563 3 view .LVU245
+ 564:./lib/src/at32f4xx_usart.c **** 
+ 565:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL2 &= CTRL2_LBDLEN_Mask;
+ 785              		.loc 1 565 3 view .LVU246
+ 786              		.loc 1 565 17 is_stmt 0 view .LVU247
+ 787 0000 038A     		ldrh	r3, [r0, #16]
+ 788 0002 9BB2     		uxth	r3, r3
+ 789 0004 23F02003 		bic	r3, r3, #32
+ 790 0008 9BB2     		uxth	r3, r3
+ 791 000a 0382     		strh	r3, [r0, #16]	@ movhi
+ 566:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL2 |= USART_LINBreakDetectLength;
+ 792              		.loc 1 566 3 is_stmt 1 view .LVU248
+ 793              		.loc 1 566 17 is_stmt 0 view .LVU249
+ 794 000c 038A     		ldrh	r3, [r0, #16]
+ARM GAS  /tmp/ccbIHlMU.s 			page 25
+
+
+ 795 000e 9BB2     		uxth	r3, r3
+ 796 0010 0B43     		orrs	r3, r3, r1
+ 797 0012 0382     		strh	r3, [r0, #16]	@ movhi
+ 567:./lib/src/at32f4xx_usart.c **** }
+ 798              		.loc 1 567 1 view .LVU250
+ 799 0014 7047     		bx	lr
+ 800              		.cfi_endproc
+ 801              	.LFE134:
+ 803              		.section	.text.USART_LINCmd,"ax",%progbits
+ 804              		.align	1
+ 805              		.global	USART_LINCmd
+ 806              		.syntax unified
+ 807              		.thumb
+ 808              		.thumb_func
+ 809              		.fpu fpv4-sp-d16
+ 811              	USART_LINCmd:
+ 812              	.LVL70:
+ 813              	.LFB135:
+ 568:./lib/src/at32f4xx_usart.c **** 
+ 569:./lib/src/at32f4xx_usart.c **** /**
+ 570:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART’s LIN mode.
+ 571:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 572:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 573:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 574:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the USART LIN mode.
+ 575:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 576:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 577:./lib/src/at32f4xx_usart.c ****   */
+ 578:./lib/src/at32f4xx_usart.c **** void USART_LINCmd(USART_Type* USARTx, FunctionalState NewState)
+ 579:./lib/src/at32f4xx_usart.c **** {
+ 814              		.loc 1 579 1 is_stmt 1 view -0
+ 815              		.cfi_startproc
+ 816              		@ args = 0, pretend = 0, frame = 0
+ 817              		@ frame_needed = 0, uses_anonymous_args = 0
+ 818              		@ link register save eliminated.
+ 580:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 581:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 819              		.loc 1 581 3 view .LVU252
+ 582:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 820              		.loc 1 582 3 view .LVU253
+ 583:./lib/src/at32f4xx_usart.c **** 
+ 584:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 821              		.loc 1 584 3 view .LVU254
+ 822              		.loc 1 584 6 is_stmt 0 view .LVU255
+ 823 0000 29B1     		cbz	r1, .L47
+ 585:./lib/src/at32f4xx_usart.c ****   {
+ 586:./lib/src/at32f4xx_usart.c ****     /* Enable the LIN mode by setting the LINEN bit in the CTRL2 register */
+ 587:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL2 |= CTRL2_LINEN_Set;
+ 824              		.loc 1 587 5 is_stmt 1 view .LVU256
+ 825              		.loc 1 587 19 is_stmt 0 view .LVU257
+ 826 0002 038A     		ldrh	r3, [r0, #16]
+ 827 0004 9BB2     		uxth	r3, r3
+ 828 0006 43F48043 		orr	r3, r3, #16384
+ 829 000a 0382     		strh	r3, [r0, #16]	@ movhi
+ 830 000c 7047     		bx	lr
+ 831              	.L47:
+ 588:./lib/src/at32f4xx_usart.c ****   }
+ARM GAS  /tmp/ccbIHlMU.s 			page 26
+
+
+ 589:./lib/src/at32f4xx_usart.c ****   else
+ 590:./lib/src/at32f4xx_usart.c ****   {
+ 591:./lib/src/at32f4xx_usart.c ****     /* Disable the LIN mode by clearing the LINEN bit in the CTRL2 register */
+ 592:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL2 &= CTRL2_LINEN_Reset;
+ 832              		.loc 1 592 5 is_stmt 1 view .LVU258
+ 833              		.loc 1 592 19 is_stmt 0 view .LVU259
+ 834 000e 038A     		ldrh	r3, [r0, #16]
+ 835 0010 9BB2     		uxth	r3, r3
+ 836 0012 23F48043 		bic	r3, r3, #16384
+ 837 0016 9BB2     		uxth	r3, r3
+ 838 0018 0382     		strh	r3, [r0, #16]	@ movhi
+ 593:./lib/src/at32f4xx_usart.c ****   }
+ 594:./lib/src/at32f4xx_usart.c **** }
+ 839              		.loc 1 594 1 view .LVU260
+ 840 001a 7047     		bx	lr
+ 841              		.cfi_endproc
+ 842              	.LFE135:
+ 844              		.section	.text.USART_SendData,"ax",%progbits
+ 845              		.align	1
+ 846              		.global	USART_SendData
+ 847              		.syntax unified
+ 848              		.thumb
+ 849              		.thumb_func
+ 850              		.fpu fpv4-sp-d16
+ 852              	USART_SendData:
+ 853              	.LVL71:
+ 854              	.LFB136:
+ 595:./lib/src/at32f4xx_usart.c **** 
+ 596:./lib/src/at32f4xx_usart.c **** /**
+ 597:./lib/src/at32f4xx_usart.c ****   * @brief  Transmits single data through the USARTx peripheral.
+ 598:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 599:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 600:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 601:./lib/src/at32f4xx_usart.c ****   * @param  Data: the data to transmit.
+ 602:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 603:./lib/src/at32f4xx_usart.c ****   */
+ 604:./lib/src/at32f4xx_usart.c **** void USART_SendData(USART_Type* USARTx, uint16_t Data)
+ 605:./lib/src/at32f4xx_usart.c **** {
+ 855              		.loc 1 605 1 is_stmt 1 view -0
+ 856              		.cfi_startproc
+ 857              		@ args = 0, pretend = 0, frame = 0
+ 858              		@ frame_needed = 0, uses_anonymous_args = 0
+ 859              		@ link register save eliminated.
+ 606:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 607:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 860              		.loc 1 607 3 view .LVU262
+ 608:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_DATA(Data));
+ 861              		.loc 1 608 3 view .LVU263
+ 609:./lib/src/at32f4xx_usart.c **** 
+ 610:./lib/src/at32f4xx_usart.c ****   /* Transmit Data */
+ 611:./lib/src/at32f4xx_usart.c ****   USARTx->DT = (Data & (uint16_t)0x01FF);
+ 862              		.loc 1 611 3 view .LVU264
+ 863              		.loc 1 611 22 is_stmt 0 view .LVU265
+ 864 0000 C1F30801 		ubfx	r1, r1, #0, #9
+ 865              	.LVL72:
+ 866              		.loc 1 611 14 view .LVU266
+ 867 0004 8180     		strh	r1, [r0, #4]	@ movhi
+ARM GAS  /tmp/ccbIHlMU.s 			page 27
+
+
+ 612:./lib/src/at32f4xx_usart.c **** }
+ 868              		.loc 1 612 1 view .LVU267
+ 869 0006 7047     		bx	lr
+ 870              		.cfi_endproc
+ 871              	.LFE136:
+ 873              		.section	.text.USART_ReceiveData,"ax",%progbits
+ 874              		.align	1
+ 875              		.global	USART_ReceiveData
+ 876              		.syntax unified
+ 877              		.thumb
+ 878              		.thumb_func
+ 879              		.fpu fpv4-sp-d16
+ 881              	USART_ReceiveData:
+ 882              	.LVL73:
+ 883              	.LFB137:
+ 613:./lib/src/at32f4xx_usart.c **** 
+ 614:./lib/src/at32f4xx_usart.c **** /**
+ 615:./lib/src/at32f4xx_usart.c ****   * @brief  Returns the most recent received data by the USARTx peripheral.
+ 616:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 617:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 618:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 619:./lib/src/at32f4xx_usart.c ****   * @retval The received data.
+ 620:./lib/src/at32f4xx_usart.c ****   */
+ 621:./lib/src/at32f4xx_usart.c **** uint16_t USART_ReceiveData(USART_Type* USARTx)
+ 622:./lib/src/at32f4xx_usart.c **** {
+ 884              		.loc 1 622 1 is_stmt 1 view -0
+ 885              		.cfi_startproc
+ 886              		@ args = 0, pretend = 0, frame = 0
+ 887              		@ frame_needed = 0, uses_anonymous_args = 0
+ 888              		@ link register save eliminated.
+ 623:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 624:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 889              		.loc 1 624 3 view .LVU269
+ 625:./lib/src/at32f4xx_usart.c **** 
+ 626:./lib/src/at32f4xx_usart.c ****   /* Receive Data */
+ 627:./lib/src/at32f4xx_usart.c ****   return (uint16_t)(USARTx->DT & (uint16_t)0x01FF);
+ 890              		.loc 1 627 3 view .LVU270
+ 891              		.loc 1 627 27 is_stmt 0 view .LVU271
+ 892 0000 8088     		ldrh	r0, [r0, #4]
+ 893              	.LVL74:
+ 628:./lib/src/at32f4xx_usart.c **** }
+ 894              		.loc 1 628 1 view .LVU272
+ 895 0002 C0F30800 		ubfx	r0, r0, #0, #9
+ 896 0006 7047     		bx	lr
+ 897              		.cfi_endproc
+ 898              	.LFE137:
+ 900              		.section	.text.USART_SendBreak,"ax",%progbits
+ 901              		.align	1
+ 902              		.global	USART_SendBreak
+ 903              		.syntax unified
+ 904              		.thumb
+ 905              		.thumb_func
+ 906              		.fpu fpv4-sp-d16
+ 908              	USART_SendBreak:
+ 909              	.LVL75:
+ 910              	.LFB138:
+ 629:./lib/src/at32f4xx_usart.c **** 
+ARM GAS  /tmp/ccbIHlMU.s 			page 28
+
+
+ 630:./lib/src/at32f4xx_usart.c **** /**
+ 631:./lib/src/at32f4xx_usart.c ****   * @brief  Transmits break characters.
+ 632:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 633:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 634:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 635:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 636:./lib/src/at32f4xx_usart.c ****   */
+ 637:./lib/src/at32f4xx_usart.c **** void USART_SendBreak(USART_Type* USARTx)
+ 638:./lib/src/at32f4xx_usart.c **** {
+ 911              		.loc 1 638 1 is_stmt 1 view -0
+ 912              		.cfi_startproc
+ 913              		@ args = 0, pretend = 0, frame = 0
+ 914              		@ frame_needed = 0, uses_anonymous_args = 0
+ 915              		@ link register save eliminated.
+ 639:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 640:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 916              		.loc 1 640 3 view .LVU274
+ 641:./lib/src/at32f4xx_usart.c **** 
+ 642:./lib/src/at32f4xx_usart.c ****   /* Send break characters */
+ 643:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL1 |= CTRL1_SBRK_Set;
+ 917              		.loc 1 643 3 view .LVU275
+ 918              		.loc 1 643 17 is_stmt 0 view .LVU276
+ 919 0000 8389     		ldrh	r3, [r0, #12]
+ 920 0002 9BB2     		uxth	r3, r3
+ 921 0004 43F00103 		orr	r3, r3, #1
+ 922 0008 8381     		strh	r3, [r0, #12]	@ movhi
+ 644:./lib/src/at32f4xx_usart.c **** }
+ 923              		.loc 1 644 1 view .LVU277
+ 924 000a 7047     		bx	lr
+ 925              		.cfi_endproc
+ 926              	.LFE138:
+ 928              		.section	.text.USART_SetGuardTime,"ax",%progbits
+ 929              		.align	1
+ 930              		.global	USART_SetGuardTime
+ 931              		.syntax unified
+ 932              		.thumb
+ 933              		.thumb_func
+ 934              		.fpu fpv4-sp-d16
+ 936              	USART_SetGuardTime:
+ 937              	.LVL76:
+ 938              	.LFB139:
+ 645:./lib/src/at32f4xx_usart.c **** 
+ 646:./lib/src/at32f4xx_usart.c **** /**
+ 647:./lib/src/at32f4xx_usart.c ****   * @brief  Sets the specified USART guard time.
+ 648:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: where x can be 1, 2 or 3 to select the USART peripheral.
+ 649:./lib/src/at32f4xx_usart.c ****   * @param  USART_GuardTime: specifies the guard time.
+ 650:./lib/src/at32f4xx_usart.c ****   * @note The guard time bits are not available for UART4, UART5, USART6, UART7 or UART8.
+ 651:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 652:./lib/src/at32f4xx_usart.c ****   */
+ 653:./lib/src/at32f4xx_usart.c **** void USART_SetGuardTime(USART_Type* USARTx, uint8_t USART_GuardTime)
+ 654:./lib/src/at32f4xx_usart.c **** {
+ 939              		.loc 1 654 1 is_stmt 1 view -0
+ 940              		.cfi_startproc
+ 941              		@ args = 0, pretend = 0, frame = 0
+ 942              		@ frame_needed = 0, uses_anonymous_args = 0
+ 943              		@ link register save eliminated.
+ 655:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ARM GAS  /tmp/ccbIHlMU.s 			page 29
+
+
+ 656:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_123_PERIPH(USARTx));
+ 944              		.loc 1 656 3 view .LVU279
+ 657:./lib/src/at32f4xx_usart.c **** 
+ 658:./lib/src/at32f4xx_usart.c ****   /* Clear the USART Guard time */
+ 659:./lib/src/at32f4xx_usart.c ****   USARTx->GTP &= GTPR_LSB_Mask;
+ 945              		.loc 1 659 3 view .LVU280
+ 946              		.loc 1 659 15 is_stmt 0 view .LVU281
+ 947 0000 028B     		ldrh	r2, [r0, #24]
+ 948 0002 D2B2     		uxtb	r2, r2
+ 949 0004 0283     		strh	r2, [r0, #24]	@ movhi
+ 660:./lib/src/at32f4xx_usart.c ****   /* Set the USART guard time */
+ 661:./lib/src/at32f4xx_usart.c ****   USARTx->GTP |= (uint16_t)((uint16_t)USART_GuardTime << 0x08);
+ 950              		.loc 1 661 3 is_stmt 1 view .LVU282
+ 951              		.loc 1 661 15 is_stmt 0 view .LVU283
+ 952 0006 038B     		ldrh	r3, [r0, #24]
+ 953 0008 9BB2     		uxth	r3, r3
+ 954 000a 43EA0123 		orr	r3, r3, r1, lsl #8
+ 955 000e 0383     		strh	r3, [r0, #24]	@ movhi
+ 662:./lib/src/at32f4xx_usart.c **** }
+ 956              		.loc 1 662 1 view .LVU284
+ 957 0010 7047     		bx	lr
+ 958              		.cfi_endproc
+ 959              	.LFE139:
+ 961              		.section	.text.USART_SetPrescaler,"ax",%progbits
+ 962              		.align	1
+ 963              		.global	USART_SetPrescaler
+ 964              		.syntax unified
+ 965              		.thumb
+ 966              		.thumb_func
+ 967              		.fpu fpv4-sp-d16
+ 969              	USART_SetPrescaler:
+ 970              	.LVL77:
+ 971              	.LFB140:
+ 663:./lib/src/at32f4xx_usart.c **** 
+ 664:./lib/src/at32f4xx_usart.c **** /**
+ 665:./lib/src/at32f4xx_usart.c ****   * @brief  Sets the system clock prescaler.
+ 666:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 667:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 668:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4 or UART5.
+ 669:./lib/src/at32f4xx_usart.c ****   * @param  USART_Prescaler: specifies the prescaler clock.
+ 670:./lib/src/at32f4xx_usart.c ****   * @note   The function is used for IrDA mode with UART4, UART5, USART6, UART7 or UART8.
+ 671:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 672:./lib/src/at32f4xx_usart.c ****   */
+ 673:./lib/src/at32f4xx_usart.c **** void USART_SetPrescaler(USART_Type* USARTx, uint8_t USART_Prescaler)
+ 674:./lib/src/at32f4xx_usart.c **** {
+ 972              		.loc 1 674 1 is_stmt 1 view -0
+ 973              		.cfi_startproc
+ 974              		@ args = 0, pretend = 0, frame = 0
+ 975              		@ frame_needed = 0, uses_anonymous_args = 0
+ 976              		@ link register save eliminated.
+ 675:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 676:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 977              		.loc 1 676 3 view .LVU286
+ 677:./lib/src/at32f4xx_usart.c **** 
+ 678:./lib/src/at32f4xx_usart.c ****   /* Clear the USART prescaler */
+ 679:./lib/src/at32f4xx_usart.c ****   USARTx->GTP &= GTPR_MSB_Mask;
+ 978              		.loc 1 679 3 view .LVU287
+ARM GAS  /tmp/ccbIHlMU.s 			page 30
+
+
+ 979              		.loc 1 679 15 is_stmt 0 view .LVU288
+ 980 0000 028B     		ldrh	r2, [r0, #24]
+ 981 0002 02F47F42 		and	r2, r2, #65280
+ 982 0006 0283     		strh	r2, [r0, #24]	@ movhi
+ 680:./lib/src/at32f4xx_usart.c ****   /* Set the USART prescaler */
+ 681:./lib/src/at32f4xx_usart.c ****   USARTx->GTP |= USART_Prescaler;
+ 983              		.loc 1 681 3 is_stmt 1 view .LVU289
+ 984              		.loc 1 681 15 is_stmt 0 view .LVU290
+ 985 0008 038B     		ldrh	r3, [r0, #24]
+ 986 000a 9BB2     		uxth	r3, r3
+ 987 000c 0B43     		orrs	r3, r3, r1
+ 988 000e 0383     		strh	r3, [r0, #24]	@ movhi
+ 682:./lib/src/at32f4xx_usart.c **** }
+ 989              		.loc 1 682 1 view .LVU291
+ 990 0010 7047     		bx	lr
+ 991              		.cfi_endproc
+ 992              	.LFE140:
+ 994              		.section	.text.USART_SmartCardCmd,"ax",%progbits
+ 995              		.align	1
+ 996              		.global	USART_SmartCardCmd
+ 997              		.syntax unified
+ 998              		.thumb
+ 999              		.thumb_func
+ 1000              		.fpu fpv4-sp-d16
+ 1002              	USART_SmartCardCmd:
+ 1003              	.LVL78:
+ 1004              	.LFB141:
+ 683:./lib/src/at32f4xx_usart.c **** 
+ 684:./lib/src/at32f4xx_usart.c **** /**
+ 685:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART’s Smart Card mode.
+ 686:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: where x can be 1, 2 or 3 to select the USART peripheral.
+ 687:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the Smart Card mode.
+ 688:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 689:./lib/src/at32f4xx_usart.c ****   * @note The Smart Card mode is not available for UART4, UART5, UART7 and UART8.
+ 690:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 691:./lib/src/at32f4xx_usart.c ****   */
+ 692:./lib/src/at32f4xx_usart.c **** void USART_SmartCardCmd(USART_Type* USARTx, FunctionalState NewState)
+ 693:./lib/src/at32f4xx_usart.c **** {
+ 1005              		.loc 1 693 1 is_stmt 1 view -0
+ 1006              		.cfi_startproc
+ 1007              		@ args = 0, pretend = 0, frame = 0
+ 1008              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1009              		@ link register save eliminated.
+ 694:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 695:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_123_PERIPH(USARTx));
+ 1010              		.loc 1 695 3 view .LVU293
+ 696:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1011              		.loc 1 696 3 view .LVU294
+ 697:./lib/src/at32f4xx_usart.c **** 
+ 698:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1012              		.loc 1 698 3 view .LVU295
+ 1013              		.loc 1 698 6 is_stmt 0 view .LVU296
+ 1014 0000 29B1     		cbz	r1, .L55
+ 699:./lib/src/at32f4xx_usart.c ****   {
+ 700:./lib/src/at32f4xx_usart.c ****     /* Enable the SC mode by setting the SCEN bit in the CR3 register */
+ 701:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 |= CTRL3_SCMEN_Set;
+ 1015              		.loc 1 701 5 is_stmt 1 view .LVU297
+ARM GAS  /tmp/ccbIHlMU.s 			page 31
+
+
+ 1016              		.loc 1 701 19 is_stmt 0 view .LVU298
+ 1017 0002 838A     		ldrh	r3, [r0, #20]
+ 1018 0004 9BB2     		uxth	r3, r3
+ 1019 0006 43F02003 		orr	r3, r3, #32
+ 1020 000a 8382     		strh	r3, [r0, #20]	@ movhi
+ 1021 000c 7047     		bx	lr
+ 1022              	.L55:
+ 702:./lib/src/at32f4xx_usart.c ****   }
+ 703:./lib/src/at32f4xx_usart.c ****   else
+ 704:./lib/src/at32f4xx_usart.c ****   {
+ 705:./lib/src/at32f4xx_usart.c ****     /* Disable the SC mode by clearing the SCEN bit in the CR3 register */
+ 706:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 &= CTRL3_SCMEN_Reset;
+ 1023              		.loc 1 706 5 is_stmt 1 view .LVU299
+ 1024              		.loc 1 706 19 is_stmt 0 view .LVU300
+ 1025 000e 838A     		ldrh	r3, [r0, #20]
+ 1026 0010 9BB2     		uxth	r3, r3
+ 1027 0012 23F02003 		bic	r3, r3, #32
+ 1028 0016 9BB2     		uxth	r3, r3
+ 1029 0018 8382     		strh	r3, [r0, #20]	@ movhi
+ 707:./lib/src/at32f4xx_usart.c ****   }
+ 708:./lib/src/at32f4xx_usart.c **** }
+ 1030              		.loc 1 708 1 view .LVU301
+ 1031 001a 7047     		bx	lr
+ 1032              		.cfi_endproc
+ 1033              	.LFE141:
+ 1035              		.section	.text.USART_SmartCardNACKCmd,"ax",%progbits
+ 1036              		.align	1
+ 1037              		.global	USART_SmartCardNACKCmd
+ 1038              		.syntax unified
+ 1039              		.thumb
+ 1040              		.thumb_func
+ 1041              		.fpu fpv4-sp-d16
+ 1043              	USART_SmartCardNACKCmd:
+ 1044              	.LVL79:
+ 1045              	.LFB142:
+ 709:./lib/src/at32f4xx_usart.c **** 
+ 710:./lib/src/at32f4xx_usart.c **** /**
+ 711:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables NACK transmission.
+ 712:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: where x can be 1, 2 or 3 to select the USART peripheral.
+ 713:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the NACK transmission.
+ 714:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 715:./lib/src/at32f4xx_usart.c ****   * @note The Smart Card mode is not available for UART4, UART5, UART7 and UART8.
+ 716:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 717:./lib/src/at32f4xx_usart.c ****   */
+ 718:./lib/src/at32f4xx_usart.c **** void USART_SmartCardNACKCmd(USART_Type* USARTx, FunctionalState NewState)
+ 719:./lib/src/at32f4xx_usart.c **** {
+ 1046              		.loc 1 719 1 is_stmt 1 view -0
+ 1047              		.cfi_startproc
+ 1048              		@ args = 0, pretend = 0, frame = 0
+ 1049              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1050              		@ link register save eliminated.
+ 720:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 721:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_123_PERIPH(USARTx));
+ 1051              		.loc 1 721 3 view .LVU303
+ 722:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1052              		.loc 1 722 3 view .LVU304
+ 723:./lib/src/at32f4xx_usart.c **** 
+ARM GAS  /tmp/ccbIHlMU.s 			page 32
+
+
+ 724:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1053              		.loc 1 724 3 view .LVU305
+ 1054              		.loc 1 724 6 is_stmt 0 view .LVU306
+ 1055 0000 29B1     		cbz	r1, .L58
+ 725:./lib/src/at32f4xx_usart.c ****   {
+ 726:./lib/src/at32f4xx_usart.c ****     /* Enable the NACK transmission by setting the NACK bit in the CR3 register */
+ 727:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 |= CTRL3_NACKEN_Set;
+ 1056              		.loc 1 727 5 is_stmt 1 view .LVU307
+ 1057              		.loc 1 727 19 is_stmt 0 view .LVU308
+ 1058 0002 838A     		ldrh	r3, [r0, #20]
+ 1059 0004 9BB2     		uxth	r3, r3
+ 1060 0006 43F01003 		orr	r3, r3, #16
+ 1061 000a 8382     		strh	r3, [r0, #20]	@ movhi
+ 1062 000c 7047     		bx	lr
+ 1063              	.L58:
+ 728:./lib/src/at32f4xx_usart.c ****   }
+ 729:./lib/src/at32f4xx_usart.c ****   else
+ 730:./lib/src/at32f4xx_usart.c ****   {
+ 731:./lib/src/at32f4xx_usart.c ****     /* Disable the NACK transmission by clearing the NACK bit in the CR3 register */
+ 732:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 &= CTRL3_NACKEN_Reset;
+ 1064              		.loc 1 732 5 is_stmt 1 view .LVU309
+ 1065              		.loc 1 732 19 is_stmt 0 view .LVU310
+ 1066 000e 838A     		ldrh	r3, [r0, #20]
+ 1067 0010 9BB2     		uxth	r3, r3
+ 1068 0012 23F01003 		bic	r3, r3, #16
+ 1069 0016 9BB2     		uxth	r3, r3
+ 1070 0018 8382     		strh	r3, [r0, #20]	@ movhi
+ 733:./lib/src/at32f4xx_usart.c ****   }
+ 734:./lib/src/at32f4xx_usart.c **** }
+ 1071              		.loc 1 734 1 view .LVU311
+ 1072 001a 7047     		bx	lr
+ 1073              		.cfi_endproc
+ 1074              	.LFE142:
+ 1076              		.section	.text.USART_HalfDuplexCmd,"ax",%progbits
+ 1077              		.align	1
+ 1078              		.global	USART_HalfDuplexCmd
+ 1079              		.syntax unified
+ 1080              		.thumb
+ 1081              		.thumb_func
+ 1082              		.fpu fpv4-sp-d16
+ 1084              	USART_HalfDuplexCmd:
+ 1085              	.LVL80:
+ 1086              	.LFB143:
+ 735:./lib/src/at32f4xx_usart.c **** 
+ 736:./lib/src/at32f4xx_usart.c **** /**
+ 737:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART’s Half Duplex communication.
+ 738:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 739:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 740:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 741:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the USART Communication.
+ 742:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 743:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 744:./lib/src/at32f4xx_usart.c ****   */
+ 745:./lib/src/at32f4xx_usart.c **** void USART_HalfDuplexCmd(USART_Type* USARTx, FunctionalState NewState)
+ 746:./lib/src/at32f4xx_usart.c **** {
+ 1087              		.loc 1 746 1 is_stmt 1 view -0
+ 1088              		.cfi_startproc
+ARM GAS  /tmp/ccbIHlMU.s 			page 33
+
+
+ 1089              		@ args = 0, pretend = 0, frame = 0
+ 1090              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1091              		@ link register save eliminated.
+ 747:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 748:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1092              		.loc 1 748 3 view .LVU313
+ 749:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1093              		.loc 1 749 3 view .LVU314
+ 750:./lib/src/at32f4xx_usart.c **** 
+ 751:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1094              		.loc 1 751 3 view .LVU315
+ 1095              		.loc 1 751 6 is_stmt 0 view .LVU316
+ 1096 0000 29B1     		cbz	r1, .L61
+ 752:./lib/src/at32f4xx_usart.c ****   {
+ 753:./lib/src/at32f4xx_usart.c ****     /* Enable the Half-Duplex mode by setting the HDSEL bit in the CR3 register */
+ 754:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 |= CTRL3_HALFSEL_Set;
+ 1097              		.loc 1 754 5 is_stmt 1 view .LVU317
+ 1098              		.loc 1 754 19 is_stmt 0 view .LVU318
+ 1099 0002 838A     		ldrh	r3, [r0, #20]
+ 1100 0004 9BB2     		uxth	r3, r3
+ 1101 0006 43F00803 		orr	r3, r3, #8
+ 1102 000a 8382     		strh	r3, [r0, #20]	@ movhi
+ 1103 000c 7047     		bx	lr
+ 1104              	.L61:
+ 755:./lib/src/at32f4xx_usart.c ****   }
+ 756:./lib/src/at32f4xx_usart.c ****   else
+ 757:./lib/src/at32f4xx_usart.c ****   {
+ 758:./lib/src/at32f4xx_usart.c ****     /* Disable the Half-Duplex mode by clearing the HDSEL bit in the CR3 register */
+ 759:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 &= CTRL3_HALFSEL_Reset;
+ 1105              		.loc 1 759 5 is_stmt 1 view .LVU319
+ 1106              		.loc 1 759 19 is_stmt 0 view .LVU320
+ 1107 000e 838A     		ldrh	r3, [r0, #20]
+ 1108 0010 9BB2     		uxth	r3, r3
+ 1109 0012 23F00803 		bic	r3, r3, #8
+ 1110 0016 9BB2     		uxth	r3, r3
+ 1111 0018 8382     		strh	r3, [r0, #20]	@ movhi
+ 760:./lib/src/at32f4xx_usart.c ****   }
+ 761:./lib/src/at32f4xx_usart.c **** }
+ 1112              		.loc 1 761 1 view .LVU321
+ 1113 001a 7047     		bx	lr
+ 1114              		.cfi_endproc
+ 1115              	.LFE143:
+ 1117              		.section	.text.USART_OverSampling8Cmd,"ax",%progbits
+ 1118              		.align	1
+ 1119              		.global	USART_OverSampling8Cmd
+ 1120              		.syntax unified
+ 1121              		.thumb
+ 1122              		.thumb_func
+ 1123              		.fpu fpv4-sp-d16
+ 1125              	USART_OverSampling8Cmd:
+ 1126              	.LVL81:
+ 1127              	.LFB144:
+ 762:./lib/src/at32f4xx_usart.c **** 
+ 763:./lib/src/at32f4xx_usart.c **** 
+ 764:./lib/src/at32f4xx_usart.c **** /**
+ 765:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART's 8x oversampling mode.
+ 766:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ARM GAS  /tmp/ccbIHlMU.s 			page 34
+
+
+ 767:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 768:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 769:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the USART one bit sampling method.
+ 770:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 771:./lib/src/at32f4xx_usart.c ****   * @note
+ 772:./lib/src/at32f4xx_usart.c ****   *     This function has to be called before calling USART_Init()
+ 773:./lib/src/at32f4xx_usart.c ****   *     function in order to have correct baudrate Divider value.
+ 774:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 775:./lib/src/at32f4xx_usart.c ****   */
+ 776:./lib/src/at32f4xx_usart.c **** void USART_OverSampling8Cmd(USART_Type* USARTx, FunctionalState NewState)
+ 777:./lib/src/at32f4xx_usart.c **** {
+ 1128              		.loc 1 777 1 is_stmt 1 view -0
+ 1129              		.cfi_startproc
+ 1130              		@ args = 0, pretend = 0, frame = 0
+ 1131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1132              		@ link register save eliminated.
+ 778:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 779:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1133              		.loc 1 779 3 view .LVU323
+ 780:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1134              		.loc 1 780 3 view .LVU324
+ 781:./lib/src/at32f4xx_usart.c **** 
+ 782:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1135              		.loc 1 782 3 view .LVU325
+ 1136              		.loc 1 782 6 is_stmt 0 view .LVU326
+ 1137 0000 39B1     		cbz	r1, .L64
+ 783:./lib/src/at32f4xx_usart.c ****   {
+ 784:./lib/src/at32f4xx_usart.c ****     /* Enable the 8x Oversampling mode by setting the OVER8 bit in the CTRL1 register */
+ 785:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL1 |= CTRL1_OVER8_Set;
+ 1138              		.loc 1 785 5 is_stmt 1 view .LVU327
+ 1139              		.loc 1 785 19 is_stmt 0 view .LVU328
+ 1140 0002 8389     		ldrh	r3, [r0, #12]
+ 1141 0004 6FEA4343 		mvn	r3, r3, lsl #17
+ 1142 0008 6FEA5343 		mvn	r3, r3, lsr #17
+ 1143 000c 9BB2     		uxth	r3, r3
+ 1144 000e 8381     		strh	r3, [r0, #12]	@ movhi
+ 1145 0010 7047     		bx	lr
+ 1146              	.L64:
+ 786:./lib/src/at32f4xx_usart.c ****   }
+ 787:./lib/src/at32f4xx_usart.c ****   else
+ 788:./lib/src/at32f4xx_usart.c ****   {
+ 789:./lib/src/at32f4xx_usart.c ****     /* Disable the 8x Oversampling mode by clearing the OVER8 bit in the CTRL1 register */
+ 790:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL1 &= CTRL1_OVER8_Reset;
+ 1147              		.loc 1 790 5 is_stmt 1 view .LVU329
+ 1148              		.loc 1 790 19 is_stmt 0 view .LVU330
+ 1149 0012 8389     		ldrh	r3, [r0, #12]
+ 1150 0014 C3F30E03 		ubfx	r3, r3, #0, #15
+ 1151 0018 8381     		strh	r3, [r0, #12]	@ movhi
+ 791:./lib/src/at32f4xx_usart.c ****   }
+ 792:./lib/src/at32f4xx_usart.c **** }
+ 1152              		.loc 1 792 1 view .LVU331
+ 1153 001a 7047     		bx	lr
+ 1154              		.cfi_endproc
+ 1155              	.LFE144:
+ 1157              		.section	.text.USART_OneBitMethodCmd,"ax",%progbits
+ 1158              		.align	1
+ 1159              		.global	USART_OneBitMethodCmd
+ARM GAS  /tmp/ccbIHlMU.s 			page 35
+
+
+ 1160              		.syntax unified
+ 1161              		.thumb
+ 1162              		.thumb_func
+ 1163              		.fpu fpv4-sp-d16
+ 1165              	USART_OneBitMethodCmd:
+ 1166              	.LVL82:
+ 1167              	.LFB145:
+ 793:./lib/src/at32f4xx_usart.c **** 
+ 794:./lib/src/at32f4xx_usart.c **** /**
+ 795:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART's one bit sampling method.
+ 796:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 797:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 798:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 799:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the USART one bit sampling method.
+ 800:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 801:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 802:./lib/src/at32f4xx_usart.c ****   */
+ 803:./lib/src/at32f4xx_usart.c **** void USART_OneBitMethodCmd(USART_Type* USARTx, FunctionalState NewState)
+ 804:./lib/src/at32f4xx_usart.c **** {
+ 1168              		.loc 1 804 1 is_stmt 1 view -0
+ 1169              		.cfi_startproc
+ 1170              		@ args = 0, pretend = 0, frame = 0
+ 1171              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1172              		@ link register save eliminated.
+ 805:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 806:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1173              		.loc 1 806 3 view .LVU333
+ 807:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1174              		.loc 1 807 3 view .LVU334
+ 808:./lib/src/at32f4xx_usart.c **** 
+ 809:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1175              		.loc 1 809 3 view .LVU335
+ 1176              		.loc 1 809 6 is_stmt 0 view .LVU336
+ 1177 0000 29B1     		cbz	r1, .L67
+ 810:./lib/src/at32f4xx_usart.c ****   {
+ 811:./lib/src/at32f4xx_usart.c ****     /* Enable the one bit method by setting the ONEBITE bit in the CR3 register */
+ 812:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 |= CTRL3_ONEBITE_Set;
+ 1178              		.loc 1 812 5 is_stmt 1 view .LVU337
+ 1179              		.loc 1 812 19 is_stmt 0 view .LVU338
+ 1180 0002 838A     		ldrh	r3, [r0, #20]
+ 1181 0004 9BB2     		uxth	r3, r3
+ 1182 0006 43F40063 		orr	r3, r3, #2048
+ 1183 000a 8382     		strh	r3, [r0, #20]	@ movhi
+ 1184 000c 7047     		bx	lr
+ 1185              	.L67:
+ 813:./lib/src/at32f4xx_usart.c ****   }
+ 814:./lib/src/at32f4xx_usart.c ****   else
+ 815:./lib/src/at32f4xx_usart.c ****   {
+ 816:./lib/src/at32f4xx_usart.c ****     /* Disable tthe one bit method by clearing the ONEBITE bit in the CR3 register */
+ 817:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 &= CTRL3_ONEBITE_Reset;
+ 1186              		.loc 1 817 5 is_stmt 1 view .LVU339
+ 1187              		.loc 1 817 19 is_stmt 0 view .LVU340
+ 1188 000e 838A     		ldrh	r3, [r0, #20]
+ 1189 0010 9BB2     		uxth	r3, r3
+ 1190 0012 23F40063 		bic	r3, r3, #2048
+ 1191 0016 9BB2     		uxth	r3, r3
+ 1192 0018 8382     		strh	r3, [r0, #20]	@ movhi
+ARM GAS  /tmp/ccbIHlMU.s 			page 36
+
+
+ 818:./lib/src/at32f4xx_usart.c ****   }
+ 819:./lib/src/at32f4xx_usart.c **** }
+ 1193              		.loc 1 819 1 view .LVU341
+ 1194 001a 7047     		bx	lr
+ 1195              		.cfi_endproc
+ 1196              	.LFE145:
+ 1198              		.section	.text.USART_IrDAConfig,"ax",%progbits
+ 1199              		.align	1
+ 1200              		.global	USART_IrDAConfig
+ 1201              		.syntax unified
+ 1202              		.thumb
+ 1203              		.thumb_func
+ 1204              		.fpu fpv4-sp-d16
+ 1206              	USART_IrDAConfig:
+ 1207              	.LVL83:
+ 1208              	.LFB146:
+ 820:./lib/src/at32f4xx_usart.c **** 
+ 821:./lib/src/at32f4xx_usart.c **** /**
+ 822:./lib/src/at32f4xx_usart.c ****   * @brief  Configures the USART's IrDA interface.
+ 823:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 824:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 825:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 826:./lib/src/at32f4xx_usart.c ****   * @param  USART_IrDAMode: specifies the IrDA mode.
+ 827:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 828:./lib/src/at32f4xx_usart.c ****   *     @arg USART_IrDAMode_LowPower
+ 829:./lib/src/at32f4xx_usart.c ****   *     @arg USART_IrDAMode_Normal
+ 830:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 831:./lib/src/at32f4xx_usart.c ****   */
+ 832:./lib/src/at32f4xx_usart.c **** void USART_IrDAConfig(USART_Type* USARTx, uint16_t USART_IrDAMode)
+ 833:./lib/src/at32f4xx_usart.c **** {
+ 1209              		.loc 1 833 1 is_stmt 1 view -0
+ 1210              		.cfi_startproc
+ 1211              		@ args = 0, pretend = 0, frame = 0
+ 1212              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1213              		@ link register save eliminated.
+ 834:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 835:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1214              		.loc 1 835 3 view .LVU343
+ 836:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_IRDA_MODE(USART_IrDAMode));
+ 1215              		.loc 1 836 3 view .LVU344
+ 837:./lib/src/at32f4xx_usart.c **** 
+ 838:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL3 &= CTRL3_IRDALP_Mask;
+ 1216              		.loc 1 838 3 view .LVU345
+ 1217              		.loc 1 838 17 is_stmt 0 view .LVU346
+ 1218 0000 838A     		ldrh	r3, [r0, #20]
+ 1219 0002 9BB2     		uxth	r3, r3
+ 1220 0004 23F00403 		bic	r3, r3, #4
+ 1221 0008 9BB2     		uxth	r3, r3
+ 1222 000a 8382     		strh	r3, [r0, #20]	@ movhi
+ 839:./lib/src/at32f4xx_usart.c ****   USARTx->CTRL3 |= USART_IrDAMode;
+ 1223              		.loc 1 839 3 is_stmt 1 view .LVU347
+ 1224              		.loc 1 839 17 is_stmt 0 view .LVU348
+ 1225 000c 838A     		ldrh	r3, [r0, #20]
+ 1226 000e 9BB2     		uxth	r3, r3
+ 1227 0010 0B43     		orrs	r3, r3, r1
+ 1228 0012 8382     		strh	r3, [r0, #20]	@ movhi
+ 840:./lib/src/at32f4xx_usart.c **** }
+ARM GAS  /tmp/ccbIHlMU.s 			page 37
+
+
+ 1229              		.loc 1 840 1 view .LVU349
+ 1230 0014 7047     		bx	lr
+ 1231              		.cfi_endproc
+ 1232              	.LFE146:
+ 1234              		.section	.text.USART_IrDACmd,"ax",%progbits
+ 1235              		.align	1
+ 1236              		.global	USART_IrDACmd
+ 1237              		.syntax unified
+ 1238              		.thumb
+ 1239              		.thumb_func
+ 1240              		.fpu fpv4-sp-d16
+ 1242              	USART_IrDACmd:
+ 1243              	.LVL84:
+ 1244              	.LFB147:
+ 841:./lib/src/at32f4xx_usart.c **** 
+ 842:./lib/src/at32f4xx_usart.c **** /**
+ 843:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART's IrDA interface.
+ 844:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 845:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 846:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 847:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the IrDA mode.
+ 848:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+ 849:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 850:./lib/src/at32f4xx_usart.c ****   */
+ 851:./lib/src/at32f4xx_usart.c **** void USART_IrDACmd(USART_Type* USARTx, FunctionalState NewState)
+ 852:./lib/src/at32f4xx_usart.c **** {
+ 1245              		.loc 1 852 1 is_stmt 1 view -0
+ 1246              		.cfi_startproc
+ 1247              		@ args = 0, pretend = 0, frame = 0
+ 1248              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1249              		@ link register save eliminated.
+ 853:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 854:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1250              		.loc 1 854 3 view .LVU351
+ 855:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1251              		.loc 1 855 3 view .LVU352
+ 856:./lib/src/at32f4xx_usart.c **** 
+ 857:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1252              		.loc 1 857 3 view .LVU353
+ 1253              		.loc 1 857 6 is_stmt 0 view .LVU354
+ 1254 0000 29B1     		cbz	r1, .L71
+ 858:./lib/src/at32f4xx_usart.c ****   {
+ 859:./lib/src/at32f4xx_usart.c ****     /* Enable the IrDA mode by setting the IREN bit in the CR3 register */
+ 860:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 |= CTRL3_IRDAEN_Set;
+ 1255              		.loc 1 860 5 is_stmt 1 view .LVU355
+ 1256              		.loc 1 860 19 is_stmt 0 view .LVU356
+ 1257 0002 838A     		ldrh	r3, [r0, #20]
+ 1258 0004 9BB2     		uxth	r3, r3
+ 1259 0006 43F00203 		orr	r3, r3, #2
+ 1260 000a 8382     		strh	r3, [r0, #20]	@ movhi
+ 1261 000c 7047     		bx	lr
+ 1262              	.L71:
+ 861:./lib/src/at32f4xx_usart.c ****   }
+ 862:./lib/src/at32f4xx_usart.c ****   else
+ 863:./lib/src/at32f4xx_usart.c ****   {
+ 864:./lib/src/at32f4xx_usart.c ****     /* Disable the IrDA mode by clearing the IREN bit in the CR3 register */
+ 865:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL3 &= CTRL3_IRDAEN_Reset;
+ARM GAS  /tmp/ccbIHlMU.s 			page 38
+
+
+ 1263              		.loc 1 865 5 is_stmt 1 view .LVU357
+ 1264              		.loc 1 865 19 is_stmt 0 view .LVU358
+ 1265 000e 838A     		ldrh	r3, [r0, #20]
+ 1266 0010 9BB2     		uxth	r3, r3
+ 1267 0012 23F00203 		bic	r3, r3, #2
+ 1268 0016 9BB2     		uxth	r3, r3
+ 1269 0018 8382     		strh	r3, [r0, #20]	@ movhi
+ 866:./lib/src/at32f4xx_usart.c ****   }
+ 867:./lib/src/at32f4xx_usart.c **** }
+ 1270              		.loc 1 867 1 view .LVU359
+ 1271 001a 7047     		bx	lr
+ 1272              		.cfi_endproc
+ 1273              	.LFE147:
+ 1275              		.section	.text.USART_GetFlagStatus,"ax",%progbits
+ 1276              		.align	1
+ 1277              		.global	USART_GetFlagStatus
+ 1278              		.syntax unified
+ 1279              		.thumb
+ 1280              		.thumb_func
+ 1281              		.fpu fpv4-sp-d16
+ 1283              	USART_GetFlagStatus:
+ 1284              	.LVL85:
+ 1285              	.LFB148:
+ 868:./lib/src/at32f4xx_usart.c **** 
+ 869:./lib/src/at32f4xx_usart.c **** /**
+ 870:./lib/src/at32f4xx_usart.c ****   * @brief  Checks whether the specified USART flag is set or not.
+ 871:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 872:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 873:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 874:./lib/src/at32f4xx_usart.c ****   * @param  USART_FLAG: specifies the flag to check.
+ 875:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 876:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_CTSF:  CTS Change flag (not available for UART4 and UART5)
+ 877:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_LBDF:  LIN Break detection flag
+ 878:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_TDE:  Transmit data register empty flag
+ 879:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_TRAC:   Transmission Complete flag
+ 880:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_RDNE: Receive data register not empty flag
+ 881:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_IDLEF: Idle Line detection flag
+ 882:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_ORERR:  OverRun Error flag
+ 883:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_NERR:   Noise Error flag
+ 884:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_FERR:   Framing Error flag
+ 885:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_PERR:   Parity Error flag
+ 886:./lib/src/at32f4xx_usart.c ****   * @retval The new state of USART_FLAG (SET or RESET).
+ 887:./lib/src/at32f4xx_usart.c ****   */
+ 888:./lib/src/at32f4xx_usart.c **** FlagStatus USART_GetFlagStatus(USART_Type* USARTx, uint16_t USART_FLAG)
+ 889:./lib/src/at32f4xx_usart.c **** {
+ 1286              		.loc 1 889 1 is_stmt 1 view -0
+ 1287              		.cfi_startproc
+ 1288              		@ args = 0, pretend = 0, frame = 0
+ 1289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1290              		@ link register save eliminated.
+ 890:./lib/src/at32f4xx_usart.c ****   FlagStatus bitstatus = RESET;
+ 1291              		.loc 1 890 3 view .LVU361
+ 891:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 892:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1292              		.loc 1 892 3 view .LVU362
+ 893:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_FLAG(USART_FLAG));
+ 1293              		.loc 1 893 3 view .LVU363
+ARM GAS  /tmp/ccbIHlMU.s 			page 39
+
+
+ 894:./lib/src/at32f4xx_usart.c **** 
+ 895:./lib/src/at32f4xx_usart.c ****   /* The CTS flag is not available for UART4 and UART5 */
+ 896:./lib/src/at32f4xx_usart.c ****   if (USART_FLAG == USART_FLAG_CTSF)
+ 1294              		.loc 1 896 3 view .LVU364
+ 897:./lib/src/at32f4xx_usart.c ****   {
+ 898:./lib/src/at32f4xx_usart.c ****     assert_param(IS_USART_123_PERIPH(USARTx));
+ 1295              		.loc 1 898 5 view .LVU365
+ 899:./lib/src/at32f4xx_usart.c ****   }
+ 900:./lib/src/at32f4xx_usart.c **** 
+ 901:./lib/src/at32f4xx_usart.c ****   if ((USARTx->STS & USART_FLAG) != (uint16_t)RESET)
+ 1296              		.loc 1 901 3 view .LVU366
+ 1297              		.loc 1 901 14 is_stmt 0 view .LVU367
+ 1298 0000 0388     		ldrh	r3, [r0]
+ 1299              		.loc 1 901 6 view .LVU368
+ 1300 0002 1942     		tst	r1, r3
+ 1301 0004 01D0     		beq	.L75
+ 902:./lib/src/at32f4xx_usart.c ****   {
+ 903:./lib/src/at32f4xx_usart.c ****     bitstatus = SET;
+ 1302              		.loc 1 903 15 view .LVU369
+ 1303 0006 0120     		movs	r0, #1
+ 1304              	.LVL86:
+ 1305              		.loc 1 903 15 view .LVU370
+ 1306 0008 7047     		bx	lr
+ 1307              	.LVL87:
+ 1308              	.L75:
+ 904:./lib/src/at32f4xx_usart.c ****   }
+ 905:./lib/src/at32f4xx_usart.c ****   else
+ 906:./lib/src/at32f4xx_usart.c ****   {
+ 907:./lib/src/at32f4xx_usart.c ****     bitstatus = RESET;
+ 1309              		.loc 1 907 15 view .LVU371
+ 1310 000a 0020     		movs	r0, #0
+ 1311              	.LVL88:
+ 908:./lib/src/at32f4xx_usart.c ****   }
+ 909:./lib/src/at32f4xx_usart.c **** 
+ 910:./lib/src/at32f4xx_usart.c ****   return bitstatus;
+ 1312              		.loc 1 910 3 is_stmt 1 view .LVU372
+ 911:./lib/src/at32f4xx_usart.c **** }
+ 1313              		.loc 1 911 1 is_stmt 0 view .LVU373
+ 1314 000c 7047     		bx	lr
+ 1315              		.cfi_endproc
+ 1316              	.LFE148:
+ 1318              		.section	.text.USART_ClearFlag,"ax",%progbits
+ 1319              		.align	1
+ 1320              		.global	USART_ClearFlag
+ 1321              		.syntax unified
+ 1322              		.thumb
+ 1323              		.thumb_func
+ 1324              		.fpu fpv4-sp-d16
+ 1326              	USART_ClearFlag:
+ 1327              	.LVL89:
+ 1328              	.LFB149:
+ 912:./lib/src/at32f4xx_usart.c **** 
+ 913:./lib/src/at32f4xx_usart.c **** /**
+ 914:./lib/src/at32f4xx_usart.c ****   * @brief  Clears the USARTx's pending flags.
+ 915:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 916:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 917:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ARM GAS  /tmp/ccbIHlMU.s 			page 40
+
+
+ 918:./lib/src/at32f4xx_usart.c ****   * @param  USART_FLAG: specifies the flag to clear.
+ 919:./lib/src/at32f4xx_usart.c ****   *   This parameter can be any combination of the following values:
+ 920:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_CTSF:  CTS Change flag (not available for UART4 and UART5).
+ 921:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_LBDF:  LIN Break detection flag.
+ 922:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_TRAC:   Transmission Complete flag.
+ 923:./lib/src/at32f4xx_usart.c ****   *     @arg USART_FLAG_RDNE: Receive data register not empty flag.
+ 924:./lib/src/at32f4xx_usart.c ****   *
+ 925:./lib/src/at32f4xx_usart.c ****   * @note
+ 926:./lib/src/at32f4xx_usart.c ****   *   - PE (Parity error), FE (Framing error), NE (Noise error), ORE (OverRun
+ 927:./lib/src/at32f4xx_usart.c ****   *     error) and IDLE (Idle line detected) flags are cleared by software
+ 928:./lib/src/at32f4xx_usart.c ****   *     sequence: a read operation to USART_SR register (USART_GetFlagStatus())
+ 929:./lib/src/at32f4xx_usart.c ****   *     followed by a read operation to USART_DR register (USART_ReceiveData()).
+ 930:./lib/src/at32f4xx_usart.c ****   *   - RXNE flag can be also cleared by a read to the USART_DR register
+ 931:./lib/src/at32f4xx_usart.c ****   *     (USART_ReceiveData()).
+ 932:./lib/src/at32f4xx_usart.c ****   *   - TC flag can be also cleared by software sequence: a read operation to
+ 933:./lib/src/at32f4xx_usart.c ****   *     USART_SR register (USART_GetFlagStatus()) followed by a write operation
+ 934:./lib/src/at32f4xx_usart.c ****   *     to USART_DR register (USART_SendData()).
+ 935:./lib/src/at32f4xx_usart.c ****   *   - TXE flag is cleared only by a write to the USART_DR register
+ 936:./lib/src/at32f4xx_usart.c ****   *     (USART_SendData()).
+ 937:./lib/src/at32f4xx_usart.c ****   * @retval None
+ 938:./lib/src/at32f4xx_usart.c ****   */
+ 939:./lib/src/at32f4xx_usart.c **** void USART_ClearFlag(USART_Type* USARTx, uint16_t USART_FLAG)
+ 940:./lib/src/at32f4xx_usart.c **** {
+ 1329              		.loc 1 940 1 is_stmt 1 view -0
+ 1330              		.cfi_startproc
+ 1331              		@ args = 0, pretend = 0, frame = 0
+ 1332              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1333              		@ link register save eliminated.
+ 941:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 942:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1334              		.loc 1 942 3 view .LVU375
+ 943:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_CLEAR_FLAG(USART_FLAG));
+ 1335              		.loc 1 943 3 view .LVU376
+ 944:./lib/src/at32f4xx_usart.c **** 
+ 945:./lib/src/at32f4xx_usart.c ****   /* The CTS flag is not available for UART4 and UART5 */
+ 946:./lib/src/at32f4xx_usart.c ****   if ((USART_FLAG & USART_FLAG_CTSF) == USART_FLAG_CTSF)
+ 1336              		.loc 1 946 3 view .LVU377
+ 947:./lib/src/at32f4xx_usart.c ****   {
+ 948:./lib/src/at32f4xx_usart.c ****     assert_param(IS_USART_123_PERIPH(USARTx));
+ 1337              		.loc 1 948 5 view .LVU378
+ 949:./lib/src/at32f4xx_usart.c ****   }
+ 950:./lib/src/at32f4xx_usart.c **** 
+ 951:./lib/src/at32f4xx_usart.c ****   USARTx->STS = (uint16_t)~USART_FLAG;
+ 1338              		.loc 1 951 3 view .LVU379
+ 1339              		.loc 1 951 17 is_stmt 0 view .LVU380
+ 1340 0000 C943     		mvns	r1, r1
+ 1341              	.LVL90:
+ 1342              		.loc 1 951 17 view .LVU381
+ 1343 0002 89B2     		uxth	r1, r1
+ 1344              		.loc 1 951 15 view .LVU382
+ 1345 0004 0180     		strh	r1, [r0]	@ movhi
+ 952:./lib/src/at32f4xx_usart.c **** }
+ 1346              		.loc 1 952 1 view .LVU383
+ 1347 0006 7047     		bx	lr
+ 1348              		.cfi_endproc
+ 1349              	.LFE149:
+ 1351              		.section	.text.USART_GetITStatus,"ax",%progbits
+ARM GAS  /tmp/ccbIHlMU.s 			page 41
+
+
+ 1352              		.align	1
+ 1353              		.global	USART_GetITStatus
+ 1354              		.syntax unified
+ 1355              		.thumb
+ 1356              		.thumb_func
+ 1357              		.fpu fpv4-sp-d16
+ 1359              	USART_GetITStatus:
+ 1360              	.LVL91:
+ 1361              	.LFB150:
+ 953:./lib/src/at32f4xx_usart.c **** 
+ 954:./lib/src/at32f4xx_usart.c **** /**
+ 955:./lib/src/at32f4xx_usart.c ****   * @brief  Checks whether the specified USART interrupt has occurred or not.
+ 956:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+ 957:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 958:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+ 959:./lib/src/at32f4xx_usart.c ****   * @param  USART_INT: specifies the USART interrupt source to check.
+ 960:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+ 961:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_CTSF:  CTS change interrupt (not available for UART4 and UART5)
+ 962:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_LBDF:  LIN Break detection interrupt
+ 963:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_TDE:  Tansmit Data Register empty interrupt
+ 964:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_TRAC:   Transmission complete interrupt
+ 965:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_RDNE: Receive Data register not empty interrupt
+ 966:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_IDLEF: Idle line detection interrupt
+ 967:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_ORERR:  OverRun Error interrupt
+ 968:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_NERR:   Noise Error interrupt
+ 969:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_FERR:   Framing Error interrupt
+ 970:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_PERR:   Parity Error interrupt
+ 971:./lib/src/at32f4xx_usart.c ****   * @retval The new state of USART_INT (SET or RESET).
+ 972:./lib/src/at32f4xx_usart.c ****   */
+ 973:./lib/src/at32f4xx_usart.c **** ITStatus USART_GetITStatus(USART_Type* USARTx, uint16_t USART_INT)
+ 974:./lib/src/at32f4xx_usart.c **** {
+ 1362              		.loc 1 974 1 is_stmt 1 view -0
+ 1363              		.cfi_startproc
+ 1364              		@ args = 0, pretend = 0, frame = 0
+ 1365              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1366              		@ link register save eliminated.
+ 975:./lib/src/at32f4xx_usart.c ****   uint32_t bitpos = 0x00, itmask = 0x00, usartreg = 0x00;
+ 1367              		.loc 1 975 3 view .LVU385
+ 976:./lib/src/at32f4xx_usart.c ****   ITStatus bitstatus = RESET;
+ 1368              		.loc 1 976 3 view .LVU386
+ 977:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+ 978:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1369              		.loc 1 978 3 view .LVU387
+ 979:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_GET_INT(USART_INT));
+ 1370              		.loc 1 979 3 view .LVU388
+ 980:./lib/src/at32f4xx_usart.c **** 
+ 981:./lib/src/at32f4xx_usart.c ****   /* The CTS interrupt is not available for UART4, UART5, USART6, UART7 and UART8 */
+ 982:./lib/src/at32f4xx_usart.c ****   if (USART_INT == USART_INT_CTSF)
+ 1371              		.loc 1 982 3 view .LVU389
+ 983:./lib/src/at32f4xx_usart.c ****   {
+ 984:./lib/src/at32f4xx_usart.c ****     assert_param(IS_USART_123_PERIPH(USARTx));
+ 1372              		.loc 1 984 5 view .LVU390
+ 985:./lib/src/at32f4xx_usart.c ****   }
+ 986:./lib/src/at32f4xx_usart.c **** 
+ 987:./lib/src/at32f4xx_usart.c ****   /* Get the USART register index */
+ 988:./lib/src/at32f4xx_usart.c ****   usartreg = (((uint8_t)USART_INT) >> 0x05);
+ 1373              		.loc 1 988 3 view .LVU391
+ARM GAS  /tmp/ccbIHlMU.s 			page 42
+
+
+ 1374              		.loc 1 988 36 is_stmt 0 view .LVU392
+ 1375 0000 C1F34212 		ubfx	r2, r1, #5, #3
+ 1376              	.LVL92:
+ 989:./lib/src/at32f4xx_usart.c ****   /* Get the interrupt position */
+ 990:./lib/src/at32f4xx_usart.c ****   itmask = USART_INT & INT_Mask;
+ 1377              		.loc 1 990 3 is_stmt 1 view .LVU393
+ 1378              		.loc 1 990 10 is_stmt 0 view .LVU394
+ 1379 0004 01F01F0C 		and	ip, r1, #31
+ 1380              	.LVL93:
+ 991:./lib/src/at32f4xx_usart.c ****   itmask = (uint32_t)0x01 << itmask;
+ 1381              		.loc 1 991 3 is_stmt 1 view .LVU395
+ 1382              		.loc 1 991 10 is_stmt 0 view .LVU396
+ 1383 0008 0123     		movs	r3, #1
+ 1384 000a 03FA0CF3 		lsl	r3, r3, ip
+ 1385              	.LVL94:
+ 992:./lib/src/at32f4xx_usart.c **** 
+ 993:./lib/src/at32f4xx_usart.c ****   if (usartreg == 0x01) /* The INT  is in CTRL1 register */
+ 1386              		.loc 1 993 3 is_stmt 1 view .LVU397
+ 1387              		.loc 1 993 6 is_stmt 0 view .LVU398
+ 1388 000e 012A     		cmp	r2, #1
+ 1389 0010 0FD0     		beq	.L84
+ 994:./lib/src/at32f4xx_usart.c ****   {
+ 995:./lib/src/at32f4xx_usart.c ****     itmask &= USARTx->CTRL1;
+ 996:./lib/src/at32f4xx_usart.c ****   }
+ 997:./lib/src/at32f4xx_usart.c ****   else if (usartreg == 0x02) /* The INT  is in CTRL2 register */
+ 1390              		.loc 1 997 8 is_stmt 1 view .LVU399
+ 1391              		.loc 1 997 11 is_stmt 0 view .LVU400
+ 1392 0012 022A     		cmp	r2, #2
+ 1393 0014 11D0     		beq	.L85
+ 998:./lib/src/at32f4xx_usart.c ****   {
+ 999:./lib/src/at32f4xx_usart.c ****     itmask &= USARTx->CTRL2;
+1000:./lib/src/at32f4xx_usart.c ****   }
+1001:./lib/src/at32f4xx_usart.c ****   else /* The INT  is in CR3 register */
+1002:./lib/src/at32f4xx_usart.c ****   {
+1003:./lib/src/at32f4xx_usart.c ****     itmask &= USARTx->CTRL3;
+ 1394              		.loc 1 1003 5 is_stmt 1 view .LVU401
+ 1395              		.loc 1 1003 21 is_stmt 0 view .LVU402
+ 1396 0016 828A     		ldrh	r2, [r0, #20]
+ 1397              	.LVL95:
+ 1398              		.loc 1 1003 21 view .LVU403
+ 1399 0018 92B2     		uxth	r2, r2
+ 1400              		.loc 1 1003 12 view .LVU404
+ 1401 001a 1340     		ands	r3, r3, r2
+ 1402              	.LVL96:
+ 1403              	.L79:
+1004:./lib/src/at32f4xx_usart.c ****   }
+1005:./lib/src/at32f4xx_usart.c **** 
+1006:./lib/src/at32f4xx_usart.c ****   bitpos = USART_INT >> 0x08;
+ 1404              		.loc 1 1006 3 is_stmt 1 view .LVU405
+ 1405              		.loc 1 1006 22 is_stmt 0 view .LVU406
+ 1406 001c 090A     		lsrs	r1, r1, #8
+ 1407              	.LVL97:
+1007:./lib/src/at32f4xx_usart.c ****   bitpos = (uint32_t)0x01 << bitpos;
+ 1408              		.loc 1 1007 3 is_stmt 1 view .LVU407
+ 1409              		.loc 1 1007 10 is_stmt 0 view .LVU408
+ 1410 001e 0122     		movs	r2, #1
+ 1411 0020 02FA01F1 		lsl	r1, r2, r1
+ARM GAS  /tmp/ccbIHlMU.s 			page 43
+
+
+ 1412              	.LVL98:
+1008:./lib/src/at32f4xx_usart.c ****   bitpos &= USARTx->STS;
+ 1413              		.loc 1 1008 3 is_stmt 1 view .LVU409
+ 1414              		.loc 1 1008 19 is_stmt 0 view .LVU410
+ 1415 0024 0288     		ldrh	r2, [r0]
+ 1416 0026 92B2     		uxth	r2, r2
+ 1417              		.loc 1 1008 10 view .LVU411
+ 1418 0028 0A40     		ands	r2, r2, r1
+ 1419              	.LVL99:
+1009:./lib/src/at32f4xx_usart.c **** 
+1010:./lib/src/at32f4xx_usart.c ****   if ((itmask != (uint16_t)RESET) && (bitpos != (uint16_t)RESET))
+ 1420              		.loc 1 1010 3 is_stmt 1 view .LVU412
+ 1421              		.loc 1 1010 6 is_stmt 0 view .LVU413
+ 1422 002a 53B1     		cbz	r3, .L82
+ 1423              		.loc 1 1010 35 discriminator 1 view .LVU414
+ 1424 002c 5AB9     		cbnz	r2, .L83
+1011:./lib/src/at32f4xx_usart.c ****   {
+1012:./lib/src/at32f4xx_usart.c ****     bitstatus = SET;
+1013:./lib/src/at32f4xx_usart.c ****   }
+1014:./lib/src/at32f4xx_usart.c ****   else
+1015:./lib/src/at32f4xx_usart.c ****   {
+1016:./lib/src/at32f4xx_usart.c ****     bitstatus = RESET;
+ 1425              		.loc 1 1016 15 view .LVU415
+ 1426 002e 0020     		movs	r0, #0
+ 1427              	.LVL100:
+ 1428              		.loc 1 1016 15 view .LVU416
+ 1429 0030 7047     		bx	lr
+ 1430              	.LVL101:
+ 1431              	.L84:
+ 995:./lib/src/at32f4xx_usart.c ****   }
+ 1432              		.loc 1 995 5 is_stmt 1 view .LVU417
+ 995:./lib/src/at32f4xx_usart.c ****   }
+ 1433              		.loc 1 995 21 is_stmt 0 view .LVU418
+ 1434 0032 8289     		ldrh	r2, [r0, #12]
+ 1435              	.LVL102:
+ 995:./lib/src/at32f4xx_usart.c ****   }
+ 1436              		.loc 1 995 21 view .LVU419
+ 1437 0034 92B2     		uxth	r2, r2
+ 995:./lib/src/at32f4xx_usart.c ****   }
+ 1438              		.loc 1 995 12 view .LVU420
+ 1439 0036 1340     		ands	r3, r3, r2
+ 1440              	.LVL103:
+ 995:./lib/src/at32f4xx_usart.c ****   }
+ 1441              		.loc 1 995 12 view .LVU421
+ 1442 0038 F0E7     		b	.L79
+ 1443              	.LVL104:
+ 1444              	.L85:
+ 999:./lib/src/at32f4xx_usart.c ****   }
+ 1445              		.loc 1 999 5 is_stmt 1 view .LVU422
+ 999:./lib/src/at32f4xx_usart.c ****   }
+ 1446              		.loc 1 999 21 is_stmt 0 view .LVU423
+ 1447 003a 028A     		ldrh	r2, [r0, #16]
+ 1448              	.LVL105:
+ 999:./lib/src/at32f4xx_usart.c ****   }
+ 1449              		.loc 1 999 21 view .LVU424
+ 1450 003c 92B2     		uxth	r2, r2
+ 999:./lib/src/at32f4xx_usart.c ****   }
+ARM GAS  /tmp/ccbIHlMU.s 			page 44
+
+
+ 1451              		.loc 1 999 12 view .LVU425
+ 1452 003e 1340     		ands	r3, r3, r2
+ 1453              	.LVL106:
+ 999:./lib/src/at32f4xx_usart.c ****   }
+ 1454              		.loc 1 999 12 view .LVU426
+ 1455 0040 ECE7     		b	.L79
+ 1456              	.LVL107:
+ 1457              	.L82:
+ 1458              		.loc 1 1016 15 view .LVU427
+ 1459 0042 0020     		movs	r0, #0
+ 1460              	.LVL108:
+ 1461              		.loc 1 1016 15 view .LVU428
+ 1462 0044 7047     		bx	lr
+ 1463              	.LVL109:
+ 1464              	.L83:
+1012:./lib/src/at32f4xx_usart.c ****   }
+ 1465              		.loc 1 1012 15 view .LVU429
+ 1466 0046 0120     		movs	r0, #1
+ 1467              	.LVL110:
+1017:./lib/src/at32f4xx_usart.c ****   }
+1018:./lib/src/at32f4xx_usart.c **** 
+1019:./lib/src/at32f4xx_usart.c ****   return bitstatus;
+ 1468              		.loc 1 1019 3 is_stmt 1 view .LVU430
+1020:./lib/src/at32f4xx_usart.c **** }
+ 1469              		.loc 1 1020 1 is_stmt 0 view .LVU431
+ 1470 0048 7047     		bx	lr
+ 1471              		.cfi_endproc
+ 1472              	.LFE150:
+ 1474              		.section	.text.USART_ClearITPendingBit,"ax",%progbits
+ 1475              		.align	1
+ 1476              		.global	USART_ClearITPendingBit
+ 1477              		.syntax unified
+ 1478              		.thumb
+ 1479              		.thumb_func
+ 1480              		.fpu fpv4-sp-d16
+ 1482              	USART_ClearITPendingBit:
+ 1483              	.LVL111:
+ 1484              	.LFB151:
+1021:./lib/src/at32f4xx_usart.c **** 
+1022:./lib/src/at32f4xx_usart.c **** /**
+1023:./lib/src/at32f4xx_usart.c ****   * @brief  Clears the USARTx's interrupt pending bits.
+1024:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+1025:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+1026:./lib/src/at32f4xx_usart.c ****   *   USART1, USART2, USART3, UART4, UART5, USART6, UART7 or UART8.
+1027:./lib/src/at32f4xx_usart.c ****   * @param  USART_INT: specifies the interrupt pending bit to clear.
+1028:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+1029:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_CTSF:  CTS change interrupt (not available for UART4 and UART5)
+1030:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_LBDF:  LIN Break detection interrupt
+1031:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_TRAC:   Transmission complete interrupt.
+1032:./lib/src/at32f4xx_usart.c ****   *     @arg USART_INT_RDNE: Receive Data register not empty interrupt.
+1033:./lib/src/at32f4xx_usart.c ****   *
+1034:./lib/src/at32f4xx_usart.c ****   * @note
+1035:./lib/src/at32f4xx_usart.c ****   *   - PE (Parity error), FE (Framing error), NE (Noise error), ORE (OverRun
+1036:./lib/src/at32f4xx_usart.c ****   *     error) and IDLE (Idle line detected) pending bits are cleared by
+1037:./lib/src/at32f4xx_usart.c ****   *     software sequence: a read operation to USART_SR register
+1038:./lib/src/at32f4xx_usart.c ****   *     (USART_GetITStatus()) followed by a read operation to USART_DR register
+1039:./lib/src/at32f4xx_usart.c ****   *     (USART_ReceiveData()).
+ARM GAS  /tmp/ccbIHlMU.s 			page 45
+
+
+1040:./lib/src/at32f4xx_usart.c ****   *   - RXNE pending bit can be also cleared by a read to the USART_DR register
+1041:./lib/src/at32f4xx_usart.c ****   *     (USART_ReceiveData()).
+1042:./lib/src/at32f4xx_usart.c ****   *   - TC pending bit can be also cleared by software sequence: a read
+1043:./lib/src/at32f4xx_usart.c ****   *     operation to USART_SR register (USART_GetITStatus()) followed by a write
+1044:./lib/src/at32f4xx_usart.c ****   *     operation to USART_DR register (USART_SendData()).
+1045:./lib/src/at32f4xx_usart.c ****   *   - TXE pending bit is cleared only by a write to the USART_DR register
+1046:./lib/src/at32f4xx_usart.c ****   *     (USART_SendData()).
+1047:./lib/src/at32f4xx_usart.c ****   * @retval None
+1048:./lib/src/at32f4xx_usart.c ****   */
+1049:./lib/src/at32f4xx_usart.c **** void USART_ClearITPendingBit(USART_Type* USARTx, uint16_t USART_INT)
+1050:./lib/src/at32f4xx_usart.c **** {
+ 1485              		.loc 1 1050 1 is_stmt 1 view -0
+ 1486              		.cfi_startproc
+ 1487              		@ args = 0, pretend = 0, frame = 0
+ 1488              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1489              		@ link register save eliminated.
+1051:./lib/src/at32f4xx_usart.c ****   uint16_t bitpos = 0x00, itmask = 0x00;
+ 1490              		.loc 1 1051 3 view .LVU433
+1052:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+1053:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1491              		.loc 1 1053 3 view .LVU434
+1054:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_CLEAR_INT(USART_INT));
+ 1492              		.loc 1 1054 3 view .LVU435
+1055:./lib/src/at32f4xx_usart.c **** 
+1056:./lib/src/at32f4xx_usart.c ****   /* The CTS interrupt is not available for UART4, UART5, USART6, UART7 and UART8 */
+1057:./lib/src/at32f4xx_usart.c ****   if (USART_INT == USART_INT_CTSF)
+ 1493              		.loc 1 1057 3 view .LVU436
+1058:./lib/src/at32f4xx_usart.c ****   {
+1059:./lib/src/at32f4xx_usart.c ****     assert_param(IS_USART_123_PERIPH(USARTx));
+ 1494              		.loc 1 1059 5 view .LVU437
+1060:./lib/src/at32f4xx_usart.c ****   }
+1061:./lib/src/at32f4xx_usart.c **** 
+1062:./lib/src/at32f4xx_usart.c ****   bitpos = USART_INT >> 0x08;
+ 1495              		.loc 1 1062 3 view .LVU438
+ 1496              		.loc 1 1062 10 is_stmt 0 view .LVU439
+ 1497 0000 090A     		lsrs	r1, r1, #8
+ 1498              	.LVL112:
+1063:./lib/src/at32f4xx_usart.c ****   itmask = ((uint16_t)0x01 << (uint16_t)bitpos);
+ 1499              		.loc 1 1063 3 is_stmt 1 view .LVU440
+ 1500              		.loc 1 1063 28 is_stmt 0 view .LVU441
+ 1501 0002 0123     		movs	r3, #1
+ 1502 0004 8B40     		lsls	r3, r3, r1
+ 1503              		.loc 1 1063 10 view .LVU442
+ 1504 0006 9BB2     		uxth	r3, r3
+ 1505              	.LVL113:
+1064:./lib/src/at32f4xx_usart.c ****   USARTx->STS = (uint16_t)~itmask;
+ 1506              		.loc 1 1064 3 is_stmt 1 view .LVU443
+ 1507              		.loc 1 1064 17 is_stmt 0 view .LVU444
+ 1508 0008 DB43     		mvns	r3, r3
+ 1509              	.LVL114:
+ 1510              		.loc 1 1064 17 view .LVU445
+ 1511 000a 9BB2     		uxth	r3, r3
+ 1512              	.LVL115:
+ 1513              		.loc 1 1064 15 view .LVU446
+ 1514 000c 0380     		strh	r3, [r0]	@ movhi
+1065:./lib/src/at32f4xx_usart.c **** }
+ 1515              		.loc 1 1065 1 view .LVU447
+ARM GAS  /tmp/ccbIHlMU.s 			page 46
+
+
+ 1516 000e 7047     		bx	lr
+ 1517              		.cfi_endproc
+ 1518              	.LFE151:
+ 1520              		.section	.text.USART_SWAP,"ax",%progbits
+ 1521              		.align	1
+ 1522              		.global	USART_SWAP
+ 1523              		.syntax unified
+ 1524              		.thumb
+ 1525              		.thumb_func
+ 1526              		.fpu fpv4-sp-d16
+ 1528              	USART_SWAP:
+ 1529              	.LVL116:
+ 1530              	.LFB152:
+1066:./lib/src/at32f4xx_usart.c **** 
+1067:./lib/src/at32f4xx_usart.c **** /**
+1068:./lib/src/at32f4xx_usart.c ****   * @brief  Enables or disables the USART's swap function.
+1069:./lib/src/at32f4xx_usart.c ****   * @param  USARTx: Select the USART or the UART peripheral.
+1070:./lib/src/at32f4xx_usart.c ****   *   This parameter can be one of the following values:
+1071:./lib/src/at32f4xx_usart.c ****   *   USART1 or USART2.
+1072:./lib/src/at32f4xx_usart.c ****   * @param  NewState: new state of the swap function.
+1073:./lib/src/at32f4xx_usart.c ****   *   This parameter can be: ENABLE or DISABLE.
+1074:./lib/src/at32f4xx_usart.c ****   * @retval None
+1075:./lib/src/at32f4xx_usart.c ****   */
+1076:./lib/src/at32f4xx_usart.c **** #if defined (AT32F421xx)
+1077:./lib/src/at32f4xx_usart.c **** void USART_SWAP(USART_Type* USARTx, FunctionalState NewState)
+1078:./lib/src/at32f4xx_usart.c **** {
+ 1531              		.loc 1 1078 1 is_stmt 1 view -0
+ 1532              		.cfi_startproc
+ 1533              		@ args = 0, pretend = 0, frame = 0
+ 1534              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1535              		@ link register save eliminated.
+1079:./lib/src/at32f4xx_usart.c ****   /* Check the parameters */
+1080:./lib/src/at32f4xx_usart.c ****   assert_param(IS_USART_ALL_PERIPH(USARTx));
+ 1536              		.loc 1 1080 3 view .LVU449
+1081:./lib/src/at32f4xx_usart.c ****   assert_param(IS_FUNCTIONAL_STATE(NewState));
+ 1537              		.loc 1 1081 3 view .LVU450
+1082:./lib/src/at32f4xx_usart.c **** 
+1083:./lib/src/at32f4xx_usart.c ****   if (NewState != DISABLE)
+ 1538              		.loc 1 1083 3 view .LVU451
+ 1539              		.loc 1 1083 6 is_stmt 0 view .LVU452
+ 1540 0000 39B1     		cbz	r1, .L88
+1084:./lib/src/at32f4xx_usart.c ****   {
+1085:./lib/src/at32f4xx_usart.c ****     /* Enable the SWAP bit in the USART CR2 register */
+1086:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL2 |= CTRL2_SWAP_Set;
+ 1541              		.loc 1 1086 5 is_stmt 1 view .LVU453
+ 1542              		.loc 1 1086 19 is_stmt 0 view .LVU454
+ 1543 0002 038A     		ldrh	r3, [r0, #16]
+ 1544 0004 6FEA4343 		mvn	r3, r3, lsl #17
+ 1545 0008 6FEA5343 		mvn	r3, r3, lsr #17
+ 1546 000c 9BB2     		uxth	r3, r3
+ 1547 000e 0382     		strh	r3, [r0, #16]	@ movhi
+ 1548 0010 7047     		bx	lr
+ 1549              	.L88:
+1087:./lib/src/at32f4xx_usart.c ****   }
+1088:./lib/src/at32f4xx_usart.c ****   else
+1089:./lib/src/at32f4xx_usart.c ****   {
+1090:./lib/src/at32f4xx_usart.c ****     /* Disable the SWAP bit in the USART CR2 register */
+ARM GAS  /tmp/ccbIHlMU.s 			page 47
+
+
+1091:./lib/src/at32f4xx_usart.c ****     USARTx->CTRL2 &= CTRL2_SWAP_Reset;
+ 1550              		.loc 1 1091 5 is_stmt 1 view .LVU455
+ 1551              		.loc 1 1091 19 is_stmt 0 view .LVU456
+ 1552 0012 038A     		ldrh	r3, [r0, #16]
+ 1553 0014 C3F30E03 		ubfx	r3, r3, #0, #15
+ 1554 0018 0382     		strh	r3, [r0, #16]	@ movhi
+1092:./lib/src/at32f4xx_usart.c ****   }
+1093:./lib/src/at32f4xx_usart.c **** }
+ 1555              		.loc 1 1093 1 view .LVU457
+ 1556 001a 7047     		bx	lr
+ 1557              		.cfi_endproc
+ 1558              	.LFE152:
+ 1560              		.text
+ 1561              	.Letext0:
+ 1562              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 1563              		.file 3 "CMSIS/at32f4xx.h"
+ 1564              		.file 4 "lib/inc/at32f4xx_rcc.h"
+ 1565              		.file 5 "lib/inc/at32f4xx_usart.h"
+ARM GAS  /tmp/ccbIHlMU.s 			page 48
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 at32f4xx_usart.c
+     /tmp/ccbIHlMU.s:18     .text.USART_Reset:0000000000000000 $t
+     /tmp/ccbIHlMU.s:26     .text.USART_Reset:0000000000000000 USART_Reset
+     /tmp/ccbIHlMU.s:89     .text.USART_Reset:000000000000003c $d
+     /tmp/ccbIHlMU.s:95     .text.USART_Init:0000000000000000 $t
+     /tmp/ccbIHlMU.s:102    .text.USART_Init:0000000000000000 USART_Init
+     /tmp/ccbIHlMU.s:330    .text.USART_Init:00000000000000bc $d
+     /tmp/ccbIHlMU.s:336    .text.USART_StructInit:0000000000000000 $t
+     /tmp/ccbIHlMU.s:343    .text.USART_StructInit:0000000000000000 USART_StructInit
+     /tmp/ccbIHlMU.s:378    .text.USART_ClockInit:0000000000000000 $t
+     /tmp/ccbIHlMU.s:385    .text.USART_ClockInit:0000000000000000 USART_ClockInit
+     /tmp/ccbIHlMU.s:440    .text.USART_ClockStructInit:0000000000000000 $t
+     /tmp/ccbIHlMU.s:447    .text.USART_ClockStructInit:0000000000000000 USART_ClockStructInit
+     /tmp/ccbIHlMU.s:474    .text.USART_Cmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:481    .text.USART_Cmd:0000000000000000 USART_Cmd
+     /tmp/ccbIHlMU.s:515    .text.USART_INTConfig:0000000000000000 $t
+     /tmp/ccbIHlMU.s:522    .text.USART_INTConfig:0000000000000000 USART_INTConfig
+     /tmp/ccbIHlMU.s:606    .text.USART_DMACmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:613    .text.USART_DMACmd:0000000000000000 USART_DMACmd
+     /tmp/ccbIHlMU.s:655    .text.USART_SetAddress:0000000000000000 $t
+     /tmp/ccbIHlMU.s:662    .text.USART_SetAddress:0000000000000000 USART_SetAddress
+     /tmp/ccbIHlMU.s:691    .text.USART_WakeUpConfig:0000000000000000 $t
+     /tmp/ccbIHlMU.s:698    .text.USART_WakeUpConfig:0000000000000000 USART_WakeUpConfig
+     /tmp/ccbIHlMU.s:727    .text.USART_ReceiverWakeUpCmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:734    .text.USART_ReceiverWakeUpCmd:0000000000000000 USART_ReceiverWakeUpCmd
+     /tmp/ccbIHlMU.s:768    .text.USART_LINBreakDetectLengthConfig:0000000000000000 $t
+     /tmp/ccbIHlMU.s:775    .text.USART_LINBreakDetectLengthConfig:0000000000000000 USART_LINBreakDetectLengthConfig
+     /tmp/ccbIHlMU.s:804    .text.USART_LINCmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:811    .text.USART_LINCmd:0000000000000000 USART_LINCmd
+     /tmp/ccbIHlMU.s:845    .text.USART_SendData:0000000000000000 $t
+     /tmp/ccbIHlMU.s:852    .text.USART_SendData:0000000000000000 USART_SendData
+     /tmp/ccbIHlMU.s:874    .text.USART_ReceiveData:0000000000000000 $t
+     /tmp/ccbIHlMU.s:881    .text.USART_ReceiveData:0000000000000000 USART_ReceiveData
+     /tmp/ccbIHlMU.s:901    .text.USART_SendBreak:0000000000000000 $t
+     /tmp/ccbIHlMU.s:908    .text.USART_SendBreak:0000000000000000 USART_SendBreak
+     /tmp/ccbIHlMU.s:929    .text.USART_SetGuardTime:0000000000000000 $t
+     /tmp/ccbIHlMU.s:936    .text.USART_SetGuardTime:0000000000000000 USART_SetGuardTime
+     /tmp/ccbIHlMU.s:962    .text.USART_SetPrescaler:0000000000000000 $t
+     /tmp/ccbIHlMU.s:969    .text.USART_SetPrescaler:0000000000000000 USART_SetPrescaler
+     /tmp/ccbIHlMU.s:995    .text.USART_SmartCardCmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1002   .text.USART_SmartCardCmd:0000000000000000 USART_SmartCardCmd
+     /tmp/ccbIHlMU.s:1036   .text.USART_SmartCardNACKCmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1043   .text.USART_SmartCardNACKCmd:0000000000000000 USART_SmartCardNACKCmd
+     /tmp/ccbIHlMU.s:1077   .text.USART_HalfDuplexCmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1084   .text.USART_HalfDuplexCmd:0000000000000000 USART_HalfDuplexCmd
+     /tmp/ccbIHlMU.s:1118   .text.USART_OverSampling8Cmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1125   .text.USART_OverSampling8Cmd:0000000000000000 USART_OverSampling8Cmd
+     /tmp/ccbIHlMU.s:1158   .text.USART_OneBitMethodCmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1165   .text.USART_OneBitMethodCmd:0000000000000000 USART_OneBitMethodCmd
+     /tmp/ccbIHlMU.s:1199   .text.USART_IrDAConfig:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1206   .text.USART_IrDAConfig:0000000000000000 USART_IrDAConfig
+     /tmp/ccbIHlMU.s:1235   .text.USART_IrDACmd:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1242   .text.USART_IrDACmd:0000000000000000 USART_IrDACmd
+     /tmp/ccbIHlMU.s:1276   .text.USART_GetFlagStatus:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1283   .text.USART_GetFlagStatus:0000000000000000 USART_GetFlagStatus
+     /tmp/ccbIHlMU.s:1319   .text.USART_ClearFlag:0000000000000000 $t
+ARM GAS  /tmp/ccbIHlMU.s 			page 49
+
+
+     /tmp/ccbIHlMU.s:1326   .text.USART_ClearFlag:0000000000000000 USART_ClearFlag
+     /tmp/ccbIHlMU.s:1352   .text.USART_GetITStatus:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1359   .text.USART_GetITStatus:0000000000000000 USART_GetITStatus
+     /tmp/ccbIHlMU.s:1475   .text.USART_ClearITPendingBit:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1482   .text.USART_ClearITPendingBit:0000000000000000 USART_ClearITPendingBit
+     /tmp/ccbIHlMU.s:1521   .text.USART_SWAP:0000000000000000 $t
+     /tmp/ccbIHlMU.s:1528   .text.USART_SWAP:0000000000000000 USART_SWAP
+
+UNDEFINED SYMBOLS
+RCC_APB2PeriphResetCmd
+RCC_APB1PeriphResetCmd
+RCC_GetClocksFreq

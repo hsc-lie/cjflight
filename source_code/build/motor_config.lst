@@ -1,0 +1,256 @@
+ARM GAS  /tmp/ccEhkGtf.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"motor_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.Motor4_Out,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	Motor4_Out:
+  26              	.LVL0:
+  27              	.LFB126:
+  28              		.file 1 "./dev/motor/motor_config.c"
+   1:./dev/motor/motor_config.c **** #include "motor_config.h"
+   2:./dev/motor/motor_config.c **** 
+   3:./dev/motor/motor_config.c **** 
+   4:./dev/motor/motor_config.c **** #include "pwm_hal_config.h"
+   5:./dev/motor/motor_config.c **** 
+   6:./dev/motor/motor_config.c **** #define MOTOR_OUT_MIN        (0)
+   7:./dev/motor/motor_config.c **** #define MOTOR_OUT_MAX        (4000)
+   8:./dev/motor/motor_config.c **** 
+   9:./dev/motor/motor_config.c **** 
+  10:./dev/motor/motor_config.c **** 
+  11:./dev/motor/motor_config.c **** static void Motor1_Out(int32_t outValue)
+  12:./dev/motor/motor_config.c **** {
+  13:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[0], outValue + 4000);
+  14:./dev/motor/motor_config.c **** }
+  15:./dev/motor/motor_config.c **** 
+  16:./dev/motor/motor_config.c **** static void Motor2_Out(int32_t outValue)
+  17:./dev/motor/motor_config.c **** {
+  18:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[1], outValue + 4000);
+  19:./dev/motor/motor_config.c **** }
+  20:./dev/motor/motor_config.c **** 
+  21:./dev/motor/motor_config.c **** static void Motor3_Out(int32_t outValue)
+  22:./dev/motor/motor_config.c **** {
+  23:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[2], outValue + 4000);
+  24:./dev/motor/motor_config.c **** }
+  25:./dev/motor/motor_config.c **** 
+  26:./dev/motor/motor_config.c **** static void Motor4_Out(int32_t outValue)
+  27:./dev/motor/motor_config.c **** {
+  29              		.loc 1 27 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /tmp/ccEhkGtf.s 			page 2
+
+
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 27 1 is_stmt 0 view .LVU1
+  34 0000 08B5     		push	{r3, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+  28:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[3], outValue + 4000);
+  39              		.loc 1 28 2 is_stmt 1 view .LVU2
+  40 0002 00F57A61 		add	r1, r0, #4000
+  41 0006 0248     		ldr	r0, .L3
+  42              	.LVL1:
+  43              		.loc 1 28 2 is_stmt 0 view .LVU3
+  44 0008 FFF7FEFF 		bl	PWM_HALDutyOut
+  45              	.LVL2:
+  29:./dev/motor/motor_config.c **** }
+  46              		.loc 1 29 1 view .LVU4
+  47 000c 08BD     		pop	{r3, pc}
+  48              	.L4:
+  49 000e 00BF     		.align	2
+  50              	.L3:
+  51 0010 0C000000 		.word	PWM_HAL+12
+  52              		.cfi_endproc
+  53              	.LFE126:
+  55              		.section	.text.Motor3_Out,"ax",%progbits
+  56              		.align	1
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  60              		.fpu fpv4-sp-d16
+  62              	Motor3_Out:
+  63              	.LVL3:
+  64              	.LFB125:
+  22:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[2], outValue + 4000);
+  65              		.loc 1 22 1 is_stmt 1 view -0
+  66              		.cfi_startproc
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  22:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[2], outValue + 4000);
+  69              		.loc 1 22 1 is_stmt 0 view .LVU6
+  70 0000 08B5     		push	{r3, lr}
+  71              	.LCFI1:
+  72              		.cfi_def_cfa_offset 8
+  73              		.cfi_offset 3, -8
+  74              		.cfi_offset 14, -4
+  23:./dev/motor/motor_config.c **** }
+  75              		.loc 1 23 2 is_stmt 1 view .LVU7
+  76 0002 00F57A61 		add	r1, r0, #4000
+  77 0006 0248     		ldr	r0, .L7
+  78              	.LVL4:
+  23:./dev/motor/motor_config.c **** }
+  79              		.loc 1 23 2 is_stmt 0 view .LVU8
+  80 0008 FFF7FEFF 		bl	PWM_HALDutyOut
+  81              	.LVL5:
+  24:./dev/motor/motor_config.c **** 
+  82              		.loc 1 24 1 view .LVU9
+  83 000c 08BD     		pop	{r3, pc}
+ARM GAS  /tmp/ccEhkGtf.s 			page 3
+
+
+  84              	.L8:
+  85 000e 00BF     		.align	2
+  86              	.L7:
+  87 0010 08000000 		.word	PWM_HAL+8
+  88              		.cfi_endproc
+  89              	.LFE125:
+  91              		.section	.text.Motor2_Out,"ax",%progbits
+  92              		.align	1
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  96              		.fpu fpv4-sp-d16
+  98              	Motor2_Out:
+  99              	.LVL6:
+ 100              	.LFB124:
+  17:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[1], outValue + 4000);
+ 101              		.loc 1 17 1 is_stmt 1 view -0
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+  17:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[1], outValue + 4000);
+ 105              		.loc 1 17 1 is_stmt 0 view .LVU11
+ 106 0000 08B5     		push	{r3, lr}
+ 107              	.LCFI2:
+ 108              		.cfi_def_cfa_offset 8
+ 109              		.cfi_offset 3, -8
+ 110              		.cfi_offset 14, -4
+  18:./dev/motor/motor_config.c **** }
+ 111              		.loc 1 18 2 is_stmt 1 view .LVU12
+ 112 0002 00F57A61 		add	r1, r0, #4000
+ 113 0006 0248     		ldr	r0, .L11
+ 114              	.LVL7:
+  18:./dev/motor/motor_config.c **** }
+ 115              		.loc 1 18 2 is_stmt 0 view .LVU13
+ 116 0008 FFF7FEFF 		bl	PWM_HALDutyOut
+ 117              	.LVL8:
+  19:./dev/motor/motor_config.c **** 
+ 118              		.loc 1 19 1 view .LVU14
+ 119 000c 08BD     		pop	{r3, pc}
+ 120              	.L12:
+ 121 000e 00BF     		.align	2
+ 122              	.L11:
+ 123 0010 04000000 		.word	PWM_HAL+4
+ 124              		.cfi_endproc
+ 125              	.LFE124:
+ 127              		.section	.text.Motor1_Out,"ax",%progbits
+ 128              		.align	1
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 132              		.fpu fpv4-sp-d16
+ 134              	Motor1_Out:
+ 135              	.LVL9:
+ 136              	.LFB123:
+  12:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[0], outValue + 4000);
+ 137              		.loc 1 12 1 is_stmt 1 view -0
+ 138              		.cfi_startproc
+ARM GAS  /tmp/ccEhkGtf.s 			page 4
+
+
+ 139              		@ args = 0, pretend = 0, frame = 0
+ 140              		@ frame_needed = 0, uses_anonymous_args = 0
+  12:./dev/motor/motor_config.c **** 	PWM_HALDutyOut(&PWM_HAL[0], outValue + 4000);
+ 141              		.loc 1 12 1 is_stmt 0 view .LVU16
+ 142 0000 08B5     		push	{r3, lr}
+ 143              	.LCFI3:
+ 144              		.cfi_def_cfa_offset 8
+ 145              		.cfi_offset 3, -8
+ 146              		.cfi_offset 14, -4
+  13:./dev/motor/motor_config.c **** }
+ 147              		.loc 1 13 2 is_stmt 1 view .LVU17
+ 148 0002 00F57A61 		add	r1, r0, #4000
+ 149 0006 0248     		ldr	r0, .L15
+ 150              	.LVL10:
+  13:./dev/motor/motor_config.c **** }
+ 151              		.loc 1 13 2 is_stmt 0 view .LVU18
+ 152 0008 FFF7FEFF 		bl	PWM_HALDutyOut
+ 153              	.LVL11:
+  14:./dev/motor/motor_config.c **** 
+ 154              		.loc 1 14 1 view .LVU19
+ 155 000c 08BD     		pop	{r3, pc}
+ 156              	.L16:
+ 157 000e 00BF     		.align	2
+ 158              	.L15:
+ 159 0010 00000000 		.word	PWM_HAL
+ 160              		.cfi_endproc
+ 161              	.LFE123:
+ 163              		.global	Motor
+ 164              		.section	.data.Motor,"aw"
+ 165              		.align	2
+ 168              	Motor:
+ 169 0000 00000000 		.word	0
+ 170 0004 A00F0000 		.word	4000
+ 171 0008 00000000 		.word	Motor1_Out
+ 172 000c 00000000 		.word	0
+ 173 0010 A00F0000 		.word	4000
+ 174 0014 00000000 		.word	Motor2_Out
+ 175 0018 00000000 		.word	0
+ 176 001c A00F0000 		.word	4000
+ 177 0020 00000000 		.word	Motor3_Out
+ 178 0024 00000000 		.word	0
+ 179 0028 A00F0000 		.word	4000
+ 180 002c 00000000 		.word	Motor4_Out
+ 181              		.text
+ 182              	.Letext0:
+ 183              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 184              		.file 3 "./dev/motor/motor.h"
+ 185              		.file 4 "hal/pwm/pwm_hal.h"
+ 186              		.file 5 "./dev/motor/motor_config.h"
+ 187              		.file 6 "hal/pwm/pwm_hal_config.h"
+ARM GAS  /tmp/ccEhkGtf.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 motor_config.c
+     /tmp/ccEhkGtf.s:18     .text.Motor4_Out:0000000000000000 $t
+     /tmp/ccEhkGtf.s:25     .text.Motor4_Out:0000000000000000 Motor4_Out
+     /tmp/ccEhkGtf.s:51     .text.Motor4_Out:0000000000000010 $d
+     /tmp/ccEhkGtf.s:56     .text.Motor3_Out:0000000000000000 $t
+     /tmp/ccEhkGtf.s:62     .text.Motor3_Out:0000000000000000 Motor3_Out
+     /tmp/ccEhkGtf.s:87     .text.Motor3_Out:0000000000000010 $d
+     /tmp/ccEhkGtf.s:92     .text.Motor2_Out:0000000000000000 $t
+     /tmp/ccEhkGtf.s:98     .text.Motor2_Out:0000000000000000 Motor2_Out
+     /tmp/ccEhkGtf.s:123    .text.Motor2_Out:0000000000000010 $d
+     /tmp/ccEhkGtf.s:128    .text.Motor1_Out:0000000000000000 $t
+     /tmp/ccEhkGtf.s:134    .text.Motor1_Out:0000000000000000 Motor1_Out
+     /tmp/ccEhkGtf.s:159    .text.Motor1_Out:0000000000000010 $d
+     /tmp/ccEhkGtf.s:168    .data.Motor:0000000000000000 Motor
+     /tmp/ccEhkGtf.s:165    .data.Motor:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+PWM_HALDutyOut
+PWM_HAL

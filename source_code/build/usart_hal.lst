@@ -1,0 +1,222 @@
+ARM GAS  /tmp/ccV0UHR6.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"usart_hal.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.USART_HAL_SendData,"ax",%progbits
+  18              		.align	1
+  19              		.global	USART_HAL_SendData
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	USART_HAL_SendData:
+  27              	.LVL0:
+  28              	.LFB123:
+  29              		.file 1 "./hal/usart/usart_hal.c"
+   1:./hal/usart/usart_hal.c **** #include "usart_hal.h"
+   2:./hal/usart/usart_hal.c **** 
+   3:./hal/usart/usart_hal.c **** 
+   4:./hal/usart/usart_hal.c **** E_USART_HAL_ERROR USART_HAL_SendData(const USART_HAL_t * const usart, uint8_t *data, uint32_t len)
+   5:./hal/usart/usart_hal.c **** {
+  30              		.loc 1 5 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+   6:./hal/usart/usart_hal.c **** 	if((NULL == usart)
+  34              		.loc 1 6 2 view .LVU1
+  35              		.loc 1 6 4 is_stmt 0 view .LVU2
+  36 0000 40B1     		cbz	r0, .L3
+   5:./hal/usart/usart_hal.c **** 	if((NULL == usart)
+  37              		.loc 1 5 1 view .LVU3
+  38 0002 08B5     		push	{r3, lr}
+  39              	.LCFI0:
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 3, -8
+  42              		.cfi_offset 14, -4
+  43 0004 0B46     		mov	r3, r1
+  44 0006 1146     		mov	r1, r2
+  45              	.LVL1:
+   7:./hal/usart/usart_hal.c **** 		|| (NULL == usart->SendData)
+  46              		.loc 1 7 20 view .LVU4
+  47 0008 0268     		ldr	r2, [r0]
+  48              	.LVL2:
+  49              		.loc 1 7 3 view .LVU5
+  50 000a 2AB1     		cbz	r2, .L4
+ARM GAS  /tmp/ccV0UHR6.s 			page 2
+
+
+   8:./hal/usart/usart_hal.c **** 	)
+   9:./hal/usart/usart_hal.c **** 	{
+  10:./hal/usart/usart_hal.c **** 		return E_USART_HAL_ERROR_NULL;
+  11:./hal/usart/usart_hal.c **** 	}
+  12:./hal/usart/usart_hal.c **** 
+  13:./hal/usart/usart_hal.c **** 	usart->SendData(data, len);
+  51              		.loc 1 13 2 is_stmt 1 view .LVU6
+  52 000c 1846     		mov	r0, r3
+  53              	.LVL3:
+  54              		.loc 1 13 2 is_stmt 0 view .LVU7
+  55 000e 9047     		blx	r2
+  56              	.LVL4:
+  14:./hal/usart/usart_hal.c **** 
+  15:./hal/usart/usart_hal.c **** 	return E_USART_HAL_ERROR_OK;
+  57              		.loc 1 15 2 is_stmt 1 view .LVU8
+  58              		.loc 1 15 9 is_stmt 0 view .LVU9
+  59 0010 0020     		movs	r0, #0
+  60              	.L2:
+  16:./hal/usart/usart_hal.c **** }
+  61              		.loc 1 16 1 view .LVU10
+  62 0012 08BD     		pop	{r3, pc}
+  63              	.LVL5:
+  64              	.L3:
+  65              	.LCFI1:
+  66              		.cfi_def_cfa_offset 0
+  67              		.cfi_restore 3
+  68              		.cfi_restore 14
+  10:./hal/usart/usart_hal.c **** 	}
+  69              		.loc 1 10 10 view .LVU11
+  70 0014 0120     		movs	r0, #1
+  71              	.LVL6:
+  72              		.loc 1 16 1 view .LVU12
+  73 0016 7047     		bx	lr
+  74              	.LVL7:
+  75              	.L4:
+  76              	.LCFI2:
+  77              		.cfi_def_cfa_offset 8
+  78              		.cfi_offset 3, -8
+  79              		.cfi_offset 14, -4
+  10:./hal/usart/usart_hal.c **** 	}
+  80              		.loc 1 10 10 view .LVU13
+  81 0018 0120     		movs	r0, #1
+  82              	.LVL8:
+  10:./hal/usart/usart_hal.c **** 	}
+  83              		.loc 1 10 10 view .LVU14
+  84 001a FAE7     		b	.L2
+  85              		.cfi_endproc
+  86              	.LFE123:
+  88              		.section	.text.USART_HAL_ReadData,"ax",%progbits
+  89              		.align	1
+  90              		.global	USART_HAL_ReadData
+  91              		.syntax unified
+  92              		.thumb
+  93              		.thumb_func
+  94              		.fpu fpv4-sp-d16
+  96              	USART_HAL_ReadData:
+  97              	.LVL9:
+ARM GAS  /tmp/ccV0UHR6.s 			page 3
+
+
+  98              	.LFB124:
+  17:./hal/usart/usart_hal.c **** 
+  18:./hal/usart/usart_hal.c **** 
+  19:./hal/usart/usart_hal.c **** E_USART_HAL_ERROR USART_HAL_ReadData(const USART_HAL_t * const usart, uint8_t *data, uint32_t readL
+  20:./hal/usart/usart_hal.c **** {
+  99              		.loc 1 20 1 is_stmt 1 view -0
+ 100              		.cfi_startproc
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+  21:./hal/usart/usart_hal.c **** 	if((NULL == usart)
+ 103              		.loc 1 21 2 view .LVU16
+ 104              		.loc 1 21 4 is_stmt 0 view .LVU17
+ 105 0000 48B1     		cbz	r0, .L11
+  20:./hal/usart/usart_hal.c **** 	if((NULL == usart)
+ 106              		.loc 1 20 1 view .LVU18
+ 107 0002 08B5     		push	{r3, lr}
+ 108              	.LCFI3:
+ 109              		.cfi_def_cfa_offset 8
+ 110              		.cfi_offset 3, -8
+ 111              		.cfi_offset 14, -4
+ 112 0004 8C46     		mov	ip, r1
+ 113 0006 1146     		mov	r1, r2
+ 114              	.LVL10:
+  20:./hal/usart/usart_hal.c **** 	if((NULL == usart)
+ 115              		.loc 1 20 1 view .LVU19
+ 116 0008 1A46     		mov	r2, r3
+ 117              	.LVL11:
+  22:./hal/usart/usart_hal.c **** 		|| (NULL == usart->ReadData)
+ 118              		.loc 1 22 20 view .LVU20
+ 119 000a 4368     		ldr	r3, [r0, #4]
+ 120              	.LVL12:
+ 121              		.loc 1 22 3 view .LVU21
+ 122 000c 2BB1     		cbz	r3, .L12
+  23:./hal/usart/usart_hal.c **** 	)
+  24:./hal/usart/usart_hal.c **** 	{
+  25:./hal/usart/usart_hal.c **** 		return E_USART_HAL_ERROR_NULL;
+  26:./hal/usart/usart_hal.c **** 	}
+  27:./hal/usart/usart_hal.c **** 
+  28:./hal/usart/usart_hal.c **** 	usart->ReadData(data, readLen, outLen);
+ 123              		.loc 1 28 2 is_stmt 1 view .LVU22
+ 124 000e 6046     		mov	r0, ip
+ 125              	.LVL13:
+ 126              		.loc 1 28 2 is_stmt 0 view .LVU23
+ 127 0010 9847     		blx	r3
+ 128              	.LVL14:
+  29:./hal/usart/usart_hal.c **** 
+  30:./hal/usart/usart_hal.c **** 	return E_USART_HAL_ERROR_OK;
+ 129              		.loc 1 30 2 is_stmt 1 view .LVU24
+ 130              		.loc 1 30 9 is_stmt 0 view .LVU25
+ 131 0012 0020     		movs	r0, #0
+ 132              	.L10:
+  31:./hal/usart/usart_hal.c **** }
+ 133              		.loc 1 31 1 view .LVU26
+ 134 0014 08BD     		pop	{r3, pc}
+ 135              	.LVL15:
+ 136              	.L11:
+ 137              	.LCFI4:
+ARM GAS  /tmp/ccV0UHR6.s 			page 4
+
+
+ 138              		.cfi_def_cfa_offset 0
+ 139              		.cfi_restore 3
+ 140              		.cfi_restore 14
+  25:./hal/usart/usart_hal.c **** 	}
+ 141              		.loc 1 25 10 view .LVU27
+ 142 0016 0120     		movs	r0, #1
+ 143              	.LVL16:
+ 144              		.loc 1 31 1 view .LVU28
+ 145 0018 7047     		bx	lr
+ 146              	.LVL17:
+ 147              	.L12:
+ 148              	.LCFI5:
+ 149              		.cfi_def_cfa_offset 8
+ 150              		.cfi_offset 3, -8
+ 151              		.cfi_offset 14, -4
+  25:./hal/usart/usart_hal.c **** 	}
+ 152              		.loc 1 25 10 view .LVU29
+ 153 001a 0120     		movs	r0, #1
+ 154              	.LVL18:
+  25:./hal/usart/usart_hal.c **** 	}
+ 155              		.loc 1 25 10 view .LVU30
+ 156 001c FAE7     		b	.L10
+ 157              		.cfi_endproc
+ 158              	.LFE124:
+ 160              		.text
+ 161              	.Letext0:
+ 162              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 163              		.file 3 "./hal/usart/usart_hal.h"
+ARM GAS  /tmp/ccV0UHR6.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 usart_hal.c
+     /tmp/ccV0UHR6.s:18     .text.USART_HAL_SendData:0000000000000000 $t
+     /tmp/ccV0UHR6.s:26     .text.USART_HAL_SendData:0000000000000000 USART_HAL_SendData
+     /tmp/ccV0UHR6.s:89     .text.USART_HAL_ReadData:0000000000000000 $t
+     /tmp/ccV0UHR6.s:96     .text.USART_HAL_ReadData:0000000000000000 USART_HAL_ReadData
+
+NO UNDEFINED SYMBOLS

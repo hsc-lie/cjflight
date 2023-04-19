@@ -1,0 +1,1740 @@
+ARM GAS  /tmp/cc6bjkb9.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"quaternion.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.InvSqrt,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	InvSqrt:
+  26              	.LVL0:
+  27              	.LFB123:
+  28              		.file 1 "./app/quaternion/quaternion.c"
+   1:./app/quaternion/quaternion.c **** 
+   2:./app/quaternion/quaternion.c **** #include "quaternion.h"
+   3:./app/quaternion/quaternion.c **** #include "math.h"
+   4:./app/quaternion/quaternion.c **** 
+   5:./app/quaternion/quaternion.c **** 
+   6:./app/quaternion/quaternion.c **** 
+   7:./app/quaternion/quaternion.c **** //度转弧
+   8:./app/quaternion/quaternion.c **** #define DEG_TO_RAD(deg)		((deg) * 0.017453293f)	
+   9:./app/quaternion/quaternion.c **** //弧转度
+  10:./app/quaternion/quaternion.c **** #define RAD_TO_DEG(rad)		((rad) * 57.29578f)		
+  11:./app/quaternion/quaternion.c **** 
+  12:./app/quaternion/quaternion.c **** 
+  13:./app/quaternion/quaternion.c **** 
+  14:./app/quaternion/quaternion.c **** //快速开平方求倒数
+  15:./app/quaternion/quaternion.c **** static float InvSqrt(float x)	
+  16:./app/quaternion/quaternion.c **** {
+  29              		.loc 1 16 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  17:./app/quaternion/quaternion.c **** 	float halfx = 0.5f * x;
+  34              		.loc 1 17 2 view .LVU1
+  35              		.loc 1 17 8 is_stmt 0 view .LVU2
+  36 0000 F6EE007A 		vmov.f32	s15, #5.0e-1
+  37 0004 60EE277A 		vmul.f32	s15, s0, s15
+  38              	.LVL1:
+  18:./app/quaternion/quaternion.c **** 	float y = x;
+  39              		.loc 1 18 2 is_stmt 1 view .LVU3
+  19:./app/quaternion/quaternion.c **** 	long i = *(long*)&y;
+ARM GAS  /tmp/cc6bjkb9.s 			page 2
+
+
+  40              		.loc 1 19 2 view .LVU4
+  41              		.loc 1 19 11 is_stmt 0 view .LVU5
+  42 0008 10EE103A 		vmov	r3, s0	@ int
+  43              	.LVL2:
+  20:./app/quaternion/quaternion.c **** 	i = 0x5f3759df - (i>>1);
+  44              		.loc 1 20 2 is_stmt 1 view .LVU6
+  21:./app/quaternion/quaternion.c **** 	y = *(float*)&i;
+  45              		.loc 1 21 2 view .LVU7
+  46              		.loc 1 21 6 is_stmt 0 view .LVU8
+  47 000c 074A     		ldr	r2, .L2
+  48 000e A2EB6303 		sub	r3, r2, r3, asr #1
+  49              	.LVL3:
+  50              		.loc 1 21 6 view .LVU9
+  51 0012 07EE103A 		vmov	s14, r3	@ int
+  52              	.LVL4:
+  22:./app/quaternion/quaternion.c **** 	y = y * (1.5f - (halfx * y * y));
+  53              		.loc 1 22 2 is_stmt 1 view .LVU10
+  54              		.loc 1 22 25 is_stmt 0 view .LVU11
+  55 0016 67EE277A 		vmul.f32	s15, s14, s15
+  56              	.LVL5:
+  57              		.loc 1 22 29 view .LVU12
+  58 001a 67EE277A 		vmul.f32	s15, s14, s15
+  59              		.loc 1 22 16 view .LVU13
+  60 001e B7EE080A 		vmov.f32	s0, #1.5e+0
+  61              	.LVL6:
+  62              		.loc 1 22 16 view .LVU14
+  63 0022 30EE670A 		vsub.f32	s0, s0, s15
+  64              	.LVL7:
+  23:./app/quaternion/quaternion.c **** 	return y;
+  65              		.loc 1 23 2 is_stmt 1 view .LVU15
+  24:./app/quaternion/quaternion.c **** }
+  66              		.loc 1 24 1 is_stmt 0 view .LVU16
+  67 0026 27EE000A 		vmul.f32	s0, s14, s0
+  68 002a 7047     		bx	lr
+  69              	.L3:
+  70              		.align	2
+  71              	.L2:
+  72 002c DF59375F 		.word	1597463007
+  73              		.cfi_endproc
+  74              	.LFE123:
+  76              		.section	.text.Quaternion_ComputeRotationMatrix,"ax",%progbits
+  77              		.align	1
+  78              		.syntax unified
+  79              		.thumb
+  80              		.thumb_func
+  81              		.fpu fpv4-sp-d16
+  83              	Quaternion_ComputeRotationMatrix:
+  84              	.LVL8:
+  85              	.LFB126:
+  25:./app/quaternion/quaternion.c **** 
+  26:./app/quaternion/quaternion.c **** 
+  27:./app/quaternion/quaternion.c **** 
+  28:./app/quaternion/quaternion.c **** //PI互补滤波求补正
+  29:./app/quaternion/quaternion.c **** static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, Triax
+  30:./app/quaternion/quaternion.c **** {
+  31:./app/quaternion/quaternion.c **** 	TriaxialData_t accTemp;
+  32:./app/quaternion/quaternion.c **** 	TriaxialData_t magTemp;
+ARM GAS  /tmp/cc6bjkb9.s 			page 3
+
+
+  33:./app/quaternion/quaternion.c **** 
+  34:./app/quaternion/quaternion.c **** 	float ex = 0; 
+  35:./app/quaternion/quaternion.c **** 	float ey = 0; 
+  36:./app/quaternion/quaternion.c **** 	float ez = 0;
+  37:./app/quaternion/quaternion.c **** 	float normalise = 0;
+  38:./app/quaternion/quaternion.c **** 
+  39:./app/quaternion/quaternion.c **** 	//磁力在地球坐标系投影
+  40:./app/quaternion/quaternion.c **** 	TriaxialData_t magEarth = {0};
+  41:./app/quaternion/quaternion.c **** 	TriaxialData_t magBody = {0};
+  42:./app/quaternion/quaternion.c **** 
+  43:./app/quaternion/quaternion.c **** 	if((NULL == quaternion)
+  44:./app/quaternion/quaternion.c **** 		|| (NULL == pi)
+  45:./app/quaternion/quaternion.c **** 		|| (NULL == acc)
+  46:./app/quaternion/quaternion.c **** 		|| (NULL == offset)
+  47:./app/quaternion/quaternion.c **** 	)
+  48:./app/quaternion/quaternion.c **** 	{
+  49:./app/quaternion/quaternion.c **** 		return;	
+  50:./app/quaternion/quaternion.c **** 	}
+  51:./app/quaternion/quaternion.c **** 
+  52:./app/quaternion/quaternion.c **** 	
+  53:./app/quaternion/quaternion.c **** 
+  54:./app/quaternion/quaternion.c **** 	magTemp.X = mag->X;
+  55:./app/quaternion/quaternion.c **** 	magTemp.Y = mag->Y;
+  56:./app/quaternion/quaternion.c **** 	magTemp.Z = mag->Z;
+  57:./app/quaternion/quaternion.c **** 
+  58:./app/quaternion/quaternion.c **** 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计�
+  59:./app/quaternion/quaternion.c **** 	if((magTemp.X != 0.0f) || (magTemp.Y != 0.0f) || (magTemp.Z != 0.0f))
+  60:./app/quaternion/quaternion.c **** 	{
+  61:./app/quaternion/quaternion.c **** 		//归一化
+  62:./app/quaternion/quaternion.c **** 		normalise = InvSqrt(magTemp.X * magTemp.X + magTemp.Y * magTemp.Y + magTemp.Z * magTemp.Z);
+  63:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+  64:./app/quaternion/quaternion.c **** 		magTemp.Y *= normalise;
+  65:./app/quaternion/quaternion.c **** 		magTemp.Z *= normalise;
+  66:./app/quaternion/quaternion.c **** 	
+  67:./app/quaternion/quaternion.c **** 		//磁力从机体坐标转到地球坐标
+  68:./app/quaternion/quaternion.c **** 		Quaternion_BodyToEarth(quaternion, &magTemp, &magEarth);
+  69:./app/quaternion/quaternion.c **** 		//水平面向量和为北边 勾股定理定北边为x轴 
+  70:./app/quaternion/quaternion.c **** 		magEarth.X = 1.0f / InvSqrt(magEarth.X * magEarth.X + magEarth.Y * magEarth.Y);
+  71:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+  72:./app/quaternion/quaternion.c **** 
+  73:./app/quaternion/quaternion.c **** 
+  74:./app/quaternion/quaternion.c **** 		//磁力从地球坐标转到机体坐标
+  75:./app/quaternion/quaternion.c **** 		Quaternion_EarthToBody(quaternion, &magEarth, &magBody);
+  76:./app/quaternion/quaternion.c **** 	}
+  77:./app/quaternion/quaternion.c **** 
+  78:./app/quaternion/quaternion.c **** 
+  79:./app/quaternion/quaternion.c **** 	accTemp.X = acc->X;
+  80:./app/quaternion/quaternion.c **** 	accTemp.Y = acc->Y;
+  81:./app/quaternion/quaternion.c **** 	accTemp.Z = acc->Z;
+  82:./app/quaternion/quaternion.c **** 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计�
+  83:./app/quaternion/quaternion.c **** 	if((accTemp.X != 0.0f) || (accTemp.Y != 0.0f) || (accTemp.Z != 0.0f))
+  84:./app/quaternion/quaternion.c **** 	{
+  85:./app/quaternion/quaternion.c **** 
+  86:./app/quaternion/quaternion.c **** 		//归一化
+  87:./app/quaternion/quaternion.c **** 		normalise = InvSqrt(accTemp.X * accTemp.X + accTemp.Y * accTemp.Y + accTemp.Z * accTemp.Z);
+  88:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+  89:./app/quaternion/quaternion.c **** 		accTemp.Y *= normalise;
+ARM GAS  /tmp/cc6bjkb9.s 			page 4
+
+
+  90:./app/quaternion/quaternion.c **** 		accTemp.Z *= normalise;
+  91:./app/quaternion/quaternion.c **** 		
+  92:./app/quaternion/quaternion.c **** 		//向量叉乘得出偏差
+  93:./app/quaternion/quaternion.c **** 		ex = (accTemp.Y * quaternion->RotationMatrix[2][2] - accTemp.Z * quaternion->RotationMatrix[2][1]
+  94:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+  95:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+  96:./app/quaternion/quaternion.c **** 		
+  97:./app/quaternion/quaternion.c **** 		//PI互补滤波 I项
+  98:./app/quaternion/quaternion.c **** 		pi->exInt += pi->I * ex * dt;  
+  99:./app/quaternion/quaternion.c **** 		pi->eyInt += pi->I * ey * dt;
+ 100:./app/quaternion/quaternion.c **** 		pi->ezInt += pi->I * ez * dt;
+ 101:./app/quaternion/quaternion.c **** 		
+ 102:./app/quaternion/quaternion.c **** 		//PI互补 P项加上I项
+ 103:./app/quaternion/quaternion.c **** 		offset->X += pi->P * ex + pi->exInt;
+ 104:./app/quaternion/quaternion.c **** 		offset->Y += pi->P * ey + pi->eyInt;
+ 105:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 106:./app/quaternion/quaternion.c **** 	}
+ 107:./app/quaternion/quaternion.c **** 
+ 108:./app/quaternion/quaternion.c **** }
+ 109:./app/quaternion/quaternion.c **** 
+ 110:./app/quaternion/quaternion.c **** //四元数更新
+ 111:./app/quaternion/quaternion.c **** void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float dt)
+ 112:./app/quaternion/quaternion.c **** {
+ 113:./app/quaternion/quaternion.c **** 	float normalise;
+ 114:./app/quaternion/quaternion.c **** 	float halfT = 0.5f * dt;
+ 115:./app/quaternion/quaternion.c **** 
+ 116:./app/quaternion/quaternion.c **** 	float q0 = quaternion->q0;
+ 117:./app/quaternion/quaternion.c **** 	float q1 = quaternion->q1;
+ 118:./app/quaternion/quaternion.c **** 	float q2 = quaternion->q2;
+ 119:./app/quaternion/quaternion.c **** 	float q3 = quaternion->q3;
+ 120:./app/quaternion/quaternion.c **** 
+ 121:./app/quaternion/quaternion.c **** 	//根据角速度更新四元数
+ 122:./app/quaternion/quaternion.c **** 	q0 += (-q1 * gyro->X - q2 * gyro->Y - q3 * gyro->Z) * halfT;
+ 123:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 124:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 125:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 126:./app/quaternion/quaternion.c **** 	
+ 127:./app/quaternion/quaternion.c **** 	//归一化
+ 128:./app/quaternion/quaternion.c **** 	normalise = InvSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+ 129:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 130:./app/quaternion/quaternion.c **** 	q1 *= normalise;
+ 131:./app/quaternion/quaternion.c **** 	q2 *= normalise;
+ 132:./app/quaternion/quaternion.c **** 	q3 *= normalise;
+ 133:./app/quaternion/quaternion.c **** 
+ 134:./app/quaternion/quaternion.c **** 	//最终赋值给外部
+ 135:./app/quaternion/quaternion.c **** 	quaternion->q0 = q0;
+ 136:./app/quaternion/quaternion.c **** 	quaternion->q1 = q1;
+ 137:./app/quaternion/quaternion.c **** 	quaternion->q2 = q2;
+ 138:./app/quaternion/quaternion.c **** 	quaternion->q3 = q3;
+ 139:./app/quaternion/quaternion.c **** 
+ 140:./app/quaternion/quaternion.c **** }
+ 141:./app/quaternion/quaternion.c **** 
+ 142:./app/quaternion/quaternion.c **** 
+ 143:./app/quaternion/quaternion.c **** //更新旋转矩阵
+ 144:./app/quaternion/quaternion.c **** static void Quaternion_ComputeRotationMatrix(Quaternion_t * quaternion)
+ 145:./app/quaternion/quaternion.c **** {
+  86              		.loc 1 145 1 is_stmt 1 view -0
+ARM GAS  /tmp/cc6bjkb9.s 			page 5
+
+
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 0
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90              		@ link register save eliminated.
+ 146:./app/quaternion/quaternion.c ****     float q1q1 = quaternion->q1 * quaternion->q1;
+  91              		.loc 1 146 5 view .LVU18
+  92              		.loc 1 146 28 is_stmt 0 view .LVU19
+  93 0000 D0ED017A 		vldr.32	s15, [r0, #4]
+  94              		.loc 1 146 11 view .LVU20
+  95 0004 27EEA74A 		vmul.f32	s8, s15, s15
+  96              	.LVL9:
+ 147:./app/quaternion/quaternion.c ****     float q2q2 = quaternion->q2 * quaternion->q2;
+  97              		.loc 1 147 5 is_stmt 1 view .LVU21
+  98              		.loc 1 147 28 is_stmt 0 view .LVU22
+  99 0008 D0ED026A 		vldr.32	s13, [r0, #8]
+ 100              		.loc 1 147 11 view .LVU23
+ 101 000c 66EEA64A 		vmul.f32	s9, s13, s13
+ 102              	.LVL10:
+ 148:./app/quaternion/quaternion.c ****     float q3q3 = quaternion->q3 * quaternion->q3;
+ 103              		.loc 1 148 5 is_stmt 1 view .LVU24
+ 104              		.loc 1 148 28 is_stmt 0 view .LVU25
+ 105 0010 90ED036A 		vldr.32	s12, [r0, #12]
+ 106              		.loc 1 148 11 view .LVU26
+ 107 0014 26EE065A 		vmul.f32	s10, s12, s12
+ 108              	.LVL11:
+ 149:./app/quaternion/quaternion.c **** 
+ 150:./app/quaternion/quaternion.c ****     float q0q1 = quaternion->q0 * quaternion->q1;
+ 109              		.loc 1 150 5 is_stmt 1 view .LVU27
+ 110              		.loc 1 150 28 is_stmt 0 view .LVU28
+ 111 0018 90ED007A 		vldr.32	s14, [r0]
+ 112              		.loc 1 150 11 view .LVU29
+ 113 001c 67EE875A 		vmul.f32	s11, s15, s14
+ 114              	.LVL12:
+ 151:./app/quaternion/quaternion.c ****     float q0q2 = quaternion->q0 * quaternion->q2;
+ 115              		.loc 1 151 5 is_stmt 1 view .LVU30
+ 116              		.loc 1 151 11 is_stmt 0 view .LVU31
+ 117 0020 26EE873A 		vmul.f32	s6, s13, s14
+ 118              	.LVL13:
+ 152:./app/quaternion/quaternion.c ****     float q0q3 = quaternion->q0 * quaternion->q3;
+ 119              		.loc 1 152 5 is_stmt 1 view .LVU32
+ 120              		.loc 1 152 11 is_stmt 0 view .LVU33
+ 121 0024 26EE077A 		vmul.f32	s14, s12, s14
+ 122              	.LVL14:
+ 153:./app/quaternion/quaternion.c ****     float q1q2 = quaternion->q1 * quaternion->q2;
+ 123              		.loc 1 153 5 is_stmt 1 view .LVU34
+ 124              		.loc 1 153 11 is_stmt 0 view .LVU35
+ 125 0028 67EEA62A 		vmul.f32	s5, s15, s13
+ 126              	.LVL15:
+ 154:./app/quaternion/quaternion.c ****     float q1q3 = quaternion->q1 * quaternion->q3;
+ 127              		.loc 1 154 5 is_stmt 1 view .LVU36
+ 128              		.loc 1 154 11 is_stmt 0 view .LVU37
+ 129 002c 67EE867A 		vmul.f32	s15, s15, s12
+ 130              	.LVL16:
+ 155:./app/quaternion/quaternion.c ****     float q2q3 = quaternion->q2 * quaternion->q3;
+ 131              		.loc 1 155 5 is_stmt 1 view .LVU38
+ 132              		.loc 1 155 11 is_stmt 0 view .LVU39
+ 133 0030 66EE866A 		vmul.f32	s13, s13, s12
+ARM GAS  /tmp/cc6bjkb9.s 			page 6
+
+
+ 134              	.LVL17:
+ 156:./app/quaternion/quaternion.c **** 
+ 157:./app/quaternion/quaternion.c **** 	//将四元数更新到旋转矩阵
+ 158:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[0][0] = 1.0f - 2.0f * q2q2 - 2.0f * q3q3;
+ 135              		.loc 1 158 5 is_stmt 1 view .LVU40
+ 136              		.loc 1 158 52 is_stmt 0 view .LVU41
+ 137 0034 74EEA44A 		vadd.f32	s9, s9, s9
+ 138              	.LVL18:
+ 139              		.loc 1 158 45 view .LVU42
+ 140 0038 B7EE006A 		vmov.f32	s12, #1.0e+0
+ 141 003c 76EE643A 		vsub.f32	s7, s12, s9
+ 142              		.loc 1 158 66 view .LVU43
+ 143 0040 35EE055A 		vadd.f32	s10, s10, s10
+ 144              	.LVL19:
+ 145              		.loc 1 158 59 view .LVU44
+ 146 0044 73EEC53A 		vsub.f32	s7, s7, s10
+ 147              		.loc 1 158 38 view .LVU45
+ 148 0048 C0ED043A 		vstr.32	s7, [r0, #16]
+ 159:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[0][1] = 2.0f * (q1q2 + -q0q3);
+ 149              		.loc 1 159 5 is_stmt 1 view .LVU46
+ 150              		.loc 1 159 53 is_stmt 0 view .LVU47
+ 151 004c 72EEC73A 		vsub.f32	s7, s5, s14
+ 152              		.loc 1 159 45 view .LVU48
+ 153 0050 73EEA33A 		vadd.f32	s7, s7, s7
+ 154              		.loc 1 159 38 view .LVU49
+ 155 0054 C0ED053A 		vstr.32	s7, [r0, #20]
+ 160:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[0][2] = 2.0f * (q1q3 - -q0q2);
+ 156              		.loc 1 160 5 is_stmt 1 view .LVU50
+ 157              		.loc 1 160 53 is_stmt 0 view .LVU51
+ 158 0058 73EE273A 		vadd.f32	s7, s6, s15
+ 159              		.loc 1 160 45 view .LVU52
+ 160 005c 73EEA33A 		vadd.f32	s7, s7, s7
+ 161              		.loc 1 160 38 view .LVU53
+ 162 0060 C0ED063A 		vstr.32	s7, [r0, #24]
+ 161:./app/quaternion/quaternion.c **** 
+ 162:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[1][0] = 2.0f * (q1q2 - -q0q3);
+ 163              		.loc 1 162 5 is_stmt 1 view .LVU54
+ 164              		.loc 1 162 53 is_stmt 0 view .LVU55
+ 165 0064 37EE227A 		vadd.f32	s14, s14, s5
+ 166              	.LVL20:
+ 167              		.loc 1 162 45 view .LVU56
+ 168 0068 37EE077A 		vadd.f32	s14, s14, s14
+ 169              		.loc 1 162 38 view .LVU57
+ 170 006c 80ED077A 		vstr.32	s14, [r0, #28]
+ 163:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[1][1] = 1.0f - 2.0f * q1q1 - 2.0f * q3q3;
+ 171              		.loc 1 163 5 is_stmt 1 view .LVU58
+ 172              		.loc 1 163 52 is_stmt 0 view .LVU59
+ 173 0070 34EE044A 		vadd.f32	s8, s8, s8
+ 174              	.LVL21:
+ 175              		.loc 1 163 45 view .LVU60
+ 176 0074 36EE447A 		vsub.f32	s14, s12, s8
+ 177              		.loc 1 163 59 view .LVU61
+ 178 0078 37EE455A 		vsub.f32	s10, s14, s10
+ 179              		.loc 1 163 38 view .LVU62
+ 180 007c 80ED085A 		vstr.32	s10, [r0, #32]
+ 164:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[1][2] = 2.0f * (q2q3 + -q0q1);
+ 181              		.loc 1 164 5 is_stmt 1 view .LVU63
+ARM GAS  /tmp/cc6bjkb9.s 			page 7
+
+
+ 182              		.loc 1 164 53 is_stmt 0 view .LVU64
+ 183 0080 36EEE56A 		vsub.f32	s12, s13, s11
+ 184              		.loc 1 164 45 view .LVU65
+ 185 0084 36EE066A 		vadd.f32	s12, s12, s12
+ 186              		.loc 1 164 38 view .LVU66
+ 187 0088 80ED096A 		vstr.32	s12, [r0, #36]
+ 165:./app/quaternion/quaternion.c **** 
+ 166:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[2][0] = 2.0f * (q1q3 + -q0q2);
+ 188              		.loc 1 166 5 is_stmt 1 view .LVU67
+ 189              		.loc 1 166 53 is_stmt 0 view .LVU68
+ 190 008c 77EEC37A 		vsub.f32	s15, s15, s6
+ 191              	.LVL22:
+ 192              		.loc 1 166 45 view .LVU69
+ 193 0090 77EEA77A 		vadd.f32	s15, s15, s15
+ 194              		.loc 1 166 38 view .LVU70
+ 195 0094 C0ED0A7A 		vstr.32	s15, [r0, #40]
+ 167:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[2][1] = 2.0f * (q2q3 - -q0q1);
+ 196              		.loc 1 167 5 is_stmt 1 view .LVU71
+ 197              		.loc 1 167 53 is_stmt 0 view .LVU72
+ 198 0098 75EEA66A 		vadd.f32	s13, s11, s13
+ 199              	.LVL23:
+ 200              		.loc 1 167 45 view .LVU73
+ 201 009c 76EEA66A 		vadd.f32	s13, s13, s13
+ 202              		.loc 1 167 38 view .LVU74
+ 203 00a0 C0ED0B6A 		vstr.32	s13, [r0, #44]
+ 168:./app/quaternion/quaternion.c ****     quaternion->RotationMatrix[2][2] = 1.0f - 2.0f * q1q1 - 2.0f * q2q2;
+ 204              		.loc 1 168 5 is_stmt 1 view .LVU75
+ 205              		.loc 1 168 59 is_stmt 0 view .LVU76
+ 206 00a4 37EE647A 		vsub.f32	s14, s14, s9
+ 207              		.loc 1 168 38 view .LVU77
+ 208 00a8 80ED0C7A 		vstr.32	s14, [r0, #48]
+ 169:./app/quaternion/quaternion.c **** }
+ 209              		.loc 1 169 1 view .LVU78
+ 210 00ac 7047     		bx	lr
+ 211              		.cfi_endproc
+ 212              	.LFE126:
+ 214              		.section	.text.Quaternion_Update,"ax",%progbits
+ 215              		.align	1
+ 216              		.global	Quaternion_Update
+ 217              		.syntax unified
+ 218              		.thumb
+ 219              		.thumb_func
+ 220              		.fpu fpv4-sp-d16
+ 222              	Quaternion_Update:
+ 223              	.LVL24:
+ 224              	.LFB125:
+ 112:./app/quaternion/quaternion.c **** 	float normalise;
+ 225              		.loc 1 112 1 is_stmt 1 view -0
+ 226              		.cfi_startproc
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 112:./app/quaternion/quaternion.c **** 	float normalise;
+ 229              		.loc 1 112 1 is_stmt 0 view .LVU80
+ 230 0000 10B5     		push	{r4, lr}
+ 231              	.LCFI0:
+ 232              		.cfi_def_cfa_offset 8
+ 233              		.cfi_offset 4, -8
+ARM GAS  /tmp/cc6bjkb9.s 			page 8
+
+
+ 234              		.cfi_offset 14, -4
+ 235 0002 2DED048B 		vpush.64	{d8, d9}
+ 236              	.LCFI1:
+ 237              		.cfi_def_cfa_offset 24
+ 238              		.cfi_offset 80, -24
+ 239              		.cfi_offset 81, -20
+ 240              		.cfi_offset 82, -16
+ 241              		.cfi_offset 83, -12
+ 242 0006 0446     		mov	r4, r0
+ 113:./app/quaternion/quaternion.c **** 	float halfT = 0.5f * dt;
+ 243              		.loc 1 113 2 is_stmt 1 view .LVU81
+ 114:./app/quaternion/quaternion.c **** 
+ 244              		.loc 1 114 2 view .LVU82
+ 114:./app/quaternion/quaternion.c **** 
+ 245              		.loc 1 114 8 is_stmt 0 view .LVU83
+ 246 0008 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 247 000c 20EE270A 		vmul.f32	s0, s0, s15
+ 248              	.LVL25:
+ 116:./app/quaternion/quaternion.c **** 	float q1 = quaternion->q1;
+ 249              		.loc 1 116 2 is_stmt 1 view .LVU84
+ 116:./app/quaternion/quaternion.c **** 	float q1 = quaternion->q1;
+ 250              		.loc 1 116 8 is_stmt 0 view .LVU85
+ 251 0010 90ED005A 		vldr.32	s10, [r0]
+ 252              	.LVL26:
+ 117:./app/quaternion/quaternion.c **** 	float q2 = quaternion->q2;
+ 253              		.loc 1 117 2 is_stmt 1 view .LVU86
+ 117:./app/quaternion/quaternion.c **** 	float q2 = quaternion->q2;
+ 254              		.loc 1 117 8 is_stmt 0 view .LVU87
+ 255 0014 D0ED015A 		vldr.32	s11, [r0, #4]
+ 256              	.LVL27:
+ 118:./app/quaternion/quaternion.c **** 	float q3 = quaternion->q3;
+ 257              		.loc 1 118 2 is_stmt 1 view .LVU88
+ 118:./app/quaternion/quaternion.c **** 	float q3 = quaternion->q3;
+ 258              		.loc 1 118 8 is_stmt 0 view .LVU89
+ 259 0018 90ED026A 		vldr.32	s12, [r0, #8]
+ 260              	.LVL28:
+ 119:./app/quaternion/quaternion.c **** 
+ 261              		.loc 1 119 2 is_stmt 1 view .LVU90
+ 119:./app/quaternion/quaternion.c **** 
+ 262              		.loc 1 119 8 is_stmt 0 view .LVU91
+ 263 001c D0ED036A 		vldr.32	s13, [r0, #12]
+ 264              	.LVL29:
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 265              		.loc 1 122 2 is_stmt 1 view .LVU92
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 266              		.loc 1 122 19 is_stmt 0 view .LVU93
+ 267 0020 91ED007A 		vldr.32	s14, [r1]
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 268              		.loc 1 122 13 view .LVU94
+ 269 0024 65EEC78A 		vnmul.f32	s17, s11, s14
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 270              		.loc 1 122 34 view .LVU95
+ 271 0028 91ED018A 		vldr.32	s16, [r1, #4]
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 272              		.loc 1 122 28 view .LVU96
+ 273 002c 68EE067A 		vmul.f32	s15, s16, s12
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ARM GAS  /tmp/cc6bjkb9.s 			page 9
+
+
+ 274              		.loc 1 122 23 view .LVU97
+ 275 0030 78EEE78A 		vsub.f32	s17, s17, s15
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 276              		.loc 1 122 49 view .LVU98
+ 277 0034 D1ED027A 		vldr.32	s15, [r1, #8]
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 278              		.loc 1 122 43 view .LVU99
+ 279 0038 67EEA64A 		vmul.f32	s9, s15, s13
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 280              		.loc 1 122 38 view .LVU100
+ 281 003c 78EEE48A 		vsub.f32	s17, s17, s9
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 282              		.loc 1 122 54 view .LVU101
+ 283 0040 68EE808A 		vmul.f32	s17, s17, s0
+ 122:./app/quaternion/quaternion.c **** 	q1 += ( q0 * gyro->X + q2 * gyro->Z - q3 * gyro->Y) * halfT;
+ 284              		.loc 1 122 5 view .LVU102
+ 285 0044 78EE858A 		vadd.f32	s17, s17, s10
+ 286              	.LVL30:
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 287              		.loc 1 123 2 is_stmt 1 view .LVU103
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 288              		.loc 1 123 13 is_stmt 0 view .LVU104
+ 289 0048 27EE289A 		vmul.f32	s18, s14, s17
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 290              		.loc 1 123 28 view .LVU105
+ 291 004c 27EE865A 		vmul.f32	s10, s15, s12
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 292              		.loc 1 123 23 view .LVU106
+ 293 0050 39EE059A 		vadd.f32	s18, s18, s10
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 294              		.loc 1 123 43 view .LVU107
+ 295 0054 28EE265A 		vmul.f32	s10, s16, s13
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 296              		.loc 1 123 38 view .LVU108
+ 297 0058 39EE459A 		vsub.f32	s18, s18, s10
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 298              		.loc 1 123 54 view .LVU109
+ 299 005c 29EE009A 		vmul.f32	s18, s18, s0
+ 123:./app/quaternion/quaternion.c **** 	q2 += ( q0 * gyro->Y - q1 * gyro->Z + q3 * gyro->X) * halfT;
+ 300              		.loc 1 123 5 view .LVU110
+ 301 0060 39EE259A 		vadd.f32	s18, s18, s11
+ 302              	.LVL31:
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 303              		.loc 1 124 2 is_stmt 1 view .LVU111
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 304              		.loc 1 124 13 is_stmt 0 view .LVU112
+ 305 0064 68EE289A 		vmul.f32	s19, s16, s17
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 306              		.loc 1 124 28 view .LVU113
+ 307 0068 67EE895A 		vmul.f32	s11, s15, s18
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 308              		.loc 1 124 23 view .LVU114
+ 309 006c 79EEE59A 		vsub.f32	s19, s19, s11
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 310              		.loc 1 124 43 view .LVU115
+ 311 0070 67EE265A 		vmul.f32	s11, s14, s13
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ARM GAS  /tmp/cc6bjkb9.s 			page 10
+
+
+ 312              		.loc 1 124 38 view .LVU116
+ 313 0074 79EEA59A 		vadd.f32	s19, s19, s11
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 314              		.loc 1 124 54 view .LVU117
+ 315 0078 69EE809A 		vmul.f32	s19, s19, s0
+ 124:./app/quaternion/quaternion.c **** 	q3 += ( q0 * gyro->Z + q1 * gyro->Y - q2 * gyro->X) * halfT;
+ 316              		.loc 1 124 5 view .LVU118
+ 317 007c 79EE869A 		vadd.f32	s19, s19, s12
+ 318              	.LVL32:
+ 125:./app/quaternion/quaternion.c **** 	
+ 319              		.loc 1 125 2 is_stmt 1 view .LVU119
+ 125:./app/quaternion/quaternion.c **** 	
+ 320              		.loc 1 125 13 is_stmt 0 view .LVU120
+ 321 0080 67EEA87A 		vmul.f32	s15, s15, s17
+ 125:./app/quaternion/quaternion.c **** 	
+ 322              		.loc 1 125 28 view .LVU121
+ 323 0084 28EE098A 		vmul.f32	s16, s16, s18
+ 125:./app/quaternion/quaternion.c **** 	
+ 324              		.loc 1 125 23 view .LVU122
+ 325 0088 37EE888A 		vadd.f32	s16, s15, s16
+ 125:./app/quaternion/quaternion.c **** 	
+ 326              		.loc 1 125 43 view .LVU123
+ 327 008c 27EE297A 		vmul.f32	s14, s14, s19
+ 125:./app/quaternion/quaternion.c **** 	
+ 328              		.loc 1 125 38 view .LVU124
+ 329 0090 38EE478A 		vsub.f32	s16, s16, s14
+ 125:./app/quaternion/quaternion.c **** 	
+ 330              		.loc 1 125 54 view .LVU125
+ 331 0094 28EE008A 		vmul.f32	s16, s16, s0
+ 125:./app/quaternion/quaternion.c **** 	
+ 332              		.loc 1 125 5 view .LVU126
+ 333 0098 38EE268A 		vadd.f32	s16, s16, s13
+ 334              	.LVL33:
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 335              		.loc 1 128 2 is_stmt 1 view .LVU127
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 336              		.loc 1 128 25 is_stmt 0 view .LVU128
+ 337 009c 68EEA87A 		vmul.f32	s15, s17, s17
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 338              		.loc 1 128 35 view .LVU129
+ 339 00a0 29EE090A 		vmul.f32	s0, s18, s18
+ 340              	.LVL34:
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 341              		.loc 1 128 30 view .LVU130
+ 342 00a4 77EE807A 		vadd.f32	s15, s15, s0
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 343              		.loc 1 128 45 view .LVU131
+ 344 00a8 29EEA90A 		vmul.f32	s0, s19, s19
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 345              		.loc 1 128 40 view .LVU132
+ 346 00ac 77EE807A 		vadd.f32	s15, s15, s0
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 347              		.loc 1 128 55 view .LVU133
+ 348 00b0 28EE080A 		vmul.f32	s0, s16, s16
+ 128:./app/quaternion/quaternion.c **** 	q0 *= normalise;
+ 349              		.loc 1 128 14 view .LVU134
+ 350 00b4 37EE800A 		vadd.f32	s0, s15, s0
+ARM GAS  /tmp/cc6bjkb9.s 			page 11
+
+
+ 351 00b8 FFF7FEFF 		bl	InvSqrt
+ 352              	.LVL35:
+ 129:./app/quaternion/quaternion.c **** 	q1 *= normalise;
+ 353              		.loc 1 129 2 is_stmt 1 view .LVU135
+ 129:./app/quaternion/quaternion.c **** 	q1 *= normalise;
+ 354              		.loc 1 129 5 is_stmt 0 view .LVU136
+ 355 00bc 68EE808A 		vmul.f32	s17, s17, s0
+ 356              	.LVL36:
+ 130:./app/quaternion/quaternion.c **** 	q2 *= normalise;
+ 357              		.loc 1 130 2 is_stmt 1 view .LVU137
+ 130:./app/quaternion/quaternion.c **** 	q2 *= normalise;
+ 358              		.loc 1 130 5 is_stmt 0 view .LVU138
+ 359 00c0 29EE009A 		vmul.f32	s18, s18, s0
+ 360              	.LVL37:
+ 131:./app/quaternion/quaternion.c **** 	q3 *= normalise;
+ 361              		.loc 1 131 2 is_stmt 1 view .LVU139
+ 131:./app/quaternion/quaternion.c **** 	q3 *= normalise;
+ 362              		.loc 1 131 5 is_stmt 0 view .LVU140
+ 363 00c4 69EE809A 		vmul.f32	s19, s19, s0
+ 364              	.LVL38:
+ 132:./app/quaternion/quaternion.c **** 
+ 365              		.loc 1 132 2 is_stmt 1 view .LVU141
+ 132:./app/quaternion/quaternion.c **** 
+ 366              		.loc 1 132 5 is_stmt 0 view .LVU142
+ 367 00c8 28EE008A 		vmul.f32	s16, s16, s0
+ 368              	.LVL39:
+ 135:./app/quaternion/quaternion.c **** 	quaternion->q1 = q1;
+ 369              		.loc 1 135 2 is_stmt 1 view .LVU143
+ 135:./app/quaternion/quaternion.c **** 	quaternion->q1 = q1;
+ 370              		.loc 1 135 17 is_stmt 0 view .LVU144
+ 371 00cc C4ED008A 		vstr.32	s17, [r4]
+ 136:./app/quaternion/quaternion.c **** 	quaternion->q2 = q2;
+ 372              		.loc 1 136 2 is_stmt 1 view .LVU145
+ 136:./app/quaternion/quaternion.c **** 	quaternion->q2 = q2;
+ 373              		.loc 1 136 17 is_stmt 0 view .LVU146
+ 374 00d0 84ED019A 		vstr.32	s18, [r4, #4]
+ 137:./app/quaternion/quaternion.c **** 	quaternion->q3 = q3;
+ 375              		.loc 1 137 2 is_stmt 1 view .LVU147
+ 137:./app/quaternion/quaternion.c **** 	quaternion->q3 = q3;
+ 376              		.loc 1 137 17 is_stmt 0 view .LVU148
+ 377 00d4 C4ED029A 		vstr.32	s19, [r4, #8]
+ 138:./app/quaternion/quaternion.c **** 
+ 378              		.loc 1 138 2 is_stmt 1 view .LVU149
+ 138:./app/quaternion/quaternion.c **** 
+ 379              		.loc 1 138 17 is_stmt 0 view .LVU150
+ 380 00d8 84ED038A 		vstr.32	s16, [r4, #12]
+ 140:./app/quaternion/quaternion.c **** 
+ 381              		.loc 1 140 1 view .LVU151
+ 382 00dc BDEC048B 		vldm	sp!, {d8-d9}
+ 383              	.LCFI2:
+ 384              		.cfi_restore 82
+ 385              		.cfi_restore 83
+ 386              		.cfi_restore 80
+ 387              		.cfi_restore 81
+ 388              		.cfi_def_cfa_offset 8
+ 389              	.LVL40:
+ 140:./app/quaternion/quaternion.c **** 
+ARM GAS  /tmp/cc6bjkb9.s 			page 12
+
+
+ 390              		.loc 1 140 1 view .LVU152
+ 391 00e0 10BD     		pop	{r4, pc}
+ 140:./app/quaternion/quaternion.c **** 
+ 392              		.loc 1 140 1 view .LVU153
+ 393              		.cfi_endproc
+ 394              	.LFE125:
+ 396              		.section	.text.Quaternion_ToAttitudeAngle,"ax",%progbits
+ 397              		.align	1
+ 398              		.global	Quaternion_ToAttitudeAngle
+ 399              		.syntax unified
+ 400              		.thumb
+ 401              		.thumb_func
+ 402              		.fpu fpv4-sp-d16
+ 404              	Quaternion_ToAttitudeAngle:
+ 405              	.LVL41:
+ 406              	.LFB127:
+ 170:./app/quaternion/quaternion.c **** 
+ 171:./app/quaternion/quaternion.c **** 
+ 172:./app/quaternion/quaternion.c **** //四元数转欧拉角
+ 173:./app/quaternion/quaternion.c **** void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angle)
+ 174:./app/quaternion/quaternion.c **** {
+ 407              		.loc 1 174 1 is_stmt 1 view -0
+ 408              		.cfi_startproc
+ 409              		@ args = 0, pretend = 0, frame = 0
+ 410              		@ frame_needed = 0, uses_anonymous_args = 0
+ 411              		.loc 1 174 1 is_stmt 0 view .LVU155
+ 412 0000 38B5     		push	{r3, r4, r5, lr}
+ 413              	.LCFI3:
+ 414              		.cfi_def_cfa_offset 16
+ 415              		.cfi_offset 3, -16
+ 416              		.cfi_offset 4, -12
+ 417              		.cfi_offset 5, -8
+ 418              		.cfi_offset 14, -4
+ 419 0002 2DED028B 		vpush.64	{d8}
+ 420              	.LCFI4:
+ 421              		.cfi_def_cfa_offset 24
+ 422              		.cfi_offset 80, -24
+ 423              		.cfi_offset 81, -20
+ 424 0006 0446     		mov	r4, r0
+ 425 0008 0D46     		mov	r5, r1
+ 175:./app/quaternion/quaternion.c **** 	//先更新旋转矩阵 计算欧拉角是由旋转矩阵计算
+ 176:./app/quaternion/quaternion.c **** 	Quaternion_ComputeRotationMatrix(quaternion);
+ 426              		.loc 1 176 2 is_stmt 1 view .LVU156
+ 427 000a FFF7FEFF 		bl	Quaternion_ComputeRotationMatrix
+ 428              	.LVL42:
+ 177:./app/quaternion/quaternion.c **** 
+ 178:./app/quaternion/quaternion.c **** 	//由旋转矩阵计算欧拉角
+ 179:./app/quaternion/quaternion.c **** 	angle->Pitch = RAD_TO_DEG(-asinf(quaternion->RotationMatrix[2][0])); 
+ 429              		.loc 1 179 2 view .LVU157
+ 430              		.loc 1 179 17 is_stmt 0 view .LVU158
+ 431 000e 94ED0A0A 		vldr.32	s0, [r4, #40]
+ 432 0012 FFF7FEFF 		bl	asinf
+ 433              	.LVL43:
+ 434 0016 9FED0E8A 		vldr.32	s16, .L9
+ 435 001a 20EE480A 		vnmul.f32	s0, s0, s16
+ 436              		.loc 1 179 15 view .LVU159
+ 437 001e 85ED000A 		vstr.32	s0, [r5]
+ARM GAS  /tmp/cc6bjkb9.s 			page 13
+
+
+ 180:./app/quaternion/quaternion.c **** 	angle->Roll = RAD_TO_DEG(atan2f(quaternion->RotationMatrix[2][1], quaternion->RotationMatrix[2][2]
+ 438              		.loc 1 180 2 is_stmt 1 view .LVU160
+ 439              		.loc 1 180 16 is_stmt 0 view .LVU161
+ 440 0022 D4ED0C0A 		vldr.32	s1, [r4, #48]
+ 441 0026 94ED0B0A 		vldr.32	s0, [r4, #44]
+ 442 002a FFF7FEFF 		bl	atan2f
+ 443              	.LVL44:
+ 444 002e 20EE080A 		vmul.f32	s0, s0, s16
+ 445              		.loc 1 180 14 view .LVU162
+ 446 0032 85ED010A 		vstr.32	s0, [r5, #4]
+ 181:./app/quaternion/quaternion.c **** 	angle->Yaw = RAD_TO_DEG(atan2f(quaternion->RotationMatrix[1][0], quaternion->RotationMatrix[0][0])
+ 447              		.loc 1 181 2 is_stmt 1 view .LVU163
+ 448              		.loc 1 181 15 is_stmt 0 view .LVU164
+ 449 0036 D4ED040A 		vldr.32	s1, [r4, #16]
+ 450 003a 94ED070A 		vldr.32	s0, [r4, #28]
+ 451 003e FFF7FEFF 		bl	atan2f
+ 452              	.LVL45:
+ 453 0042 20EE080A 		vmul.f32	s0, s0, s16
+ 454              		.loc 1 181 13 view .LVU165
+ 455 0046 85ED020A 		vstr.32	s0, [r5, #8]
+ 182:./app/quaternion/quaternion.c **** }
+ 456              		.loc 1 182 1 view .LVU166
+ 457 004a BDEC028B 		vldm	sp!, {d8}
+ 458              	.LCFI5:
+ 459              		.cfi_restore 80
+ 460              		.cfi_restore 81
+ 461              		.cfi_def_cfa_offset 16
+ 462 004e 38BD     		pop	{r3, r4, r5, pc}
+ 463              	.LVL46:
+ 464              	.L10:
+ 465              		.loc 1 182 1 view .LVU167
+ 466              		.align	2
+ 467              	.L9:
+ 468 0050 E12E6542 		.word	1113927393
+ 469              		.cfi_endproc
+ 470              	.LFE127:
+ 472              		.section	.text.Quaternion_BodyToEarth,"ax",%progbits
+ 473              		.align	1
+ 474              		.global	Quaternion_BodyToEarth
+ 475              		.syntax unified
+ 476              		.thumb
+ 477              		.thumb_func
+ 478              		.fpu fpv4-sp-d16
+ 480              	Quaternion_BodyToEarth:
+ 481              	.LVL47:
+ 482              	.LFB129:
+ 183:./app/quaternion/quaternion.c **** 
+ 184:./app/quaternion/quaternion.c **** 
+ 185:./app/quaternion/quaternion.c **** //惯性传感器计算
+ 186:./app/quaternion/quaternion.c **** void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_
+ 187:./app/quaternion/quaternion.c **** {
+ 188:./app/quaternion/quaternion.c **** 	TriaxialData_t gyroOffset = {0};
+ 189:./app/quaternion/quaternion.c **** 	TriaxialData_t gyroRad = {0};
+ 190:./app/quaternion/quaternion.c **** 
+ 191:./app/quaternion/quaternion.c **** 	//角度转弧度
+ 192:./app/quaternion/quaternion.c **** 	gyroRad.X = DEG_TO_RAD(gyro->X);	
+ 193:./app/quaternion/quaternion.c **** 	gyroRad.Y = DEG_TO_RAD(gyro->Y);
+ARM GAS  /tmp/cc6bjkb9.s 			page 14
+
+
+ 194:./app/quaternion/quaternion.c **** 	gyroRad.Z = DEG_TO_RAD(gyro->Z);
+ 195:./app/quaternion/quaternion.c **** 
+ 196:./app/quaternion/quaternion.c **** 	//PI互补滤波
+ 197:./app/quaternion/quaternion.c **** 	Quaternion_GetPIGyroOffset(quaternion, pi, acc, mag, &gyroOffset, dt);
+ 198:./app/quaternion/quaternion.c **** 
+ 199:./app/quaternion/quaternion.c **** 	//根据PI互补滤波补正
+ 200:./app/quaternion/quaternion.c **** 	gyroRad.X += gyroOffset.X;
+ 201:./app/quaternion/quaternion.c **** 	gyroRad.Y += gyroOffset.Y;
+ 202:./app/quaternion/quaternion.c **** 	gyroRad.Z += gyroOffset.Z;
+ 203:./app/quaternion/quaternion.c **** 
+ 204:./app/quaternion/quaternion.c **** 	//更新四元数
+ 205:./app/quaternion/quaternion.c **** 	Quaternion_Update(quaternion, &gyroRad, dt);
+ 206:./app/quaternion/quaternion.c **** 
+ 207:./app/quaternion/quaternion.c **** 	//四元数更新旋转矩阵
+ 208:./app/quaternion/quaternion.c **** 	Quaternion_ComputeRotationMatrix(quaternion);
+ 209:./app/quaternion/quaternion.c **** 
+ 210:./app/quaternion/quaternion.c **** 	//四元数转欧拉角
+ 211:./app/quaternion/quaternion.c **** 	Quaternion_ToAttitudeAngle(quaternion, angle);
+ 212:./app/quaternion/quaternion.c **** }
+ 213:./app/quaternion/quaternion.c **** 
+ 214:./app/quaternion/quaternion.c **** 
+ 215:./app/quaternion/quaternion.c **** //机体坐标系转到地球坐标系
+ 216:./app/quaternion/quaternion.c **** void Quaternion_BodyToEarth(Quaternion_t * quaternion, TriaxialData_t * body, TriaxialData_t * eart
+ 217:./app/quaternion/quaternion.c **** {
+ 483              		.loc 1 217 1 is_stmt 1 view -0
+ 484              		.cfi_startproc
+ 485              		@ args = 0, pretend = 0, frame = 0
+ 486              		@ frame_needed = 0, uses_anonymous_args = 0
+ 487              		@ link register save eliminated.
+ 218:./app/quaternion/quaternion.c **** 	earth->X = quaternion->RotationMatrix[0][0] * body->X + quaternion->RotationMatrix[0][1] * body->Y
+ 488              		.loc 1 218 2 view .LVU169
+ 489              		.loc 1 218 42 is_stmt 0 view .LVU170
+ 490 0000 D0ED047A 		vldr.32	s15, [r0, #16]
+ 491              		.loc 1 218 52 view .LVU171
+ 492 0004 91ED007A 		vldr.32	s14, [r1]
+ 493              		.loc 1 218 46 view .LVU172
+ 494 0008 67EE877A 		vmul.f32	s15, s15, s14
+ 495              		.loc 1 218 87 view .LVU173
+ 496 000c 90ED057A 		vldr.32	s14, [r0, #20]
+ 497              		.loc 1 218 97 view .LVU174
+ 498 0010 D1ED016A 		vldr.32	s13, [r1, #4]
+ 499              		.loc 1 218 91 view .LVU175
+ 500 0014 27EE267A 		vmul.f32	s14, s14, s13
+ 501              		.loc 1 218 56 view .LVU176
+ 502 0018 77EE877A 		vadd.f32	s15, s15, s14
+ 503              		.loc 1 218 132 view .LVU177
+ 504 001c 90ED067A 		vldr.32	s14, [r0, #24]
+ 505              		.loc 1 218 142 view .LVU178
+ 506 0020 D1ED026A 		vldr.32	s13, [r1, #8]
+ 507              		.loc 1 218 136 view .LVU179
+ 508 0024 27EE267A 		vmul.f32	s14, s14, s13
+ 509              		.loc 1 218 101 view .LVU180
+ 510 0028 77EE877A 		vadd.f32	s15, s15, s14
+ 511              		.loc 1 218 11 view .LVU181
+ 512 002c C2ED007A 		vstr.32	s15, [r2]
+ 219:./app/quaternion/quaternion.c **** 	earth->Y = quaternion->RotationMatrix[1][0] * body->X + quaternion->RotationMatrix[1][1] * body->Y
+ 513              		.loc 1 219 2 is_stmt 1 view .LVU182
+ARM GAS  /tmp/cc6bjkb9.s 			page 15
+
+
+ 514              		.loc 1 219 42 is_stmt 0 view .LVU183
+ 515 0030 D0ED077A 		vldr.32	s15, [r0, #28]
+ 516              		.loc 1 219 52 view .LVU184
+ 517 0034 91ED007A 		vldr.32	s14, [r1]
+ 518              		.loc 1 219 46 view .LVU185
+ 519 0038 67EE877A 		vmul.f32	s15, s15, s14
+ 520              		.loc 1 219 87 view .LVU186
+ 521 003c 90ED087A 		vldr.32	s14, [r0, #32]
+ 522              		.loc 1 219 97 view .LVU187
+ 523 0040 D1ED016A 		vldr.32	s13, [r1, #4]
+ 524              		.loc 1 219 91 view .LVU188
+ 525 0044 27EE267A 		vmul.f32	s14, s14, s13
+ 526              		.loc 1 219 56 view .LVU189
+ 527 0048 77EE877A 		vadd.f32	s15, s15, s14
+ 528              		.loc 1 219 132 view .LVU190
+ 529 004c 90ED097A 		vldr.32	s14, [r0, #36]
+ 530              		.loc 1 219 142 view .LVU191
+ 531 0050 D1ED026A 		vldr.32	s13, [r1, #8]
+ 532              		.loc 1 219 136 view .LVU192
+ 533 0054 27EE267A 		vmul.f32	s14, s14, s13
+ 534              		.loc 1 219 101 view .LVU193
+ 535 0058 77EE877A 		vadd.f32	s15, s15, s14
+ 536              		.loc 1 219 11 view .LVU194
+ 537 005c C2ED017A 		vstr.32	s15, [r2, #4]
+ 220:./app/quaternion/quaternion.c **** 	earth->Z = quaternion->RotationMatrix[2][0] * body->X + quaternion->RotationMatrix[2][1] * body->Y
+ 538              		.loc 1 220 2 is_stmt 1 view .LVU195
+ 539              		.loc 1 220 42 is_stmt 0 view .LVU196
+ 540 0060 D0ED0A7A 		vldr.32	s15, [r0, #40]
+ 541              		.loc 1 220 52 view .LVU197
+ 542 0064 91ED007A 		vldr.32	s14, [r1]
+ 543              		.loc 1 220 46 view .LVU198
+ 544 0068 67EE877A 		vmul.f32	s15, s15, s14
+ 545              		.loc 1 220 87 view .LVU199
+ 546 006c 90ED0B7A 		vldr.32	s14, [r0, #44]
+ 547              		.loc 1 220 97 view .LVU200
+ 548 0070 D1ED016A 		vldr.32	s13, [r1, #4]
+ 549              		.loc 1 220 91 view .LVU201
+ 550 0074 27EE267A 		vmul.f32	s14, s14, s13
+ 551              		.loc 1 220 56 view .LVU202
+ 552 0078 77EE877A 		vadd.f32	s15, s15, s14
+ 553              		.loc 1 220 132 view .LVU203
+ 554 007c 90ED0C7A 		vldr.32	s14, [r0, #48]
+ 555              		.loc 1 220 142 view .LVU204
+ 556 0080 D1ED026A 		vldr.32	s13, [r1, #8]
+ 557              		.loc 1 220 136 view .LVU205
+ 558 0084 27EE267A 		vmul.f32	s14, s14, s13
+ 559              		.loc 1 220 101 view .LVU206
+ 560 0088 77EE877A 		vadd.f32	s15, s15, s14
+ 561              		.loc 1 220 11 view .LVU207
+ 562 008c C2ED027A 		vstr.32	s15, [r2, #8]
+ 221:./app/quaternion/quaternion.c **** }
+ 563              		.loc 1 221 1 view .LVU208
+ 564 0090 7047     		bx	lr
+ 565              		.cfi_endproc
+ 566              	.LFE129:
+ 568              		.section	.text.Quaternion_EarthToBody,"ax",%progbits
+ 569              		.align	1
+ARM GAS  /tmp/cc6bjkb9.s 			page 16
+
+
+ 570              		.global	Quaternion_EarthToBody
+ 571              		.syntax unified
+ 572              		.thumb
+ 573              		.thumb_func
+ 574              		.fpu fpv4-sp-d16
+ 576              	Quaternion_EarthToBody:
+ 577              	.LVL48:
+ 578              	.LFB130:
+ 222:./app/quaternion/quaternion.c **** 
+ 223:./app/quaternion/quaternion.c **** //地球坐标系转到机体坐标系
+ 224:./app/quaternion/quaternion.c **** void Quaternion_EarthToBody(Quaternion_t * quaternion, TriaxialData_t * earth, TriaxialData_t * bod
+ 225:./app/quaternion/quaternion.c **** {
+ 579              		.loc 1 225 1 is_stmt 1 view -0
+ 580              		.cfi_startproc
+ 581              		@ args = 0, pretend = 0, frame = 0
+ 582              		@ frame_needed = 0, uses_anonymous_args = 0
+ 583              		@ link register save eliminated.
+ 226:./app/quaternion/quaternion.c **** 	body->X = quaternion->RotationMatrix[0][0] * earth->X + quaternion->RotationMatrix[1][0] * earth->
+ 584              		.loc 1 226 2 view .LVU210
+ 585              		.loc 1 226 41 is_stmt 0 view .LVU211
+ 586 0000 D0ED047A 		vldr.32	s15, [r0, #16]
+ 587              		.loc 1 226 52 view .LVU212
+ 588 0004 91ED007A 		vldr.32	s14, [r1]
+ 589              		.loc 1 226 45 view .LVU213
+ 590 0008 67EE877A 		vmul.f32	s15, s15, s14
+ 591              		.loc 1 226 87 view .LVU214
+ 592 000c 90ED077A 		vldr.32	s14, [r0, #28]
+ 593              		.loc 1 226 98 view .LVU215
+ 594 0010 D1ED016A 		vldr.32	s13, [r1, #4]
+ 595              		.loc 1 226 91 view .LVU216
+ 596 0014 27EE267A 		vmul.f32	s14, s14, s13
+ 597              		.loc 1 226 56 view .LVU217
+ 598 0018 77EE877A 		vadd.f32	s15, s15, s14
+ 599              		.loc 1 226 133 view .LVU218
+ 600 001c 90ED0A7A 		vldr.32	s14, [r0, #40]
+ 601              		.loc 1 226 144 view .LVU219
+ 602 0020 D1ED026A 		vldr.32	s13, [r1, #8]
+ 603              		.loc 1 226 137 view .LVU220
+ 604 0024 27EE267A 		vmul.f32	s14, s14, s13
+ 605              		.loc 1 226 102 view .LVU221
+ 606 0028 77EE877A 		vadd.f32	s15, s15, s14
+ 607              		.loc 1 226 10 view .LVU222
+ 608 002c C2ED007A 		vstr.32	s15, [r2]
+ 227:./app/quaternion/quaternion.c **** 	body->Y = quaternion->RotationMatrix[0][1] * earth->X + quaternion->RotationMatrix[1][1] * earth->
+ 609              		.loc 1 227 2 is_stmt 1 view .LVU223
+ 610              		.loc 1 227 41 is_stmt 0 view .LVU224
+ 611 0030 D0ED057A 		vldr.32	s15, [r0, #20]
+ 612              		.loc 1 227 52 view .LVU225
+ 613 0034 91ED007A 		vldr.32	s14, [r1]
+ 614              		.loc 1 227 45 view .LVU226
+ 615 0038 67EE877A 		vmul.f32	s15, s15, s14
+ 616              		.loc 1 227 87 view .LVU227
+ 617 003c 90ED087A 		vldr.32	s14, [r0, #32]
+ 618              		.loc 1 227 98 view .LVU228
+ 619 0040 D1ED016A 		vldr.32	s13, [r1, #4]
+ 620              		.loc 1 227 91 view .LVU229
+ 621 0044 27EE267A 		vmul.f32	s14, s14, s13
+ARM GAS  /tmp/cc6bjkb9.s 			page 17
+
+
+ 622              		.loc 1 227 56 view .LVU230
+ 623 0048 77EE877A 		vadd.f32	s15, s15, s14
+ 624              		.loc 1 227 133 view .LVU231
+ 625 004c 90ED0B7A 		vldr.32	s14, [r0, #44]
+ 626              		.loc 1 227 144 view .LVU232
+ 627 0050 D1ED026A 		vldr.32	s13, [r1, #8]
+ 628              		.loc 1 227 137 view .LVU233
+ 629 0054 27EE267A 		vmul.f32	s14, s14, s13
+ 630              		.loc 1 227 102 view .LVU234
+ 631 0058 77EE877A 		vadd.f32	s15, s15, s14
+ 632              		.loc 1 227 10 view .LVU235
+ 633 005c C2ED017A 		vstr.32	s15, [r2, #4]
+ 228:./app/quaternion/quaternion.c **** 	body->Z = quaternion->RotationMatrix[0][2] * earth->X + quaternion->RotationMatrix[1][2] * earth->
+ 634              		.loc 1 228 2 is_stmt 1 view .LVU236
+ 635              		.loc 1 228 41 is_stmt 0 view .LVU237
+ 636 0060 D0ED067A 		vldr.32	s15, [r0, #24]
+ 637              		.loc 1 228 52 view .LVU238
+ 638 0064 91ED007A 		vldr.32	s14, [r1]
+ 639              		.loc 1 228 45 view .LVU239
+ 640 0068 67EE877A 		vmul.f32	s15, s15, s14
+ 641              		.loc 1 228 87 view .LVU240
+ 642 006c 90ED097A 		vldr.32	s14, [r0, #36]
+ 643              		.loc 1 228 98 view .LVU241
+ 644 0070 D1ED016A 		vldr.32	s13, [r1, #4]
+ 645              		.loc 1 228 91 view .LVU242
+ 646 0074 27EE267A 		vmul.f32	s14, s14, s13
+ 647              		.loc 1 228 56 view .LVU243
+ 648 0078 77EE877A 		vadd.f32	s15, s15, s14
+ 649              		.loc 1 228 133 view .LVU244
+ 650 007c 90ED0C7A 		vldr.32	s14, [r0, #48]
+ 651              		.loc 1 228 144 view .LVU245
+ 652 0080 D1ED026A 		vldr.32	s13, [r1, #8]
+ 653              		.loc 1 228 137 view .LVU246
+ 654 0084 27EE267A 		vmul.f32	s14, s14, s13
+ 655              		.loc 1 228 102 view .LVU247
+ 656 0088 77EE877A 		vadd.f32	s15, s15, s14
+ 657              		.loc 1 228 10 view .LVU248
+ 658 008c C2ED027A 		vstr.32	s15, [r2, #8]
+ 229:./app/quaternion/quaternion.c **** }
+ 659              		.loc 1 229 1 view .LVU249
+ 660 0090 7047     		bx	lr
+ 661              		.cfi_endproc
+ 662              	.LFE130:
+ 664              		.section	.text.Quaternion_GetPIGyroOffset,"ax",%progbits
+ 665              		.align	1
+ 666              		.syntax unified
+ 667              		.thumb
+ 668              		.thumb_func
+ 669              		.fpu fpv4-sp-d16
+ 671              	Quaternion_GetPIGyroOffset:
+ 672              	.LVL49:
+ 673              	.LFB124:
+  30:./app/quaternion/quaternion.c **** 	TriaxialData_t accTemp;
+ 674              		.loc 1 30 1 is_stmt 1 view -0
+ 675              		.cfi_startproc
+ 676              		@ args = 4, pretend = 0, frame = 48
+ 677              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  /tmp/cc6bjkb9.s 			page 18
+
+
+  30:./app/quaternion/quaternion.c **** 	TriaxialData_t accTemp;
+ 678              		.loc 1 30 1 is_stmt 0 view .LVU251
+ 679 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 680              	.LCFI6:
+ 681              		.cfi_def_cfa_offset 20
+ 682              		.cfi_offset 4, -20
+ 683              		.cfi_offset 5, -16
+ 684              		.cfi_offset 6, -12
+ 685              		.cfi_offset 7, -8
+ 686              		.cfi_offset 14, -4
+ 687 0002 2DED048B 		vpush.64	{d8, d9}
+ 688              	.LCFI7:
+ 689              		.cfi_def_cfa_offset 36
+ 690              		.cfi_offset 80, -36
+ 691              		.cfi_offset 81, -32
+ 692              		.cfi_offset 82, -28
+ 693              		.cfi_offset 83, -24
+ 694 0006 8DB0     		sub	sp, sp, #52
+ 695              	.LCFI8:
+ 696              		.cfi_def_cfa_offset 88
+ 697 0008 0C46     		mov	r4, r1
+ 698 000a 169E     		ldr	r6, [sp, #88]
+  31:./app/quaternion/quaternion.c **** 	TriaxialData_t magTemp;
+ 699              		.loc 1 31 2 is_stmt 1 view .LVU252
+  32:./app/quaternion/quaternion.c **** 
+ 700              		.loc 1 32 2 view .LVU253
+  34:./app/quaternion/quaternion.c **** 	float ey = 0; 
+ 701              		.loc 1 34 2 view .LVU254
+ 702              	.LVL50:
+  35:./app/quaternion/quaternion.c **** 	float ez = 0;
+ 703              		.loc 1 35 2 view .LVU255
+  36:./app/quaternion/quaternion.c **** 	float normalise = 0;
+ 704              		.loc 1 36 2 view .LVU256
+  37:./app/quaternion/quaternion.c **** 
+ 705              		.loc 1 37 2 view .LVU257
+  40:./app/quaternion/quaternion.c **** 	TriaxialData_t magBody = {0};
+ 706              		.loc 1 40 2 view .LVU258
+  40:./app/quaternion/quaternion.c **** 	TriaxialData_t magBody = {0};
+ 707              		.loc 1 40 17 is_stmt 0 view .LVU259
+ 708 000c 0021     		movs	r1, #0
+ 709              	.LVL51:
+  40:./app/quaternion/quaternion.c **** 	TriaxialData_t magBody = {0};
+ 710              		.loc 1 40 17 view .LVU260
+ 711 000e 0391     		str	r1, [sp, #12]
+ 712 0010 0491     		str	r1, [sp, #16]
+ 713 0012 0591     		str	r1, [sp, #20]
+  41:./app/quaternion/quaternion.c **** 
+ 714              		.loc 1 41 2 is_stmt 1 view .LVU261
+  41:./app/quaternion/quaternion.c **** 
+ 715              		.loc 1 41 17 is_stmt 0 view .LVU262
+ 716 0014 0091     		str	r1, [sp]
+ 717 0016 0191     		str	r1, [sp, #4]
+ 718 0018 0291     		str	r1, [sp, #8]
+  43:./app/quaternion/quaternion.c **** 		|| (NULL == pi)
+ 719              		.loc 1 43 2 is_stmt 1 view .LVU263
+  43:./app/quaternion/quaternion.c **** 		|| (NULL == pi)
+ 720              		.loc 1 43 4 is_stmt 0 view .LVU264
+ARM GAS  /tmp/cc6bjkb9.s 			page 19
+
+
+ 721 001a 0028     		cmp	r0, #0
+ 722 001c 00F01681 		beq	.L13
+ 723 0020 1546     		mov	r5, r2
+ 724 0022 F0EE409A 		vmov.f32	s19, s0
+ 725 0026 0746     		mov	r7, r0
+  44:./app/quaternion/quaternion.c **** 		|| (NULL == acc)
+ 726              		.loc 1 44 3 view .LVU265
+ 727 0028 002C     		cmp	r4, #0
+ 728 002a 00F00F81 		beq	.L13
+  45:./app/quaternion/quaternion.c **** 		|| (NULL == offset)
+ 729              		.loc 1 45 3 view .LVU266
+ 730 002e 002A     		cmp	r2, #0
+ 731 0030 00F00C81 		beq	.L13
+  46:./app/quaternion/quaternion.c **** 	)
+ 732              		.loc 1 46 3 view .LVU267
+ 733 0034 002E     		cmp	r6, #0
+ 734 0036 00F00981 		beq	.L13
+  54:./app/quaternion/quaternion.c **** 	magTemp.Y = mag->Y;
+ 735              		.loc 1 54 2 is_stmt 1 view .LVU268
+  54:./app/quaternion/quaternion.c **** 	magTemp.Y = mag->Y;
+ 736              		.loc 1 54 17 is_stmt 0 view .LVU269
+ 737 003a 93ED008A 		vldr.32	s16, [r3]
+  54:./app/quaternion/quaternion.c **** 	magTemp.Y = mag->Y;
+ 738              		.loc 1 54 12 view .LVU270
+ 739 003e 8DED068A 		vstr.32	s16, [sp, #24]
+  55:./app/quaternion/quaternion.c **** 	magTemp.Z = mag->Z;
+ 740              		.loc 1 55 2 is_stmt 1 view .LVU271
+  55:./app/quaternion/quaternion.c **** 	magTemp.Z = mag->Z;
+ 741              		.loc 1 55 17 is_stmt 0 view .LVU272
+ 742 0042 D3ED018A 		vldr.32	s17, [r3, #4]
+  55:./app/quaternion/quaternion.c **** 	magTemp.Z = mag->Z;
+ 743              		.loc 1 55 12 view .LVU273
+ 744 0046 CDED078A 		vstr.32	s17, [sp, #28]
+  56:./app/quaternion/quaternion.c **** 
+ 745              		.loc 1 56 2 is_stmt 1 view .LVU274
+  56:./app/quaternion/quaternion.c **** 
+ 746              		.loc 1 56 17 is_stmt 0 view .LVU275
+ 747 004a 93ED029A 		vldr.32	s18, [r3, #8]
+  56:./app/quaternion/quaternion.c **** 
+ 748              		.loc 1 56 12 view .LVU276
+ 749 004e 8DED089A 		vstr.32	s18, [sp, #32]
+  59:./app/quaternion/quaternion.c **** 	{
+ 750              		.loc 1 59 2 is_stmt 1 view .LVU277
+  59:./app/quaternion/quaternion.c **** 	{
+ 751              		.loc 1 59 4 is_stmt 0 view .LVU278
+ 752 0052 B5EE408A 		vcmp.f32	s16, #0
+ 753 0056 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 754 005a 09D1     		bne	.L17
+  59:./app/quaternion/quaternion.c **** 	{
+ 755              		.loc 1 59 25 discriminator 1 view .LVU279
+ 756 005c F5EE408A 		vcmp.f32	s17, #0
+ 757 0060 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 758 0064 04D1     		bne	.L17
+  59:./app/quaternion/quaternion.c **** 	{
+ 759              		.loc 1 59 48 discriminator 2 view .LVU280
+ 760 0066 B5EE409A 		vcmp.f32	s18, #0
+ 761 006a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ARM GAS  /tmp/cc6bjkb9.s 			page 20
+
+
+ 762 006e 35D0     		beq	.L18
+ 763              	.L17:
+  62:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+ 764              		.loc 1 62 3 is_stmt 1 view .LVU281
+  62:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+ 765              		.loc 1 62 33 is_stmt 0 view .LVU282
+ 766 0070 68EE087A 		vmul.f32	s15, s16, s16
+  62:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+ 767              		.loc 1 62 57 view .LVU283
+ 768 0074 28EEA80A 		vmul.f32	s0, s17, s17
+ 769              	.LVL52:
+  62:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+ 770              		.loc 1 62 45 view .LVU284
+ 771 0078 77EE807A 		vadd.f32	s15, s15, s0
+  62:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+ 772              		.loc 1 62 81 view .LVU285
+ 773 007c 29EE090A 		vmul.f32	s0, s18, s18
+  62:./app/quaternion/quaternion.c **** 		magTemp.X *= normalise;
+ 774              		.loc 1 62 15 view .LVU286
+ 775 0080 37EE800A 		vadd.f32	s0, s15, s0
+ 776 0084 FFF7FEFF 		bl	InvSqrt
+ 777              	.LVL53:
+  63:./app/quaternion/quaternion.c **** 		magTemp.Y *= normalise;
+ 778              		.loc 1 63 3 is_stmt 1 view .LVU287
+  63:./app/quaternion/quaternion.c **** 		magTemp.Y *= normalise;
+ 779              		.loc 1 63 13 is_stmt 0 view .LVU288
+ 780 0088 28EE008A 		vmul.f32	s16, s16, s0
+ 781 008c 8DED068A 		vstr.32	s16, [sp, #24]
+  64:./app/quaternion/quaternion.c **** 		magTemp.Z *= normalise;
+ 782              		.loc 1 64 3 is_stmt 1 view .LVU289
+  64:./app/quaternion/quaternion.c **** 		magTemp.Z *= normalise;
+ 783              		.loc 1 64 13 is_stmt 0 view .LVU290
+ 784 0090 68EE808A 		vmul.f32	s17, s17, s0
+ 785 0094 CDED078A 		vstr.32	s17, [sp, #28]
+  65:./app/quaternion/quaternion.c **** 	
+ 786              		.loc 1 65 3 is_stmt 1 view .LVU291
+  65:./app/quaternion/quaternion.c **** 	
+ 787              		.loc 1 65 13 is_stmt 0 view .LVU292
+ 788 0098 29EE009A 		vmul.f32	s18, s18, s0
+ 789 009c 8DED089A 		vstr.32	s18, [sp, #32]
+  68:./app/quaternion/quaternion.c **** 		//水平面向量和为北边 勾股定理定北边为x轴 
+ 790              		.loc 1 68 3 is_stmt 1 view .LVU293
+ 791 00a0 03AA     		add	r2, sp, #12
+ 792 00a2 06A9     		add	r1, sp, #24
+ 793 00a4 3846     		mov	r0, r7
+ 794 00a6 FFF7FEFF 		bl	Quaternion_BodyToEarth
+ 795              	.LVL54:
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 796              		.loc 1 70 3 view .LVU294
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 797              		.loc 1 70 39 is_stmt 0 view .LVU295
+ 798 00aa 9DED030A 		vldr.32	s0, [sp, #12]
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 799              		.loc 1 70 42 view .LVU296
+ 800 00ae 20EE000A 		vmul.f32	s0, s0, s0
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 801              		.loc 1 70 65 view .LVU297
+ARM GAS  /tmp/cc6bjkb9.s 			page 21
+
+
+ 802 00b2 DDED047A 		vldr.32	s15, [sp, #16]
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 803              		.loc 1 70 68 view .LVU298
+ 804 00b6 67EEA77A 		vmul.f32	s15, s15, s15
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 805              		.loc 1 70 23 view .LVU299
+ 806 00ba 30EE270A 		vadd.f32	s0, s0, s15
+ 807 00be FFF7FEFF 		bl	InvSqrt
+ 808              	.LVL55:
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 809              		.loc 1 70 21 view .LVU300
+ 810 00c2 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 811 00c6 C7EE007A 		vdiv.f32	s15, s14, s0
+  70:./app/quaternion/quaternion.c **** 		magEarth.Y = 0;
+ 812              		.loc 1 70 14 view .LVU301
+ 813 00ca CDED037A 		vstr.32	s15, [sp, #12]
+  71:./app/quaternion/quaternion.c **** 
+ 814              		.loc 1 71 3 is_stmt 1 view .LVU302
+  71:./app/quaternion/quaternion.c **** 
+ 815              		.loc 1 71 14 is_stmt 0 view .LVU303
+ 816 00ce 0023     		movs	r3, #0
+ 817 00d0 0493     		str	r3, [sp, #16]	@ float
+  75:./app/quaternion/quaternion.c **** 	}
+ 818              		.loc 1 75 3 is_stmt 1 view .LVU304
+ 819 00d2 6A46     		mov	r2, sp
+ 820 00d4 03A9     		add	r1, sp, #12
+ 821 00d6 3846     		mov	r0, r7
+ 822 00d8 FFF7FEFF 		bl	Quaternion_EarthToBody
+ 823              	.LVL56:
+ 824              	.L18:
+  79:./app/quaternion/quaternion.c **** 	accTemp.Y = acc->Y;
+ 825              		.loc 1 79 2 view .LVU305
+  79:./app/quaternion/quaternion.c **** 	accTemp.Y = acc->Y;
+ 826              		.loc 1 79 17 is_stmt 0 view .LVU306
+ 827 00dc 95ED008A 		vldr.32	s16, [r5]
+  79:./app/quaternion/quaternion.c **** 	accTemp.Y = acc->Y;
+ 828              		.loc 1 79 12 view .LVU307
+ 829 00e0 8DED098A 		vstr.32	s16, [sp, #36]
+  80:./app/quaternion/quaternion.c **** 	accTemp.Z = acc->Z;
+ 830              		.loc 1 80 2 is_stmt 1 view .LVU308
+  80:./app/quaternion/quaternion.c **** 	accTemp.Z = acc->Z;
+ 831              		.loc 1 80 17 is_stmt 0 view .LVU309
+ 832 00e4 95ED019A 		vldr.32	s18, [r5, #4]
+  80:./app/quaternion/quaternion.c **** 	accTemp.Z = acc->Z;
+ 833              		.loc 1 80 12 view .LVU310
+ 834 00e8 8DED0A9A 		vstr.32	s18, [sp, #40]
+  81:./app/quaternion/quaternion.c **** 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计�
+ 835              		.loc 1 81 2 is_stmt 1 view .LVU311
+  81:./app/quaternion/quaternion.c **** 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计�
+ 836              		.loc 1 81 17 is_stmt 0 view .LVU312
+ 837 00ec D5ED028A 		vldr.32	s17, [r5, #8]
+  81:./app/quaternion/quaternion.c **** 	//虽然浮点型数据都不会直接用恒等于的方式判断是否等于0 但防止后面计�
+ 838              		.loc 1 81 12 view .LVU313
+ 839 00f0 CDED0B8A 		vstr.32	s17, [sp, #44]
+  83:./app/quaternion/quaternion.c **** 	{
+ 840              		.loc 1 83 2 is_stmt 1 view .LVU314
+  83:./app/quaternion/quaternion.c **** 	{
+ARM GAS  /tmp/cc6bjkb9.s 			page 22
+
+
+ 841              		.loc 1 83 4 is_stmt 0 view .LVU315
+ 842 00f4 B5EE408A 		vcmp.f32	s16, #0
+ 843 00f8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 844 00fc 0AD1     		bne	.L19
+  83:./app/quaternion/quaternion.c **** 	{
+ 845              		.loc 1 83 25 discriminator 1 view .LVU316
+ 846 00fe B5EE409A 		vcmp.f32	s18, #0
+ 847 0102 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 848 0106 05D1     		bne	.L19
+  83:./app/quaternion/quaternion.c **** 	{
+ 849              		.loc 1 83 48 discriminator 2 view .LVU317
+ 850 0108 F5EE408A 		vcmp.f32	s17, #0
+ 851 010c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 852 0110 00F09C80 		beq	.L13
+ 853              	.L19:
+  87:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+ 854              		.loc 1 87 3 is_stmt 1 view .LVU318
+  87:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+ 855              		.loc 1 87 33 is_stmt 0 view .LVU319
+ 856 0114 68EE087A 		vmul.f32	s15, s16, s16
+  87:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+ 857              		.loc 1 87 57 view .LVU320
+ 858 0118 29EE090A 		vmul.f32	s0, s18, s18
+  87:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+ 859              		.loc 1 87 45 view .LVU321
+ 860 011c 77EE807A 		vadd.f32	s15, s15, s0
+  87:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+ 861              		.loc 1 87 81 view .LVU322
+ 862 0120 28EEA80A 		vmul.f32	s0, s17, s17
+  87:./app/quaternion/quaternion.c **** 		accTemp.X *= normalise;
+ 863              		.loc 1 87 15 view .LVU323
+ 864 0124 37EE800A 		vadd.f32	s0, s15, s0
+ 865 0128 FFF7FEFF 		bl	InvSqrt
+ 866              	.LVL57:
+  88:./app/quaternion/quaternion.c **** 		accTemp.Y *= normalise;
+ 867              		.loc 1 88 3 is_stmt 1 view .LVU324
+  88:./app/quaternion/quaternion.c **** 		accTemp.Y *= normalise;
+ 868              		.loc 1 88 13 is_stmt 0 view .LVU325
+ 869 012c 28EE008A 		vmul.f32	s16, s16, s0
+ 870 0130 8DED098A 		vstr.32	s16, [sp, #36]
+  89:./app/quaternion/quaternion.c **** 		accTemp.Z *= normalise;
+ 871              		.loc 1 89 3 is_stmt 1 view .LVU326
+  89:./app/quaternion/quaternion.c **** 		accTemp.Z *= normalise;
+ 872              		.loc 1 89 13 is_stmt 0 view .LVU327
+ 873 0134 29EE009A 		vmul.f32	s18, s18, s0
+ 874 0138 8DED0A9A 		vstr.32	s18, [sp, #40]
+  90:./app/quaternion/quaternion.c **** 		
+ 875              		.loc 1 90 3 is_stmt 1 view .LVU328
+  90:./app/quaternion/quaternion.c **** 		
+ 876              		.loc 1 90 13 is_stmt 0 view .LVU329
+ 877 013c 68EE808A 		vmul.f32	s17, s17, s0
+ 878 0140 CDED0B8A 		vstr.32	s17, [sp, #44]
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 879              		.loc 1 93 3 is_stmt 1 view .LVU330
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 880              		.loc 1 93 50 is_stmt 0 view .LVU331
+ 881 0144 D7ED0C4A 		vldr.32	s9, [r7, #48]
+ARM GAS  /tmp/cc6bjkb9.s 			page 23
+
+
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 882              		.loc 1 93 19 view .LVU332
+ 883 0148 29EE246A 		vmul.f32	s12, s18, s9
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 884              		.loc 1 93 97 view .LVU333
+ 885 014c D7ED0B3A 		vldr.32	s7, [r7, #44]
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 886              		.loc 1 93 66 view .LVU334
+ 887 0150 68EEA37A 		vmul.f32	s15, s17, s7
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 888              		.loc 1 93 54 view .LVU335
+ 889 0154 36EE676A 		vsub.f32	s12, s12, s15
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 890              		.loc 1 93 112 view .LVU336
+ 891 0158 DDED075A 		vldr.32	s11, [sp, #28]
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 892              		.loc 1 93 124 view .LVU337
+ 893 015c 9DED025A 		vldr.32	s10, [sp, #8]
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 894              		.loc 1 93 115 view .LVU338
+ 895 0160 65EE857A 		vmul.f32	s15, s11, s10
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 896              		.loc 1 93 136 view .LVU339
+ 897 0164 DDED086A 		vldr.32	s13, [sp, #32]
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 898              		.loc 1 93 148 view .LVU340
+ 899 0168 9DED017A 		vldr.32	s14, [sp, #4]
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 900              		.loc 1 93 139 view .LVU341
+ 901 016c 26EE874A 		vmul.f32	s8, s13, s14
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 902              		.loc 1 93 127 view .LVU342
+ 903 0170 77EEC47A 		vsub.f32	s15, s15, s8
+  93:./app/quaternion/quaternion.c **** 		ey = (accTemp.Z * quaternion->RotationMatrix[2][0] - accTemp.X * quaternion->RotationMatrix[2][2]
+ 904              		.loc 1 93 6 view .LVU343
+ 905 0174 36EE276A 		vadd.f32	s12, s12, s15
+ 906              	.LVL58:
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 907              		.loc 1 94 3 is_stmt 1 view .LVU344
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 908              		.loc 1 94 50 is_stmt 0 view .LVU345
+ 909 0178 97ED0A4A 		vldr.32	s8, [r7, #40]
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 910              		.loc 1 94 19 view .LVU346
+ 911 017c 68EE848A 		vmul.f32	s17, s17, s8
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 912              		.loc 1 94 66 view .LVU347
+ 913 0180 68EE244A 		vmul.f32	s9, s16, s9
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 914              		.loc 1 94 54 view .LVU348
+ 915 0184 78EEE48A 		vsub.f32	s17, s17, s9
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 916              		.loc 1 94 124 view .LVU349
+ 917 0188 DDED007A 		vldr.32	s15, [sp]
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 918              		.loc 1 94 115 view .LVU350
+ 919 018c 66EEA76A 		vmul.f32	s13, s13, s15
+ARM GAS  /tmp/cc6bjkb9.s 			page 24
+
+
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 920              		.loc 1 94 136 view .LVU351
+ 921 0190 DDED064A 		vldr.32	s9, [sp, #24]
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 922              		.loc 1 94 139 view .LVU352
+ 923 0194 25EE245A 		vmul.f32	s10, s10, s9
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 924              		.loc 1 94 127 view .LVU353
+ 925 0198 76EEC56A 		vsub.f32	s13, s13, s10
+  94:./app/quaternion/quaternion.c **** 		ez = (accTemp.X * quaternion->RotationMatrix[2][1] - accTemp.Y * quaternion->RotationMatrix[2][0]
+ 926              		.loc 1 94 6 view .LVU354
+ 927 019c 78EEA68A 		vadd.f32	s17, s17, s13
+ 928              	.LVL59:
+  95:./app/quaternion/quaternion.c **** 		
+ 929              		.loc 1 95 3 is_stmt 1 view .LVU355
+  95:./app/quaternion/quaternion.c **** 		
+ 930              		.loc 1 95 19 is_stmt 0 view .LVU356
+ 931 01a0 28EE238A 		vmul.f32	s16, s16, s7
+  95:./app/quaternion/quaternion.c **** 		
+ 932              		.loc 1 95 66 view .LVU357
+ 933 01a4 29EE049A 		vmul.f32	s18, s18, s8
+  95:./app/quaternion/quaternion.c **** 		
+ 934              		.loc 1 95 54 view .LVU358
+ 935 01a8 38EE498A 		vsub.f32	s16, s16, s18
+  95:./app/quaternion/quaternion.c **** 		
+ 936              		.loc 1 95 115 view .LVU359
+ 937 01ac 27EE247A 		vmul.f32	s14, s14, s9
+  95:./app/quaternion/quaternion.c **** 		
+ 938              		.loc 1 95 139 view .LVU360
+ 939 01b0 65EEA75A 		vmul.f32	s11, s11, s15
+  95:./app/quaternion/quaternion.c **** 		
+ 940              		.loc 1 95 127 view .LVU361
+ 941 01b4 37EE657A 		vsub.f32	s14, s14, s11
+  95:./app/quaternion/quaternion.c **** 		
+ 942              		.loc 1 95 6 view .LVU362
+ 943 01b8 38EE078A 		vadd.f32	s16, s16, s14
+ 944              	.LVL60:
+  98:./app/quaternion/quaternion.c **** 		pi->eyInt += pi->I * ey * dt;
+ 945              		.loc 1 98 3 is_stmt 1 view .LVU363
+  98:./app/quaternion/quaternion.c **** 		pi->eyInt += pi->I * ey * dt;
+ 946              		.loc 1 98 18 is_stmt 0 view .LVU364
+ 947 01bc 94ED017A 		vldr.32	s14, [r4, #4]
+  98:./app/quaternion/quaternion.c **** 		pi->eyInt += pi->I * ey * dt;
+ 948              		.loc 1 98 22 view .LVU365
+ 949 01c0 67EE067A 		vmul.f32	s15, s14, s12
+  98:./app/quaternion/quaternion.c **** 		pi->eyInt += pi->I * ey * dt;
+ 950              		.loc 1 98 27 view .LVU366
+ 951 01c4 67EEA97A 		vmul.f32	s15, s15, s19
+  98:./app/quaternion/quaternion.c **** 		pi->eyInt += pi->I * ey * dt;
+ 952              		.loc 1 98 13 view .LVU367
+ 953 01c8 D4ED026A 		vldr.32	s13, [r4, #8]
+ 954 01cc 77EEA67A 		vadd.f32	s15, s15, s13
+ 955 01d0 C4ED027A 		vstr.32	s15, [r4, #8]
+  99:./app/quaternion/quaternion.c **** 		pi->ezInt += pi->I * ez * dt;
+ 956              		.loc 1 99 3 is_stmt 1 view .LVU368
+  99:./app/quaternion/quaternion.c **** 		pi->ezInt += pi->I * ez * dt;
+ 957              		.loc 1 99 22 is_stmt 0 view .LVU369
+ARM GAS  /tmp/cc6bjkb9.s 			page 25
+
+
+ 958 01d4 67EE286A 		vmul.f32	s13, s14, s17
+  99:./app/quaternion/quaternion.c **** 		pi->ezInt += pi->I * ez * dt;
+ 959              		.loc 1 99 27 view .LVU370
+ 960 01d8 66EEA95A 		vmul.f32	s11, s13, s19
+  99:./app/quaternion/quaternion.c **** 		pi->ezInt += pi->I * ez * dt;
+ 961              		.loc 1 99 13 view .LVU371
+ 962 01dc D4ED036A 		vldr.32	s13, [r4, #12]
+ 963 01e0 76EEA56A 		vadd.f32	s13, s13, s11
+ 964 01e4 C4ED036A 		vstr.32	s13, [r4, #12]
+ 100:./app/quaternion/quaternion.c **** 		
+ 965              		.loc 1 100 3 is_stmt 1 view .LVU372
+ 100:./app/quaternion/quaternion.c **** 		
+ 966              		.loc 1 100 22 is_stmt 0 view .LVU373
+ 967 01e8 27EE087A 		vmul.f32	s14, s14, s16
+ 100:./app/quaternion/quaternion.c **** 		
+ 968              		.loc 1 100 27 view .LVU374
+ 969 01ec 67EE299A 		vmul.f32	s19, s14, s19
+ 970              	.LVL61:
+ 100:./app/quaternion/quaternion.c **** 		
+ 971              		.loc 1 100 13 view .LVU375
+ 972 01f0 94ED047A 		vldr.32	s14, [r4, #16]
+ 973 01f4 77EE299A 		vadd.f32	s19, s14, s19
+ 974 01f8 C4ED049A 		vstr.32	s19, [r4, #16]
+ 103:./app/quaternion/quaternion.c **** 		offset->Y += pi->P * ey + pi->eyInt;
+ 975              		.loc 1 103 3 is_stmt 1 view .LVU376
+ 103:./app/quaternion/quaternion.c **** 		offset->Y += pi->P * ey + pi->eyInt;
+ 976              		.loc 1 103 18 is_stmt 0 view .LVU377
+ 977 01fc 94ED007A 		vldr.32	s14, [r4]
+ 103:./app/quaternion/quaternion.c **** 		offset->Y += pi->P * ey + pi->eyInt;
+ 978              		.loc 1 103 22 view .LVU378
+ 979 0200 27EE066A 		vmul.f32	s12, s14, s12
+ 980              	.LVL62:
+ 103:./app/quaternion/quaternion.c **** 		offset->Y += pi->P * ey + pi->eyInt;
+ 981              		.loc 1 103 27 view .LVU379
+ 982 0204 77EE867A 		vadd.f32	s15, s15, s12
+ 103:./app/quaternion/quaternion.c **** 		offset->Y += pi->P * ey + pi->eyInt;
+ 983              		.loc 1 103 13 view .LVU380
+ 984 0208 96ED007A 		vldr.32	s14, [r6]
+ 985 020c 77EE277A 		vadd.f32	s15, s14, s15
+ 986 0210 C6ED007A 		vstr.32	s15, [r6]
+ 104:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 987              		.loc 1 104 3 is_stmt 1 view .LVU381
+ 104:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 988              		.loc 1 104 18 is_stmt 0 view .LVU382
+ 989 0214 D4ED007A 		vldr.32	s15, [r4]
+ 104:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 990              		.loc 1 104 22 view .LVU383
+ 991 0218 67EEA88A 		vmul.f32	s17, s15, s17
+ 992              	.LVL63:
+ 104:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 993              		.loc 1 104 31 view .LVU384
+ 994 021c D4ED037A 		vldr.32	s15, [r4, #12]
+ 104:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 995              		.loc 1 104 27 view .LVU385
+ 996 0220 78EEA78A 		vadd.f32	s17, s17, s15
+ 104:./app/quaternion/quaternion.c **** 		offset->Z += pi->P * ez + pi->ezInt;
+ 997              		.loc 1 104 13 view .LVU386
+ARM GAS  /tmp/cc6bjkb9.s 			page 26
+
+
+ 998 0224 D6ED017A 		vldr.32	s15, [r6, #4]
+ 999 0228 77EEA88A 		vadd.f32	s17, s15, s17
+ 1000 022c C6ED018A 		vstr.32	s17, [r6, #4]
+ 105:./app/quaternion/quaternion.c **** 	}
+ 1001              		.loc 1 105 3 is_stmt 1 view .LVU387
+ 105:./app/quaternion/quaternion.c **** 	}
+ 1002              		.loc 1 105 18 is_stmt 0 view .LVU388
+ 1003 0230 D4ED007A 		vldr.32	s15, [r4]
+ 105:./app/quaternion/quaternion.c **** 	}
+ 1004              		.loc 1 105 22 view .LVU389
+ 1005 0234 27EE888A 		vmul.f32	s16, s15, s16
+ 1006              	.LVL64:
+ 105:./app/quaternion/quaternion.c **** 	}
+ 1007              		.loc 1 105 31 view .LVU390
+ 1008 0238 D4ED047A 		vldr.32	s15, [r4, #16]
+ 105:./app/quaternion/quaternion.c **** 	}
+ 1009              		.loc 1 105 27 view .LVU391
+ 1010 023c 38EE278A 		vadd.f32	s16, s16, s15
+ 105:./app/quaternion/quaternion.c **** 	}
+ 1011              		.loc 1 105 13 view .LVU392
+ 1012 0240 D6ED027A 		vldr.32	s15, [r6, #8]
+ 1013 0244 37EE888A 		vadd.f32	s16, s15, s16
+ 1014 0248 86ED028A 		vstr.32	s16, [r6, #8]
+ 1015              	.LVL65:
+ 1016              	.L13:
+ 108:./app/quaternion/quaternion.c **** 
+ 1017              		.loc 1 108 1 view .LVU393
+ 1018 024c 0DB0     		add	sp, sp, #52
+ 1019              	.LCFI9:
+ 1020              		.cfi_def_cfa_offset 36
+ 1021              		@ sp needed
+ 1022 024e BDEC048B 		vldm	sp!, {d8-d9}
+ 1023              	.LCFI10:
+ 1024              		.cfi_restore 82
+ 1025              		.cfi_restore 83
+ 1026              		.cfi_restore 80
+ 1027              		.cfi_restore 81
+ 1028              		.cfi_def_cfa_offset 20
+ 1029 0252 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 108:./app/quaternion/quaternion.c **** 
+ 1030              		.loc 1 108 1 view .LVU394
+ 1031              		.cfi_endproc
+ 1032              	.LFE124:
+ 1034              		.section	.text.Quaternion_IMUCalculation,"ax",%progbits
+ 1035              		.align	1
+ 1036              		.global	Quaternion_IMUCalculation
+ 1037              		.syntax unified
+ 1038              		.thumb
+ 1039              		.thumb_func
+ 1040              		.fpu fpv4-sp-d16
+ 1042              	Quaternion_IMUCalculation:
+ 1043              	.LVL66:
+ 1044              	.LFB128:
+ 187:./app/quaternion/quaternion.c **** 	TriaxialData_t gyroOffset = {0};
+ 1045              		.loc 1 187 1 is_stmt 1 view -0
+ 1046              		.cfi_startproc
+ 1047              		@ args = 8, pretend = 0, frame = 24
+ARM GAS  /tmp/cc6bjkb9.s 			page 27
+
+
+ 1048              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187:./app/quaternion/quaternion.c **** 	TriaxialData_t gyroOffset = {0};
+ 1049              		.loc 1 187 1 is_stmt 0 view .LVU396
+ 1050 0000 70B5     		push	{r4, r5, r6, lr}
+ 1051              	.LCFI11:
+ 1052              		.cfi_def_cfa_offset 16
+ 1053              		.cfi_offset 4, -16
+ 1054              		.cfi_offset 5, -12
+ 1055              		.cfi_offset 6, -8
+ 1056              		.cfi_offset 14, -4
+ 1057 0002 2DED028B 		vpush.64	{d8}
+ 1058              	.LCFI12:
+ 1059              		.cfi_def_cfa_offset 24
+ 1060              		.cfi_offset 80, -24
+ 1061              		.cfi_offset 81, -20
+ 1062 0006 88B0     		sub	sp, sp, #32
+ 1063              	.LCFI13:
+ 1064              		.cfi_def_cfa_offset 56
+ 1065 0008 0546     		mov	r5, r0
+ 1066 000a B0EE408A 		vmov.f32	s16, s0
+ 188:./app/quaternion/quaternion.c **** 	TriaxialData_t gyroRad = {0};
+ 1067              		.loc 1 188 2 is_stmt 1 view .LVU397
+ 188:./app/quaternion/quaternion.c **** 	TriaxialData_t gyroRad = {0};
+ 1068              		.loc 1 188 17 is_stmt 0 view .LVU398
+ 1069 000e 05AE     		add	r6, sp, #20
+ 1070 0010 0024     		movs	r4, #0
+ 1071 0012 0594     		str	r4, [sp, #20]
+ 1072 0014 0694     		str	r4, [sp, #24]
+ 1073 0016 0794     		str	r4, [sp, #28]
+ 189:./app/quaternion/quaternion.c **** 
+ 1074              		.loc 1 189 2 is_stmt 1 view .LVU399
+ 189:./app/quaternion/quaternion.c **** 
+ 1075              		.loc 1 189 17 is_stmt 0 view .LVU400
+ 1076 0018 0294     		str	r4, [sp, #8]
+ 1077 001a 0394     		str	r4, [sp, #12]
+ 1078 001c 0494     		str	r4, [sp, #16]
+ 192:./app/quaternion/quaternion.c **** 	gyroRad.Y = DEG_TO_RAD(gyro->Y);
+ 1079              		.loc 1 192 2 is_stmt 1 view .LVU401
+ 192:./app/quaternion/quaternion.c **** 	gyroRad.Y = DEG_TO_RAD(gyro->Y);
+ 1080              		.loc 1 192 14 is_stmt 0 view .LVU402
+ 1081 001e D3ED007A 		vldr.32	s15, [r3]
+ 1082 0022 9FED1F7A 		vldr.32	s14, .L24
+ 1083 0026 67EE877A 		vmul.f32	s15, s15, s14
+ 192:./app/quaternion/quaternion.c **** 	gyroRad.Y = DEG_TO_RAD(gyro->Y);
+ 1084              		.loc 1 192 12 view .LVU403
+ 1085 002a CDED027A 		vstr.32	s15, [sp, #8]
+ 193:./app/quaternion/quaternion.c **** 	gyroRad.Z = DEG_TO_RAD(gyro->Z);
+ 1086              		.loc 1 193 2 is_stmt 1 view .LVU404
+ 193:./app/quaternion/quaternion.c **** 	gyroRad.Z = DEG_TO_RAD(gyro->Z);
+ 1087              		.loc 1 193 14 is_stmt 0 view .LVU405
+ 1088 002e D3ED017A 		vldr.32	s15, [r3, #4]
+ 1089 0032 67EE877A 		vmul.f32	s15, s15, s14
+ 193:./app/quaternion/quaternion.c **** 	gyroRad.Z = DEG_TO_RAD(gyro->Z);
+ 1090              		.loc 1 193 12 view .LVU406
+ 1091 0036 CDED037A 		vstr.32	s15, [sp, #12]
+ 194:./app/quaternion/quaternion.c **** 
+ 1092              		.loc 1 194 2 is_stmt 1 view .LVU407
+ARM GAS  /tmp/cc6bjkb9.s 			page 28
+
+
+ 194:./app/quaternion/quaternion.c **** 
+ 1093              		.loc 1 194 14 is_stmt 0 view .LVU408
+ 1094 003a D3ED027A 		vldr.32	s15, [r3, #8]
+ 1095 003e 67EE877A 		vmul.f32	s15, s15, s14
+ 194:./app/quaternion/quaternion.c **** 
+ 1096              		.loc 1 194 12 view .LVU409
+ 1097 0042 CDED047A 		vstr.32	s15, [sp, #16]
+ 197:./app/quaternion/quaternion.c **** 
+ 1098              		.loc 1 197 2 is_stmt 1 view .LVU410
+ 1099 0046 0096     		str	r6, [sp]
+ 1100 0048 0E9B     		ldr	r3, [sp, #56]
+ 1101              	.LVL67:
+ 197:./app/quaternion/quaternion.c **** 
+ 1102              		.loc 1 197 2 is_stmt 0 view .LVU411
+ 1103 004a FFF7FEFF 		bl	Quaternion_GetPIGyroOffset
+ 1104              	.LVL68:
+ 200:./app/quaternion/quaternion.c **** 	gyroRad.Y += gyroOffset.Y;
+ 1105              		.loc 1 200 2 is_stmt 1 view .LVU412
+ 200:./app/quaternion/quaternion.c **** 	gyroRad.Y += gyroOffset.Y;
+ 1106              		.loc 1 200 12 is_stmt 0 view .LVU413
+ 1107 004e 9DED057A 		vldr.32	s14, [sp, #20]
+ 1108 0052 DDED027A 		vldr.32	s15, [sp, #8]
+ 1109 0056 77EE877A 		vadd.f32	s15, s15, s14
+ 1110 005a CDED027A 		vstr.32	s15, [sp, #8]
+ 201:./app/quaternion/quaternion.c **** 	gyroRad.Z += gyroOffset.Z;
+ 1111              		.loc 1 201 2 is_stmt 1 view .LVU414
+ 201:./app/quaternion/quaternion.c **** 	gyroRad.Z += gyroOffset.Z;
+ 1112              		.loc 1 201 12 is_stmt 0 view .LVU415
+ 1113 005e 9DED067A 		vldr.32	s14, [sp, #24]
+ 1114 0062 DDED037A 		vldr.32	s15, [sp, #12]
+ 1115 0066 77EE877A 		vadd.f32	s15, s15, s14
+ 1116 006a CDED037A 		vstr.32	s15, [sp, #12]
+ 202:./app/quaternion/quaternion.c **** 
+ 1117              		.loc 1 202 2 is_stmt 1 view .LVU416
+ 202:./app/quaternion/quaternion.c **** 
+ 1118              		.loc 1 202 12 is_stmt 0 view .LVU417
+ 1119 006e 9DED077A 		vldr.32	s14, [sp, #28]
+ 1120 0072 DDED047A 		vldr.32	s15, [sp, #16]
+ 1121 0076 77EE877A 		vadd.f32	s15, s15, s14
+ 1122 007a CDED047A 		vstr.32	s15, [sp, #16]
+ 205:./app/quaternion/quaternion.c **** 
+ 1123              		.loc 1 205 2 is_stmt 1 view .LVU418
+ 1124 007e B0EE480A 		vmov.f32	s0, s16
+ 1125 0082 02A9     		add	r1, sp, #8
+ 1126 0084 2846     		mov	r0, r5
+ 1127 0086 FFF7FEFF 		bl	Quaternion_Update
+ 1128              	.LVL69:
+ 208:./app/quaternion/quaternion.c **** 
+ 1129              		.loc 1 208 2 view .LVU419
+ 1130 008a 2846     		mov	r0, r5
+ 1131 008c FFF7FEFF 		bl	Quaternion_ComputeRotationMatrix
+ 1132              	.LVL70:
+ 211:./app/quaternion/quaternion.c **** }
+ 1133              		.loc 1 211 2 view .LVU420
+ 1134 0090 0F99     		ldr	r1, [sp, #60]
+ 1135 0092 2846     		mov	r0, r5
+ 1136 0094 FFF7FEFF 		bl	Quaternion_ToAttitudeAngle
+ARM GAS  /tmp/cc6bjkb9.s 			page 29
+
+
+ 1137              	.LVL71:
+ 212:./app/quaternion/quaternion.c **** 
+ 1138              		.loc 1 212 1 is_stmt 0 view .LVU421
+ 1139 0098 08B0     		add	sp, sp, #32
+ 1140              	.LCFI14:
+ 1141              		.cfi_def_cfa_offset 24
+ 1142              		@ sp needed
+ 1143 009a BDEC028B 		vldm	sp!, {d8}
+ 1144              	.LCFI15:
+ 1145              		.cfi_restore 80
+ 1146              		.cfi_restore 81
+ 1147              		.cfi_def_cfa_offset 16
+ 1148              	.LVL72:
+ 212:./app/quaternion/quaternion.c **** 
+ 1149              		.loc 1 212 1 view .LVU422
+ 1150 009e 70BD     		pop	{r4, r5, r6, pc}
+ 1151              	.LVL73:
+ 1152              	.L25:
+ 212:./app/quaternion/quaternion.c **** 
+ 1153              		.loc 1 212 1 view .LVU423
+ 1154              		.align	2
+ 1155              	.L24:
+ 1156 00a0 35FA8E3C 		.word	1016003125
+ 1157              		.cfi_endproc
+ 1158              	.LFE128:
+ 1160              		.text
+ 1161              	.Letext0:
+ 1162              		.file 2 "./app/quaternion/quaternion.h"
+ 1163              		.file 3 "/usr/include/newlib/math.h"
+ARM GAS  /tmp/cc6bjkb9.s 			page 30
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 quaternion.c
+     /tmp/cc6bjkb9.s:18     .text.InvSqrt:0000000000000000 $t
+     /tmp/cc6bjkb9.s:25     .text.InvSqrt:0000000000000000 InvSqrt
+     /tmp/cc6bjkb9.s:72     .text.InvSqrt:000000000000002c $d
+     /tmp/cc6bjkb9.s:77     .text.Quaternion_ComputeRotationMatrix:0000000000000000 $t
+     /tmp/cc6bjkb9.s:83     .text.Quaternion_ComputeRotationMatrix:0000000000000000 Quaternion_ComputeRotationMatrix
+     /tmp/cc6bjkb9.s:215    .text.Quaternion_Update:0000000000000000 $t
+     /tmp/cc6bjkb9.s:222    .text.Quaternion_Update:0000000000000000 Quaternion_Update
+     /tmp/cc6bjkb9.s:397    .text.Quaternion_ToAttitudeAngle:0000000000000000 $t
+     /tmp/cc6bjkb9.s:404    .text.Quaternion_ToAttitudeAngle:0000000000000000 Quaternion_ToAttitudeAngle
+     /tmp/cc6bjkb9.s:468    .text.Quaternion_ToAttitudeAngle:0000000000000050 $d
+     /tmp/cc6bjkb9.s:473    .text.Quaternion_BodyToEarth:0000000000000000 $t
+     /tmp/cc6bjkb9.s:480    .text.Quaternion_BodyToEarth:0000000000000000 Quaternion_BodyToEarth
+     /tmp/cc6bjkb9.s:569    .text.Quaternion_EarthToBody:0000000000000000 $t
+     /tmp/cc6bjkb9.s:576    .text.Quaternion_EarthToBody:0000000000000000 Quaternion_EarthToBody
+     /tmp/cc6bjkb9.s:665    .text.Quaternion_GetPIGyroOffset:0000000000000000 $t
+     /tmp/cc6bjkb9.s:671    .text.Quaternion_GetPIGyroOffset:0000000000000000 Quaternion_GetPIGyroOffset
+     /tmp/cc6bjkb9.s:1035   .text.Quaternion_IMUCalculation:0000000000000000 $t
+     /tmp/cc6bjkb9.s:1042   .text.Quaternion_IMUCalculation:0000000000000000 Quaternion_IMUCalculation
+     /tmp/cc6bjkb9.s:1156   .text.Quaternion_IMUCalculation:00000000000000a0 $d
+
+UNDEFINED SYMBOLS
+asinf
+atan2f

@@ -10,4 +10,4 @@ extern Motor_t Motor[4];
 
 
 
-#endif __MOTOR_CONFIG_H_
+#endif /*__MOTOR_CONFIG_H_*/

@@ -1,0 +1,111 @@
+ARM GAS  /tmp/ccNGyI7q.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"rcc_config.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.RCC_ConfigInitAll,"ax",%progbits
+  18              		.align	1
+  19              		.global	RCC_ConfigInitAll
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	RCC_ConfigInitAll:
+  27              	.LFB123:
+  28              		.file 1 "./hardware/rcc/rcc_config.c"
+   1:./hardware/rcc/rcc_config.c **** #include "rcc_config.h"
+   2:./hardware/rcc/rcc_config.c **** #include "at32f4xx.h"
+   3:./hardware/rcc/rcc_config.c **** 
+   4:./hardware/rcc/rcc_config.c **** 
+   5:./hardware/rcc/rcc_config.c **** void RCC_ConfigInitAll()
+   6:./hardware/rcc/rcc_config.c **** {
+  29              		.loc 1 6 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+   7:./hardware/rcc/rcc_config.c **** 	//GPIO时钟使能
+   8:./hardware/rcc/rcc_config.c **** 	RCC_AHBPeriphClockCmd(RCC_AHBPERIPH_GPIOA | RCC_AHBPERIPH_GPIOB | RCC_AHBPERIPH_GPIOC | RCC_AHBPER
+  38              		.loc 1 8 2 view .LVU1
+  39 0002 0121     		movs	r1, #1
+  40 0004 4FF49C00 		mov	r0, #5111808
+  41 0008 FFF7FEFF 		bl	RCC_AHBPeriphClockCmd
+  42              	.LVL0:
+   9:./hardware/rcc/rcc_config.c **** 
+  10:./hardware/rcc/rcc_config.c **** 	//DMA1时钟使能
+  11:./hardware/rcc/rcc_config.c **** 	RCC_AHBPeriphClockCmd(RCC_AHBPERIPH_DMA1, ENABLE);
+  43              		.loc 1 11 2 view .LVU2
+  44 000c 0121     		movs	r1, #1
+  45 000e 0846     		mov	r0, r1
+  46 0010 FFF7FEFF 		bl	RCC_AHBPeriphClockCmd
+  47              	.LVL1:
+ARM GAS  /tmp/ccNGyI7q.s 			page 2
+
+
+  12:./hardware/rcc/rcc_config.c **** 	
+  13:./hardware/rcc/rcc_config.c **** 
+  14:./hardware/rcc/rcc_config.c **** 	//串口1时钟使能
+  15:./hardware/rcc/rcc_config.c **** 	RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_USART1, ENABLE); 
+  48              		.loc 1 15 2 view .LVU3
+  49 0014 0121     		movs	r1, #1
+  50 0016 4FF48040 		mov	r0, #16384
+  51 001a FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  52              	.LVL2:
+  16:./hardware/rcc/rcc_config.c **** 	
+  17:./hardware/rcc/rcc_config.c **** 	//串口2时钟使能
+  18:./hardware/rcc/rcc_config.c **** 	RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_USART2, ENABLE);
+  53              		.loc 1 18 2 view .LVU4
+  54 001e 0121     		movs	r1, #1
+  55 0020 4FF40030 		mov	r0, #131072
+  56 0024 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  57              	.LVL3:
+  19:./hardware/rcc/rcc_config.c **** 
+  20:./hardware/rcc/rcc_config.c **** 	//Timer3时钟使能
+  21:./hardware/rcc/rcc_config.c **** 	RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
+  58              		.loc 1 21 2 view .LVU5
+  59 0028 0121     		movs	r1, #1
+  60 002a 0220     		movs	r0, #2
+  61 002c FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  62              	.LVL4:
+  22:./hardware/rcc/rcc_config.c **** 	
+  23:./hardware/rcc/rcc_config.c **** }
+  63              		.loc 1 23 1 is_stmt 0 view .LVU6
+  64 0030 08BD     		pop	{r3, pc}
+  65              		.cfi_endproc
+  66              	.LFE123:
+  68              		.text
+  69              	.Letext0:
+  70              		.file 2 "lib/inc/at32f4xx_rcc.h"
+  71              		.file 3 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+  72              		.file 4 "CMSIS/at32f4xx.h"
+ARM GAS  /tmp/ccNGyI7q.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 rcc_config.c
+     /tmp/ccNGyI7q.s:18     .text.RCC_ConfigInitAll:0000000000000000 $t
+     /tmp/ccNGyI7q.s:26     .text.RCC_ConfigInitAll:0000000000000000 RCC_ConfigInitAll
+
+UNDEFINED SYMBOLS
+RCC_AHBPeriphClockCmd
+RCC_APB2PeriphClockCmd
+RCC_APB1PeriphClockCmd
