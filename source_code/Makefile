@@ -135,7 +135,7 @@ show:
 	@echo C_FLAGS = $(C_FLAGS)
 
 clean:
-	rm -f *.o 
+	rm -rf build
 
 
 
