@@ -1,6 +1,3 @@
-project/Listings
-project/Objects
-project/at32f421_project.uvguix.hasee
-project/at32f421_project.uvoptx
-project/JLinkLog.txt
-si
+source_code/.vscode
+source_code/build
+source_code/si
