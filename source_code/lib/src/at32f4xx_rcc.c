@@ -1480,6 +1480,7 @@ void RCC_PLLFrefTableConfig(uint32_t hse_value)
   }
   else
   {
+    #if 1
     pllrcfreq = hse_value;
     pllrcfreq /=  1000000;
     /* HSE selected as PLL clock entry */
@@ -1513,6 +1514,7 @@ void RCC_PLLFrefTableConfig(uint32_t hse_value)
     {
         pll_reg |= PLL_FREF_25M;
     }
+  #endif
   }
 
   RCC->PLL = pll_reg;

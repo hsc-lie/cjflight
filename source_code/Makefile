@@ -20,12 +20,16 @@ CPU = -mcpu=cortex-m4
 
 FPU = 
 
-FLOAT-ABI = -mfloat-abi=hard
+#FLOAT-ABI = -mfloat-abi=hard
+FLOAT-ABI = -mfloat-abi=soft
+#FLOAT-ABI = -mfloat-abi=softfp
+#FLOAT-ABI = 
 
 MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 
 ASM_DEFINE = 
 
+#C_DEFINE = -DAT32F421C8T7 -DUSE_STDPERIPH_DRIVER -DUSE_FULL_ASSERT
 C_DEFINE = -DAT32F421C8T7 -DUSE_STDPERIPH_DRIVER
 
 C_INCLUDE = -I app \
@@ -80,6 +84,7 @@ ifeq ($(DEBUG), 1)
 endif
 
 C_FLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
+#C_FLAGS += -MMD -MP
 
 #链接脚本
 LDSCRIPT = ./linker/gcc/AT32F421x8_FLASH.ld
@@ -121,12 +126,13 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJS) Makefile
 
 $(BUILD_DIR)/%.o:%.c Makefile | $(BUILD_DIR)
 	$(CC) -c $(C_FLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+#(CC) -c $(C_FLAGS) $< -o $@
 
 $(BUILD_DIR)/%.o:%.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(ASM_FLAGS) $< -o $@
 
 
-.PHONY: show clean
+.PHONY: show clean debug
 
 show:
 #echo $(C_SOURCES)
@@ -137,5 +143,6 @@ show:
 clean:
 	rm -rf build
 
-
+debug:
+	JLinkGDBServer -if SWD -device -AT32F421C8T7
 

@@ -50,6 +50,7 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	
 	//检测陀螺仪	
 	while(readData != 0x98)
+	//while(readData != 0x68)
 	{	
 		//writeData
 		//mpu6050->I2CWriteReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);

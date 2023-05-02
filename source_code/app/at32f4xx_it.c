@@ -146,7 +146,7 @@ void USART1_IRQHandler(void)
 {
   if(USART_GetITStatus(USART1, USART_INT_RDNE) != RESET)
   {
-    //uart_send_byte(USART1, USART_ReceiveData(USART1));
+
   }
 }
 
@@ -160,19 +160,16 @@ void USART2_IRQHandler(void)
 	if(USART_GetITStatus(USART2, USART_INT_RDNE) == SET)
 	{
 		USART_ClearITPendingBit(USART2, USART_INT_RDNE);
-		//sbus_updata_data();
-		//ibus_read_original_data();
 		
 	}
 
 	if(USART_GetITStatus(USART2, USART_INT_IDLEF) == SET)
 	{
-	
-		USART_ReceiveData(USART2);
+    USART_ClearITPendingBit(USART2, USART_INT_IDLEF);
 
-		//USART_ClearFlag();
-		//USART_ClearITPendingBit(USART2, USART_INT_RDNE);
+		
 	}
+  
 }
 
 int led_flag = 0;
@@ -184,8 +181,6 @@ void TMR6_GLOBAL_IRQHandler(void)
     TMR_ClearITPendingBit(TMR6, TMR_INT_Overflow);
       
     //tim_500ms_task();
-
-    
 	
   }
 

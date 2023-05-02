@@ -13,7 +13,7 @@
 #define LED3_GPIO_PIN      GPIO_Pins_11
 
 
-#if 0 
+#if 1 
 
 #define SIMULATION_I2C_SCL_GPIO          GPIOA
 #define SIMULATION_I2C_SCL_GPIO_PIN      GPIO_Pins_10

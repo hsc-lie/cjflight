@@ -118,20 +118,6 @@ void PrintfTask(void * parameters)
 
 }
 
-/*
-
-__asm void _disable_irq()
-{
-
-	MOV R0,#1
-	MSR PRIMASK,R0
-
-}
-__asm void _enable_irq()
-{
-	cpsid i
-}
-*/
 
 
 void I2C_DevAddrTest()
@@ -168,17 +154,20 @@ int main(void)
 	Timer_ConfigInitAll();
 	USART_ConfigInitAll();
 	
+	//LED_SetValue(&LED1, 0);
+	//LED_SetValue(&LED2, 0);
+	//LED_SetValue(&LED3, 0);
 
 	/*滤波参数初始化*/
 	FilterInit();
 
 	/*MPU6050初始化*/
-	//MPU6050_Init(&MPU6050);
+	MPU6050_Init(&MPU6050);
 
 
 	/*气压计初始化*/
 	//BMP280_Init(&BMP280);
-	SPL06_Init(&SPL06);
+	//SPL06_Init(&SPL06);
 	//I2C_DevAddrTest();
 	
 
@@ -189,9 +178,6 @@ int main(void)
 	BaroAltitudeQueue = xQueueCreate(1,sizeof(float));
 	AltitudeQueue = xQueueCreate(1,sizeof(float));
 	AccQueue = xQueueCreate(1,sizeof(float));
-
-	/*创建遥控接受信号*/
-	//remote_read_semaphore = xSemaphoreCreateBinary();
 
 
 	/*LED任务创建*/
@@ -229,7 +215,8 @@ int main(void)
 
 	/*启动调度器*/		
 	vTaskStartScheduler();
-		
+
+
 	for(;;)
 	{
 		
