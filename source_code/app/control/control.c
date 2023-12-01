@@ -1,17 +1,12 @@
 #include "control.h"
 
-
 #include <math.h>
 #include <stdint.h>
 
-
-
-#include "motor_config.h"
-#include "mpu6050_config.h"
+#include "motor_cfg.h"
+#include "mpu6050_cfg.h"
 #include "bmp280_cfg.h"
 #include "spl06_cfg.h"
-
-
 
 #include "remote_data.h"
 
@@ -20,7 +15,6 @@
 #include "pid.h"
 #include "common.h"
 #include "filter.h"
-
 
 #include "main.h"
 
@@ -166,8 +160,6 @@ Quaternion_t Quaternion =
 	.q1=0.0f,
 	.q2=0.0f,
 	.q3=0.0f,
-
-	.RotationMatrix = {0},
 };
 
 //用于姿态解算中通过加速度计和磁力计修正角度
@@ -559,7 +551,7 @@ void ControlTask(void * parameters)
 
 	float setYaw = 0;
 	
-	flight_mode_t last_remote_mode = Stabilize_Mode;
+	//flight_mode_t last_remote_mode = Stabilize_Mode;
 
 
 	MPU6050_BaseData_t gyroBaseData = {0};
@@ -577,7 +569,7 @@ void ControlTask(void * parameters)
 	AttitudeData_t setAngle = {0};
 
 
-	BMP280_Data_t bmp280Data = {0};
+	//BMP280_Data_t bmp280Data = {0};
 	SPL06_Data_t spl06Data = {0};
 	static float altitude = 0;
 
@@ -607,11 +599,6 @@ void ControlTask(void * parameters)
 			remote_lose_flag = 0;
 		}
 
-
-		
-
-		
-		
 		//获取mpu6050原始数据
 		MPU6050_GetBaseAcc(&MPU6050, &accBaseData);
 		MPU6050_GetBaseGyro(&MPU6050, &gyroBaseData);
@@ -670,7 +657,13 @@ void ControlTask(void * parameters)
 		
 		
 		//四元数姿态解算
-		Quaternion_IMUCalculation(&Quaternion, &Quaternion_PIOffset, &accConvertData, &gyroConvertData, &magData, &nowAngle, 0.002);
+		Quaternion_IMUCalculation(&Quaternion, 
+		                          &Quaternion_PIOffset, 
+								  (TriaxialData_t *)&accConvertData, 
+								  (TriaxialData_t *)&gyroConvertData, 
+								  &magData, 
+								  &nowAngle, 
+								  0.002);
 
 
 		//预估机体速度和位置
@@ -693,7 +686,7 @@ void ControlTask(void * parameters)
 
 
 		//Strapdown_INS_High(&accConvertData, altitude, 0.002);
-		PositionFusion(&accConvertData, altitude, 0.002);
+		PositionFusion((TriaxialData_t *)&accConvertData, altitude, 0.002);
 		
 		if((RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y)  < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
 		//if(FALSE)

@@ -3,29 +3,22 @@
 
 #include "stdio.h"
 
+#include "rcc_cfg.h"
+#include "gpio_cfg.h"
+#include "usart_cfg.h"
+#include "dma_cfg.h"
+#include "timer_cfg.h"
 
-#include "rcc_config.h"
-#include "gpio_config.h"
-#include "usart_config.h"
-#include "dma_config.h"
-#include "timer_config.h"
+#include "usart_hal_cfg.h"
+#include "i2c_hal_cfg.h"
+#include "simulation_i2c_cfg.h"
 
-
-
-#include "usart_hal_config.h"
-#include "i2c_hal_config.h"
-#include "simulation_i2c_config.h"
-
-
-
-#include "mpu6050_config.h"
+#include "mpu6050_cfg.h"
 #include "bmp280_cfg.h"
 #include "spl06_cfg.h"
 
-
 #include "led_cfg.h"
 #include "remote_data.h"
-
 
 #include "remote_task.h"
 #include "quaternion.h"

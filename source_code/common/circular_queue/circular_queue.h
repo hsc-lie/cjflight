@@ -36,4 +36,7 @@ typedef struct
 }CircularQueue_t;
 
 
+E_CIRCULAR_QUEUE_ERROR CircularQueue_WriteByte(CircularQueue_t * const queue, uint8_t data);
+E_CIRCULAR_QUEUE_ERROR CircularQueue_ReadByte(CircularQueue_t * const queue, uint8_t * data);
+
 #endif /*__CIRCULAR_QUEUE_H_*/

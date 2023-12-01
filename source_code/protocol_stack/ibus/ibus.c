@@ -4,7 +4,6 @@
 
 E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len, uint8_t * const isGetPackage)
 {
-	//int ret = 1;
 	uint32_t i;
 	uint16_t checkSum;
 
@@ -73,7 +72,7 @@ E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len,
 		++data;
 	}
 
-  	//return ret;
+	return E_IBUS_ERROR_OK;
 }
 
 

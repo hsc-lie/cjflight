@@ -2,7 +2,7 @@
 
 
 /**********************以下根据实际工程使用情况配置**********************************/
-#include "i2c_hal_config.h"
+#include "i2c_hal_cfg.h"
 
 
 static void SPL06_I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)

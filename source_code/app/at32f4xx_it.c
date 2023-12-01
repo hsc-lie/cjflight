@@ -13,8 +13,8 @@
 #include "at32f4xx_it.h"
 
 
-#include "usart_config.h"
-#include "dma_config.h"
+#include "usart_cfg.h"
+#include "dma_cfg.h"
 
 
 

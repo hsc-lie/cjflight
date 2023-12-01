@@ -50,7 +50,7 @@ C_INCLUDE =\
 	-I app/filter \
 	-I app/pid \
 	-I app/quaternion \
-	-I app/remote_task \
+	-I app/remote \
 	-I common \
 	-I common/circular_queue \
 	-I dal/led \
@@ -104,7 +104,7 @@ endif
 C_FLAGS += -MMD -MP
 
 #链接脚本
-LDSCRIPT = ./linker/gcc/AT32F421x8_FLASH.ld
+LDSCRIPT = ./linker/AT32F421x8_FLASH.ld
 
 #C标准库相关
 LIBS = -lc -lm -lnosys

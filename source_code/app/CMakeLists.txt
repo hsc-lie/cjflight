@@ -1,0 +1,9 @@
+target_sources(${PROJECT_NAME}
+    PUBLIC
+    main.c
+    control/control.c
+    filter/filter.c
+    pid/pid.c
+    quaternion/quaternion.c
+    remote/remote_task.c
+)

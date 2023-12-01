@@ -33,7 +33,6 @@ static void mpu6050_delay()
 
 E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 {
-	uint32_t count = 0;
 	uint8_t writeData;
 	uint8_t readData = 0xff;
 
@@ -47,12 +46,10 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	
 	mpu6050_delay();
 	
-	
 	//检测陀螺仪	
 	while(readData != 0x98)
 	//while(readData != 0x68)
 	{	
-		//writeData
 		//mpu6050->I2CWriteReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
 		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
 		mpu6050_delay();
@@ -76,7 +73,7 @@ E_MPU6050_ERROR MPU6050_Init(MPU6050_t * mpu6050)
 	writeData = mpu6050->AccRange << 3;
 	mpu6050->I2CWriteReg(mpu6050->DevAddr,ACCELEROMETER_CONFIGURATION, &writeData, 1);
 	
-	
+	return E_MPU6050_ERROR_OK;
 }
 
 //获得所有轴的角速度
