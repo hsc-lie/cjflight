@@ -1,4 +1,4 @@
-TARGET = cai_ji_flight
+TARGET = cjflight
 
 DEBUG = 1
 
@@ -76,15 +76,16 @@ C_INCLUDE =\
 	-I lib/inc
 
 #需要编译的汇编
-ASM_SOURCES = ./startup/gcc/startup_at32f421c8t7.s
+ASM_SOURCES = ./startup/startup_at32f421c8t7.s
 
 #freertos的c文件
 FREERTOS_SOURCES =\
-	./freeRTOS/GCC/port.c \
+	./freeRTOS/port/port.c \
+	./freeRTOS/MemMang/heap_4.c
 	./freeRTOS/list.c \
 	./freeRTOS/queue.c \
-	./freeRTOS/tasks.c \
-	./freeRTOS/MemMang/heap_3.c
+	./freeRTOS/tasks.c
+	
 
 #c文件
 C_SOURCES =\

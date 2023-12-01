@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28.0)
 
 set(CMAKE_SYSTEM_NAME Generic)
 
-project(cai_ji_flight ASM C)
+project(cjflight ASM C)
 
 add_executable(${PROJECT_NAME})
 
