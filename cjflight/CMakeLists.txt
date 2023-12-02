@@ -32,8 +32,8 @@ set(SIZE "arm-none-eabi-size.exe")
 set(CMAKE_C_STANDARD 99)
 
 #C标准库相关
-set(LIB_FLAG "-lc -lm -lnosys")
-
+#-specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
+set(LIB_FLAG "-specs=nano.specs -specs=rdimon.specs")
 
 #内核
 set(CPU "-mcpu=cortex-m4 -mthumb")
@@ -133,8 +133,7 @@ set(CMAKE_ASM_FLAGS "-Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections 
 #C编译参数
 set(CMAKE_C_FLAGS   "-Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections ${CPU} ${FPU} ${FLOAT_ABI}")
 #链接参数
-#-specs=nano.specs -specs=rdimon.specs
-set(CMAKE_EXE_LINKER_FLAGS "-specs=nano.specs -specs=rdimon.specs -T${LINK_FILE} ${LIB_FLAG} ${LIBS} -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections")
+set(CMAKE_EXE_LINKER_FLAGS "-T${LINK_FILE} ${LIB_FLAG} ${LIBS} -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections")
 
 add_custom_command(
     TARGET ${PROJECT_NAME}
