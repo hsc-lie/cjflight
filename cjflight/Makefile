@@ -3,7 +3,7 @@ TARGET = cjflight
 DEBUG = 1
 
 #优化等级
-OPT = -Og
+OPT = -O0
 
 #编译文件路径
 BUILD_DIR = build
@@ -23,7 +23,7 @@ HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
 #CPU类型
-CPU = -mcpu=cortex-m4 
+CPU = -mcpu=cortex-m4 -mthumb
 
 #FPU类型
 FPU = 
@@ -34,7 +34,7 @@ FPU =
 FLOAT-ABI = -mfloat-abi=soft
 
 
-MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
+MCU = $(CPU) $(FPU) $(FLOAT-ABI)
 
 #汇编全局宏
 ASM_DEFINE = 
@@ -95,7 +95,7 @@ C_SOURCES =\
 
 
 ASM_FLAGS = $(MCU) $(ASM_DEFINE) $(AS_INCLUDE) $(OPT) -Wall -fdata-sections -ffunction-sections
-C_FLAGS = $(MCU) $(C_DEFINE) $(C_INCLUDE) $(OPT) -Wall -fdata-sections -ffunction-sections
+C_FLAGS = $(MCU) $(C_INCLUDE) $(C_DEFINE) $(OPT) -Wall -fdata-sections -ffunction-sections
 
 ifeq ($(DEBUG), 1)
 	C_FLAGS += -g -gdwarf-2
@@ -108,12 +108,13 @@ C_FLAGS += -MMD -MP
 LDSCRIPT = ./linker/AT32F421x8_FLASH.ld
 
 #C标准库相关
-LIBS = -lc -lm -lnosys
+#-lc -lm -lnosys #-specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
+LIBS = -specs=nano.specs -lc -lm -lnosys
 #额外的库
 LIBDIR =
 
 #链接参数
-LD_FLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LD_FLAGS = $(MCU) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 #C编译的.o文件
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(C_SOURCES:.c=.o)))
@@ -138,8 +139,8 @@ $(OUT_DIR)/$(TARGET).elf: $(OBJS) Makefile | $(OUT_DIR)
 	$(SZ) $@
 
 $(OBJ_DIR)/%.o:%.c Makefile | $(OBJ_DIR)
-	$(CC) -c $(C_FLAGS) -Wa,-a,-ad,-alms=$(OBJ_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
-#(CC) -c $(C_FLAGS) $< -o $@
+#$(CC) -c $(C_FLAGS) -Wa,-a,-ad,-alms=$(OBJ_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(CC) -c $(C_FLAGS) $< -o $@
 
 $(OBJ_DIR)/%.o:%.s Makefile | $(OBJ_DIR)
 	$(AS) -c $(ASM_FLAGS) $< -o $@

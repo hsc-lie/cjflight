@@ -19,20 +19,17 @@ set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 set(EXECUTABLE_OUTPUT_PATH "./out")
 
 #设置交叉编译器
-set(CMAKE_ASM_COMPILER "arm-none-eabi-gcc.exe")
-set(CMAKE_C_COMPILER "arm-none-eabi-gcc.exe")
-set(CMAKE_CXX_COMPILE "arm-none-eabi-g++.exe")
-SET(AS "arm-none-eabi-as.exe")
-SET(AR "arm-none-eabi-ar.exe")
-set(OBJCOPY "arm-none-eabi-objcopy.exe")
-SET(OBJDUMP "arm-none-eabi-objdump.exe")
-set(SIZE "arm-none-eabi-size.exe")
+set(CMAKE_ASM_COMPILER "arm-none-eabi-gcc")
+set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
+set(CMAKE_CXX_COMPILE "arm-none-eabi-g++")
+set(OBJCOPY "arm-none-eabi-objcopy")
+set(SIZE "arm-none-eabi-size")
 
 #C标准
 set(CMAKE_C_STANDARD 99)
 
 #C标准库相关
-#-specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
+# -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
 set(LIB_FLAG "-specs=nano.specs -specs=rdimon.specs")
 
 #内核
@@ -129,9 +126,9 @@ add_subdirectory(at32f4_lib)
 
 
 #汇编编译参数
-set(CMAKE_ASM_FLAGS "-Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections ${CPU} ${FPU} ${FLOAT_ABI} -x assembler-with-cpp")
+set(CMAKE_ASM_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} -Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections -x assembler-with-cpp")
 #C编译参数
-set(CMAKE_C_FLAGS   "-Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections ${CPU} ${FPU} ${FLOAT_ABI}")
+set(CMAKE_C_FLAGS   "${CPU} ${FPU} ${FLOAT_ABI} -Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections")
 #链接参数
 set(CMAKE_EXE_LINKER_FLAGS "-T${LINK_FILE} ${LIB_FLAG} ${LIBS} -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections")
 
