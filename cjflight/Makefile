@@ -61,7 +61,7 @@ C_INCLUDE =\
 	-I dev/spl06 \
 	-I freeRTOS \
 	-I freeRTOS/include \
-	-I freeRTOS/GCC \
+	-I freeRTOS/port \
 	-I hal/i2c \
 	-I hal/pwm \
 	-I hal/simulation_i2c \
@@ -73,7 +73,7 @@ C_INCLUDE =\
 	-I hardware/usart \
 	-I protocol_stack/ibus \
 	-I CMSIS \
-	-I lib/inc
+	-I at32f4_lib/inc
 
 #需要编译的汇编
 ASM_SOURCES = ./startup/startup_at32f421c8t7.s
@@ -81,7 +81,7 @@ ASM_SOURCES = ./startup/startup_at32f421c8t7.s
 #freertos的c文件
 FREERTOS_SOURCES =\
 	./freeRTOS/port/port.c \
-	./freeRTOS/MemMang/heap_4.c
+	./freeRTOS/MemMang/heap_4.c \
 	./freeRTOS/list.c \
 	./freeRTOS/queue.c \
 	./freeRTOS/tasks.c
@@ -89,7 +89,7 @@ FREERTOS_SOURCES =\
 
 #c文件
 C_SOURCES =\
-	$(shell find ./app ./common ./CMSIS ./dal ./dev ./hal ./hardware ./lib ./protocol_stack -name "*.c") \
+	$(shell find ./app ./common ./CMSIS ./dal ./dev ./hal ./hardware ./at32f4_lib ./protocol_stack -name "*.c") \
 	$(FREERTOS_SOURCES)
 
 
