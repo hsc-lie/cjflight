@@ -3,7 +3,7 @@ TARGET = cjflight
 DEBUG = 1
 
 #优化等级
-OPT = -O0
+OPT = -Og
 
 #编译文件路径
 BUILD_DIR = build
@@ -105,16 +105,18 @@ endif
 C_FLAGS += -MMD -MP
 
 #链接脚本
-LDSCRIPT = ./linker/AT32F421x8_FLASH.ld
+LINKER_FILE = ./linker/AT32F421x8_FLASH.ld
 
-#C标准库相关
+#gcc库相关
+#链接时需要放在其他.o文件后面
+#因为链接时.o文件里对库的依赖是往后搜索
 #-lc -lm -lnosys #-specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
-LIBS = -specs=nano.specs -lc -lm -lnosys
+LIB_FLAGS = -specs=nano.specs -lc -lm -lnosys
 #额外的库
-LIBDIR =
+LIBS =
 
 #链接参数
-LD_FLAGS = $(MCU) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LD_FLAGS = $(MCU) -T$(LINKER_FILE) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 #C编译的.o文件
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(C_SOURCES:.c=.o)))
@@ -135,7 +137,7 @@ $(OUT_DIR)/%.bin: $(OUT_DIR)/%.elf | $(OUT_DIR)
 	$(BIN) $< $@
 
 $(OUT_DIR)/$(TARGET).elf: $(OBJS) Makefile | $(OUT_DIR) 
-	$(CC) $(OBJS) $(LD_FLAGS) -o $@
+	$(CC) $(LD_FLAGS) $(OBJS) $(LIBS) $(LIB_FLAGS) -o $@
 	$(SZ) $@
 
 $(OBJ_DIR)/%.o:%.c Makefile | $(OBJ_DIR)

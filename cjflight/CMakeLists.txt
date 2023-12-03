@@ -28,10 +28,6 @@ set(SIZE "arm-none-eabi-size")
 #C标准
 set(CMAKE_C_STANDARD 99)
 
-#C标准库相关
-# -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
-set(LIB_FLAG "-specs=nano.specs -specs=rdimon.specs")
-
 #内核
 set(CPU "-mcpu=cortex-m4 -mthumb")
 
@@ -124,13 +120,23 @@ add_subdirectory(CMSIS)
 add_subdirectory(at32f4_lib)
 
 
+#C标准库相关
+#-lc -lm -lnosys
+# -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
+set(LIB_FLAG "-specs=nano.specs")
 
 #汇编编译参数
-set(CMAKE_ASM_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} -Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections -x assembler-with-cpp")
+set(CMAKE_ASM_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections -x assembler-with-cpp")
 #C编译参数
-set(CMAKE_C_FLAGS   "${CPU} ${FPU} ${FLOAT_ABI} -Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections")
+set(CMAKE_C_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections")
 #链接参数
 set(CMAKE_EXE_LINKER_FLAGS "-T${LINK_FILE} ${LIB_FLAG} ${LIBS} -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections")
+
+#垃圾玩意
+#链接时-lc -lm -lnosys不懂怎么调到.o文件后面
+#只能先这样了
+target_link_libraries(${PROJECT_NAME} c m nosys)
+
 
 add_custom_command(
     TARGET ${PROJECT_NAME}
