@@ -62,8 +62,12 @@ void LEDTask(void * parameters)
 		
 	
 		LED_SetValue(&LED1, 1);
+		LED_SetValue(&LED2, 1);
+		LED_SetValue(&LED3, 1);
 		vTaskDelay(500);
 		LED_SetValue(&LED1, 0);
+		LED_SetValue(&LED2, 0);
+		LED_SetValue(&LED3, 0);
 		vTaskDelay(500);
 	}
 	
@@ -71,14 +75,12 @@ void LEDTask(void * parameters)
 
 
 
-int fputc(int ch, FILE *f)
+int _write (int fd, char *pBuffer, int size)
 {
-	/* 发送一个字节数据到串口 */
-  	//uart_send_byte(UARTx, (uint8_t)ch);
 
-	uint8_t data = (uint8_t)ch;
-  	USART_HAL_SendData(&USART1_HAL, &data, 1);
-	return (ch);
+  	USART_HAL_SendData(&USART1_HAL, (uint8_t *)pBuffer, (uint32_t)size);
+	
+	return size;
 }
 
 
@@ -95,17 +97,18 @@ void PrintfTask(void * parameters)
 		xQueueReceive(AltitudeQueue,&altitude,0);
 		xQueueReceive(AccQueue,&acc,0);
 		
-
-		//printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
-		printf("d: %f, %f, %f\n", baroAltitude, altitude, acc);
 		
+		//printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
+		//printf("d: %f, %f, %f\n", baroAltitude, altitude, acc);
+		//printf("d: %f, %f, %f\n", 0.6, 6.6, 6.66);
+		printf("hello world\n");
 		//USART_HAL_SendData(&USART1_HAL, "hello world\n", 12);
 
 		//printf("hello world\n");
 
 
 		//stack_size = uxTaskGetStackHighWaterMark(NULL);
-		//vTaskDelay(10);
+		vTaskDelay(20);
 		 
 	}
 
