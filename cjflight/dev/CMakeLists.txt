@@ -13,3 +13,11 @@ target_sources(${PROJECT_NAME}
     mpu6050/mpu6050.c
     mpu6050/mpu6050_cfg.c
 )
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    bmp280
+	motor
+	mpu6050
+	spl06
+)

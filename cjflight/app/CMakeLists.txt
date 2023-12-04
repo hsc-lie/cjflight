@@ -7,3 +7,13 @@ target_sources(${PROJECT_NAME}
     quaternion/quaternion.c
     remote/remote_task.c
 )
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    .
+	control
+	filter
+	pid
+	quaternion
+	remote
+)

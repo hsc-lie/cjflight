@@ -13,23 +13,20 @@ SET(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
 
 #设置生成目标的文件类型
-set(CMAKE_EXECUTABLE_SUFFIX ".elf")
+set(CMAKE_EXECUTABLE_SUFFIX .elf)
 
 #设置生成目标的目录
-set(EXECUTABLE_OUTPUT_PATH "./out")
+set(EXECUTABLE_OUTPUT_PATH out)
 
 #设置交叉编译器
-set(CMAKE_ASM_COMPILER "arm-none-eabi-gcc")
-set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
-set(CMAKE_CXX_COMPILE "arm-none-eabi-g++")
-set(OBJCOPY "arm-none-eabi-objcopy")
-set(SIZE "arm-none-eabi-size")
-
-#C标准
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
+set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+set(CMAKE_CXX_COMPILE arm-none-eabi-g++)
+set(OBJCOPY arm-none-eabi-objcopy)
+set(SIZE arm-none-eabi-size)
 
 #内核
-set(CPU "-mcpu=cortex-m4 -mthumb")
+set(CPU -mcpu=cortex-m4 -mthumb)
 
 #FPU类型
 set(FPU "")
@@ -37,54 +34,23 @@ set(FPU "")
 #浮点计算的方式
 #hard 硬件
 #soft 软件
-set(FLOAT_ABI "-mfloat-abi=soft")
+set(FLOAT_ABI -mfloat-abi=soft)
 
+#C标准
+set(C_STD -std=c99)
 
 #启动文件
-set(STARTUP_FILE "./startup/startup_at32f421c8t7.s")
+set(STARTUP_FILE ./startup/startup_at32f421c8t7.s)
 #链接文件
-set(LINK_FILE "../linker/AT32F421x8_FLASH.ld")
+set(LINKER_FILE ../linker/AT32F421x8_FLASH.ld)
 #CPU相关的全局宏
-set(CPU_DEFINE "AT32F421C8T7")
+set(CPU_DEFINE AT32F421C8T7)
 
 #全局宏定义
-ADD_DEFINITIONS(
-    -D ${CPU_DEFINE}
-    -D USE_STDPERIPH_DRIVER
-)
-
-#头文件路径
-include_directories(
-    .
-    app
-	app/control
-	app/filter
-	app/pid
-	app/quaternion
-	app/remote
-    freeRTOS
-	freeRTOS/include
-	freeRTOS/port
-	common
-	common/circular_queue
-	dal/led
-	dal/remote
-	dev/bmp280
-	dev/motor
-	dev/mpu6050
-	dev/spl06
-	hal/i2c
-	hal/pwm
-	hal/simulation_i2c
-	hal/usart
-	hardware/dma
-	hardware/gpio
-	hardware/rcc
-	hardware/timer
-	hardware/usart
-	protocol_stack/ibus
-	CMSIS
-	at32f4_lib/inc
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+	${CPU_DEFINE}
+	USE_STDPERIPH_DRIVER
 )
 
 
@@ -120,22 +86,28 @@ add_subdirectory(CMSIS)
 add_subdirectory(at32f4_lib)
 
 
-#C标准库相关
-#-lc -lm -lnosys
-# -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
-set(LIB_FLAG "-specs=nano.specs")
-
 #汇编编译参数
-set(CMAKE_ASM_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections -x assembler-with-cpp")
-#C编译参数
-set(CMAKE_C_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections")
-#链接参数
-set(CMAKE_EXE_LINKER_FLAGS "-T${LINK_FILE} ${LIB_FLAG} ${LIBS} -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections")
+set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
+
+
+#编译参数
+target_compile_options(${PROJECT_NAME}
+	PRIVATE
+	${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections
+)
 
 #垃圾玩意
 #链接时-lc -lm -lnosys不懂怎么调到.o文件后面
 #只能先这样了
+#-lc -lm -lnosys
 target_link_libraries(${PROJECT_NAME} c m nosys)
+
+#链接参数
+# -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
+target_link_options(${PROJECT_NAME}
+	PRIVATE
+	-T${LINKER_FILE} -specs=nano.specs -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections
+)
 
 
 add_custom_command(

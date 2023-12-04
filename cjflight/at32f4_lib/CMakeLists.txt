@@ -6,3 +6,8 @@ target_sources(${PROJECT_NAME}
 )
 
 #message(${AT32F4_LIB_SOURCE_FILES})
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    inc
+)
