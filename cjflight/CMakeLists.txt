@@ -26,7 +26,7 @@ set(OBJCOPY arm-none-eabi-objcopy)
 set(SIZE arm-none-eabi-size)
 
 #内核
-set(CPU -mcpu=cortex-m4 -mthumb)
+set(CPU "-mcpu=cortex-m4 -mthumb")
 
 #FPU类型
 set(FPU "")
@@ -37,7 +37,7 @@ set(FPU "")
 set(FLOAT_ABI -mfloat-abi=soft)
 
 #C标准
-set(C_STD -std=c99)
+#set(C_STD -std=c99)
 
 #启动文件
 set(STARTUP_FILE ./startup/startup_at32f421c8t7.s)
@@ -87,14 +87,18 @@ add_subdirectory(at32f4_lib)
 
 
 #汇编编译参数
-set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
+#set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
+set(CMAKE_ASM_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections -x assembler-with-cpp")
 
-
+set(CMAKE_C_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections")
 #编译参数
+#[[
 target_compile_options(${PROJECT_NAME}
 	PRIVATE
-	${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections
+	${COMMON_COMPILE_OPTIONS}
+	#${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections
 )
+]]
 
 #垃圾玩意
 #链接时-lc -lm -lnosys不懂怎么调到.o文件后面
