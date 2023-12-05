@@ -99,7 +99,7 @@ void PrintfTask(void * parameters)
 		//printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
 		//printf("d: %f, %f, %f\n", baroAltitude, altitude, acc);
 		//printf("d: %f, %f, %f\n", 0.6, 6.6, 6.66);
-		//printf("hello world\n");
+		printf("hello world\n");
 		//USART_HAL_SendData(&USART1_HAL, "hello world\n", 12);
 
 		//printf("hello world\n");

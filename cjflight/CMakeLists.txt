@@ -7,7 +7,7 @@ project(cjflight ASM C)
 add_executable(${PROJECT_NAME})
 
 #是否开启更详细的编译过程信息显示
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # 彩色日志输出；
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
