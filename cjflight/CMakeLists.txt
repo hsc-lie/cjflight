@@ -7,7 +7,7 @@ project(cjflight ASM C)
 add_executable(${PROJECT_NAME})
 
 #是否开启更详细的编译过程信息显示
-SET(CMAKE_VERBOSE_MAKEFILE OFF)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 # 彩色日志输出；
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
@@ -26,7 +26,7 @@ set(OBJCOPY arm-none-eabi-objcopy)
 set(SIZE arm-none-eabi-size)
 
 #内核
-set(CPU "-mcpu=cortex-m4 -mthumb")
+set(CPU -mcpu=cortex-m4 -mthumb)
 
 #FPU类型
 set(FPU "")
@@ -37,7 +37,7 @@ set(FPU "")
 set(FLOAT_ABI -mfloat-abi=soft)
 
 #C标准
-#set(C_STD -std=c99)
+set(C_STD -std=c99)
 
 #启动文件
 set(STARTUP_FILE ./startup/startup_at32f421c8t7.s)
@@ -87,18 +87,13 @@ add_subdirectory(at32f4_lib)
 
 
 #汇编编译参数
-#set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
-set(CMAKE_ASM_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections -x assembler-with-cpp")
-
-set(CMAKE_C_FLAGS "${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections")
+set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
 #编译参数
-#[[
 target_compile_options(${PROJECT_NAME}
 	PRIVATE
-	${COMMON_COMPILE_OPTIONS}
-	#${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections
+	${CPU} ${FPU} ${FLOAT_ABI} ${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections
 )
-]]
+
 
 #垃圾玩意
 #链接时-lc -lm -lnosys不懂怎么调到.o文件后面
@@ -110,6 +105,7 @@ target_link_libraries(${PROJECT_NAME} c m nosys)
 # -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
 target_link_options(${PROJECT_NAME}
 	PRIVATE
+	${CPU} ${FPU} ${FLOAT_ABI}
 	-T${LINKER_FILE} -specs=nano.specs -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections
 )
 
