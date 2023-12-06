@@ -19,18 +19,23 @@
 # 编译示例
 ## cmake
 ### Linux环境下
+
     mkdir build
     cd build
     cmake ..
     cmake --build .
+
 ### Windows环境下
 以MinGW64为例
+
     mkdir build
     cd build
     cmake -G "MinGW Makefiles" ..
     cmake --build .
+
 ## Makefile
 在Linux环境下，或在windows使用git的命令行中运行
+
     make
 
 
