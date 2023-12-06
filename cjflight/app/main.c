@@ -156,7 +156,7 @@ int main(void)
 	FilterInit();
 
 	/*MPU6050初始化*/
-	//MPU6050_Init(&MPU6050);
+	MPU6050_Init(&MPU6050);
 
 
 	/*气压计初始化*/
