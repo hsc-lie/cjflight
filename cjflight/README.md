@@ -17,6 +17,7 @@
 
 
 # 3 编译示例
+编译生成的所有文件在build/out内
 ## 3.1 使用cmake构建
 Linux环境下
 
@@ -36,6 +37,7 @@ Windows环境下，以MinGW64为例
 在Linux环境下，或在windows使用git的命令行中运行
 
     make
+
 
 
 
