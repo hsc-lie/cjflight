@@ -53,6 +53,7 @@ C_INCLUDE =\
 	-I app/remote \
 	-I common \
 	-I common/circular_queue \
+	-I protocol_stack/ibus \
 	-I dal/led \
 	-I dal/remote \
 	-I dev/bmp280 \
@@ -66,17 +67,18 @@ C_INCLUDE =\
 	-I hal/pwm \
 	-I hal/simulation_i2c \
 	-I hal/usart \
-	-I hardware/dma \
-	-I hardware/gpio \
-	-I hardware/rcc \
-	-I hardware/timer \
-	-I hardware/usart \
-	-I protocol_stack/ibus \
-	-I CMSIS \
-	-I at32f4_lib/inc
+	-I bsp/at32f4/board/dma \
+	-I bsp/at32f4/board/gpio \
+	-I bsp/at32f4/board/rcc \
+	-I bsp/at32f4/board/timer \
+	-I bsp/at32f4/board/usart \
+	-I bsp/at32f4/cmsis \
+	-I bsp/at32f4/at32f4_lib/inc \
+	
+
 
 #需要编译的汇编
-ASM_SOURCES = ./startup/startup_at32f421c8t7.s
+ASM_SOURCES = .bsp/at32f4/startup/startup_at32f421c8t7.s
 
 #freertos的c文件
 FREERTOS_SOURCES =\
@@ -89,7 +91,7 @@ FREERTOS_SOURCES =\
 
 #c文件
 C_SOURCES =\
-	$(shell find ./app ./common ./CMSIS ./dal ./dev ./hal ./hardware ./at32f4_lib ./protocol_stack -name "*.c") \
+	$(shell find ./app ./common ./protocol_stack ./dal ./dev ./hal ./bsp -name "*.c") \
 	$(FREERTOS_SOURCES)
 
 
