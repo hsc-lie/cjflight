@@ -1,10 +1,10 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
-    rcc/rcc_cfg.c
-    dma/dma_cfg.c
-    gpio/gpio_cfg.c
-    usart/usart_cfg.c
-    timer/timer_cfg.c
+    rcc/bsp_rcc.c
+    dma/bsp_dma.c
+    gpio/bsp_gpio.c
+    usart/bsp_usart.c
+    timer/bsp_timer.c
 )
 
 target_include_directories(${PROJECT_NAME}

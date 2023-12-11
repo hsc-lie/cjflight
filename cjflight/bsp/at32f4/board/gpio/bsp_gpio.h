@@ -1,5 +1,5 @@
-#ifndef __GPIO_CFG_H_
-#define __GPIO_CFG_H_
+#ifndef __BSP_GPIO_H_
+#define __BSP_GPIO_H_
 
 
 
@@ -32,13 +32,6 @@
 
 #endif
 
+extern void BSPGPIOInitAll(void);
 
-
-
-
-extern void GPIO_ConfigInitAll(void);
-
-
-
-
-#endif /*__GPIO_CFG_H_*/
+#endif /*__BSP_GPIO_H_*/

@@ -3,11 +3,11 @@
 
 #include "stdio.h"
 
-#include "rcc_cfg.h"
-#include "gpio_cfg.h"
-#include "usart_cfg.h"
-#include "dma_cfg.h"
-#include "timer_cfg.h"
+#include "bsp_rcc.h"
+#include "bsp_gpio.h"
+#include "bsp_usart.h"
+#include "bsp_dma.h"
+#include "bsp_timer.h"
 
 #include "usart_hal_cfg.h"
 #include "i2c_hal_cfg.h"
@@ -142,11 +142,11 @@ int main(void)
 	/*中断优先级分组*/
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
-	RCC_ConfigInitAll();
-	GPIO_ConfigInitAll();
-	DMA_ConfigInitAll();
-	Timer_ConfigInitAll();
-	USART_ConfigInitAll();
+	BSPRCCInitAll();
+	BSPGPIOInitAll();
+	BSPDMAInitAll();
+	BSPTimerInitAll();
+	BSPUSARTInitAll();
 	
 	//LED_SetValue(&LED1, 0);
 	//LED_SetValue(&LED2, 0);

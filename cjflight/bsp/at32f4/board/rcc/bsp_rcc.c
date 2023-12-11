@@ -1,8 +1,8 @@
-#include "rcc_cfg.h"
+#include "bsp_rcc.h"
 #include "at32f4xx.h"
 
 
-void RCC_ConfigInitAll()
+void BSPRCCInitAll()
 {
 	//GPIO时钟使能
 	RCC_AHBPeriphClockCmd(RCC_AHBPERIPH_GPIOA | RCC_AHBPERIPH_GPIOB | RCC_AHBPERIPH_GPIOC | RCC_AHBPERIPH_GPIOF, ENABLE);

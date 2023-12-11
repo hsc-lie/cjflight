@@ -1,6 +1,6 @@
 #include "usart_hal_cfg.h"
 
-#include "usart_cfg.h"
+#include "bsp_usart.h"
 #include "circular_queue.h"
 
 
@@ -11,7 +11,7 @@
 
 static void USART1_HAL_SendData(uint8_t * data, uint32_t len)
 {
-	USART_TransmissionData(USART1, data, len);
+	BSPUSARTSendData(USART1, data, len);
 }
 
 
@@ -32,7 +32,7 @@ static void USART2_HAL_ReadData(uint8_t * data, uint32_t readLen, uint32_t * out
 	for(i = 0;i < readLen;++i)
 	{
 	
-		if(E_CIRCULAR_QUEUE_ERROR_OK != CircularQueue_ReadByte(&USART2_Queue, data))
+		if(E_CIRCULAR_QUEUE_ERROR_OK != CircularQueue_ReadByte(&USART2Queue, data))
 		{
 			break;
 		}

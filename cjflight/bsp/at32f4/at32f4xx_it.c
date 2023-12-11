@@ -13,8 +13,8 @@
 #include "at32f4xx_it.h"
 
 
-#include "usart_cfg.h"
-#include "dma_cfg.h"
+#include "bsp_usart.h"
+#include "bsp_dma.h"
 
 
 
@@ -172,8 +172,6 @@ void USART2_IRQHandler(void)
   
 }
 
-int led_flag = 0;
-int motor_count = 0;
 void TMR6_GLOBAL_IRQHandler(void)
 {
   if(TMR_GetINTStatus(TMR6, TMR_INT_Overflow) == SET)
@@ -191,7 +189,6 @@ void TMR3_GLOBAL_IRQHandler(void)
   if(TMR_GetINTStatus(TMR3, TMR_INT_CC2) == SET) 
   {
     TMR_ClearITPendingBit(TMR3, TMR_INT_CC2);
-    //tim_get_ppm();
   }
 }
 
@@ -200,7 +197,6 @@ void TMR15_GLOBAL_IRQHandler(void)
   if(TMR_GetINTStatus(TMR15, TMR_INT_CC1) == SET) 
   {
     TMR_ClearITPendingBit(TMR15, TMR_INT_CC1);
-    //tim_get_ppm();
   }
 }
 
@@ -210,7 +206,6 @@ void EXTI1_0_IRQHandler(void)
   if(EXTI_GetIntStatus(EXTI_Line0) == SET)
   {
     EXTI_ClearIntPendingBit(EXTI_Line0);
-	  //tim_get_ppm();
   }
 }
 

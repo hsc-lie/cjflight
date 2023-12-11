@@ -2,7 +2,7 @@
 
 
 /*****************************以下所有代码按工程实际需要配置*******************************/
-#include "gpio_cfg.h"
+#include "bsp_gpio.h"
 
 #define LED1_ON()            GPIO_ResetBits(LED1_GPIO, LED1_GPIO_PIN)
 #define LED1_OFF()           GPIO_SetBits(LED1_GPIO, LED1_GPIO_PIN)

@@ -1,4 +1,4 @@
-#include "gpio_cfg.h"
+#include "bsp_gpio.h"
 #include "at32f4xx.h"
 
 
@@ -227,7 +227,7 @@ const GPIO_Config_t Timer3_GPIOConfigTable[] =
 
 
 
-void GPIO_ConfigInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
+void BSPGPIOInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
 {
 	uint32_t i;
 
@@ -239,33 +239,19 @@ void GPIO_ConfigInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
 }
 
 
-void GPIO_ConfigInitAll(void)
+void BSPGPIOInitAll(void)
 {
-
-
 	//LED GPIO
-	GPIO_ConfigInit(&LED_GPIOConfigTable, sizeof(LED_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(&LED_GPIOConfigTable, sizeof(LED_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//USART1
-	GPIO_ConfigInit(&USART1_GPIOConfigTable, sizeof(USART1_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(&USART1_GPIOConfigTable, sizeof(USART1_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//USART2
-	GPIO_ConfigInit(&USART2_GPIOConfigTable, sizeof(USART2_GPIOConfigTable)/sizeof(GPIO_Config_t));
-
+	BSPGPIOInit(&USART2_GPIOConfigTable, sizeof(USART2_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//软件I2C
-	GPIO_ConfigInit(&SimulationI2C_GPIOConfigTable, sizeof(SimulationI2C_GPIOConfigTable)/sizeof(GPIO_Config_t));
-
+	BSPGPIOInit(&SimulationI2C_GPIOConfigTable, sizeof(SimulationI2C_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//Timer3
-	GPIO_ConfigInit(&Timer3_GPIOConfigTable, sizeof(Timer3_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(&Timer3_GPIOConfigTable, sizeof(Timer3_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	
-	/*
-	uint32_t i;
-	uint32_t len = sizeof(GPIO_ConfigTable)/sizeof(GPIO_Config_t);
-
-	for(i = 0;i < len;++i)
-	{
-		GPIO_Init(GPIO_ConfigTable[i].GPIOx, (GPIO_Config_t *)&GPIO_ConfigTable[i].GPIO_InitType);
-		GPIO_PinAFConfig(GPIO_ConfigTable[i].GPIOx, GPIO_ConfigTable[i].GPIO_PinSource, GPIO_ConfigTable[i].GPIO_AF);
-	}
-	*/
 }
 
 

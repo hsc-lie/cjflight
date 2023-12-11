@@ -6,7 +6,7 @@
 
 
 
-#include "gpio_cfg.h"
+#include "bsp_gpio.h"
 
 #define SIMULATION_I2C_DELAY_COUNT            (20)
 
