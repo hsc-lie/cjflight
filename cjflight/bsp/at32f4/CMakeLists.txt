@@ -6,9 +6,10 @@ add_subdirectory(at32f4_lib)
 add_subdirectory(board)
 
 #内核
-set(CPU -mcpu=cortex-m4 -mthumb)
+set(CPU -mthumb -mcpu=cortex-m4 -march=armv7e-m)
 
 #FPU类型
+#-mfpu=fpv4-sp-d16
 set(FPU "")
 
 #浮点计算的方式
@@ -36,10 +37,17 @@ target_compile_options(${PROJECT_NAME}
     ${CPU} ${FPU} ${FLOAT_ABI} 
 )
 
+#头文件路径
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    .
+)
+
 #源文件
 target_sources(${PROJECT_NAME}
     PUBLIC
     ${STARTUP_FILE}
+    at32f4xx_it.c
 )
 
 #链接文件路径
@@ -48,9 +56,10 @@ target_link_directories(${PROJECT_NAME}
     linker
 )
 
-#链接文件
+#链接参数
 target_link_options(${PROJECT_NAME}
     PUBLIC
+    ${CPU} ${FPU} ${FLOAT_ABI}
 	-T ${LINKER_FILE}
 )
 

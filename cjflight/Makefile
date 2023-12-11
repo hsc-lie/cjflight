@@ -23,9 +23,10 @@ HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
 #CPU类型
-CPU = -mcpu=cortex-m4 -mthumb
+CPU = -mthumb -mcpu=cortex-m4 -march=armv7e-m 
 
 #FPU类型
+#-mfpu=fpv4-sp-d16
 FPU = 
 
 #浮点计算的方式 

@@ -7,7 +7,7 @@ project(cjflight ASM C)
 add_executable(${PROJECT_NAME})
 
 #是否开启更详细的编译过程信息显示
-SET(CMAKE_VERBOSE_MAKEFILE OFF)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 # 彩色日志输出；
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
@@ -80,7 +80,6 @@ target_link_libraries(${PROJECT_NAME} c m nosys)
 # -specs=nosys.specs -specs=nano.specs -specs=rdimon.specs -specs=rdpmon.specs
 target_link_options(${PROJECT_NAME}
 	PRIVATE
-	${CPU} ${FPU} ${FLOAT_ABI}
 	-specs=nano.specs -Wl,-Map=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map,--cref -Wl,--gc-sections
 )
 
