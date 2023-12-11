@@ -11,10 +11,10 @@
 - hal：硬件抽象层
 - bsp: 板级支持包
 - bsp/at32f4/board: 板级相关配置
-- bsp/at32f4/cmsis: at32f4芯片相关ARM标准接口
-- bsp/at32f4/at32f4_lib：AT32标准外设库
-- bsp/at32f4/linker: at32f4芯片相关链接文件
-- bsp/at32f4/startup: at32f4芯片相关启动文件
+- bsp/at32f4/cmsis: AT32F4系列芯片相关ARM标准接口
+- bsp/at32f4/at32f4_lib：AT32F4系列芯片标准外设库
+- bsp/at32f4/linker: AT32F4系列芯片相关链接文件
+- bsp/at32f4/startup: AT32F4系列芯片相关启动文件
 
 
 ## 三、编译示例
