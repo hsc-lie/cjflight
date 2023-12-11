@@ -66,7 +66,7 @@ set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
 #编译参数
 target_compile_options(${PROJECT_NAME}
 	PRIVATE
-	${C_STD} -Wall -Og -g -gdwarf-2 -fdata-sections -ffunction-sections
+	${C_STD} -Wall -O0 -g -gdwarf-2 -fdata-sections -ffunction-sections
 )
 
 

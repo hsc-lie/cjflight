@@ -3,7 +3,7 @@ TARGET = cjflight
 DEBUG = 1
 
 #优化等级
-OPT = -Og
+OPT = -O0
 
 #编译文件路径
 BUILD_DIR = build
@@ -67,6 +67,7 @@ C_INCLUDE =\
 	-I hal/pwm \
 	-I hal/simulation_i2c \
 	-I hal/usart \
+	-I bsp/at32f4 \
 	-I bsp/at32f4/board/dma \
 	-I bsp/at32f4/board/gpio \
 	-I bsp/at32f4/board/rcc \
@@ -78,7 +79,7 @@ C_INCLUDE =\
 
 
 #需要编译的汇编
-ASM_SOURCES = .bsp/at32f4/startup/startup_at32f421c8t7.s
+ASM_SOURCES = ./bsp/at32f4/startup/startup_at32f421c8t7.s
 
 #freertos的c文件
 FREERTOS_SOURCES =\
@@ -107,7 +108,7 @@ endif
 C_FLAGS += -MMD -MP
 
 #链接脚本
-LINKER_FILE = ./linker/AT32F421x8_FLASH.ld
+LINKER_FILE = ./bsp/at32f4/linker/AT32F421x8_FLASH.ld
 
 #gcc库相关
 #链接时需要放在其他.o文件后面
