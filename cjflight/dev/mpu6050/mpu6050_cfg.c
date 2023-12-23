@@ -2,33 +2,14 @@
 
 #include "i2c_dev.h"
 
-static I2CDev_t *MPU6050I2CDev = NULL;
-
 static void MPU6050I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
-	if(NULL == MPU6050I2CDev)
-	{
-		MPU6050I2CDev = I2CDevGet(0);
-	}
-
-	if (NULL != MPU6050I2CDev)
-	{
-		I2CDevSendData(MPU6050I2CDev, addr, &reg, 1, data, len);
-	}
-	
+	I2CDevSendData(I2C_TYPE_SENSOR, addr, &reg, 1, data, len);
 }
 
 static void MPU6050I2CReadReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
-	if(NULL == MPU6050I2CDev)
-	{
-		MPU6050I2CDev = I2CDevGet(0);
-	}
-
-	if (NULL != MPU6050I2CDev)
-	{
-		I2CDevReadData(MPU6050I2CDev, addr, &reg, 1, data, len);
-	}
+	I2CDevReadData(I2C_TYPE_SENSOR, addr, &reg, 1, data, len);
 }
 
 

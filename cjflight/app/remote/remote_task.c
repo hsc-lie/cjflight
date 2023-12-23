@@ -67,21 +67,6 @@ static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
     
 }
 
-
-static IBusUSARTReadData(uint8_t *data, uint32_t readLen, uint32_t * outLen)
-{
-	if(NULL == IBusUSARTDev)
-	{
-		IBusUSARTDev = USARTDevGet(2);
-	}
-	
-	if(NULL != IBusUSARTDev)
-	{
-		USARTDevReadData(IBusUSARTDev, data, readLen, outLen);
-	}
-}
-
-
 static void IBusDataUpdate()
 {
 	uint8_t isGetIBUSPackage;
@@ -90,7 +75,7 @@ static void IBusDataUpdate()
 
 	RemoteData_t remoteData = {0};
 	
-	IBusUSARTReadData(data, 32, &outLen);
+	USARTDevReadData(USART_REMOTE, data, 32, &outLen);
 
 	IBusAnalysisData(&IBus, data, outLen, &isGetIBUSPackage);
 

@@ -66,19 +66,10 @@ void LEDTask(void * parameters)
 }
 
 
-static USARTDev_t *PrintfUSARTDev = NULL;
 int _write (int fd, char *pBuffer, int size)
 {
-	if(NULL == PrintfUSARTDev)
-	{
-		PrintfUSARTDev = USARTDevGet(1);
-	}
+	USARTDevSendData(USART_PRINTF, (uint8_t *)pBuffer, (uint32_t)size);
 
-	if(NULL != PrintfUSARTDev)
-	{
-		USARTDevSendData(PrintfUSARTDev, (uint8_t *)pBuffer, (uint32_t)size);
-	}
-	
 	return size;
 }
 
@@ -122,14 +113,14 @@ void I2C_DevAddrTest()
 	uint8_t reg = 0;
 	uint8_t readData = 0;
 
-	I2C_ERROR_t ret;
+	I2C_DEV_ERROR_t ret;
 
 	for(addr = 0;addr < 0x7f;addr++)
 	{
 		//ret = SimulationI2CReadData(&SimulationI2C1, addr, &reg, 1, &readData, 1);
 		//ret = I2C_HalReadData(&I2C_Dev1, addr, &reg, 1, &readData, 1);
 
-		if(I2C_ERROR_OK == ret)
+		if(I2C_DEV_ERROR_OK == ret)
 		{
 			ret = 0;
 		}
@@ -140,11 +131,11 @@ void I2C_DevAddrTest()
 
 int main(void)
 {
-	
 	GPIODevInit();
-	I2CDevInitAll();
-	USARTDevInitAll();
-	TimerDevInitAll();
+	I2CDevInit(I2C_TYPE_SENSOR);
+	USARTDevInit(USART_PRINTF);
+	USARTDevInit(USART_REMOTE);
+	TimerDevInit(TIMER_MOTOR_PWM);
 
 	/*滤波参数初始化*/
 	FilterInit();
@@ -152,13 +143,10 @@ int main(void)
 	/*MPU6050初始化*/
 	//MPU6050Init(&MPU6050);
 
-
 	/*气压计初始化*/
 	//BMP280_Init(&BMP280);
-	//SPL06Init(&SPL06);
+	SPL06Init(&SPL06);
 	//I2C_DevAddrTest();
-	
-
 	
 	/*创建遥控数据消息队列*/
 	RemoteDataQueue = xQueueCreate(1, sizeof(RemoteData_t));

@@ -1,73 +1,78 @@
 #include "usart_dev.h"
 
+static USARTDev_t *USARTDevTable[USART_MAX];
 
 
-static DoublyListItem_t USARTDevList = 
+#define USART_DEV_CHECK(usart) \
+if(usart >= USART_MAX)\
+{\
+	return USART_DEV_ERROR_INVALID;\
+}\
+while(0)
+
+#define USART_DEV_CHECK_FUNC(usart, func) \
+USART_DEV_CHECK(usart)\
+if((NULL == USARTDevTable[usart]) || (NULL == func))\
+{\
+	return USART_DEV_ERROR_NULL;\
+}\
+while(0)
+
+USART_DEV_ERROR_t USARTDevRegister(USART_t usart, USARTDev_t *dev)
 {
-	.Next = &USARTDevList,
-	.Prev = &USARTDevList,
-};
+	USART_DEV_CHECK(usart);
 
+	USARTDevTable[usart] = dev;
 
-void USARTDevInit(USARTDev_t * i2c)
-{
-	DevInit((Dev_t *)i2c);
+	return USART_DEV_ERROR_OK;
 }
 
-void USARTDevDeInit(USARTDev_t * i2c)
+USART_DEV_ERROR_t USARTDevUnregister(USART_t usart)
 {
-	DevDeInit((Dev_t *)i2c);
-}
+	USART_DEV_CHECK(usart);
 
-void USARTDevInitAll()
-{
-	DevInitAll(&USARTDevList);
-}
-
-void USARTDevDeInitAll()
-{
-	DevDeInitAll(&USARTDevList);
-}
-
-USARTDev_t *USARTDevGet(uint32_t id)
-{
-	return (USARTDev_t *)DevGet(&USARTDevList, id);
-}
-
-void USARTDevRegister(USARTDev_t *USARTDev)
-{
-	DevRegister(&USARTDevList, (Dev_t *)USARTDev);
-}
-
-void USARTDevUnregister(USARTDev_t *USARTDev)
-{
-	DevUnregister(&USARTDevList, (Dev_t *)USARTDev);
-}
-
-
-USART_DEV_ERROR_t USARTDevSendData(const USARTDev_t * const usart, uint8_t *data, uint32_t len)
-{
-	if(NULL == usart->SendData)
-	{
-		return USART_DEV_ERROR_NULL;
-	}
-
-	usart->SendData(data, len);
+	USARTDevTable[usart] = NULL;
 
 	return USART_DEV_ERROR_OK;
 }
 
 
-USART_DEV_ERROR_t USARTDevReadData(const USARTDev_t * const usart, uint8_t *data, uint32_t readLen, uint32_t * outLen)
+USART_DEV_ERROR_t USARTDevInit(USART_t usart)
 {
-	if(NULL == usart->ReadData)
-	{
-		return USART_DEV_ERROR_NULL;
-	}
+	USART_DEV_ERROR_t ret;
 
-	usart->ReadData(data, readLen, outLen);
+	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->Init);
 
-	return USART_DEV_ERROR_OK;
+	return USARTDevTable[usart]->Init();
+}
+
+USART_DEV_ERROR_t USARTDevDeInit(USART_t usart)
+{
+	USART_DEV_ERROR_t ret;
+
+	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->DeInit);
+
+	return USARTDevTable[usart]->DeInit();
+}
+
+
+USART_DEV_ERROR_t USARTDevSendData(USART_t usart, uint8_t *data, uint32_t len)
+{
+	USART_DEV_ERROR_t ret;
+
+	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->SendData);
+
+	return USARTDevTable[usart]->SendData(data, len);
+}
+
+
+USART_DEV_ERROR_t USARTDevReadData(USART_t usart, uint8_t *data, uint32_t readLen, uint32_t * outLen)
+{
+	USART_DEV_ERROR_t ret;
+
+	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->ReadData);
+
+	return USARTDevTable[usart]->ReadData(data, readLen, outLen);
 }
 
 

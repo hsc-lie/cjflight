@@ -170,12 +170,8 @@ GPIODev_t GPIODev =
 
 USARTDev_t USART1Dev = 
 {
-	.Dev = 
-	{
-		.ID = 1,
-		.Init = BSPUSART1Init,
-		.DeInit = NULL,
-	},
+	.Init = BSPUSART1Init,
+	.DeInit = NULL,
 	.SendData = USART1SendData,
 	.ReadData = NULL,
 };
@@ -183,12 +179,8 @@ USARTDev_t USART1Dev =
 
 USARTDev_t USART2Dev = 
 {
-	.Dev = 
-	{
-		.ID = 2,
-		.Init = USART2Init,
-		.DeInit = NULL,
-	},
+	.Init = USART2Init,
+	.DeInit = NULL,
 	.SendData = NULL,
 	.ReadData = USART2ReadData,
 };
@@ -196,45 +188,19 @@ USARTDev_t USART2Dev =
 
 static I2CDev_t I2CDev0 =
 {
-	.Dev = 
-	{
-		.ID = 0,
-		.Init = NULL,
-    	.DeInit = NULL,
-	},
+	.Init = NULL,
+    .DeInit = NULL,
 	.SendData = I2C0SendData,
 	.ReadData = I2C0ReadData,
 };
 
 
-static TimerDev_t Timer1Dev =
+static TimerDev_t Timer3Dev =
 {
-	.Dev = 
-	{
-		.ID = 1,
-		.Init = BSPTimer3Init,
-    	.DeInit = NULL,
-	},
+	.Init = BSPTimer3Init,
+    .DeInit = NULL,
 	.PWMOut = Timer3PWMOut,
 };
-
-
-
-static void USARTDevRegisterAll()
-{
-	USARTDevRegister(&USART1Dev);
-	USARTDevRegister(&USART2Dev);
-}
-
-static void I2CDevRegisterAll()
-{
-    I2CDevRegister(&I2CDev0);
-}
-
-static void TimerDevRegisterAll()
-{
-	TimerDevRegister(&Timer1Dev);
-}
 
 
 void BSPMain(void)
@@ -246,9 +212,12 @@ void BSPMain(void)
 
 	GPIODevRegister(&GPIODev);
 
-	USARTDevRegisterAll();
-    I2CDevRegisterAll();
-	TimerDevRegisterAll();
+	USARTDevRegister(USART_PRINTF, &USART1Dev);
+	USARTDevRegister(USART_REMOTE, &USART2Dev);
+
+	I2CDevRegister(I2C_TYPE_SENSOR, &I2CDev0);
+
+	TimerDevRegister(TIMER_MOTOR_PWM, &Timer3Dev);
 
 	main();
 }

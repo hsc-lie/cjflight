@@ -1,78 +1,118 @@
 #include "i2c_dev.h"
 
+static I2CDev_t *I2CDevTable[I2C_MAX];
 
-
-static DoublyListItem_t I2CDevList = 
+static I2C_DEV_ERROR_t I2CDevCheck(I2C_t i2c)
 {
-	.Next = &I2CDevList,
-	.Prev = &I2CDevList,
-};
-
-
-void I2CDevInit(I2CDev_t *i2c)
-{
-	DevInit((Dev_t *)i2c);
-}
-
-void I2CDevDeInit(I2CDev_t *i2c)
-{
-	DevDeInit((Dev_t *)i2c);
-}
-
-void I2CDevInitAll()
-{
-	DevInitAll(&I2CDevList);
-}
-
-void I2CDevDeInitAll()
-{
-	DevDeInitAll(&I2CDevList);
-}
-
-
-I2CDev_t *I2CDevGet(uint32_t id)
-{
-	return (I2CDev_t *)DevGet(&I2CDevList, id);
-}
-
-
-void I2CDevRegister(I2CDev_t *i2c)
-{
-	DevRegister(&I2CDevList, (Dev_t *)i2c);
-}
-
-void I2CDevUnregister(I2CDev_t *i2c)
-{
-	DevUnregister(&I2CDevList, (Dev_t *)i2c);
-}
-
-
-
-
-I2C_ERROR_t I2CDevSendData(I2CDev_t *i2c, uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t *data, uint32_t dataLen)
-{
-	if(NULL == i2c->SendData)
+	if(i2c >= I2C_MAX)
 	{
-		return I2C_ERROR_NULL;
+		return I2C_DEV_ERROR_INVALID;
 	}
 
-	return i2c->SendData(addr, reg, regLen, data, dataLen);
+	if(NULL == I2CDevTable[i2c])
+	{
+		return I2C_DEV_ERROR_NULL;
+	}
+
+	return I2C_DEV_ERROR_OK;
+}
+
+I2C_DEV_ERROR_t I2CDevRegister(I2C_t i2c, I2CDev_t *dev)
+{
+	if(i2c >= I2C_MAX)
+	{
+		return I2C_DEV_ERROR_INVALID;
+	}
+
+	I2CDevTable[i2c] = dev;
+
+	return I2C_DEV_ERROR_OK;
+}
+
+I2C_DEV_ERROR_t I2CDevUnregister(I2C_t i2c)
+{
+	if(i2c >= I2C_MAX)
+	{
+		return I2C_DEV_ERROR_INVALID;
+	}
+
+	I2CDevTable[i2c] = NULL;
+
+	return I2C_DEV_ERROR_OK;
+}
+
+
+I2C_DEV_ERROR_t I2CDevInit(I2C_t i2c)
+{
+	I2C_DEV_ERROR_t ret;
+
+	ret = I2CDevCheck(i2c);
+	if(I2C_DEV_ERROR_OK != ret)
+	{
+		return ret;
+	}
+
+	if(NULL == I2CDevTable[i2c]->Init)
+	{
+		return I2C_DEV_ERROR_NULL;
+	}
+
+	return I2CDevTable[i2c]->Init();
+}
+
+I2C_DEV_ERROR_t I2CDevDeInit(I2C_t i2c)
+{
+	I2C_DEV_ERROR_t ret;
+
+	ret = I2CDevCheck(i2c);
+	if(I2C_DEV_ERROR_OK != ret)
+	{
+		return ret;
+	}
+
+	if(NULL == I2CDevTable[i2c]->DeInit)
+	{
+		return I2C_DEV_ERROR_NULL;
+	}
+
+	return I2CDevTable[i2c]->DeInit();
+}
+
+
+I2C_DEV_ERROR_t I2CDevSendData(I2C_t i2c, uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t *data, uint32_t dataLen)
+{
+	I2C_DEV_ERROR_t ret;
+
+	ret = I2CDevCheck(i2c);
+	if(I2C_DEV_ERROR_OK != ret)
+	{
+		return ret;
+	}
+
+	if(NULL == I2CDevTable[i2c]->SendData)
+	{
+		return I2C_DEV_ERROR_NULL;
+	}
 	
+	return I2CDevTable[i2c]->SendData(addr, reg, regLen, data, dataLen);
 }
 
 
-I2C_ERROR_t I2CDevReadData(I2CDev_t *i2c, uint8_t addr, uint8_t *reg, uint32_t regLen,uint8_t *data, uint32_t dataLen)
+I2C_DEV_ERROR_t I2CDevReadData(I2C_t i2c, uint8_t addr, uint8_t *reg, uint32_t regLen,uint8_t *data, uint32_t dataLen)
 {
-	if(NULL == i2c->ReadData)
+	I2C_DEV_ERROR_t ret;
+
+	ret = I2CDevCheck(i2c);
+	if(I2C_DEV_ERROR_OK != ret)
 	{
-		return I2C_ERROR_NULL;
+		return ret;
 	}
 
-	i2c->ReadData(addr, reg, regLen, data, dataLen);
+	if(NULL == I2CDevTable[i2c]->ReadData)
+	{
+		return I2C_DEV_ERROR_NULL;
+	}
 
-	return I2C_ERROR_OK;
+	return I2CDevTable[i2c]->ReadData(addr, reg, regLen, data, dataLen);
 }
-
-
-
 

@@ -1,54 +1,99 @@
 #include "timer_dev.h"
 
 
+static TimerDev_t *TimerDevTable[TIMER_MAX];
 
-static DoublyListItem_t TimerDevList = 
+static TIMER_DEV_ERROR_t TimerDevCheck(TIMER_t timer)
 {
-	.Next = &TimerDevList,
-	.Prev = &TimerDevList,
-};
-
-
-void TimerDevInit(TimerDev_t * i2c)
-{
-	DevInit((Dev_t *)i2c);
-}
-
-void TimerDevDeInit(TimerDev_t * i2c)
-{
-	DevDeInit((Dev_t *)i2c);
-}
-
-void TimerDevInitAll()
-{
-	DevInitAll(&TimerDevList);
-}
-
-void TimerDevDeInitAll()
-{
-	DevDeInitAll(&TimerDevList);
-}
-
-TimerDev_t *TimerDevGet(uint32_t id)
-{
-	return (TimerDev_t *)DevGet(&TimerDevList, id);
-}
-
-void TimerDevRegister(TimerDev_t *TimerDev)
-{
-	DevRegister(&TimerDevList, (Dev_t *)TimerDev);
-}
-
-void TimerDevUnregister(TimerDev_t *TimerDev)
-{
-	DevUnregister(&TimerDevList, (Dev_t *)TimerDev);
-}
-
-
-void TimerPWMOut(TimerDev_t * timer, uint8_t channel, uint32_t duty)
-{
-	if(NULL != timer)
+	if(timer >= TIMER_MAX)
 	{
-		timer->PWMOut(channel, duty);
+		return TIMER_DEV_ERROR_INVALID;
 	}
+
+	if(NULL == TimerDevTable[timer])
+	{
+		return TIMER_DEV_ERROR_NULL;
+	}
+
+	return TIMER_DEV_ERROR_OK;
+}
+
+TIMER_DEV_ERROR_t TimerDevRegister(TIMER_t timer, TimerDev_t *dev)
+{
+	if(timer >= TIMER_MAX)
+	{
+		return TIMER_DEV_ERROR_INVALID;
+	}
+
+	TimerDevTable[timer] = dev;
+
+	return TIMER_DEV_ERROR_OK;
+}
+
+TIMER_DEV_ERROR_t TimerDevUnregister(TIMER_t timer)
+{
+	if(timer >= TIMER_MAX)
+	{
+		return TIMER_DEV_ERROR_INVALID;
+	}
+
+	TimerDevTable[timer] = NULL;
+
+	return TIMER_DEV_ERROR_OK;
+}
+
+
+TIMER_DEV_ERROR_t TimerDevInit(TIMER_t timer)
+{
+	TIMER_DEV_ERROR_t ret;
+
+	ret = TimerDevCheck(timer);
+	if(TIMER_DEV_ERROR_OK != ret)
+	{
+		return ret;
+	}
+
+	if(NULL == TimerDevTable[timer]->Init)
+	{
+		return TIMER_DEV_ERROR_NULL;
+	}
+
+	return TimerDevTable[timer]->Init();
+}
+
+TIMER_DEV_ERROR_t TimerDevDeInit(TIMER_t timer)
+{
+	TIMER_DEV_ERROR_t ret;
+
+	ret = TimerDevCheck(timer);
+	if(TIMER_DEV_ERROR_OK != ret)
+	{
+		return ret;
+	}
+
+	if(NULL == TimerDevTable[timer]->DeInit)
+	{
+		return TIMER_DEV_ERROR_NULL;
+	}
+
+	return TimerDevTable[timer]->DeInit();
+}
+
+TIMER_DEV_ERROR_t TimerDevPWMOut(TIMER_t timer, uint8_t channel, uint32_t duty)
+{
+	TIMER_DEV_ERROR_t ret;
+
+	ret = TimerDevCheck(timer);
+	if(TIMER_DEV_ERROR_OK != ret)
+	{
+		return ret;
+	}
+
+	if(NULL == TimerDevTable[timer]->PWMOut)
+	{
+		return TIMER_DEV_ERROR_NULL;
+	}
+
+	return TimerDevTable[timer]->PWMOut(channel, duty);
+
 }

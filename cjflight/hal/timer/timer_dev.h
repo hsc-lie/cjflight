@@ -2,25 +2,35 @@
 #define __TIMER_DEV_H_
 
 
+#include "common.h"
 
-#include "dev.h"
+typedef enum
+{
+	TIMER_MOTOR_PWM,
+
+	TIMER_MAX
+}TIMER_t;
+
+
+typedef enum
+{
+	TIMER_DEV_ERROR_OK = 0,
+	TIMER_DEV_ERROR_NULL,
+	TIMER_DEV_ERROR_INVALID,
+}TIMER_DEV_ERROR_t;
+
 
 typedef struct
 {
-	Dev_t Dev;
-
-	void (*PWMOut)(uint8_t channel, uint32_t duty);
+	TIMER_DEV_ERROR_t (*Init)(void);
+	TIMER_DEV_ERROR_t (*DeInit)(void);
+	TIMER_DEV_ERROR_t (*PWMOut)(uint8_t channel, uint32_t duty);
 }TimerDev_t;
 
-
-extern void TimerDevInit(TimerDev_t * i2c);
-extern void TimerDevDeInit(TimerDev_t * i2c);
-extern void TimerDevInitAll();
-extern void TimerDevDeInitAll();
-extern TimerDev_t *TimerDevGet(uint32_t id);
-extern void TimerDevRegister(TimerDev_t *TimerDev);
-extern void TimerDevUnregister(TimerDev_t *TimerDev);
-
-extern void TimerPWMOut(TimerDev_t * timer, uint8_t channel, uint32_t duty);
+extern TIMER_DEV_ERROR_t TimerDevRegister(TIMER_t timer, TimerDev_t *dev);
+extern TIMER_DEV_ERROR_t TimerDevUnregister(TIMER_t timer);
+extern TIMER_DEV_ERROR_t TimerDevInit(TIMER_t timer);
+extern TIMER_DEV_ERROR_t TimerDevDeInit(TIMER_t timer);
+extern TIMER_DEV_ERROR_t TimerPWMOut(TIMER_t timer, uint8_t channel, uint32_t duty);
 
 #endif /*__TIMER_DEV_H_*/
