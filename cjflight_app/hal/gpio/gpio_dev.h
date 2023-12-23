@@ -1,7 +1,7 @@
 #ifndef __GPIO_DEV_H_
 #define __GPIO_DEV_H_
 
-#include "dev.h"
+#include "common.h"
 
 
 typedef enum

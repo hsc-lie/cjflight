@@ -1,6 +1,5 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
-    dev/dev.c
     gpio/gpio_dev.c
     usart/usart_dev.c
     i2c/i2c_dev.c
@@ -10,7 +9,6 @@ target_sources(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-    dev
     gpio
     usart
     i2c

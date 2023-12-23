@@ -11,7 +11,7 @@ if(usart >= USART_MAX)\
 while(0)
 
 #define USART_DEV_CHECK_FUNC(usart, func) \
-USART_DEV_CHECK(usart)\
+USART_DEV_CHECK(usart);\
 if((NULL == USARTDevTable[usart]) || (NULL == func))\
 {\
 	return USART_DEV_ERROR_NULL;\

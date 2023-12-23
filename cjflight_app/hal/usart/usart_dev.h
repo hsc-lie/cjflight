@@ -2,8 +2,6 @@
 #define __USART_DEV_H_
 
 #include "common.h"
-#include "dev.h"
-
 
 typedef enum
 {
