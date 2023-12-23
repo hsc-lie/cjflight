@@ -1,5 +1,6 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
+    bsp_register.c
     rcc/bsp_rcc.c
     dma/bsp_dma.c
     gpio/bsp_gpio.c
@@ -9,6 +10,7 @@ target_sources(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
+    .
     dma
 	gpio
 	rcc

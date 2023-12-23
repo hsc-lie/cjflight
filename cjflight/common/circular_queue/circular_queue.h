@@ -7,25 +7,25 @@
 
 typedef enum
 {
-	E_CIRCULAR_QUEUE_STATUS_NOT_FULL = 0,     //队列未满
-	E_CIRCULAR_QUEUE_STATUS_FULL,          //队列已满
-}E_CIRCULAR_QUEUE_STATUS;
+	CIRCULAR_QUEUE_STATUS_NOT_FULL = 0,     //队列未满
+	CIRCULAR_QUEUE_STATUS_FULL,          //队列已满
+}CIRCULAR_QUEUE_STATUS_t;
 
 
 typedef enum
 {
-	E_CIRCULAR_QUEUE_ERROR_OK = 0,    //OK
-	E_CIRCULAR_QUEUE_ERROR_NULL,      //队列指针为NULL
-	E_CIRCULAR_QUEUE_ERROR_FULL,      //队列已满
-	E_CIRCULAR_QUEUE_ERROR_EMPTY,     //队列为空
-}E_CIRCULAR_QUEUE_ERROR;
+	CIRCULAR_QUEUE_ERROR_OK = 0,    //OK
+	CIRCULAR_QUEUE_ERROR_NULL,      //队列指针为NULL
+	CIRCULAR_QUEUE_ERROR_FULL,      //队列已满
+	CIRCULAR_QUEUE_ERROR_EMPTY,     //队列为空
+}CIRCULAR_QUEUE_ERROR_t;
 
 
 
 
 typedef struct
 {
-	E_CIRCULAR_QUEUE_STATUS Status;
+	CIRCULAR_QUEUE_STATUS_t Status;
 
 	uint8_t * Buffer;
 	uint32_t BufferSize;
@@ -36,7 +36,7 @@ typedef struct
 }CircularQueue_t;
 
 
-E_CIRCULAR_QUEUE_ERROR CircularQueue_WriteByte(CircularQueue_t * const queue, uint8_t data);
-E_CIRCULAR_QUEUE_ERROR CircularQueue_ReadByte(CircularQueue_t * const queue, uint8_t * data);
+CIRCULAR_QUEUE_ERROR_t CircularQueueWriteByte(CircularQueue_t * const queue, uint8_t data);
+CIRCULAR_QUEUE_ERROR_t CircularQueueReadByte(CircularQueue_t * const queue, uint8_t * data);
 
 #endif /*__CIRCULAR_QUEUE_H_*/

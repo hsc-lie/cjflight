@@ -1,17 +1,34 @@
 #include "mpu6050_cfg.h"
 
-#include "i2c_hal_cfg.h"
+#include "i2c_dev.h"
 
-static void MPU6050_I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
+static I2CDev_t *MPU6050I2CDev = NULL;
+
+static void MPU6050I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
+	if(NULL == MPU6050I2CDev)
+	{
+		MPU6050I2CDev = I2CDevGet(0);
+	}
+
+	if (NULL != MPU6050I2CDev)
+	{
+		I2CDevSendData(MPU6050I2CDev, addr, &reg, 1, data, len);
+	}
 	
-	I2C_HalSendData(&I2C_Dev1, addr, &reg, 1, data, len);
 }
 
-static void MPU6050_I2CReadReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
+static void MPU6050I2CReadReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
-	
-	I2C_HalReadData(&I2C_Dev1, addr, &reg, 1, data, len);
+	if(NULL == MPU6050I2CDev)
+	{
+		MPU6050I2CDev = I2CDevGet(0);
+	}
+
+	if (NULL != MPU6050I2CDev)
+	{
+		I2CDevReadData(MPU6050I2CDev, addr, &reg, 1, data, len);
+	}
 }
 
 
@@ -19,8 +36,8 @@ MPU6050_t MPU6050 =
 {
 	.DevAddr = MPU6050_DEV_ADDR1,
 	
-	.GyroRange = E_MPU6050_GYRO_RANGE_2000,
-	.AccRange = E_MPU6050_ACC_RANGE_2G,
+	.GyroRange = MPU6050_GYRO_RANGE_2000,
+	.AccRange = MPU6050_ACC_RANGE_2G,
 
 	.GyroZero = 
 	{
@@ -29,8 +46,8 @@ MPU6050_t MPU6050 =
 		.Z = 0,
 	},
 
-	.I2CWriteReg = MPU6050_I2CWriteReg,
-	.I2CReadReg = MPU6050_I2CReadReg,
+	.I2CWriteReg = MPU6050I2CWriteReg,
+	.I2CReadReg = MPU6050I2CReadReg,
 };
 
 

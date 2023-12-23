@@ -1,19 +1,13 @@
 #include "spl06.h"
 
    
-
-
-
-
 //获取补偿参数
-void SPL06_GetCalibParams(SPL06_t * spl06)
+void SPL06GetCalibParams(SPL06_t * spl06)
 {
 
 	uint8_t data[18] = {0};
 
-	if((NULL == spl06)
-		&& (NULL == spl06->I2CReadReg)
-	)
+	if(NULL == spl06->I2CReadReg)
 	{
 		return;
 	}
@@ -58,7 +52,7 @@ void SPL06_GetCalibParams(SPL06_t * spl06)
 }
 
 
-static void SPL06_Delay()
+static void SPL06Delay()
 {
 	uint32_t count = 100000;
 
@@ -67,21 +61,20 @@ static void SPL06_Delay()
 
 
 //SPL06初始化
-E_SPL06_ERROR SPL06_Init(SPL06_t * spl06)
+SPL06_ERROR_t SPL06Init(SPL06_t * spl06)
 {
 
 	uint8_t id = 0;
 	uint8_t count = 0;
 
-	if((NULL == spl06)
-		|| (NULL == spl06->I2CWriteReg)
+	if((NULL == spl06->I2CWriteReg)
 		|| (NULL == spl06->I2CReadReg)
 	)
 	{
-		return E_SPL06_ERROR_NULL;
+		return SPL06_ERROR_NULL;
 	}
 
-	SPL06_Delay();
+	SPL06Delay();
 
 	do
 	{
@@ -90,53 +83,53 @@ E_SPL06_ERROR SPL06_Init(SPL06_t * spl06)
 
 		if(count > 5)
 		{
-			return E_SPL06_ERROR_DEV_NOT_FOUND;
+			return SPL06_ERROR_DEV_NOT_FOUND;
 		}
 	}
 	while (id != 0x10);
 	
 
-	SPL06_GetCalibParams(spl06);
+	SPL06GetCalibParams(spl06);
 
-	SPL06_SetPressureRate(spl06, spl06->PressureRate, spl06->PressurePRC);
+	SPL06SetPressureRate(spl06, spl06->PressureRate, spl06->PressurePRC);
 
-	SPL06_SetTemperatureRate(spl06, spl06->TemperatureRate, spl06->TemperaturePRC);
+	SPL06SetTemperatureRate(spl06, spl06->TemperatureRate, spl06->TemperaturePRC);
 
-	SPL06_SetMode(spl06, spl06->Mode);
+	SPL06SetMode(spl06, spl06->Mode);
 
 
-	return E_SPL06_ERROR_OK;
+	return SPL06_ERROR_OK;
 }
 
 
-static int32_t SPL06_GetKPKT(E_SPL06_PRC prc) 
+static int32_t SPL06GetKPKT(SPL06_PRC_t prc) 
 {
 	int32_t kpkt;
 
 	switch(prc)
     {
-    	case E_SPL06_PRC_TIMES1:
+    	case SPL06_PRC_TIMES1:
 			kpkt = 524288;
 			break;
-        case E_SPL06_PRC_TIMES2:
+        case SPL06_PRC_TIMES2:
             kpkt = 1572864;
             break;
-        case E_SPL06_PRC_TIMES4:
+        case SPL06_PRC_TIMES4:
             kpkt = 3670016;
             break;
-        case E_SPL06_PRC_TIMES8:
+        case SPL06_PRC_TIMES8:
             kpkt = 7864320;
             break;
-        case E_SPL06_PRC_TIMES16:
+        case SPL06_PRC_TIMES16:
             kpkt = 253952;
             break;
-        case E_SPL06_PRC_TIMES32:
+        case SPL06_PRC_TIMES32:
             kpkt = 516096;
             break;
-        case E_SPL06_PRC_TIMES64:
+        case SPL06_PRC_TIMES64:
             kpkt = 1040384;
             break;
-        case E_SPL06_PRC_TIMES128:
+        case SPL06_PRC_TIMES128:
             kpkt = 2088960;
             break;
         default:
@@ -149,18 +142,18 @@ static int32_t SPL06_GetKPKT(E_SPL06_PRC prc)
 }
 
 
-void SPL06_SetPressureRate(SPL06_t * spl06, E_SPL06_RATE rate, E_SPL06_PRC prc)
+void SPL06SetPressureRate(SPL06_t * spl06, SPL06_RATE_t rate, SPL06_PRC_t prc)
 {
 
 	uint8_t writeData = 0;
 	uint8_t readData = 0;
 
 
-	spl06->KP = SPL06_GetKPKT(prc);
+	spl06->KP = SPL06GetKPKT(prc);
 	writeData = (rate << 4) | prc;
 	spl06->I2CWriteReg(spl06->DevAddr, 0x06, &writeData, 1);
 
-    if(prc > E_SPL06_PRC_TIMES8)
+    if(prc > SPL06_PRC_TIMES8)
     {
 		spl06->I2CReadReg(spl06->DevAddr, 0x09, &readData, 1);	
 		writeData = readData | 0x04;
@@ -171,18 +164,18 @@ void SPL06_SetPressureRate(SPL06_t * spl06, E_SPL06_RATE rate, E_SPL06_PRC prc)
 }
 
 
-void SPL06_SetTemperatureRate(SPL06_t * spl06, E_SPL06_RATE rate, E_SPL06_PRC prc)
+void SPL06SetTemperatureRate(SPL06_t * spl06, SPL06_RATE_t rate, SPL06_PRC_t prc)
 {
 
 	uint8_t writeData = 0;
 	uint8_t readData = 0;
 
 
-	spl06->KT = SPL06_GetKPKT(prc);
+	spl06->KT = SPL06GetKPKT(prc);
 	
 	writeData = (rate << 4) | prc;
 	spl06->I2CWriteReg(spl06->DevAddr, 0x07, &writeData, 1);
-    if(prc > E_SPL06_PRC_TIMES8)
+    if(prc > SPL06_PRC_TIMES8)
     {
 		spl06->I2CReadReg(spl06->DevAddr, 0x09, &readData, 1);
 		writeData = readData | 0x08;
@@ -193,22 +186,20 @@ void SPL06_SetTemperatureRate(SPL06_t * spl06, E_SPL06_RATE rate, E_SPL06_PRC pr
 
 
 //设置模式
-void SPL06_SetMode(SPL06_t * spl06, E_SPL06_MODE mode)
+void SPL06SetMode(SPL06_t * spl06, SPL06_MODE_t mode)
 {
 	spl06->I2CWriteReg(spl06->DevAddr, 0x08, &mode, 1);
 }
 
 
 //获取SPL06温度
-float SPL06_GetTemperature(SPL06_t * spl06)
+float SPL06GetTemperature(SPL06_t * spl06)
 {
     float tsc;
 
 	uint8_t data[3] = {0};
 
-	if((NULL == spl06)
-		&& (NULL == spl06->I2CReadReg)
-	)
+	if(NULL == spl06->I2CReadReg)
 	{
 		return 0;
 	}
@@ -223,16 +214,14 @@ float SPL06_GetTemperature(SPL06_t * spl06)
 }
 
 //获取SPL06气压值
-float SPL06_GetPressure(SPL06_t * spl06)
+float SPL06GetPressure(SPL06_t * spl06)
 {
     float tsc, psc;
     float qua2, qua3;
 
 	uint8_t data[3] = {0};
 
-	if((NULL == spl06)
-		&& (NULL == spl06->I2CReadReg)
-	)
+	if(NULL == spl06->I2CReadReg)
 	{
 		return 0;
 	}
@@ -252,11 +241,11 @@ float SPL06_GetPressure(SPL06_t * spl06)
 
 
 //获取SPL06所有数据
-void SPL06_GetDataAll(SPL06_t * spl06, SPL06_Data_t * data)
+void SPL06GetDataAll(SPL06_t * spl06, SPL06Data_t * data)
 {
 
-	data->Pressure = SPL06_GetPressure(spl06);
-	data->Temperature = SPL06_GetTemperature(spl06);
+	data->Pressure = SPL06GetPressure(spl06);
+	data->Temperature = SPL06GetTemperature(spl06);
 	
 }
 

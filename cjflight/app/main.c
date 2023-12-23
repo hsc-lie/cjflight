@@ -1,17 +1,12 @@
 #include "main.h"
-#include "at32f4xx.h"
+
 
 #include "stdio.h"
 
-#include "bsp_rcc.h"
-#include "bsp_gpio.h"
-#include "bsp_usart.h"
-#include "bsp_dma.h"
-#include "bsp_timer.h"
-
-#include "usart_hal_cfg.h"
-#include "i2c_hal_cfg.h"
-#include "simulation_i2c_cfg.h"
+#include "gpio_dev.h"
+#include "usart_dev.h"
+#include "i2c_dev.h"
+#include "timer_dev.h"
 
 #include "mpu6050_cfg.h"
 #include "bmp280_cfg.h"
@@ -37,7 +32,6 @@ uxTaskGetStackHighWaterMark(NULL);         获取当前运行任务启动以来�
 
 uint32_t heap_size1;
 uint32_t heap_size2;
-
 uint32_t stack_size;
 
 /*遥控数据传输队列句柄*/
@@ -59,24 +53,31 @@ void LEDTask(void * parameters)
 {
 	for(;;)
 	{
-		LED_SetValue(&LED1, 1);
-		LED_SetValue(&LED2, 1);
-		LED_SetValue(&LED3, 1);
+		LEDSetValue(&LED[0], 1);
+		LEDSetValue(&LED[1], 1);
+		LEDSetValue(&LED[2], 1);
 		vTaskDelay(500);
-		LED_SetValue(&LED1, 0);
-		LED_SetValue(&LED2, 0);
-		LED_SetValue(&LED3, 0);
+		LEDSetValue(&LED[0], 0);
+		LEDSetValue(&LED[1], 0);
+		LEDSetValue(&LED[2], 0);
 		vTaskDelay(500);
 	}
 	
 }
 
 
-
+static USARTDev_t *PrintfUSARTDev = NULL;
 int _write (int fd, char *pBuffer, int size)
 {
+	if(NULL == PrintfUSARTDev)
+	{
+		PrintfUSARTDev = USARTDevGet(1);
+	}
 
-  	USART_HAL_SendData(&USART1_HAL, (uint8_t *)pBuffer, (uint32_t)size);
+	if(NULL != PrintfUSARTDev)
+	{
+		USARTDevSendData(PrintfUSARTDev, (uint8_t *)pBuffer, (uint32_t)size);
+	}
 	
 	return size;
 }
@@ -121,14 +122,14 @@ void I2C_DevAddrTest()
 	uint8_t reg = 0;
 	uint8_t readData = 0;
 
-	E_I2C_ERROR ret;
+	I2C_ERROR_t ret;
 
 	for(addr = 0;addr < 0x7f;addr++)
 	{
-		ret = SimulationI2C_ReadData(&SimulationI2C1, addr, &reg, 1, &readData, 1);
+		//ret = SimulationI2CReadData(&SimulationI2C1, addr, &reg, 1, &readData, 1);
 		//ret = I2C_HalReadData(&I2C_Dev1, addr, &reg, 1, &readData, 1);
 
-		if(E_I2C_ERROR_OK == ret)
+		if(I2C_ERROR_OK == ret)
 		{
 			ret = 0;
 		}
@@ -139,29 +140,22 @@ void I2C_DevAddrTest()
 
 int main(void)
 {
-	/*中断优先级分组*/
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-
-	BSPRCCInitAll();
-	BSPGPIOInitAll();
-	BSPDMAInitAll();
-	BSPTimerInitAll();
-	BSPUSARTInitAll();
 	
-	//LED_SetValue(&LED1, 0);
-	//LED_SetValue(&LED2, 0);
-	//LED_SetValue(&LED3, 0);
+	GPIODevInit();
+	I2CDevInitAll();
+	USARTDevInitAll();
+	TimerDevInitAll();
 
 	/*滤波参数初始化*/
 	FilterInit();
 
 	/*MPU6050初始化*/
-	MPU6050_Init(&MPU6050);
+	//MPU6050Init(&MPU6050);
 
 
 	/*气压计初始化*/
 	//BMP280_Init(&BMP280);
-	//SPL06_Init(&SPL06);
+	//SPL06Init(&SPL06);
 	//I2C_DevAddrTest();
 	
 

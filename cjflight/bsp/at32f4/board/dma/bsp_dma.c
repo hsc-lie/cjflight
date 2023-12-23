@@ -9,7 +9,7 @@
 static uint8_t USARTRxDMABuffer[USART2_RX_DMA_BUFFER_SIZE];
 
 
-void BSPDMAInitAll()
+void BSPDMA1Cannel5Init()
 {
 	DMA_InitType dmaInitStruct;
 	NVIC_InitType nvicInitStructure;

@@ -2,73 +2,29 @@
 
 
 /*****************************以下所有代码按工程实际需要配置*******************************/
-#include "bsp_gpio.h"
-
-#define LED1_ON()            GPIO_ResetBits(LED1_GPIO, LED1_GPIO_PIN)
-#define LED1_OFF()           GPIO_SetBits(LED1_GPIO, LED1_GPIO_PIN)
-
-#define LED2_ON()            GPIO_ResetBits(LED2_GPIO, LED2_GPIO_PIN)
-#define LED2_OFF()           GPIO_SetBits(LED2_GPIO, LED2_GPIO_PIN)
-
-#define LED3_ON()            GPIO_ResetBits(LED3_GPIO, LED3_GPIO_PIN)
-#define LED3_OFF()           GPIO_SetBits(LED3_GPIO, LED3_GPIO_PIN)
+#include "gpio_dev.h"
 
 
-static void LED1_SetValue(uint32_t value)
+static void LED0SetValue(uint32_t value)
 {
-	if(0 == value)
-	{
-		GPIO_SetBits(LED1_GPIO, LED1_GPIO_PIN);
-	}
-	else
-	{
-		GPIO_ResetBits(LED1_GPIO, LED1_GPIO_PIN);
-	}
+	GPIODevWritePinOut(GPIO_TYPE_LED0, value);
 }
 
-static void LED2_SetValue(uint32_t value)
+static void LED1SetValue(uint32_t value)
 {
-	if(0 == value)
-	{
-		GPIO_SetBits(LED2_GPIO, LED2_GPIO_PIN);
-	}
-	else
-	{
-		GPIO_ResetBits(LED2_GPIO, LED2_GPIO_PIN);
-	}
+	GPIODevWritePinOut(GPIO_TYPE_LED1, value);
 }
 
-static void LED3_SetValue(uint32_t value)
+static void LED2SetValue(uint32_t value)
 {
-	if(0 == value)
-	{
-		GPIO_SetBits(LED3_GPIO, LED3_GPIO_PIN);
-	}
-	else
-	{
-		GPIO_ResetBits(LED3_GPIO, LED3_GPIO_PIN);
-	}
+	GPIODevWritePinOut(GPIO_TYPE_LED2, value);
 }
 
 
-
-
-
-LED_t LED1 = 
+LED_t LED[3] = 
 {
-	.SetValue = LED1_SetValue,
+	{.SetValue = LED0SetValue},
+	{.SetValue = LED1SetValue},
+	{.SetValue = LED2SetValue},
 };
-
-LED_t LED2 = 
-{
-	.SetValue = LED2_SetValue,
-};
-
-LED_t LED3 = 
-{
-	.SetValue = LED3_SetValue,
-};
-
-
-
 

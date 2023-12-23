@@ -8,7 +8,7 @@
 
 
 
-static void BSPTimer3Init()
+void BSPTimer3Init()
 {
 	TMR_TimerBaseInitType timerBaseInitStruct;
     TMR_OCInitType ocInitStructure;
@@ -70,9 +70,4 @@ static void Timer6_ConfigInit()
 }
 */
 
-void BSPTimerInitAll()
-{
-	BSPTimer3Init();
-	//Timer6_ConfigInit();
-}
 

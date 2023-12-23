@@ -2,26 +2,26 @@
 
 #include "main.h"
 
-#include "usart_hal_cfg.h"
+#include "usart_dev.h"
 #include "ibus.h"
 
 #include "remote_data.h"
 
 
-IBUS_t IBUS = 
+static IBus_t IBus = 
 {
 	0
 };
 
+static USARTDev_t *IBusUSARTDev = NULL;
 
 
-
-static void IBUSDataToRemoteData(IBUS_t * ibus, RemoteData_t * remote)
+static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 {
 	int throttle = 0;
 
 	/**********************油门**************************/
-    throttle = IBUS_GetChannelData(ibus, E_IBUS_Channel3);
+    throttle = IBusGetChannelData(ibus, IBUS_Channel3);
     throttle = int_range(throttle, REMOTE_VALUE_MIN, REMOTE_VALUE_MAX);
 
     throttle = (THROTTLE_TO_MOTOR_MAX - THROTTLE_TO_MOTOR_MIN) * (throttle - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
@@ -32,25 +32,25 @@ static void IBUSDataToRemoteData(IBUS_t * ibus, RemoteData_t * remote)
 	int16_t ibusChannelValue;
 	int16_t remoteValue;
 	
-	ibusChannelValue = IBUS_GetChannelData(ibus, E_IBUS_Channel3); 
+	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel3); 
 
 	remoteValue = (THROTTLE_OUT_MAX - THROTTLE_OUT_MIN) * (ibusChannelValue - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN) + THROTTLE_OUT_MIN;
-	RemoteData_SetRockerValue(remote, E_REMOTE_DATA_LEFT_ROCKER_Y, remoteValue);
+	RemoteDataSetRockerValue(remote, REMOTE_DATA_LEFT_ROCKER_Y, remoteValue);
 	
 
-	ibusChannelValue = IBUS_GetChannelData(ibus, E_IBUS_Channel2);
+	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel2);
 	remoteValue = (SET_PITCH_MAX - SET_PITCH_MIN) * (ibusChannelValue - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN) + SET_PITCH_MIN;
-	RemoteData_SetRockerValue(remote, E_REMOTE_DATA_RIGHT_ROCKER_Y, remoteValue);
+	RemoteDataSetRockerValue(remote, REMOTE_DATA_RIGHT_ROCKER_Y, remoteValue);
 
-	ibusChannelValue = IBUS_GetChannelData(ibus, E_IBUS_Channel1);
+	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel1);
 	remoteValue = (SET_ROLL_MAX - SET_ROLL_MIN) * (ibusChannelValue - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN) + SET_ROLL_MIN;
-	RemoteData_SetRockerValue(remote, E_REMOTE_DATA_RIGHT_ROCKER_X, remoteValue);
+	RemoteDataSetRockerValue(remote, REMOTE_DATA_RIGHT_ROCKER_X, remoteValue);
 
-	ibusChannelValue = IBUS_GetChannelData(ibus, E_IBUS_Channel4);
+	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel4);
 	remoteValue = (SET_YAW_RATE_MAX - SET_YAW_RATE_MIN) * (ibusChannelValue - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN) + SET_YAW_RATE_MIN;
-	RemoteData_SetRockerValue(remote, E_REMOTE_DATA_LEFT_ROCKER_X, remoteValue);
+	RemoteDataSetRockerValue(remote, REMOTE_DATA_LEFT_ROCKER_X, remoteValue);
 
-	ibusChannelValue = IBUS_GetChannelData(ibus, E_IBUS_Channel7);
+	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel7);
 	if((ibusChannelValue > 750) && (ibusChannelValue < 1250))
 	{
 		remoteValue = Stabilize_Mode;
@@ -63,13 +63,26 @@ static void IBUSDataToRemoteData(IBUS_t * ibus, RemoteData_t * remote)
 	{
 		remoteValue = Auto_Mode;
 	}
-	RemoteData_SetSWValue(remote, E_REMOTE_DATA_SW4, remoteValue);
+	RemoteDataSetSWValue(remote, REMOTE_DATA_SW4, remoteValue);
     
 }
 
 
+static IBusUSARTReadData(uint8_t *data, uint32_t readLen, uint32_t * outLen)
+{
+	if(NULL == IBusUSARTDev)
+	{
+		IBusUSARTDev = USARTDevGet(2);
+	}
+	
+	if(NULL != IBusUSARTDev)
+	{
+		USARTDevReadData(IBusUSARTDev, data, readLen, outLen);
+	}
+}
 
-static void IBUSDataUpdate()
+
+static void IBusDataUpdate()
 {
 	uint8_t isGetIBUSPackage;
 	uint8_t data[32];
@@ -77,14 +90,14 @@ static void IBUSDataUpdate()
 
 	RemoteData_t remoteData = {0};
 	
-	USART_HAL_ReadData(&USART2_HAL, data, 32, &outLen);
+	IBusUSARTReadData(data, 32, &outLen);
 
-	IBUS_AnalysisData(&IBUS, data, outLen, &isGetIBUSPackage);
+	IBusAnalysisData(&IBus, data, outLen, &isGetIBUSPackage);
 
 	
 	if(TRUE == isGetIBUSPackage)
 	{
-		IBUSDataToRemoteData(&IBUS, &remoteData);
+		IBusDataToRemoteData(&IBus, &remoteData);
 
 		xQueueSend(RemoteDataQueue,&remoteData,0);
 	}
@@ -100,7 +113,7 @@ void RemoteTask(void * parameters)
 	{
         //xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
 
-        IBUSDataUpdate();
+        IBusDataUpdate();
 		vTaskDelay(1);
 
 	}

@@ -1,12 +1,12 @@
-#ifndef __MY_I2C_H
-#define __MY_I2C_H
+#ifndef __SIMULATION_I2C_H_
+#define __SIMULATION_I2C_H_
 
 
 #include "common.h"
 
 #if 1
 
-#define I2C_GPIO_CLK             RCC_AHBPERIPH_GPIOA
+#define I2C_GPIO_CLK                  RCC_AHBPERIPH_GPIOA
 
 #define I2C_GPIO_SCL_PROT             GPIOA
 #define I2C_SCL_PIN                   GPIO_Pins_10
@@ -32,18 +32,18 @@
 
 typedef enum
 {
-	E_SIMULATION_I2C_ERROR_OK,
-	E_SIMULATION_I2C_ERROR_NULL,
-	E_SIMULATION_I2C_ERROR_NACK,
+	SIMULATION_I2C_ERROR_OK,
+	SIMULATION_I2C_ERROR_NULL,
+	SIMULATION_I2C_ERROR_NACK,
 	
-}E_SIMULATION_I2C_ERROR;
+}SIMULATION_I2C_ERROR_t;
 
 
 typedef enum
 {
-	E_SIMULATION_I2C_SDA_RX,
-	E_SIMULATION_I2C_SDA_TX,
-}E_SIMULATION_I2C_SDA_DIR;
+	SIMULATION_I2C_SDA_RX,
+	SIMULATION_I2C_SDA_TX,
+}SIMULATION_I2C_SDA_DIR_t;
 
 
 
@@ -54,18 +54,18 @@ typedef struct
 	void (*SCLSet)(uint8_t value);
 	void (*SDASet)(uint8_t value);
 
-	void (*SDADirSet)(E_SIMULATION_I2C_SDA_DIR dir);
+	void (*SDADirSet)(SIMULATION_I2C_SDA_DIR_t dir);
 	uint8_t (*SDARead)(void);
 
 }SimulationI2C_t;
 
 
 
-extern E_SIMULATION_I2C_ERROR SimulationI2C_SendData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen, uint8_t *data, uint8_t dataLen);
-extern E_SIMULATION_I2C_ERROR SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint8_t regLen, uint8_t *data, uint8_t dataLen);
+extern SIMULATION_I2C_ERROR_t SimulationI2C_SendData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen, uint8_t *data, uint8_t dataLen);
+extern SIMULATION_I2C_ERROR_t SimulationI2C_ReadData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint8_t regLen, uint8_t *data, uint8_t dataLen);
 
 
 
-#endif
+#endif /*__SIMULATION_I2C_H_*/
 
 

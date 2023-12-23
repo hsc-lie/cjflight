@@ -1,8 +1,8 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
 
-    bmp280/bmp280.c
-    bmp280/bmp280_cfg.c
+    #bmp280/bmp280.c
+    #bmp280/bmp280_cfg.c
 
     spl06/spl06.c
     spl06/spl06_cfg.c

@@ -2,7 +2,7 @@
 
 
 
-E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len, uint8_t * const isGetPackage)
+IBUS_ERROR_TYPE_t IBusAnalysisData(IBus_t *ibus, uint8_t *data, uint32_t len, uint8_t *const isGetPackage)
 {
 	uint32_t i;
 	uint16_t checkSum;
@@ -11,7 +11,7 @@ E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len,
 
 	if(NULL == ibus)
 	{
-		return E_IBUS_ERROR_NULL;
+		return IBUS_ERROR_NULL;
 	}
 
 	for(i = 0;i < len;i++)
@@ -51,7 +51,7 @@ E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len,
   			ibus->CheckSum = (ibus->CheckSum + 0x60) ^ 0xffff;
 			if(ibus->CheckSum == checkSum)
 			{
-				for(i = 0;i < E_IBUS_Channel_MAX;i++)
+				for(i = 0;i < IBUS_Channel_MAX;i++)
 			    {
 					ibus->ChannelData[i] = ((uint16_t)(ibus->DataBuffer[(i << 1) + 3]) & 0x0f) << 8 | (ibus->DataBuffer[(i << 1) + 2]);
 			    }
@@ -72,13 +72,13 @@ E_IBUS_ERROR_TYPE IBUS_AnalysisData(IBUS_t * ibus, uint8_t * data, uint32_t len,
 		++data;
 	}
 
-	return E_IBUS_ERROR_OK;
+	return IBUS_ERROR_OK;
 }
 
 
 
 
-uint16_t IBUS_GetChannelData(IBUS_t * ibus, E_IBUS_Channel channel)
+uint16_t IBusGetChannelData(IBus_t *ibus, IBUS_Channel_t channel)
 {
 	if(NULL == ibus)
 	{

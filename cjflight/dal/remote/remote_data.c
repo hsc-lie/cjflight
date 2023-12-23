@@ -1,10 +1,10 @@
 #include "remote_data.h"
 
 
-void RemoteData_SetRockerValue(RemoteData_t * remote, E_REMOTE_DATA_ROCKER_TYPE rockerType, int16_t Value)
+void RemoteDataSetRockerValue(RemoteData_t * remote, REMOTE_DATA_ROCKER_TYPE_t rockerType, int16_t Value)
 {
 	if((NULL == remote)
-		&& (rockerType >= E_REMOTE_DATA_ROCKER_TYPE_MAX)
+		&& (rockerType >= REMOTE_DATA_ROCKER_TYPE_MAX)
 	)
 	{
 		return;
@@ -17,10 +17,10 @@ void RemoteData_SetRockerValue(RemoteData_t * remote, E_REMOTE_DATA_ROCKER_TYPE 
 
 
 
-int16_t RemoteData_GetRockerValue(RemoteData_t * remote, E_REMOTE_DATA_ROCKER_TYPE rockerType)
+int16_t RemoteDataGetRockerValue(RemoteData_t * remote, REMOTE_DATA_ROCKER_TYPE_t rockerType)
 {
 	if((NULL == remote)
-		&& (rockerType >= E_REMOTE_DATA_ROCKER_TYPE_MAX)
+		&& (rockerType >= REMOTE_DATA_ROCKER_TYPE_MAX)
 	)
 	{
 		return 0;
@@ -33,10 +33,10 @@ int16_t RemoteData_GetRockerValue(RemoteData_t * remote, E_REMOTE_DATA_ROCKER_TY
 
 
 
-void RemoteData_SetSWValue(RemoteData_t * remote, E_REMOTE_DATA_SW_TYPE swType, uint8_t Value)
+void RemoteDataSetSWValue(RemoteData_t * remote, REMOTE_DATA_SW_TYPE_t swType, uint8_t Value)
 {
 	if((NULL == remote)
-		&& (swType >= E_REMOTE_DATA_SW_TYPE_MAX)
+		&& (swType >= REMOTE_DATA_SW_TYPE_MAX)
 	)
 	{
 		return;
@@ -49,10 +49,10 @@ void RemoteData_SetSWValue(RemoteData_t * remote, E_REMOTE_DATA_SW_TYPE swType, 
 
 
 
-uint8_t RemoteData_GetSWValue(RemoteData_t * remote, E_REMOTE_DATA_SW_TYPE swType)
+uint8_t RemoteDataGetSWValue(RemoteData_t * remote, REMOTE_DATA_SW_TYPE_t swType)
 {
 	if((NULL == remote)
-		&& (swType >= E_REMOTE_DATA_SW_TYPE_MAX)
+		&& (swType >= REMOTE_DATA_SW_TYPE_MAX)
 	)
 	{
 		return 0;

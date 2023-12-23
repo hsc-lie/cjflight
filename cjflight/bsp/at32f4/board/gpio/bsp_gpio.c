@@ -1,6 +1,4 @@
 #include "bsp_gpio.h"
-#include "at32f4xx.h"
-
 
 
 
@@ -25,6 +23,21 @@ typedef struct
 //LED GPIO
 const GPIO_Config_t LED_GPIOConfigTable[] = 
 {
+	//LED0
+	{
+		.GPIOx = LED0_GPIO,
+		.GPIO_PinSource = 0,
+		.GPIO_AF = 0,
+		.GPIO_InitType = 
+		{
+			.GPIO_Pins  = LED0_GPIO_PIN,
+	    	.GPIO_Mode = GPIO_Mode_OUT,
+	    	.GPIO_OutType = GPIO_OutType_PP,
+	    	.GPIO_Pull = GPIO_Pull_NOPULL,
+	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
+		},
+	},
+
 	//LED1
 	{
 		.GPIOx = LED1_GPIO,
@@ -48,21 +61,6 @@ const GPIO_Config_t LED_GPIOConfigTable[] =
 		.GPIO_InitType = 
 		{
 			.GPIO_Pins  = LED2_GPIO_PIN,
-	    	.GPIO_Mode = GPIO_Mode_OUT,
-	    	.GPIO_OutType = GPIO_OutType_PP,
-	    	.GPIO_Pull = GPIO_Pull_NOPULL,
-	    	.GPIO_MaxSpeed = GPIO_MaxSpeed_10MHz,
-		},
-	},
-
-	//LED3
-	{
-		.GPIOx = LED3_GPIO,
-		.GPIO_PinSource = 0,
-		.GPIO_AF = 0,
-		.GPIO_InitType = 
-		{
-			.GPIO_Pins  = LED3_GPIO_PIN,
 	    	.GPIO_Mode = GPIO_Mode_OUT,
 	    	.GPIO_OutType = GPIO_OutType_PP,
 	    	.GPIO_Pull = GPIO_Pull_NOPULL,

@@ -2,7 +2,7 @@
 
 
 
-void Motor_Out(Motor_t * motor, int32_t outValue)
+void MotorOut(Motor_t * motor, int32_t outValue)
 {
 
 	if((NULL != motor)

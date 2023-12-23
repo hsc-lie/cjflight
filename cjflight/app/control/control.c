@@ -248,13 +248,13 @@ static void MotorStopAll()
 
 	for(i = 0;i < 4;++i)
 	{
-		Motor_Out(&Motor[i], MOTOR_STOP_PWM);
+		MotorOut(&Motor[i], MOTOR_STOP_PWM);
 	}
 }
 
 
 //姿态控制
-void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050_ConvertData_t * gyro)
+void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050ConvertData_t * gyro)
 {
 	uint32_t i;
 	static uint8_t attitude_control_count = 0;
@@ -316,7 +316,7 @@ void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeDa
 	for(i = 0;i < 4;++i)
 	{
 		motorOut[i] = int_range(motorOut[i],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
-		Motor_Out(&Motor[i], motorOut[i]);
+		MotorOut(&Motor[i], motorOut[i]);
 	}
 
 	
@@ -554,11 +554,11 @@ void ControlTask(void * parameters)
 	//flight_mode_t last_remote_mode = Stabilize_Mode;
 
 
-	MPU6050_BaseData_t gyroBaseData = {0};
-	MPU6050_BaseData_t accBaseData = {0};
+	MPU6050BaseData_t gyroBaseData = {0};
+	MPU6050BaseData_t accBaseData = {0};
 	
-	MPU6050_ConvertData_t gyroConvertData = {0};
-	MPU6050_ConvertData_t accConvertData = {0};
+	MPU6050ConvertData_t gyroConvertData = {0};
+	MPU6050ConvertData_t accConvertData = {0};
 
 	TriaxialData_t magData = {0, 0, 0};
 	//TriaxialData_t magData = {0, 1, 0};//yaw -90
@@ -570,7 +570,7 @@ void ControlTask(void * parameters)
 
 
 	//BMP280_Data_t bmp280Data = {0};
-	SPL06_Data_t spl06Data = {0};
+	SPL06Data_t spl06Data = {0};
 	static float altitude = 0;
 
 	for(;;)
@@ -600,15 +600,15 @@ void ControlTask(void * parameters)
 		}
 
 		//获取mpu6050原始数据
-		MPU6050_GetBaseAcc(&MPU6050, &accBaseData);
-		MPU6050_GetBaseGyro(&MPU6050, &gyroBaseData);
+		MPU6050GetBaseAcc(&MPU6050, &accBaseData);
+		MPU6050GetBaseGyro(&MPU6050, &gyroBaseData);
 		
 		gyroBaseData.X -= -7;
 		gyroBaseData.Y -= 54;
 		gyroBaseData.Z -= -6;
 
-		MPU6050_ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
-		MPU6050_ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
+		MPU6050ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
+		MPU6050ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
 
 		biquad_filter(&biquad_GyroParameterX, gyroConvertData.X);
 		biquad_filter(&biquad_GyroParameterY, gyroConvertData.Y);
@@ -636,7 +636,7 @@ void ControlTask(void * parameters)
 
 
 			//SPL06
-			SPL06_GetDataAll(&SPL06, &spl06Data);
+			SPL06GetDataAll(&SPL06, &spl06Data);
 			//spl06Data.Pressure = SlidingFilter(&AltitudeSlidingFilterParam, spl06Data.Pressure);
 			altitude = PressureToAltitude(spl06Data.Pressure);
 			//altitude = LowPassFilter(&AltitudeLPFParam, altitude);
@@ -688,7 +688,7 @@ void ControlTask(void * parameters)
 		//Strapdown_INS_High(&accConvertData, altitude, 0.002);
 		PositionFusion((TriaxialData_t *)&accConvertData, altitude, 0.002);
 		
-		if((RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y)  < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
+		if((RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_LEFT_ROCKER_Y)  < THROTTLE_DEAD_ZONE) || (1 == remote_lose_flag))
 		//if(FALSE)
 		{
 			//电机停转
@@ -705,7 +705,7 @@ void ControlTask(void * parameters)
 		}
 		else
 		{
-			setYaw += RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_X);
+			setYaw += RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_LEFT_ROCKER_X);
 			
 			if(setYaw > 180)
 			{
@@ -726,10 +726,10 @@ void ControlTask(void * parameters)
 			}
 			last_remote_mode = remote_data.mode;*/
 
-			setAngle.Pitch = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_Y);
-			setAngle.Roll = RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_RIGHT_ROCKER_X);
+			setAngle.Pitch = RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_RIGHT_ROCKER_Y);
+			setAngle.Roll = RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_RIGHT_ROCKER_X);
 			setAngle.Yaw = setYaw;
-			AttitudeControl(RemoteData_GetRockerValue(&remoteData, E_REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
+			AttitudeControl(RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &nowAngle, &gyroConvertData);
 		}
 		
 		vTaskDelayUntil(&time,2);

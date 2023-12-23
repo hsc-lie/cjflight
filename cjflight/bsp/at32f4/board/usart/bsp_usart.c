@@ -14,16 +14,11 @@ CircularQueue_t USART2Queue =
 };
 
 
-
-
-
-void BSPUSARTInitAll()
+void BSPUSART1Init()
 {
 	USART_InitType usartInitStructure;
 	NVIC_InitType nvicInitStructure;
 
-	/*************************USART1********************************/
-#if TRUE
 	USART_StructInit(&usartInitStructure);
 	usartInitStructure.USART_BaudRate = 115200;
 	usartInitStructure.USART_WordLength = USART_WordLength_8b;
@@ -44,11 +39,16 @@ void BSPUSARTInitAll()
 	nvicInitStructure.NVIC_IRQChannelSubPriority = 0;
 	nvicInitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvicInitStructure);*/
+}
 
-#endif
 
-	/*************************USART2********************************/
-#if TRUE	
+
+
+void BSPUSART2Init()
+{
+	USART_InitType usartInitStructure;
+	NVIC_InitType nvicInitStructure;
+
 	usartInitStructure.USART_BaudRate = 115200;
 	usartInitStructure.USART_WordLength = USART_WordLength_8b;
 	usartInitStructure.USART_StopBits = USART_StopBits_1;
@@ -72,9 +72,6 @@ void BSPUSARTInitAll()
 	nvicInitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvicInitStructure);
 
-#endif
-
-	
 }
 
 

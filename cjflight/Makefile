@@ -3,7 +3,7 @@ TARGET = cjflight
 DEBUG = 1
 
 #优化等级
-OPT = -O0
+OPT = -Og
 
 #编译文件路径
 BUILD_DIR = build
