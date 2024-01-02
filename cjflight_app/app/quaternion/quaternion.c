@@ -9,8 +9,6 @@
 //弧转度
 #define RAD_TO_DEG(rad)		((rad) * 57.29578f)		
 
-
-
 //快速开平方求倒数
 static float InvSqrt(float x)	
 {
@@ -23,10 +21,18 @@ static float InvSqrt(float x)
 	return y;
 }
 
-
-
-//PI互补滤波求补正
-static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * mag, TriaxialData_t * offset, float dt)
+/*
+ * @函数名  QuaternionGetPIGyroOffset
+ * @用  途  PI互补滤波求补正
+ * @参  数  quaternion:四元数
+ *          pi:PI参数
+ *          acc:输入三轴加速度
+ *          mag:输入三轴磁场强度
+ *          offset:输出的三轴角速度偏移补正
+ *          dt:计算周期(单位s)
+ * @返回值  
+*/
+static void QuaternionGetPIGyroOffset(Quaternion_t *quaternion, QuaternionPIParams_t *pi, TriaxialData_t *acc, TriaxialData_t *mag, TriaxialData_t *offset, float dt)
 {
 	TriaxialData_t accTemp;
 	TriaxialData_t magTemp;
@@ -65,14 +71,14 @@ static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIO
 		magTemp.Z *= normalise;
 	
 		//磁力从机体坐标转到地球坐标
-		Quaternion_BodyToEarth(quaternion, &magTemp, &magEarth);
+		QuaternionBodyToEarth(quaternion, &magTemp, &magEarth);
 		//水平面向量和为北边 勾股定理定北边为x轴 
 		magEarth.X = 1.0f / InvSqrt(magEarth.X * magEarth.X + magEarth.Y * magEarth.Y);
 		magEarth.Y = 0;
 
 
 		//磁力从地球坐标转到机体坐标
-		Quaternion_EarthToBody(quaternion, &magEarth, &magBody);
+		QuaternionEarthToBody(quaternion, &magEarth, &magBody);
 	}
 
 
@@ -107,8 +113,15 @@ static void Quaternion_GetPIGyroOffset(Quaternion_t * quaternion, Quaternion_PIO
 
 }
 
-//四元数更新
-void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float dt)
+/*
+ * @函数名  QuaternionUpdate
+ * @用  途  四元数更新
+ * @参  数  quaternion:四元数
+ *          gyro:输入三轴角速度
+ *          dt:计算周期(单位s)
+ * @返回值  
+*/
+void QuaternionUpdate(Quaternion_t *quaternion, TriaxialData_t *gyro, float dt)
 {
 	float normalise;
 	float halfT = 0.5f * dt;
@@ -139,9 +152,14 @@ void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float d
 
 }
 
-
-//更新旋转矩阵
-static void Quaternion_ComputeRotationMatrix(Quaternion_t * quaternion)
+/*
+ * @函数名  QuaternionRotationMatrixUpdate
+ * @用  途  更新旋转矩阵
+ * @参  数  quaternion:四元数
+ *          angle:输出欧拉角
+ * @返回值  
+*/
+static void QuaternionRotationMatrixUpdate(Quaternion_t *quaternion)
 {
     float q1q1 = quaternion->q1 * quaternion->q1;
     float q2q2 = quaternion->q2 * quaternion->q2;
@@ -168,12 +186,17 @@ static void Quaternion_ComputeRotationMatrix(Quaternion_t * quaternion)
     quaternion->RotationMatrix[2][2] = 1.0f - 2.0f * q1q1 - 2.0f * q2q2;
 }
 
-
-//四元数转欧拉角
-void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angle)
+/*
+ * @函数名  QuaternionToAttitudeAngle
+ * @用  途  四元数转欧拉角
+ * @参  数  quaternion:四元数
+ *          angle:输出欧拉角
+ * @返回值  
+*/
+void QuaternionToAttitudeAngle(Quaternion_t *quaternion, AttitudeData_t *angle)
 {
 	//先更新旋转矩阵 计算欧拉角是由旋转矩阵计算
-	Quaternion_ComputeRotationMatrix(quaternion);
+	QuaternionRotationMatrixUpdate(quaternion);
 
 	//由旋转矩阵计算欧拉角
 	angle->Pitch = RAD_TO_DEG(-asinf(quaternion->RotationMatrix[2][0])); 
@@ -181,9 +204,19 @@ void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angl
 	angle->Yaw = RAD_TO_DEG(atan2f(quaternion->RotationMatrix[1][0], quaternion->RotationMatrix[0][0]));
 }
 
-
-//惯性传感器计算
-void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, TriaxialData_t * mag, AttitudeData_t * angle , float dt)
+/*
+ * @函数名  QuaternionAttitudeAlgorithm
+ * @用  途  四元数姿态解算
+ * @参  数  quaternion:四元数
+ *          pi:PI参数
+ *          acc:输入三轴加速度
+ *          gyro:输入三轴角速度
+ *          mag:输入三轴磁场强度
+ *          angle:输出欧拉角
+ *          dt:计算周期(单位s)
+ * @返回值  
+*/
+void QuaternionAttitudeAlgorithm(Quaternion_t *quaternion, QuaternionPIParams_t *pi, TriaxialData_t *acc, TriaxialData_t *gyro, TriaxialData_t *mag, AttitudeData_t *angle , float dt)
 {
 	TriaxialData_t gyroOffset = {0};
 	TriaxialData_t gyroRad = {0};
@@ -194,7 +227,7 @@ void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t 
 	gyroRad.Z = DEG_TO_RAD(gyro->Z);
 
 	//PI互补滤波
-	Quaternion_GetPIGyroOffset(quaternion, pi, acc, mag, &gyroOffset, dt);
+	QuaternionGetPIGyroOffset(quaternion, pi, acc, mag, &gyroOffset, dt);
 
 	//根据PI互补滤波补正
 	gyroRad.X += gyroOffset.X;
@@ -202,32 +235,41 @@ void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t 
 	gyroRad.Z += gyroOffset.Z;
 
 	//更新四元数
-	Quaternion_Update(quaternion, &gyroRad, dt);
+	QuaternionUpdate(quaternion, &gyroRad, dt);
 
 	//四元数更新旋转矩阵
-	Quaternion_ComputeRotationMatrix(quaternion);
+	QuaternionRotationMatrixUpdate(quaternion);
 
 	//四元数转欧拉角
-	Quaternion_ToAttitudeAngle(quaternion, angle);
+	QuaternionToAttitudeAngle(quaternion, angle);
 }
 
-
-//机体坐标系转到地球坐标系
-void Quaternion_BodyToEarth(Quaternion_t * quaternion, TriaxialData_t * body, TriaxialData_t * earth)
+/*
+ * @函数名  QuaternionBodyToEarth
+ * @用  途  机体坐标系转到地球坐标系
+ * @参  数  quaternion:四元数
+ *          body:输入机体坐标系3轴加速度
+ *          earth:输出地球坐标系3轴加速度
+ * @返回值  
+*/
+void QuaternionBodyToEarth(Quaternion_t *quaternion, TriaxialData_t *body, TriaxialData_t *earth)
 {
 	earth->X = quaternion->RotationMatrix[0][0] * body->X + quaternion->RotationMatrix[0][1] * body->Y + quaternion->RotationMatrix[0][2] * body->Z;
 	earth->Y = quaternion->RotationMatrix[1][0] * body->X + quaternion->RotationMatrix[1][1] * body->Y + quaternion->RotationMatrix[1][2] * body->Z;
 	earth->Z = quaternion->RotationMatrix[2][0] * body->X + quaternion->RotationMatrix[2][1] * body->Y + quaternion->RotationMatrix[2][2] * body->Z;
 }
 
-//地球坐标系转到机体坐标系
-void Quaternion_EarthToBody(Quaternion_t * quaternion, TriaxialData_t * earth, TriaxialData_t * body)
+/*
+ * @函数名  QuaternionEarthToBody
+ * @用  途  地球坐标系转到机体坐标系
+ * @参  数  quaternion:四元数
+ *          earth:输入地球坐标系3轴加速度
+ *          body:输出机体坐标系3轴加速度
+ * @返回值  
+*/
+void QuaternionEarthToBody(Quaternion_t *quaternion, TriaxialData_t *earth, TriaxialData_t *body)
 {
 	body->X = quaternion->RotationMatrix[0][0] * earth->X + quaternion->RotationMatrix[1][0] * earth->Y + quaternion->RotationMatrix[2][0] * earth->Z;
 	body->Y = quaternion->RotationMatrix[0][1] * earth->X + quaternion->RotationMatrix[1][1] * earth->Y + quaternion->RotationMatrix[2][1] * earth->Z;
 	body->Z = quaternion->RotationMatrix[0][2] * earth->X + quaternion->RotationMatrix[1][2] * earth->Y + quaternion->RotationMatrix[2][2] * earth->Z;
 }
-
-
-
-

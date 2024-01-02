@@ -164,7 +164,7 @@ Quaternion_t Quaternion =
 
 //用于姿态解算中通过加速度计和磁力计修正角度
 //P越大回正速度越快
-Quaternion_PIOffset_t Quaternion_PIOffset = 
+QuaternionPIParams_t QuaternionPIParams = 
 {
 	.P = 0.4f,
 	.I = 0.000f,
@@ -430,7 +430,7 @@ void Strapdown_INS_High(TriaxialData_t * acc, float altitude, float dt)
 {
 	TriaxialData_t accEarth = {0};
 	
-	Quaternion_BodyToEarth(&Quaternion, acc, &accEarth);
+	QuaternionBodyToEarth(&Quaternion, acc, &accEarth);
 
 	accEarth.X *= GRAVITY_ACC;
 	accEarth.Y *= GRAVITY_ACC;
@@ -475,7 +475,7 @@ void PositionFusion(TriaxialData_t * acc, float observeAltitude, float dt)
 	TriaxialData_t accEarth = {0};
 	float altitudeDeviation;
 	
-	Quaternion_BodyToEarth(&Quaternion, acc, &accEarth);
+	QuaternionBodyToEarth(&Quaternion, acc, &accEarth);
 
 	accEarth.X *= GRAVITY_ACC;
 	accEarth.Y *= GRAVITY_ACC;
@@ -657,13 +657,13 @@ void ControlTask(void * parameters)
 		
 		
 		//四元数姿态解算
-		Quaternion_IMUCalculation(&Quaternion, 
-		                          &Quaternion_PIOffset, 
-								  (TriaxialData_t *)&accConvertData, 
-								  (TriaxialData_t *)&gyroConvertData, 
-								  &magData, 
-								  &nowAngle, 
-								  0.002);
+		QuaternionAttitudeAlgorithm(&Quaternion, 
+		                            &QuaternionPIParams, 
+								    (TriaxialData_t *)&accConvertData, 
+								    (TriaxialData_t *)&gyroConvertData, 
+								    &magData, 
+								    &nowAngle, 
+								    0.002);
 
 
 		//预估机体速度和位置

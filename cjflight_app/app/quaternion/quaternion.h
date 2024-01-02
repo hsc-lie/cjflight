@@ -1,8 +1,6 @@
 #ifndef _QUATERNION_H_
 #define _QUATERNION_H_
 
-
-
 #include "common.h"
 
 typedef struct
@@ -19,7 +17,6 @@ typedef struct
 	float Yaw;
 }AttitudeData_t;
 
-
 //float P = 0.4f;
 //float I = 0.001f;
 typedef struct
@@ -30,10 +27,7 @@ typedef struct
 	float exInt;
 	float eyInt;
 	float ezInt;
-
-
-}Quaternion_PIOffset_t;
-
+}QuaternionPIParams_t;
 
 /*
 	定义Quaternion_t结构体时请初始化为以下值
@@ -52,16 +46,10 @@ typedef struct
 	float RotationMatrix[3][3];
 }Quaternion_t;
 
-
-extern void Quaternion_Update(Quaternion_t * quaternion, TriaxialData_t * gyro, float dt);
-extern void Quaternion_ToAttitudeAngle(Quaternion_t * quaternion, AttitudeData_t * angle);
-extern void Quaternion_IMUCalculation(Quaternion_t * quaternion, Quaternion_PIOffset_t * pi, TriaxialData_t * acc, TriaxialData_t * gyro, TriaxialData_t * mag, AttitudeData_t * angle , float dt);
-
-extern void Quaternion_BodyToEarth(Quaternion_t * quaternion, TriaxialData_t * body, TriaxialData_t * earth);
-extern void Quaternion_EarthToBody(Quaternion_t * quaternion, TriaxialData_t * earth, TriaxialData_t * body);
-
-
-
-//void imu_body_to_Earth(TriaxialData_t * body_v, TriaxialData_t * earth_v);
+extern void QuaternionUpdate(Quaternion_t *quaternion, TriaxialData_t *gyro, float dt);
+extern void QuaternionToAttitudeAngle(Quaternion_t *quaternion, AttitudeData_t *angle);
+extern void QuaternionAttitudeAlgorithm(Quaternion_t *quaternion, QuaternionPIParams_t *pi, TriaxialData_t *acc, TriaxialData_t *gyro, TriaxialData_t *mag, AttitudeData_t *angle , float dt);
+extern void QuaternionBodyToEarth(Quaternion_t *quaternion, TriaxialData_t *body, TriaxialData_t *earth);
+extern void QuaternionEarthToBody(Quaternion_t *quaternion, TriaxialData_t *earth, TriaxialData_t *body);
 
 #endif /*_QUATERNION_H_*/
