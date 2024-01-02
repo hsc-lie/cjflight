@@ -1,21 +1,22 @@
 #include "circular_queue.h"
 
-
-
-
-CIRCULAR_QUEUE_ERROR_t CircularQueue_WriteByte(CircularQueue_t * const queue, uint8_t data)
+/*
+ * @函数名  CircularQueueWriteByte
+ * @用  途  环形队列写入
+ * @参  数  queue:环形队列
+ *          data:要写入的数据
+ * @返回值  错误的状态
+*/
+CIRCULAR_QUEUE_ERROR_t CircularQueueWriteByte(CircularQueue_t *const queue, uint8_t data)
 {
 	uint32_t writeIndex;
 
-	if((NULL == queue)
-		|| (NULL == queue->Buffer)
-	)
+	if(NULL == queue->Buffer)
 	{
 		return CIRCULAR_QUEUE_ERROR_NULL;
 	}
 
 	writeIndex = queue->WriteIndex;
-
 
 	if(CIRCULAR_QUEUE_STATUS_FULL == queue->Status)
 	{
@@ -39,20 +40,22 @@ CIRCULAR_QUEUE_ERROR_t CircularQueue_WriteByte(CircularQueue_t * const queue, ui
 			queue->Status = CIRCULAR_QUEUE_STATUS_FULL;
 		}
 		
-		
 		return CIRCULAR_QUEUE_ERROR_OK;
 	}
-	
 }
 
-
-CIRCULAR_QUEUE_ERROR_t CircularQueue_ReadByte(CircularQueue_t * const queue, uint8_t * data)
+/*
+ * @函数名  CircularQueueReadByte
+ * @用  途  环形队列读取
+ * @参  数  queue:环形队列
+ *          data:读取到的数据
+ * @返回值  错误的状态
+*/
+CIRCULAR_QUEUE_ERROR_t CircularQueueReadByte(CircularQueue_t *const queue, uint8_t *data)
 {
 	uint32_t readIndex;
 
-	if((NULL == queue)
-		|| (NULL == queue->Buffer)
-	)
+	if(NULL == queue->Buffer)
 	{
 		return CIRCULAR_QUEUE_ERROR_NULL;
 	}
@@ -81,9 +84,4 @@ CIRCULAR_QUEUE_ERROR_t CircularQueue_ReadByte(CircularQueue_t * const queue, uin
 		
 		return CIRCULAR_QUEUE_ERROR_OK;
 	}
-	
 }
-
-
-
-

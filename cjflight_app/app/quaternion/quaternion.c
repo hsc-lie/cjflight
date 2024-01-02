@@ -1,8 +1,5 @@
-
 #include "quaternion.h"
 #include "math.h"
-
-
 
 //度转弧
 #define DEG_TO_RAD(deg)		((deg) * 0.017453293f)	
@@ -45,17 +42,6 @@ static void QuaternionGetPIGyroOffset(Quaternion_t *quaternion, QuaternionPIPara
 	//磁力在地球坐标系投影
 	TriaxialData_t magEarth = {0};
 	TriaxialData_t magBody = {0};
-
-	if((NULL == quaternion)
-		|| (NULL == pi)
-		|| (NULL == acc)
-		|| (NULL == offset)
-	)
-	{
-		return;	
-	}
-
-	
 
 	magTemp.X = mag->X;
 	magTemp.Y = mag->Y;

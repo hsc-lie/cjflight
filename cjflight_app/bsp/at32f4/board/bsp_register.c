@@ -77,7 +77,7 @@ static void USART2ReadData(uint8_t * data, uint32_t readLen, uint32_t * outLen)
 	for(i = 0;i < readLen;++i)
 	{
 	
-		if(CIRCULAR_QUEUE_ERROR_OK != CircularQueue_ReadByte(&USART2Queue, data))
+		if(CIRCULAR_QUEUE_ERROR_OK != CircularQueueReadByte(&USART2Queue, data))
 		{
 			break;
 		}

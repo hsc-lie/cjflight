@@ -52,7 +52,7 @@ void DMA1_CH5_HT_Transmission()
 
 	for(i = 0;i < halfSize;++i)
 	{
-		CircularQueue_WriteByte(&USART2Queue, USARTRxDMABuffer[i]);
+		CircularQueueWriteByte(&USART2Queue, USARTRxDMABuffer[i]);
 	}
 		
 }
@@ -65,7 +65,7 @@ void DMA1_CH5_TC_Transmission()
 
 	for(i = halfSize;i < USART2_RX_DMA_BUFFER_SIZE;++i)
 	{
-		CircularQueue_WriteByte(&USART2Queue, USARTRxDMABuffer[i]);
+		CircularQueueWriteByte(&USART2Queue, USARTRxDMABuffer[i]);
 	}
 }
 
