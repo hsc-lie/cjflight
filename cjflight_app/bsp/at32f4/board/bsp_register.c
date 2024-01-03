@@ -129,7 +129,7 @@ static SimulationI2C_t SimulationI2C1 =
 
 static int I2C0SendData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
 {
-	return SimulationI2CSendData(&SimulationI2C1, addr, reg, regLen, data, dataLen);
+	return SimulationI2CWriteData(&SimulationI2C1, addr, reg, regLen, data, dataLen);
 }
 
 static int I2C0ReadData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)

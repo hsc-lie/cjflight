@@ -12,7 +12,6 @@ static void MPU6050I2CReadReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t
 	I2CDevReadData(I2C_TYPE_SENSOR, addr, &reg, 1, data, len);
 }
 
-
 MPU6050_t MPU6050 = 
 {
 	.DevAddr = MPU6050_DEV_ADDR1,
@@ -30,10 +29,3 @@ MPU6050_t MPU6050 =
 	.I2CWriteReg = MPU6050I2CWriteReg,
 	.I2CReadReg = MPU6050I2CReadReg,
 };
-
-
-
-
-
-
-

@@ -1,13 +1,10 @@
 #ifndef __MPU6050_H
 #define __MPU6050_H
 
-
 #include "common.h"
 
 #define MPU6050_DEV_ADDR1                0x68
 #define MPU6050_DEV_ADDR2                0x69   
-
-
 
 typedef enum
 {
@@ -36,7 +33,6 @@ typedef enum
 	MPU6050_ACC_RANGE_16G,
 }MPU6050_ACC_RANGE_t;
 
-
 typedef struct
 {
 	int16_t X;
@@ -51,8 +47,6 @@ typedef struct
 	float Y;
 	float Z;
 }MPU6050ConvertData_t;
-
-
 
 typedef struct
 {

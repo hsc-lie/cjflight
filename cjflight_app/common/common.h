@@ -2,16 +2,15 @@
 #define __COMMON_H_
 
 #include <stdio.h>
-#include <stdint.h>
+//#include <stdint.h>
 
 #define ABS(x)         ((x) < 0 ? (-(x)):(x))
 
 
-/*
 #ifndef NULL
 #define NULL  ((void *)0)
 #endif
-*/
+
 
 #ifndef FALSE
 #define FALSE  (0)
@@ -59,12 +58,7 @@ typedef signed long long  int64_t;
 typedef unsigned long long  uint64_t;
 #endif
 
-
-
-int int_range(int value, int min, int max);
-float float_range(float value, float min, float max);
-
-
+extern int IntRange(int value, int min, int max);
+extern float FloatRange(float value, float min, float max);
 
 #endif /*__COMMON_H_*/
-

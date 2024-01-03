@@ -22,7 +22,7 @@ static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 
 	/**********************油门**************************/
     throttle = IBusGetChannelData(ibus, IBUS_Channel3);
-    throttle = int_range(throttle, REMOTE_VALUE_MIN, REMOTE_VALUE_MAX);
+    throttle = IntRange(throttle, REMOTE_VALUE_MIN, REMOTE_VALUE_MAX);
 
     throttle = (THROTTLE_TO_MOTOR_MAX - THROTTLE_TO_MOTOR_MIN) * (throttle - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
 	throttle += THROTTLE_TO_MOTOR_MIN;

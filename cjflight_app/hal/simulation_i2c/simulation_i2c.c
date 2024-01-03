@@ -1,18 +1,25 @@
  #include "simulation_i2c.h"
 
-
-static void SimulationI2CDelay(SimulationI2C_t * i2c) 
+/*
+ * @函数名  SimulationI2CDelay
+ * @用  途  模拟I2C延时
+ * @参  数  i2c:模拟I2C
+ * @返回值
+*/
+static void SimulationI2CDelay(SimulationI2C_t *i2c) 
 {
-	uint32_t i = i2c->DelayCount;
+	register uint32_t i = i2c->DelayCount;
 	while(--i);
 }
 
-
-
-static uint8_t SimulationI2CStart(SimulationI2C_t * i2c)
+/*
+ * @函数名  SimulationI2CStart
+ * @用  途  模拟I2C发送起始信号
+ * @参  数  i2c:模拟I2C
+ * @返回值
+*/
+static void SimulationI2CStart(SimulationI2C_t *i2c)
 {
-
-
 	i2c->SDASet(1);
 	SimulationI2CDelay(i2c);
 	i2c->SCLSet(1);
@@ -21,26 +28,32 @@ static uint8_t SimulationI2CStart(SimulationI2C_t * i2c)
 	SimulationI2CDelay(i2c);
 	i2c->SCLSet(0);
 	SimulationI2CDelay(i2c);
-
 }
 
-
-static void SimulationI2CStop(SimulationI2C_t * i2c)
+/*
+ * @函数名  SimulationI2CStop
+ * @用  途  模拟I2C发送停止信号
+ * @参  数  i2c:模拟I2C
+ * @返回值
+*/
+static void SimulationI2CStop(SimulationI2C_t *i2c)
 {
-
 	i2c->SDASet(0);
 	SimulationI2CDelay(i2c);
 	i2c->SCLSet(1);
 	SimulationI2CDelay(i2c);
 	i2c->SDASet(1);
 	SimulationI2CDelay(i2c);
-
 }
 
-
-static void SimulationI2CAck(SimulationI2C_t * i2c)
+/*
+ * @函数名  SimulationI2CAck
+ * @用  途  模拟I2C发送应答
+ * @参  数  i2c:模拟I2C
+ * @返回值
+*/
+static void SimulationI2CAck(SimulationI2C_t *i2c)
 {
-
 	i2c->SDASet(0);
 	SimulationI2CDelay(i2c);
 	i2c->SCLSet(1);
@@ -48,11 +61,15 @@ static void SimulationI2CAck(SimulationI2C_t * i2c)
 	i2c->SCLSet(0);
 	SimulationI2CDelay(i2c);
 	i2c->SDASet(1);
-
-
 }
 
-static void SimulationI2CNAck(SimulationI2C_t * i2c)
+/*
+ * @函数名  SimulationI2CNAck
+ * @用  途  模拟I2C发送非应答
+ * @参  数  i2c:模拟I2C
+ * @返回值
+*/
+static void SimulationI2CNAck(SimulationI2C_t *i2c)
 {
 	i2c->SDASet(1);
 	SimulationI2CDelay(i2c);
@@ -62,7 +79,15 @@ static void SimulationI2CNAck(SimulationI2C_t * i2c)
 	SimulationI2CDelay(i2c);
 }
 
-static uint8_t SimulationI2CReadAck(SimulationI2C_t * i2c)
+/*
+ * @函数名  SimulationI2CReceiveAck
+ * @用  途  模拟I2C接收从机应答
+ * @参  数  i2c:模拟I2C
+ * @返回值  读取到的从机应答值
+ *          0:应答
+ *          1:非应答
+*/
+static uint8_t SimulationI2CReceiveAck(SimulationI2C_t *i2c)
 {
 	uint8_t ack;
 
@@ -74,14 +99,20 @@ static uint8_t SimulationI2CReadAck(SimulationI2C_t * i2c)
 	i2c->SDADirSet(SIMULATION_I2C_SDA_TX);
 	SimulationI2CDelay(i2c);
 	
-	
 	return ack;
 }
 
-
-static void SimulationI2C_SendByte(SimulationI2C_t * i2c, uint8_t data)
+/*
+ * @函数名  SimulationI2CSendByte
+ * @用  途  模拟I2C发送一个字节数据
+ * @参  数  i2c:模拟I2C
+ *          data:发送的数据
+ * @返回值
+*/
+static void SimulationI2CSendByte(SimulationI2C_t *i2c, uint8_t data)
 {
 	uint8_t i;
+
 	for(i = 0;i < 8;++i)
 	{
 		if(data & 0x80)
@@ -92,23 +123,29 @@ static void SimulationI2C_SendByte(SimulationI2C_t * i2c, uint8_t data)
 		{
 			i2c->SDASet(0);
 		}
+
 		SimulationI2CDelay(i2c);
 		i2c->SCLSet(1);
 		SimulationI2CDelay(i2c);
 		i2c->SCLSet(0);
 		SimulationI2CDelay(i2c);
 		data <<= 1;
+
 		if(i == 7)
 		{
 			i2c->SDASet(1);
 		}
-		
-		
 	}
-	
 }
 
-static uint8_t SimulationI2CReadByte(SimulationI2C_t * i2c, uint8_t ack)
+/*
+ * @函数名  SimulationI2CReceiveByte
+ * @用  途  模拟I2C接收一个字节数据
+ * @参  数  i2c:模拟I2C
+ *          ack:主机应答值 0:应答 1:非应答
+ * @返回值  接收到的数据
+*/
+static uint8_t SimulationI2CReceiveByte(SimulationI2C_t *i2c, uint8_t ack)
 {
 	uint8_t i;
 	uint8_t data = 0;
@@ -123,7 +160,6 @@ static uint8_t SimulationI2CReadByte(SimulationI2C_t * i2c, uint8_t ack)
 		data |= i2c->SDARead();
 		i2c->SCLSet(0);
 		SimulationI2CDelay(i2c);
-
 	}
 
 	i2c->SDADirSet(SIMULATION_I2C_SDA_TX);
@@ -136,12 +172,22 @@ static uint8_t SimulationI2CReadByte(SimulationI2C_t * i2c, uint8_t ack)
 	{
 		SimulationI2CAck(i2c);
 	}
+
 	return data;
 }
 
-
-
-SIMULATION_I2C_ERROR_t SimulationI2CSendData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint32_t regLen, uint8_t *data, uint8_t dataLen)
+/*
+ * @函数名  SimulationI2CSendData
+ * @用  途  模拟I2C写入数据
+ * @参  数  i2c:模拟I2C
+ *          addr:从机地址
+ *          reg:寄存器值(或是命令)
+ *          regLen:寄存器值长度(或是命令长度)
+ *          data:要写入的数据
+ *          dataLen:写入的数据的长度
+ * @返回值  错误状态值
+*/
+SIMULATION_I2C_ERROR_t SimulationI2CWriteData(SimulationI2C_t *i2c, uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t *data, uint8_t dataLen)
 {
 	uint32_t i;
 	uint8_t ack;
@@ -155,51 +201,57 @@ SIMULATION_I2C_ERROR_t SimulationI2CSendData(SimulationI2C_t * i2c, uint8_t addr
 	}
 	
 	SimulationI2CStart(i2c);
-	SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
+	SimulationI2CSendByte(i2c, (addr << 1) | 0x00);
 	
-	ack = SimulationI2CReadAck(i2c);
+	ack = SimulationI2CReceiveAck(i2c);
 	if(1 == ack)
 	{
 		return SIMULATION_I2C_ERROR_NACK;
 	}
 
-
-
 	for(i = 0;i < regLen;++i)
 	{
-		SimulationI2C_SendByte(i2c, *reg);
+		SimulationI2CSendByte(i2c, *reg);
 		
-		ack = SimulationI2CReadAck(i2c);
+		ack = SimulationI2CReceiveAck(i2c);
 		if(1 == ack)
 		{
 			return SIMULATION_I2C_ERROR_NACK;
 		}
 
-		reg++;
+		++reg;
 	}
-	
 	
 	for(i = 0;i < dataLen;++i)
 	{
-		SimulationI2C_SendByte(i2c, *data);
+		SimulationI2CSendByte(i2c, *data);
 		
-		ack = SimulationI2CReadAck(i2c);
+		ack = SimulationI2CReceiveAck(i2c);
 		if(1 == ack)
 		{
 			return SIMULATION_I2C_ERROR_NACK;
 		}
 
-		data++;
+		++data;
 	}
-
 
 	SimulationI2CStop(i2c);
 	
 	return SIMULATION_I2C_ERROR_OK;
 }
 
-
-SIMULATION_I2C_ERROR_t SimulationI2CReadData(SimulationI2C_t * i2c, uint8_t addr, uint8_t * reg, uint8_t regLen, uint8_t *data, uint8_t dataLen)
+/*
+ * @函数名  SimulationI2CReadData
+ * @用  途  模拟I2C读取数据
+ * @参  数  i2c:模拟I2C
+ *          addr:从机地址
+ *          reg:寄存器值(或是命令)
+ *          regLen:寄存器值长度(或是命令长度)
+ *          data:读取到的数据
+ *          dataLen:要读取数据的长度
+ * @返回值  错误状态值
+*/
+SIMULATION_I2C_ERROR_t SimulationI2CReadData(SimulationI2C_t *i2c, uint8_t addr, uint8_t *reg, uint8_t regLen, uint8_t *data, uint8_t dataLen)
 {
 	uint32_t i;
 	uint8_t ack;
@@ -217,9 +269,9 @@ SIMULATION_I2C_ERROR_t SimulationI2CReadData(SimulationI2C_t * i2c, uint8_t addr
 	if(0 != regLen)
 	{
 		SimulationI2CStart(i2c);
-		SimulationI2C_SendByte(i2c, (addr << 1) | 0x00);
+		SimulationI2CSendByte(i2c, (addr << 1) | 0x00);
 		
-		ack = SimulationI2CReadAck(i2c);
+		ack = SimulationI2CReceiveAck(i2c);
 		if(1 == ack)
 		{
 			return SIMULATION_I2C_ERROR_NACK;
@@ -227,23 +279,23 @@ SIMULATION_I2C_ERROR_t SimulationI2CReadData(SimulationI2C_t * i2c, uint8_t addr
 
 		for(i = 0;i < regLen;++i)
 		{
-			SimulationI2C_SendByte(i2c, *reg);
+			SimulationI2CSendByte(i2c, *reg);
 			
-			ack = SimulationI2CReadAck(i2c);
+			ack = SimulationI2CReceiveAck(i2c);
+
 			if(1 == ack)
 			{
 				return SIMULATION_I2C_ERROR_NACK;
 			}
-			reg++;
+
+			++reg;
 		}
-	
 	}
 	
-	
 	SimulationI2CStart(i2c);
-	SimulationI2C_SendByte(i2c, (addr << 1) | 0x01);
+	SimulationI2CSendByte(i2c, (addr << 1) | 0x01);
 	
-	ack = SimulationI2CReadAck(i2c);
+	ack = SimulationI2CReceiveAck(i2c);
 	if(1 == ack)
 	{
 		return SIMULATION_I2C_ERROR_NACK;
@@ -252,12 +304,11 @@ SIMULATION_I2C_ERROR_t SimulationI2CReadData(SimulationI2C_t * i2c, uint8_t addr
 		
 	for(i = 0;i < (dataLen - 1);++i)
 	{
-		*data = SimulationI2CReadByte(i2c, 1);
-		data++;
+		*data = SimulationI2CReceiveByte(i2c, 1);
+		++data;
 	}
-	*data = SimulationI2CReadByte(i2c, 0);
+	*data = SimulationI2CReceiveByte(i2c, 0);
 	SimulationI2CStop(i2c);
 	
 	return SIMULATION_I2C_ERROR_OK;
 }
-

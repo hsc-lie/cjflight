@@ -25,7 +25,7 @@ typedef struct
 }GPIODev_t;
 
 extern void GPIODevRegister(GPIODev_t *gpio);
-extern void GPIODevUnregister(GPIODev_t *gpio);
+extern void GPIODevUnregister(void);
 extern void GPIODevInit(void);
 extern void GPIODevDeInit(void);
 extern void GPIODevWritePinOut(GPIO_TYPE_t type, uint8_t value);

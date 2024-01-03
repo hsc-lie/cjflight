@@ -1,7 +1,6 @@
 #include "control.h"
 
 #include <math.h>
-#include <stdint.h>
 
 #include "motor_cfg.h"
 #include "mpu6050_cfg.h"
@@ -315,7 +314,7 @@ void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeDa
 
 	for(i = 0;i < 4;++i)
 	{
-		motorOut[i] = int_range(motorOut[i],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
+		motorOut[i] = IntRange(motorOut[i],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
 		MotorOut(&Motor[i], motorOut[i]);
 	}
 

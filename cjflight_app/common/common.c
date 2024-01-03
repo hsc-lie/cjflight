@@ -1,7 +1,7 @@
 #include "common.h"
 
 
-int int_range(int value, int min, int max)
+int IntRange(int value, int min, int max)
 {
 	if(value < min)
 	{
@@ -18,7 +18,7 @@ int int_range(int value, int min, int max)
 }
 
 
-float float_range(float value, float min, float max)
+float FloatRange(float value, float min, float max)
 {
 	if(value < min)
 	{
