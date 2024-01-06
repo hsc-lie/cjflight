@@ -1,7 +1,6 @@
 #include "ibus.h"
 
 
-
 IBUS_ERROR_TYPE_t IBusAnalysisData(IBus_t *ibus, uint8_t *data, uint32_t len, uint8_t *const isGetPackage)
 {
 	uint32_t i;

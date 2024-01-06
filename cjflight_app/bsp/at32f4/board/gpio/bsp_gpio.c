@@ -1,23 +1,12 @@
 #include "bsp_gpio.h"
 
-
-
-
 typedef struct
 {
 	GPIO_Type * GPIOx;
 	uint16_t GPIO_PinSource; 
 	uint8_t GPIO_AF;
 	GPIO_InitType GPIO_InitType;
-	
-	
 }GPIO_Config_t;
-
-
-
-
-
-
 
 
 //LED GPIO
@@ -77,12 +66,12 @@ const GPIO_Config_t USART1_GPIOConfigTable[] =
 {
 	//串口1 TX
 	{
-		.GPIOx = GPIOB,
-		.GPIO_PinSource = GPIO_PinsSource6,
-		.GPIO_AF = GPIO_AF_0,
+		.GPIOx = DEBUG_USART_TX_GPIO,
+		.GPIO_PinSource = DEBUG_USART_TX_PIN_SOURCE,
+		.GPIO_AF = DEBUG_USART_TX_AF,
 		.GPIO_InitType = 
 		{
-			.GPIO_Pins  = GPIO_Pins_6,
+			.GPIO_Pins  = DEBUG_USART_TX_PIN,
 	    	.GPIO_Mode = GPIO_Mode_AF,
 	    	.GPIO_OutType = GPIO_OutType_PP,
 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
@@ -91,12 +80,12 @@ const GPIO_Config_t USART1_GPIOConfigTable[] =
 	},
 	//串口1 RX
 	{
-		.GPIOx = GPIOA,
-		.GPIO_PinSource = GPIO_PinsSource6,
-		.GPIO_AF = GPIO_AF_0,
+		.GPIOx = DEBUG_USART_RX_GPIO,
+		.GPIO_PinSource = DEBUG_USART_RX_PIN_SOURCE,
+		.GPIO_AF = DEBUG_USART_RX_AF,
 		.GPIO_InitType = 
 		{
-			.GPIO_Pins  = GPIO_Pins_7,
+			.GPIO_Pins  = DEBUG_USART_RX_PIN,
 	    	.GPIO_Mode = GPIO_Mode_AF,
 	    	.GPIO_OutType = GPIO_OutType_PP,
 	    	.GPIO_Pull = GPIO_Pull_NOPULL,
@@ -111,12 +100,12 @@ const GPIO_Config_t USART2_GPIOConfigTable[] =
 {
 	//USART2 RX
 	{
-		.GPIOx = GPIOA,
-		.GPIO_PinSource = GPIO_PinsSource3,
-		.GPIO_AF = GPIO_AF_1,
+		.GPIOx = IBUS_USART_RX_GPIO,
+		.GPIO_PinSource = IBUS_USART_RX_PIN_SOURCE,
+		.GPIO_AF = IBUS_USART_RX_AF,
 		.GPIO_InitType = 
 		{
-			.GPIO_Pins  = GPIO_Pins_3,
+			.GPIO_Pins  = IBUS_USART_RX_PIN,
 	    	.GPIO_Mode = GPIO_Mode_AF,
 	    	.GPIO_OutType = GPIO_OutType_PP,
 	    	.GPIO_Pull = GPIO_Pull_NOPULL,

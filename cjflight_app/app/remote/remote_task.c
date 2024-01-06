@@ -75,7 +75,7 @@ static void IBusDataUpdate()
 
 	RemoteData_t remoteData = {0};
 	
-	USARTDevReadData(USART_REMOTE, data, 32, &outLen);
+	USARTDevReadData(USART_REMOTE, data, sizeof(data), &outLen);
 
 	IBusAnalysisData(&IBus, data, outLen, &isGetIBUSPackage);
 
@@ -90,16 +90,12 @@ static void IBusDataUpdate()
 
 }
 
-
 void RemoteTask(void * parameters)
 {
-
 	for(;;)
 	{
         //xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
-
         IBusDataUpdate();
 		vTaskDelay(1);
-
 	}
 }

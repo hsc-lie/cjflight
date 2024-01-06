@@ -4,12 +4,14 @@
 
 #include "bsp_rcc.h"
 
+#include "bsp_interrupt.h"
+
 #include "gpio_dev.h"
 #include "bsp_gpio.h"
 
 #include "usart_dev.h"
 #include "bsp_usart.h"
-#include "circular_queue.h"
+#include "ring_queue.h"
 
 #include "i2c_dev.h"
 #include "simulation_i2c.h"
@@ -59,9 +61,18 @@ static uint8_t GPIOReadPinIn(GPIO_TYPE_t type)
 	return GPIO_ReadInputDataBit(port->Type, port->Pin);
 }
 
-static void USART1SendData(uint8_t * data, uint32_t len)
+static USART_DEV_ERROR_t USART1SendData(uint8_t *data, uint32_t len)
 {
 	BSPUSARTSendData(USART1, data, len);
+
+	return USART_DEV_ERROR_OK;
+}
+
+static USART_DEV_ERROR_t USART2ReadData(uint8_t *data, uint32_t readLen, uint32_t *outLen)
+{
+	*outLen = BSPUSART2ReadData(data, readLen);
+
+	return USART_DEV_ERROR_OK;
 }
 
 static void USART2Init()
@@ -69,28 +80,6 @@ static void USART2Init()
 	BSPDMA1Cannel5Init();
 	BSPUSART2Init();
 }
-
-static void USART2ReadData(uint8_t * data, uint32_t readLen, uint32_t * outLen)
-{
-	uint32_t i;
-	
-	for(i = 0;i < readLen;++i)
-	{
-	
-		if(CIRCULAR_QUEUE_ERROR_OK != CircularQueueReadByte(&USART2Queue, data))
-		{
-			break;
-		}
-		else
-		{
-			++data;
-		}	
-		
-	}
-
-	*outLen = i;
-}
-
 
 #define SIMULATION_I2C_DELAY_COUNT            (20)
 
@@ -205,8 +194,7 @@ static TimerDev_t Timer3Dev =
 
 void BSPMain(void)
 {
-	/*中断优先级分组*/
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	BSPInterruptInit();
 
 	BSPRCCInitAll();
 

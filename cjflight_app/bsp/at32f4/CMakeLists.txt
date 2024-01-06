@@ -47,7 +47,6 @@ target_include_directories(${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
     PUBLIC
     ${STARTUP_FILE}
-    at32f4xx_it.c
 )
 
 #链接文件路径

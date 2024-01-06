@@ -2,7 +2,7 @@
 #include "bsp_usart.h"
 #include "at32f4xx.h"
 
-
+#include "ring_queue.h"
 
 
 #define USART2_RX_DMA_BUFFER_SIZE        (32)
@@ -50,11 +50,7 @@ void DMA1_CH5_HT_Transmission()
 	uint32_t i;
 	uint32_t halfSize = USART2_RX_DMA_BUFFER_SIZE >> 1;
 
-	for(i = 0;i < halfSize;++i)
-	{
-		CircularQueueWriteByte(&USART2Queue, USARTRxDMABuffer[i]);
-	}
-		
+	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer, halfSize);	
 }
 
 
@@ -63,9 +59,26 @@ void DMA1_CH5_TC_Transmission()
 	uint32_t i;
 	uint32_t halfSize = USART2_RX_DMA_BUFFER_SIZE >> 1;
 
-	for(i = halfSize;i < USART2_RX_DMA_BUFFER_SIZE;++i)
-	{
-		CircularQueueWriteByte(&USART2Queue, USARTRxDMABuffer[i]);
-	}
+	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer+halfSize, halfSize);	
 }
 
+
+void DMA1_Channel7_4_IRQHandler(void)
+{
+	//static int i = 0;
+	//static int j = 0;
+	//传输一半中断
+	if(DMA_GetITStatus(DMA1_INT_HT5) == SET)
+	{
+		DMA_ClearITPendingBit(DMA1_INT_HT5);
+		DMA1_CH5_HT_Transmission();	
+		//i++;
+	}
+	//传输完成中断
+	if(DMA_GetITStatus(DMA1_INT_TC5) == SET)
+	{
+		DMA_ClearITPendingBit(DMA1_INT_TC5);
+		DMA1_CH5_TC_Transmission();	
+		//j++;
+	}
+}

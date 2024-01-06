@@ -1,51 +1,42 @@
 TARGET = cjflight
 
-DEBUG = 1
-
-#优化等级
-OPT = -Og
-
 #编译文件路径
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 OUT_DIR = $(BUILD_DIR)/out
 
-#gcc编译器类型
-PREFIX = arm-none-eabi-
-CC = $(PREFIX)gcc
-AS = $(PREFIX)gcc -x assembler-with-cpp
-CP = $(PREFIX)objcopy
-SZ = $(PREFIX)size
-
+#设置交叉编译
+CC = arm-none-eabi-gcc
+AS = arm-none-eabi-gcc -x assembler-with-cpp
+SZ = arm-none-eabi-size
 #生成hex文件的指令
-HEX = $(CP) -O ihex
+HEX = arm-none-eabi-objcopy -O ihex
 #生成bin文件的指令
-BIN = $(CP) -O binary -S
+BIN = arm-none-eabi-objcopy -O binary -S
+
+#删除指令
+RM = rm -rf
+
+#优化等级
+OPT = -O0 -g -gdwarf-2
 
 #CPU类型
 CPU = -mthumb -mcpu=cortex-m4 -march=armv7e-m 
-
 #FPU类型
 #-mfpu=fpv4-sp-d16
 FPU = 
-
 #浮点计算的方式 
 #hard 硬件
 #soft 软件 
 FLOAT-ABI = -mfloat-abi=soft
-
-
+#MCU相关参数
 MCU = $(CPU) $(FPU) $(FLOAT-ABI)
 
-#汇编全局宏
-ASM_DEFINE = 
-
 #C全局宏
-#C_DEFINE = -DAT32F421C8T7 -DUSE_STDPERIPH_DRIVER -DUSE_FULL_ASSERT
 C_DEFINE = -DAT32F421C8T7 -DUSE_STDPERIPH_DRIVER
 
 #头文件路径
-C_INCLUDE =\
+INCLUDE_DIR =\
 	-I app \
 	-I app/control \
 	-I app/filter \
@@ -53,7 +44,7 @@ C_INCLUDE =\
 	-I app/quaternion \
 	-I app/remote \
 	-I common \
-	-I common/circular_queue \
+	-I common/ring_queue \
 	-I protocol_stack/ibus \
 	-I dal/led \
 	-I dal/remote \
@@ -64,20 +55,20 @@ C_INCLUDE =\
 	-I freeRTOS \
 	-I freeRTOS/include \
 	-I freeRTOS/port \
-	-I hal/i2c \
-	-I hal/pwm \
-	-I hal/simulation_i2c \
+	-I hal/gpio \
 	-I hal/usart \
+	-I hal/timer \
+	-I hal/i2c \
+	-I hal/simulation_i2c \
 	-I bsp/at32f4 \
+	-I bsp/at32f4/board/rcc \
+	-I bsp/at32f4/board/interrupt \
 	-I bsp/at32f4/board/dma \
 	-I bsp/at32f4/board/gpio \
-	-I bsp/at32f4/board/rcc \
-	-I bsp/at32f4/board/timer \
 	-I bsp/at32f4/board/usart \
+	-I bsp/at32f4/board/timer \
 	-I bsp/at32f4/cmsis \
 	-I bsp/at32f4/at32f4_lib/inc \
-	
-
 
 #需要编译的汇编
 ASM_SOURCES = ./bsp/at32f4/startup/startup_at32f421c8t7.s
@@ -93,20 +84,12 @@ FREERTOS_SOURCES =\
 
 #c文件
 C_SOURCES =\
-	$(shell find ./app ./common ./protocol_stack ./dal ./dev ./hal ./bsp -name "*.c") \
+	$(shell find ./app ./common ./protocol_stack ./dal ./dev ./hal ./bsp -name *.c) \
 	$(FREERTOS_SOURCES)
 
 
-
-ASM_FLAGS = $(MCU) $(ASM_DEFINE) $(AS_INCLUDE) $(OPT) -Wall -fdata-sections -ffunction-sections
-C_FLAGS = $(MCU) $(C_INCLUDE) $(C_DEFINE) $(OPT) -Wall -fdata-sections -ffunction-sections
-
-ifeq ($(DEBUG), 1)
-	C_FLAGS += -g -gdwarf-2
-endif
-
-#C_FLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
-C_FLAGS += -MMD -MP
+ASM_FLAGS = $(MCU) $(OPT) -Wall -fdata-sections -ffunction-sections -MMD -MP -fdiagnostics-color=always
+C_FLAGS = $(MCU) $(INCLUDE_DIR) $(C_DEFINE) $(OPT) -Wall -fdata-sections -ffunction-sections -fdiagnostics-color=always
 
 #链接脚本
 LINKER_FILE = ./bsp/at32f4/linker/AT32F421x8_FLASH.ld
@@ -120,19 +103,17 @@ LIB_FLAGS = -specs=nano.specs -lc -lm -lnosys
 LIBS =
 
 #链接参数
-LD_FLAGS = $(MCU) -T$(LINKER_FILE) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
-
-#C编译的.o文件
-OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(C_SOURCES:.c=.o)))
-vpath %.c $(dir $(C_SOURCES))
+LD_FLAGS = $(MCU) -T$(LINKER_FILE) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -Wl,--gc-sections -fdiagnostics-color=always
 
 #汇编编译的.s文件
 OBJS += $(addprefix $(OBJ_DIR)/, $(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(dir $(ASM_SOURCES))
+#C编译的.o文件
+OBJS += $(addprefix $(OBJ_DIR)/, $(notdir $(C_SOURCES:.c=.o)))
+vpath %.c $(dir $(C_SOURCES))
 
 
 all:$(OUT_DIR)/$(TARGET).elf $(OUT_DIR)/$(TARGET).hex $(OUT_DIR)/$(TARGET).bin
-
 
 $(OUT_DIR)/%.hex: $(OUT_DIR)/%.elf | $(OUT_DIR) 
 	$(HEX) $< $@
@@ -162,9 +143,9 @@ $(BUILD_DIR):
 
 -include $(addprefix $(OBJ_DIR)/, $(notdir $(C_SOURCES:.c=.d))) 
 
-.PHONY: show clean debug
+.PHONY: printf clean
 
-show:
+printf:
 #echo $(C_SOURCES)
 #@echo OBJS = $(OBJS)
 #@echo VPATH = $(VPATH)
@@ -173,6 +154,5 @@ show:
 
 
 clean:
-	rm -rf build
-
-
+	$(RM) $(OBJ_DIR)
+	$(RM) $(OUT_DIR)

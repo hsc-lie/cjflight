@@ -6,14 +6,16 @@ target_sources(${PROJECT_NAME}
     gpio/bsp_gpio.c
     usart/bsp_usart.c
     timer/bsp_timer.c
+    interrupt/bsp_interrupt.c
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
     .
+    rcc
+    interrupt
     dma
-	gpio
-	rcc
+    gpio
+    usart
 	timer
-	usart
 )

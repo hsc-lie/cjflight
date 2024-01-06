@@ -3,21 +3,16 @@
 #include "at32f4xx_usart.h"
 
             
-uint8_t USART2Buffer[USART2_BUFFER_SIZE];
-CircularQueue_t USART2Queue = 
-{
-	.Buffer = USART2Buffer,
-	.BufferSize = USART2_BUFFER_SIZE,
-
-	.WriteIndex = 0,
-	.ReadIndex = 0,
-};
+static uint8_t USART2Buffer[USART2_BUFFER_SIZE+1];
+RingQueue_t USART2RingQueue;
 
 
 void BSPUSART1Init()
 {
 	USART_InitType usartInitStructure;
 	NVIC_InitType nvicInitStructure;
+
+	RingQueueInit(&USART2RingQueue, USART2Buffer, USART2_BUFFER_SIZE+1);
 
 	USART_StructInit(&usartInitStructure);
 	usartInitStructure.USART_BaudRate = 115200;
@@ -86,3 +81,39 @@ void BSPUSARTSendData(USART_Type * USARTx,  uint8_t * data, uint32_t len)
 	}
 }
 
+uint32_t BSPUSART2ReadData(uint8_t *data, uint32_t len)
+{
+	return RingQueueReadData(&USART2RingQueue, data, len);
+	//return 0;
+}
+
+/**
+  * @brief  This function handles USART1 global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void USART1_IRQHandler(void)
+{
+	if(USART_GetITStatus(USART1, USART_INT_RDNE) != RESET)
+	{
+
+	}
+}
+
+/**
+  * @brief  This function handles USART2 global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void USART2_IRQHandler(void)
+{
+	if(USART_GetITStatus(USART2, USART_INT_RDNE) == SET)
+	{
+		USART_ClearITPendingBit(USART2, USART_INT_RDNE);	
+	}
+
+	if(USART_GetITStatus(USART2, USART_INT_IDLEF) == SET)
+	{
+    	USART_ClearITPendingBit(USART2, USART_INT_IDLEF);	
+	}
+}
