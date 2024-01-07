@@ -140,7 +140,7 @@ int main(void)
 	FilterInit();
 
 	/*MPU6050初始化*/
-	//MPU6050Init(&MPU6050);
+	MPU6050Init(&MPU6050);
 
 	/*气压计初始化*/
 	//BMP280_Init(&BMP280);

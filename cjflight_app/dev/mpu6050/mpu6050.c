@@ -46,16 +46,12 @@ MPU6050_ERROR_t MPU6050Init(MPU6050_t *mpu6050)
 		return MPU6050_ERROR_t_NULL;
 	}
 	
-	MPU6050Delay();
-	
 	//检测陀螺仪	
-	while(readData != 0x98)
-	//while(readData != 0x68)
-	{	
-		//mpu6050->I2CWriteReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
-		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
+	do
+	{
 		MPU6050Delay();
-	}
+		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
+	} while (readData != 0x98);
 	
 		
 	writeData = 0x00;

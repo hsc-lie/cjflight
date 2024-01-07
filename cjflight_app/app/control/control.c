@@ -42,9 +42,9 @@ static PID_Base_t PID_DItemFilterYawRate(PID_Base_t in)
 //俯仰角角速度环PID
 PID_t PID_PitchRate = 
 {
-	.P = 3.6,
-	.I = 0.02,
-	.D = 52,    //18
+	.P = 4.8,    //3.6
+	.I = 0.01,  //0.2
+	.D = 52,    //18 52
 	.LastDeviation = 0,
 	.ISum = 0,
 	.ISumMin = -500,
@@ -58,15 +58,15 @@ PID_t PID_PitchRate =
 //俯仰角角度环PID
 PID_t PID_PitchAngle = 
 {
-	.P = 5,       
+	.P = 10,       
 	.I = 0.0,
 	.D = 0.0,     
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = -0,
 	.ISumMax = 0,
-	.OutMin = -300,
-	.OutMax = 300,
+	.OutMin = -720,
+	.OutMax = 720,
 
 	.DFilterFunc = NULL,
 };
@@ -74,8 +74,8 @@ PID_t PID_PitchAngle =
 //横滚角角速度环PID
 PID_t PID_RollRate = 
 {
-	.P = 3.6 * 0.75,
-	.I = 0.02 * 0.75,
+	.P = 4.8 * 0.75,
+	.I = 0.01 * 0.75,
 	.D = 52 * 0.75,
 	.ISum = 0,
 	.LastDeviation = 0,
@@ -90,15 +90,15 @@ PID_t PID_RollRate =
 //横滚角角度环PID
 PID_t PID_RollAngle = 
 {
-	.P = 5,
+	.P = 10,
 	.I = 0,
 	.D = 0,
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = 0,
 	.ISumMax = 0,
-	.OutMin = -300,
-	.OutMax = 300,
+	.OutMin = -720,
+	.OutMax = 720,
 
 	.DFilterFunc = NULL,
 };
@@ -122,15 +122,15 @@ PID_t PID_YawRate =
 //偏航角角度环PID
 PID_t PID_YawAngle = 
 {
-	.P = 5,
+	.P = 10,
 	.I = 0,
 	.D = 0,
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = 0,
 	.ISumMax = 0,
-	.OutMin = -300,
-	.OutMax = 300,
+	.OutMin = -720,
+	.OutMax = 720,
 
 	.DFilterFunc = NULL,
 };

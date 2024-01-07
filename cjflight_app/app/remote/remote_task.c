@@ -19,6 +19,8 @@ static USARTDev_t *IBusUSARTDev = NULL;
 static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 {
 	int throttle = 0;
+	int16_t ibusChannelValue;
+	int16_t remoteValue;
 
 	/**********************油门**************************/
     throttle = IBusGetChannelData(ibus, IBUS_Channel3);
@@ -27,17 +29,11 @@ static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
     throttle = (THROTTLE_TO_MOTOR_MAX - THROTTLE_TO_MOTOR_MIN) * (throttle - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN);
 	throttle += THROTTLE_TO_MOTOR_MIN;
 
-
-	
-	int16_t ibusChannelValue;
-	int16_t remoteValue;
-	
 	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel3); 
 
 	remoteValue = (THROTTLE_OUT_MAX - THROTTLE_OUT_MIN) * (ibusChannelValue - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN) + THROTTLE_OUT_MIN;
 	RemoteDataSetRockerValue(remote, REMOTE_DATA_LEFT_ROCKER_Y, remoteValue);
 	
-
 	ibusChannelValue = IBusGetChannelData(ibus, IBUS_Channel2);
 	remoteValue = (SET_PITCH_MAX - SET_PITCH_MIN) * (ibusChannelValue - REMOTE_VALUE_MIN)/(REMOTE_VALUE_MAX - REMOTE_VALUE_MIN) + SET_PITCH_MIN;
 	RemoteDataSetRockerValue(remote, REMOTE_DATA_RIGHT_ROCKER_Y, remoteValue);
@@ -70,24 +66,18 @@ static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 static void IBusDataUpdate()
 {
 	uint8_t isGetIBUSPackage;
-	uint8_t data[32];
+	uint8_t data[64];
 	uint32_t outLen = 0;
-
 	RemoteData_t remoteData = {0};
 	
 	USARTDevReadData(USART_REMOTE, data, sizeof(data), &outLen);
-
 	IBusAnalysisData(&IBus, data, outLen, &isGetIBUSPackage);
 
-	
 	if(TRUE == isGetIBUSPackage)
 	{
 		IBusDataToRemoteData(&IBus, &remoteData);
-
 		xQueueSend(RemoteDataQueue,&remoteData,0);
 	}
-
-
 }
 
 void RemoteTask(void * parameters)

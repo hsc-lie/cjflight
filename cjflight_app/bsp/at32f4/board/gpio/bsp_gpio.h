@@ -30,7 +30,7 @@
 
 
 
-#if 0//四旋翼上
+#if 1//四旋翼上
 #define SIMULATION_I2C_SCL_GPIO          GPIOA
 #define SIMULATION_I2C_SCL_GPIO_PIN      GPIO_Pins_10
 #define SIMULATION_I2C_SDA_GPIO          GPIOA

@@ -5,7 +5,7 @@
 #include "ring_queue.h"
 
 
-#define USART2_RX_DMA_BUFFER_SIZE        (32)
+#define USART2_RX_DMA_BUFFER_SIZE        (64)
 static uint8_t USARTRxDMABuffer[USART2_RX_DMA_BUFFER_SIZE];
 
 

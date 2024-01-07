@@ -17,11 +17,11 @@
 
 
 
-#define SET_PITCH_MIN             (-35)
-#define SET_PITCH_MAX              35
+#define SET_PITCH_MIN             (-45)
+#define SET_PITCH_MAX              45
 
-#define SET_ROLL_MIN              (-35)
-#define SET_ROLL_MAX               35
+#define SET_ROLL_MIN              (-45)
+#define SET_ROLL_MAX               45
 
 #define SET_YAW_RATE_MIN           (-1.0f)
 #define SET_YAW_RATE_MAX           (1.0f)
