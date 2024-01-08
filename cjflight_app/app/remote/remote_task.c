@@ -71,9 +71,8 @@ static void IBusDataUpdate()
 	RemoteData_t remoteData = {0};
 	
 	USARTDevReadData(USART_REMOTE, data, sizeof(data), &outLen);
-	IBusAnalysisData(&IBus, data, outLen, &isGetIBUSPackage);
 
-	if(TRUE == isGetIBUSPackage)
+	if(TRUE == IBusAnalysisData(&IBus, data, outLen))
 	{
 		IBusDataToRemoteData(&IBus, &remoteData);
 		xQueueSend(RemoteDataQueue,&remoteData,0);

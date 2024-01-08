@@ -37,14 +37,36 @@ static PID_Base_t PID_DItemFilterYawRate(PID_Base_t in)
 	return  biquad_filter(&biquad_YawDItemParam, in);
 }
 
+#define PID_PITCH_ANGLE_P    9.0f  
+#define PID_PITCH_ANGLE_I    0.0f
+#define PID_PITCH_ANGLE_D    0.0f
 
+#define PID_PITCH_RATE_P     4.8f//3.6
+#define PID_PITCH_RATE_I     0.005f
+#define PID_PITCH_RATE_D     52.0f
+
+#define PID_ROLL_ANGLE_P     PID_PITCH_ANGLE_P
+#define PID_ROLL_ANGLE_I     PID_PITCH_ANGLE_I
+#define PID_ROLL_ANGLE_D     PID_PITCH_ANGLE_D
+
+#define PID_ROLL_RATE_P      (0.75 * PID_PITCH_RATE_P)
+#define PID_ROLL_RATE_I      (0.75 * PID_PITCH_RATE_I)
+#define PID_ROLL_RATE_D      (0.75 * PID_PITCH_RATE_D)
+
+#define PID_YAW_ANGLE_P      PID_PITCH_ANGLE_P
+#define PID_YAW_ANGLE_I      PID_PITCH_ANGLE_I
+#define PID_YAW_ANGLE_D      PID_PITCH_ANGLE_D
+
+#define PID_YAW_RATE_P       4.8f
+#define PID_YAW_RATE_I       0.01f
+#define PID_YAW_RATE_D       52.0f
 
 //俯仰角角速度环PID
 PID_t PID_PitchRate = 
 {
-	.P = 4.8,    //3.6
-	.I = 0.01,  //0.2
-	.D = 52,    //18 52
+	.P = PID_PITCH_RATE_P,    
+	.I = PID_PITCH_RATE_I,
+	.D = PID_PITCH_RATE_D, 
 	.LastDeviation = 0,
 	.ISum = 0,
 	.ISumMin = -500,
@@ -58,9 +80,9 @@ PID_t PID_PitchRate =
 //俯仰角角度环PID
 PID_t PID_PitchAngle = 
 {
-	.P = 10,       
-	.I = 0.0,
-	.D = 0.0,     
+	.P = PID_PITCH_ANGLE_P,       
+	.I = PID_PITCH_ANGLE_I,
+	.D = PID_PITCH_ANGLE_D,     
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = -0,
@@ -74,9 +96,9 @@ PID_t PID_PitchAngle =
 //横滚角角速度环PID
 PID_t PID_RollRate = 
 {
-	.P = 4.8 * 0.75,
-	.I = 0.01 * 0.75,
-	.D = 52 * 0.75,
+	.P = PID_ROLL_RATE_P,
+	.I = PID_ROLL_RATE_I,
+	.D = PID_ROLL_RATE_D,
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = -500,
@@ -90,9 +112,9 @@ PID_t PID_RollRate =
 //横滚角角度环PID
 PID_t PID_RollAngle = 
 {
-	.P = 10,
-	.I = 0,
-	.D = 0,
+	.P = PID_ROLL_ANGLE_P,
+	.I = PID_ROLL_ANGLE_I,
+	.D = PID_ROLL_ANGLE_D,
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = 0,
@@ -106,9 +128,9 @@ PID_t PID_RollAngle =
 //偏航角角速度环PID
 PID_t PID_YawRate = 
 {
-	.P = 8,
-	.I = 0.010,
-	.D = 0,
+	.P = PID_YAW_RATE_P,
+	.I = PID_YAW_RATE_I,
+	.D = PID_YAW_RATE_D,
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = -500,
@@ -122,9 +144,9 @@ PID_t PID_YawRate =
 //偏航角角度环PID
 PID_t PID_YawAngle = 
 {
-	.P = 10,
-	.I = 0,
-	.D = 0,
+	.P = PID_YAW_ANGLE_P,
+	.I = PID_YAW_ANGLE_I,
+	.D = PID_YAW_ANGLE_D,
 	.ISum = 0,
 	.LastDeviation = 0,
 	.ISumMin = 0,
@@ -146,10 +168,6 @@ biquadFilter_t biquad_GyroParameterZ = {0};
 biquadFilter_t biquad_AccParameterX = {0};
 biquadFilter_t biquad_AccParameterY = {0};
 biquadFilter_t biquad_AccParameterZ = {0};
-
-
-
-
 
 
 //姿态四元数
@@ -174,11 +192,7 @@ QuaternionPIParams_t QuaternionPIParams =
 };
 
 
-
-
 biquadFilter_t position_z_d_ltem_biquad_parameter = {0};
-
-
 
 
 #define GRAVITY_ACC         980
@@ -256,7 +270,7 @@ static void MotorStopAll()
 void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050ConvertData_t * gyro)
 {
 	uint32_t i;
-	static uint8_t attitude_control_count = 0;
+	static uint8_t timeCount = 0;
 
 
 	float yaw_error;
@@ -287,21 +301,15 @@ void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeDa
 	setAngle->Roll += ROLL_ZERO;
 
 
-	attitude_control_count++;
-	if(1 == attitude_control_count)
+	++timeCount;
+	if(5u == timeCount)
 	{
+		timeCount = 0;
 		pitchRateOut = PID_Control(&PID_PitchAngle, nowAngle->Pitch - setAngle->Pitch);
-	}
-	else if(2 == attitude_control_count)
-	{
 		rollRateOut = PID_Control(&PID_RollAngle, nowAngle->Roll - setAngle->Roll);
-	}
-	else if(3 == attitude_control_count)
-	{
-		attitude_control_count = 0;
 		yawRateOut = PID_Control(&PID_YawAngle, yaw_error); 
 	}
-
+	
 	pitchOut = (int32_t)PID_Control(&PID_PitchRate, -gyro->Y- pitchRateOut);
 	rollOut = (int32_t)PID_Control(&PID_RollRate, -gyro->X- rollRateOut);
 	yawOut = (int32_t)PID_Control(&PID_YawRate, gyro->Z- yawRateOut);
@@ -317,91 +325,12 @@ void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeDa
 		motorOut[i] = IntRange(motorOut[i],MOTOR_PWM_MIN,MOTOR_PWM_MAX);
 		MotorOut(&Motor[i], motorOut[i]);
 	}
-
-	
 }
-
-/* Workaround a lack of optimization in gcc */
-float exp_cst1 = 2139095040.f;
-float exp_cst2 = 0.f;
-
-
-/* Relative error bounded by 1e-5 for normalized outputs
-   Returns invalid outputs for nan inputs
-   Continuous error */
-float exp_approx(float val) {
-  union { int32_t i; float f; } xu, xu2;
-  float val2, val3, val4, b;
-  int32_t val4i;
-  val2 = 12102203.1615614f*val+1065353216.f;
-  val3 = val2 < exp_cst1 ? val2 : exp_cst1;
-  val4 = val3 > exp_cst2 ? val3 : exp_cst2;
-  val4i = (int32_t) val4;
-  xu.i = val4i & 0x7F800000;                   // mask exponent  / round down to neareset 2^n (implicit mantisa bit)
-  xu2.i = (val4i & 0x7FFFFF) | 0x3F800000;     // force exponent to 0
-  b = xu2.f;
-
-  /* Generated in Sollya with:
-     > f=remez(1-x*exp(-(x-1)*log(2)),
-               [|(x-1)*(x-2), (x-1)*(x-2)*x, (x-1)*(x-2)*x*x|],
-               [1.000001,1.999999], exp(-(x-1)*log(2)));
-     > plot(exp((x-1)*log(2))/(f+x)-1, [1,2]);
-     > f+x;
-  */
-  return
-    xu.f * (0.509871020343597804469416f + b *
-            (0.312146713032169896138863f + b *
-             (0.166617139319965966118107f + b *
-              (-2.19061993049215080032874e-3f + b *
-               1.3555747234758484073940937e-2f))));
-}
-
-
-/* Absolute error bounded by 1e-6 for normalized inputs
-   Returns a finite number for +inf input
-   Returns -inf for nan and <= 0 inputs.
-   Continuous error. */
-float log_approx(float val) {
-  union { float f; int32_t i; } valu;
-  float exp, addcst, x;
-  valu.f = val;
-  exp = valu.i >> 23;
-  /* 89.970756366f = 127 * log(2) - constant term of polynomial */
-  addcst = val > 0 ? -89.970756366f : -(float)INFINITY;
-  valu.i = (valu.i & 0x7FFFFF) | 0x3F800000;
-  x = valu.f;
-
-
-  /* Generated in Sollya using:
-    > f = remez(log(x)-(x-1)*log(2),
-            [|1,(x-1)*(x-2), (x-1)*(x-2)*x, (x-1)*(x-2)*x*x,
-              (x-1)*(x-2)*x*x*x|], [1,2], 1, 1e-8);
-    > plot(f+(x-1)*log(2)-log(x), [1,2]);
-    > f+(x-1)*log(2)
- */
-  return
-    x * (3.529304993f + x * (-2.461222105f +
-      x * (1.130626167f + x * (-0.288739945f +
-        x * 3.110401639e-2f))))
-    + (addcst + 0.69314718055995f*exp);
-}
-
-
-float pow_approx(float a, float b)
-{
-    return exp_approx(b * log_approx(a));
-}
-
 
 float PressureToAltitude(float pressure)//cm
 { 
-    //return 4433000.0f * (1.0f - powf(0.190295f, pressure/101325.0f));
-	//return 44300.0f * (1.0f - powf(pressure/101325.0f, 0.190257519));
-	//return (1.0f - pow_approx(pressure / 101325.0f, 0.190295f)) * 4433000.0f;
 	return (1.0f - powf(pressure / 101325.0f, 0.190295f)) * 4433000.0f;
 }
-
-
 
 #define TIME_CONTANST_Z     5.0f
 #define K_ACC_Z (5.0f / (TIME_CONTANST_Z * TIME_CONTANST_Z * TIME_CONTANST_Z))

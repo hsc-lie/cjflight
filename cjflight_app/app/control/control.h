@@ -5,7 +5,7 @@
 #include "common.h"
 
 
-#define ATTITUDE_CONTROL_OUT_MAX     3000
+#define ATTITUDE_CONTROL_OUT_MAX     2000
 
 #define MOTOR_STOP_PWM               0
 

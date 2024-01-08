@@ -6,7 +6,6 @@
 
 #define ABS(x)         ((x) < 0 ? (-(x)):(x))
 
-
 #ifndef NULL
 #define NULL  ((void *)0)
 #endif

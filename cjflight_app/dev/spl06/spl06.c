@@ -243,10 +243,6 @@ float SPL06GetPressure(SPL06_t * spl06)
 //获取SPL06所有数据
 void SPL06GetDataAll(SPL06_t * spl06, SPL06Data_t * data)
 {
-
 	data->Pressure = SPL06GetPressure(spl06);
 	data->Temperature = SPL06GetTemperature(spl06);
-	
 }
-
-
