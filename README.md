@@ -34,8 +34,7 @@ Windows环境下，以MinGW64为例
     cmake -G "MinGW Makefiles" ..
     cmake --build .
 
-### 3.2 使用Makefile构建
-在Linux环境下，或在windows使用git的命令行中运行
+#### 3.2 使用make构建
+仅限Linux环境，Windows下需安装相关Linux命令的环境，例如Windows下安装Git，使用Git Bash命令窗口下运行
 
     make
-
