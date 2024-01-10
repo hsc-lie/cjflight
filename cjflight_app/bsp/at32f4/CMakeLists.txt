@@ -29,6 +29,7 @@ set(CPU_DEFINE AT32F421C8T7)
 target_compile_definitions(${PROJECT_NAME}
 	PUBLIC
 	${CPU_DEFINE}
+    USE_STDPERIPH_DRIVER
 )
 
 #编译参数
@@ -61,7 +62,3 @@ target_link_options(${PROJECT_NAME}
     ${CPU} ${FPU} ${FLOAT_ABI}
 	-T ${LINKER_FILE}
 )
-
-
-
-

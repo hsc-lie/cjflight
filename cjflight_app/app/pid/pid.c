@@ -55,7 +55,7 @@ PID_Base_t PI_Control(PID_t * const pid, PID_Base_t deviation)
 	}
 	
 	pid->ISum += pid->I * deviation;
-	pid->ISum = float_range(pid->ISum, pid->ISumMin, pid->ISumMax);
+	pid->ISum = PID_Limit(pid->ISum, pid->ISumMin, pid->ISumMax);
 	
 	out = pid->P * deviation + pid->ISum;
 	out = PID_Limit(out, pid->OutMin, pid->OutMax);

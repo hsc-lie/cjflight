@@ -33,7 +33,6 @@ set(C_STD -std=c99)
 #全局宏定义
 target_compile_definitions(${PROJECT_NAME}
 	PRIVATE
-	USE_STDPERIPH_DRIVER
 )
 
 
