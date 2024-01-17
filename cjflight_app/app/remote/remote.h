@@ -1,5 +1,5 @@
-#ifndef _REMOTE_H_
-#define _REMOTE_H_
+#ifndef __REMOTE_H_
+#define __REMOTE_H_
 
 #include "common.h"
 
@@ -41,4 +41,4 @@ void RemoteTask(void * parameters);
 
 
 
-#endif /*_REMOTE_H_*/
+#endif /*__REMOTE_H_*/

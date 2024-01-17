@@ -19,6 +19,37 @@ static float InvSqrt(float x)
 }
 
 /*
+ * @函数名  QuaternionInit
+ * @用  途  四元数初始化
+ * @参  数  quaternion:四元数
+ * @返回值  
+*/
+void QuaternionInit(Quaternion_t *quaternion)
+{
+	quaternion->q0 = 1.0f;
+	quaternion->q1 = 0.0f;
+	quaternion->q2 = 0.0f;
+	quaternion->q3 = 0.0f;
+}
+
+/*
+ * @函数名  QuaternionPIParamsInit
+ * @用  途  四元数PI参数初始化
+ * @参  数  params:PI参数
+ *          p:P值
+ *          i:I值
+ * @返回值  
+*/
+void QuaternionPIParamsInit(QuaternionPIParams_t *params, float p, float i)
+{
+	params->P = p;
+	params->I = i;
+	params->exInt = 0.0f;
+	params->eyInt = 0.0f;
+	params->ezInt = 0.0f;
+}
+
+/*
  * @函数名  QuaternionGetPIGyroOffset
  * @用  途  PI互补滤波求补正
  * @参  数  quaternion:四元数

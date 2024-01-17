@@ -79,11 +79,11 @@ INCLUDE_DIRS =\
 	app/pid \
 	app/quaternion \
 	app/remote \
+	app/sensors \
 	common \
 	common/ring_queue \
 	protocol_stack/ibus \
-	dal/led \
-	dal/remote \
+	dev/led \
 	dev/bmp280 \
 	dev/motor \
 	dev/mpu6050 \
@@ -115,13 +115,17 @@ ASM_SOURCES=./bsp/at32f4/startup/startup_at32f421c8t7.s
 FREERTOS_SOURCES =\
 	./freeRTOS/port/port.c \
 	./freeRTOS/MemMang/heap_4.c \
+	./freeRTOS/croutine.c \
+	./freeRTOS/event_groups.c \
 	./freeRTOS/list.c \
 	./freeRTOS/queue.c \
-	./freeRTOS/tasks.c
+	./freeRTOS/stream_buffer.c \
+	./freeRTOS/tasks.c \
+	./freeRTOS/timers.c \
 
 #c文件
 C_SOURCES=\
-	$(shell find ./app ./common ./protocol_stack ./dal ./dev ./hal ./bsp -name *.c) \
+	$(shell find ./app ./common ./protocol_stack ./dev ./hal ./bsp -name *.c) \
 	$(FREERTOS_SOURCES)
 
 #汇编编译的.s文件

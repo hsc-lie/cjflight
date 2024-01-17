@@ -11,11 +11,4 @@
 extern xQueueHandle RemoteDataQueue;
 
 
-extern xQueueHandle BaroAltitudeQueue;
-extern xQueueHandle AltitudeQueue;
-extern xQueueHandle AccQueue;
-
-
-
-
 #endif /*__MAIN_H_*/

@@ -7,7 +7,7 @@ project(cjflight ASM C)
 add_executable(${PROJECT_NAME})
 
 #是否开启更详细的编译过程信息显示
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # 彩色日志输出；
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
@@ -48,12 +48,10 @@ add_subdirectory(app)
 add_subdirectory(protocol_stack)
 #通用库
 add_subdirectory(common)
-#freeRTOS
-add_subdirectory(freeRTOS)
-#设备抽象层
-add_subdirectory(dal)
 #设备层
 add_subdirectory(dev)
+#FreeRTOS
+add_subdirectory(FreeRTOS)
 #硬件抽象层
 add_subdirectory(hal)
 #BSP

@@ -81,7 +81,7 @@ static void USART2Init()
 	BSPUSART2Init();
 }
 
-#define SIMULATION_I2C_DELAY_COUNT            (20)
+#define SIMULATION_I2C_DELAY_COUNT            (9)
 
 static void SimulationI2C1SCLSet(uint8_t value)
 {

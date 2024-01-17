@@ -14,8 +14,8 @@
 #include "led_cfg.h"
 #include "remote_data.h"
 
-#include "remote_task.h"
-#include "quaternion.h"
+#include "sensors.h"
+#include "remote.h"
 #include "control.h"
 
 
@@ -35,14 +35,6 @@ uint32_t stack_size;
 
 /*遥控数据传输队列句柄*/
 xQueueHandle RemoteDataQueue;
-
-
-xQueueHandle BaroAltitudeQueue;
-xQueueHandle AltitudeQueue;
-xQueueHandle AccQueue;
-
-
-
 
 
 /*遥控器数据接受信号句柄*/
@@ -82,10 +74,6 @@ void PrintfTask(void * parameters)
 	
 	for(;;)
 	{
-		xQueueReceive(BaroAltitudeQueue,&baroAltitude,0);
-		xQueueReceive(AltitudeQueue,&altitude,0);
-		xQueueReceive(AccQueue,&acc,0);
-		
 		
 		//printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
 		//printf("d: %f, %f, %f\n", baroAltitude, altitude, acc);
@@ -97,8 +85,7 @@ void PrintfTask(void * parameters)
 
 
 		//stack_size = uxTaskGetStackHighWaterMark(NULL);
-		vTaskDelay(20);
-		 
+		vTaskDelay(20);	 
 	}
 
 }
@@ -136,24 +123,18 @@ int main(void)
 	USARTDevInit(USART_REMOTE);
 	TimerDevInit(TIMER_MOTOR_PWM);
 
-	/*滤波参数初始化*/
-	FilterInit();
-
 	/*MPU6050初始化*/
 	MPU6050Init(&MPU6050);
 
 	/*气压计初始化*/
 	//BMP280_Init(&BMP280);
-	SPL06Init(&SPL06);
+	//SPL06Init(&SPL06);
 	//I2C_DevAddrTest();
 	
 	/*创建遥控数据消息队列*/
 	RemoteDataQueue = xQueueCreate(1, sizeof(RemoteData_t));
 
-	BaroAltitudeQueue = xQueueCreate(1,sizeof(float));
-	AltitudeQueue = xQueueCreate(1,sizeof(float));
-	AccQueue = xQueueCreate(1,sizeof(float));
-
+	SensorsDataMutex = xSemaphoreCreateMutex();
 
 	/*LED任务创建*/
 	xTaskCreate(LEDTask,
@@ -170,23 +151,32 @@ int main(void)
 				NULL,
 				1,
 				NULL);
+	
+	/*传感器采集任务创建*/
+	xTaskCreate(SensorsTask,
+				"sensors",
+				256,
+				NULL,
+				4,
+				NULL);
 
 	/*遥控器接受任务创建*/
 	xTaskCreate(RemoteTask,
 				"remote",
 				256,
 				NULL,
-				4,
+				3,
 				NULL);
 
 	/*姿态控制任务创建*/
 	xTaskCreate(ControlTask,
 				"control",
-				512,
+				256,
 				NULL,
 				5,
 				NULL);
 
+	
 
 	/*启动调度器*/		
 	vTaskStartScheduler();

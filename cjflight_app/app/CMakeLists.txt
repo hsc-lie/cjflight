@@ -5,7 +5,9 @@ target_sources(${PROJECT_NAME}
     filter/filter.c
     pid/pid.c
     quaternion/quaternion.c
-    remote/remote_task.c
+    sensors/sensors.c
+    remote/remote.c
+    remote/remote_data.c
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -15,5 +17,6 @@ target_include_directories(${PROJECT_NAME}
 	filter
 	pid
 	quaternion
+    sensors
 	remote
 )
