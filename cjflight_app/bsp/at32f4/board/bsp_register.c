@@ -4,6 +4,8 @@
 
 #include "bsp_rcc.h"
 
+#include "bsp_dma.h"
+
 #include "bsp_interrupt.h"
 
 #include "gpio_dev.h"
@@ -42,7 +44,7 @@ static const GPIOPort_t GPIOMapping[GPIO_TYPE_MAX] =
 
 static void GPIOWritePinOut(GPIO_TYPE_t type, uint8_t value)
 {
-	GPIOPort_t *port = &GPIOMapping[type];
+	const GPIOPort_t *port = &GPIOMapping[type];
 
 	if(0u == value)
 	{
@@ -56,14 +58,29 @@ static void GPIOWritePinOut(GPIO_TYPE_t type, uint8_t value)
 
 static uint8_t GPIOReadPinIn(GPIO_TYPE_t type)
 {
-	GPIOPort_t *port = &GPIOMapping[type];
+	const GPIOPort_t *port = &GPIOMapping[type];
 
 	return GPIO_ReadInputDataBit(port->Type, port->Pin);
+}
+
+static USART_DEV_ERROR_t USART1Init()
+{
+	BSPUSART1Init();
+
+	return USART_DEV_ERROR_OK;
 }
 
 static USART_DEV_ERROR_t USART1SendData(uint8_t *data, uint32_t len)
 {
 	BSPUSARTSendData(USART1, data, len);
+
+	return USART_DEV_ERROR_OK;
+}
+
+static USART_DEV_ERROR_t USART2Init()
+{
+	BSPDMA1Cannel5Init();
+	BSPUSART2Init();
 
 	return USART_DEV_ERROR_OK;
 }
@@ -75,11 +92,6 @@ static USART_DEV_ERROR_t USART2ReadData(uint8_t *data, uint32_t readLen, uint32_
 	return USART_DEV_ERROR_OK;
 }
 
-static void USART2Init()
-{
-	BSPDMA1Cannel5Init();
-	BSPUSART2Init();
-}
 
 #define SIMULATION_I2C_DELAY_COUNT            (9)
 
@@ -116,19 +128,27 @@ static SimulationI2C_t SimulationI2C1 =
 	.SDARead = SimulationI2C1SDARead,
 };
 
-static int I2C0SendData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
+static I2C_DEV_ERROR_t I2C0SendData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
 {
 	return SimulationI2CWriteData(&SimulationI2C1, addr, reg, regLen, data, dataLen);
 }
 
-static int I2C0ReadData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
+static I2C_DEV_ERROR_t I2C0ReadData(uint8_t addr, uint8_t *reg, uint32_t regLen, uint8_t * data, uint32_t dataLen)
 {
 	return SimulationI2CReadData(&SimulationI2C1, addr, reg, regLen, data, dataLen);
 }
 
-
-static void Timer3PWMOut(uint8_t channel, uint32_t duty)
+static TIMER_DEV_ERROR_t Timer3Init()
 {
+	BSPTimer3Init();
+
+	return TIMER_DEV_ERROR_OK;
+}
+
+static TIMER_DEV_ERROR_t Timer3PWMOut(uint8_t channel, uint32_t duty)
+{
+	TIMER_DEV_ERROR_t ret = TIMER_DEV_ERROR_OK;
+
 	switch (channel)
 	{
 		case 1:
@@ -144,8 +164,11 @@ static void Timer3PWMOut(uint8_t channel, uint32_t duty)
 			TMR_SetCompare4(TMR3, duty);
 			break;
 		default:
+			ret = TIMER_DEV_ERROR_INVALID;
 			break;
 	}
+
+	return ret;
 }
 
 GPIODev_t GPIODev =
@@ -159,7 +182,7 @@ GPIODev_t GPIODev =
 
 USARTDev_t USART1Dev = 
 {
-	.Init = BSPUSART1Init,
+	.Init = USART1Init,
 	.DeInit = NULL,
 	.SendData = USART1SendData,
 	.ReadData = NULL,
@@ -186,7 +209,7 @@ static I2CDev_t I2CDev0 =
 
 static TimerDev_t Timer3Dev =
 {
-	.Init = BSPTimer3Init,
+	.Init = Timer3Init,
     .DeInit = NULL,
 	.PWMOut = Timer3PWMOut,
 };

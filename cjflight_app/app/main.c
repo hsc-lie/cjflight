@@ -68,9 +68,9 @@ int _write (int fd, char *pBuffer, int size)
 void PrintfTask(void * parameters)
 {
 
-	float baroAltitude = 0;
-	float altitude = 0;
-	float acc = 0;
+	//float baroAltitude = 0;
+	//float altitude = 0;
+	//float acc = 0;
 	
 	for(;;)
 	{
@@ -78,20 +78,20 @@ void PrintfTask(void * parameters)
 		//printf("d: %f, %f, %f\n", printf_velocity, printf_position, printf_acc);
 		//printf("d: %f, %f, %f\n", baroAltitude, altitude, acc);
 		//printf("d: %f, %f, %f\n", 0.6, 6.6, 6.66);
-		printf("hello world\n");
+		//printf("hello world\n");
 		//USART_HAL_SendData(&USART1_HAL, "hello world\n", 12);
 
 		//printf("hello world\n");
 
 
 		//stack_size = uxTaskGetStackHighWaterMark(NULL);
-		vTaskDelay(20);	 
+		vTaskDelay(10);	
 	}
 
 }
 
 
-
+#if 0
 void I2C_DevAddrTest()
 {
 	uint8_t addr = 0;
@@ -108,11 +108,11 @@ void I2C_DevAddrTest()
 
 		if(I2C_DEV_ERROR_OK == ret)
 		{
-			ret = 0;
+			//ret = 0;
 		}
 	}
 }
-
+#endif
 
 
 int main(void)

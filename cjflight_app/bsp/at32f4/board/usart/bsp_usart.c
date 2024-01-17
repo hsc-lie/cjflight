@@ -10,7 +10,7 @@ RingQueue_t USART2RingQueue;
 void BSPUSART1Init()
 {
 	USART_InitType usartInitStructure;
-	NVIC_InitType nvicInitStructure;
+	//NVIC_InitType nvicInitStructure;
 
 	RingQueueInit(&USART2RingQueue, USART2Buffer, USART2_BUFFER_SIZE+1);
 

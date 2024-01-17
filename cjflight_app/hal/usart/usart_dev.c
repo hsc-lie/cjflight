@@ -58,8 +58,6 @@ USART_DEV_ERROR_t USARTDevUnregister(USART_t usart)
 */
 USART_DEV_ERROR_t USARTDevInit(USART_t usart)
 {
-	USART_DEV_ERROR_t ret;
-
 	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->Init);
 
 	return USARTDevTable[usart]->Init();
@@ -73,8 +71,6 @@ USART_DEV_ERROR_t USARTDevInit(USART_t usart)
 */
 USART_DEV_ERROR_t USARTDevDeInit(USART_t usart)
 {
-	USART_DEV_ERROR_t ret;
-
 	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->DeInit);
 
 	return USARTDevTable[usart]->DeInit();
@@ -90,8 +86,6 @@ USART_DEV_ERROR_t USARTDevDeInit(USART_t usart)
 */
 USART_DEV_ERROR_t USARTDevSendData(USART_t usart, uint8_t *data, uint32_t len)
 {
-	USART_DEV_ERROR_t ret;
-
 	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->SendData);
 
 	return USARTDevTable[usart]->SendData(data, len);
@@ -108,8 +102,6 @@ USART_DEV_ERROR_t USARTDevSendData(USART_t usart, uint8_t *data, uint32_t len)
 */
 USART_DEV_ERROR_t USARTDevReadData(USART_t usart, uint8_t *data, uint32_t readLen, uint32_t * outLen)
 {
-	USART_DEV_ERROR_t ret;
-
 	USART_DEV_CHECK_FUNC(usart, USARTDevTable[usart]->ReadData);
 
 	return USARTDevTable[usart]->ReadData(data, readLen, outLen);

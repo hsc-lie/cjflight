@@ -214,13 +214,13 @@ const GPIO_Config_t Timer3_GPIOConfigTable[] =
 
 
 
-void BSPGPIOInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
+void BSPGPIOInit(const GPIO_Config_t * gpioConfigTable, uint32_t len)
 {
 	uint32_t i;
 
 	for(i = 0;i < len;++i)
 	{
-		GPIO_Init(gpioConfigTable[i].GPIOx, (GPIO_Config_t *)&gpioConfigTable[i].GPIO_InitType);
+		GPIO_Init((GPIO_Type *)(gpioConfigTable[i].GPIOx), (GPIO_InitType *)(&gpioConfigTable[i].GPIO_InitType));
 		GPIO_PinAFConfig(gpioConfigTable[i].GPIOx, gpioConfigTable[i].GPIO_PinSource, gpioConfigTable[i].GPIO_AF);
 	}
 }
@@ -229,15 +229,15 @@ void BSPGPIOInit(GPIO_Config_t * const gpioConfigTable, uint32_t len)
 void BSPGPIOInitAll(void)
 {
 	//LED GPIO
-	BSPGPIOInit(&LED_GPIOConfigTable, sizeof(LED_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(LED_GPIOConfigTable, sizeof(LED_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//USART1
-	BSPGPIOInit(&USART1_GPIOConfigTable, sizeof(USART1_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(USART1_GPIOConfigTable, sizeof(USART1_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//USART2
-	BSPGPIOInit(&USART2_GPIOConfigTable, sizeof(USART2_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(USART2_GPIOConfigTable, sizeof(USART2_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//软件I2C
-	BSPGPIOInit(&SimulationI2C_GPIOConfigTable, sizeof(SimulationI2C_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(SimulationI2C_GPIOConfigTable, sizeof(SimulationI2C_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	//Timer3
-	BSPGPIOInit(&Timer3_GPIOConfigTable, sizeof(Timer3_GPIOConfigTable)/sizeof(GPIO_Config_t));
+	BSPGPIOInit(Timer3_GPIOConfigTable, sizeof(Timer3_GPIOConfigTable)/sizeof(GPIO_Config_t));
 	
 }
 

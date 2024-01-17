@@ -31,6 +31,6 @@ extern TIMER_DEV_ERROR_t TimerDevRegister(TIMER_t timer, TimerDev_t *dev);
 extern TIMER_DEV_ERROR_t TimerDevUnregister(TIMER_t timer);
 extern TIMER_DEV_ERROR_t TimerDevInit(TIMER_t timer);
 extern TIMER_DEV_ERROR_t TimerDevDeInit(TIMER_t timer);
-extern TIMER_DEV_ERROR_t TimerPWMOut(TIMER_t timer, uint8_t channel, uint32_t duty);
+extern TIMER_DEV_ERROR_t TimerDevPWMOut(TIMER_t timer, uint8_t channel, uint32_t duty);
 
 #endif /*__TIMER_DEV_H_*/

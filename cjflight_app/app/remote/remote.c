@@ -8,13 +8,7 @@
 #include "remote_data.h"
 
 
-static IBus_t IBus = 
-{
-	0
-};
-
-static USARTDev_t *IBusUSARTDev = NULL;
-
+static IBus_t IBus;
 
 static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 {
@@ -65,8 +59,7 @@ static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 
 static void IBusDataUpdate()
 {
-	uint8_t isGetIBUSPackage;
-	uint8_t data[64];
+	uint8_t data[128];
 	uint32_t outLen = 0;
 	RemoteData_t remoteData = {0};
 	
@@ -85,6 +78,6 @@ void RemoteTask(void * parameters)
 	{
         //xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
         IBusDataUpdate();
-		vTaskDelay(1);
+		vTaskDelay(5);
 	}
 }

@@ -6,9 +6,6 @@
 #define MOTOR_OUT_MIN        (0)
 #define MOTOR_OUT_MAX        (4000)
 
-
-static TimerDev_t *MotorPWMDev = NULL; 
-
 static void Motor1Out(int32_t outValue)
 {
 	TimerDevPWMOut(TIMER_MOTOR_PWM, 1, outValue + 4000);

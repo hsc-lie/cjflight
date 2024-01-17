@@ -183,7 +183,7 @@ static void MotorStopAll()
 
 
 //姿态控制
-void AttitudeControl(uint32_t throttleOut, AttitudeData_t * setAngle, AttitudeData_t * nowAngle, MPU6050ConvertData_t * gyro)
+void AttitudeControl(uint32_t throttleOut, AttitudeData_t *setAngle, AttitudeData_t *nowAngle, TriaxialData_t *gyro)
 {
 	uint32_t i;
 	static uint8_t timeCount = 0;

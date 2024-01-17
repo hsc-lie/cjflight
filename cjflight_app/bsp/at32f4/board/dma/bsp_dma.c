@@ -47,7 +47,6 @@ void BSPDMA1Cannel5Init()
 
 void DMA1_CH5_HT_Transmission()
 {
-	uint32_t i;
 	uint32_t halfSize = USART2_RX_DMA_BUFFER_SIZE >> 1;
 
 	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer, halfSize);	
@@ -56,7 +55,6 @@ void DMA1_CH5_HT_Transmission()
 
 void DMA1_CH5_TC_Transmission()
 {
-	uint32_t i;
 	uint32_t halfSize = USART2_RX_DMA_BUFFER_SIZE >> 1;
 
 	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer+halfSize, halfSize);	

@@ -59,8 +59,6 @@ I2C_DEV_ERROR_t I2CDevUnregister(I2C_t i2c)
 */
 I2C_DEV_ERROR_t I2CDevInit(I2C_t i2c)
 {
-	I2C_DEV_ERROR_t ret;
-
 	I2C_DEV_CHECK_FUNC(i2c, I2CDevTable[i2c]->Init);
 
 	return I2CDevTable[i2c]->Init();
@@ -74,8 +72,6 @@ I2C_DEV_ERROR_t I2CDevInit(I2C_t i2c)
 */
 I2C_DEV_ERROR_t I2CDevDeInit(I2C_t i2c)
 {
-	I2C_DEV_ERROR_t ret;
-
 	I2C_DEV_CHECK_FUNC(i2c, I2CDevTable[i2c]->DeInit);
 
 	return I2CDevTable[i2c]->DeInit();
