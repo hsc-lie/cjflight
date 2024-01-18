@@ -75,6 +75,31 @@ MPU6050_ERROR_t MPU6050Init(MPU6050_t *mpu6050)
 }
 
 /*
+ * @函数名  MPU6050GetBaseAcc
+ * @用  途  获取MPU6050三轴加速度原始值
+ * @参  数  mpu6050:mpu6050结构体指针
+ *          acc:输出的三轴加速度原始值
+ * @返回值  错误的状态
+*/
+MPU6050_ERROR_t MPU6050GetBaseAcc(MPU6050_t *mpu6050, MPU6050BaseData_t *acc)
+{
+	uint8_t data[6] = {0};
+
+	if(NULL == mpu6050->I2CReadReg)
+	{
+		return MPU6050_ERROR_t_NULL;
+	}
+
+	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 6);
+
+	acc->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]);
+	acc->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]);
+	acc->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]);
+
+	return MPU6050_ERROR_t_OK;
+}
+
+/*
  * @函数名  MPU6050GetBaseGyro
  * @用  途  获取MPU6050三轴角速度原始值
  * @参  数  mpu6050:mpu6050结构体指针
@@ -85,9 +110,7 @@ MPU6050_ERROR_t MPU6050GetBaseGyro(MPU6050_t *mpu6050, MPU6050BaseData_t *gyro)
 {
 	uint8_t data[6] = {0};
 
-	if((NULL == mpu6050)
-		|| (NULL == mpu6050->I2CReadReg)
-	)
+	if(NULL == mpu6050->I2CReadReg)
 	{
 		return MPU6050_ERROR_t_NULL;
 	}
@@ -102,28 +125,31 @@ MPU6050_ERROR_t MPU6050GetBaseGyro(MPU6050_t *mpu6050, MPU6050BaseData_t *gyro)
 }
 
 /*
- * @函数名  MPU6050GetBaseAcc
- * @用  途  获取MPU6050三轴加速度原始值
+ * @函数名  MPU6050GetBaseAll
+ * @用  途  获取MPU6050三轴加速度和三轴角速度原始值
  * @参  数  mpu6050:mpu6050结构体指针
  *          acc:输出的三轴加速度原始值
+ *          gyro:输出的三轴角速度原始值
  * @返回值  错误的状态
 */
-MPU6050_ERROR_t MPU6050GetBaseAcc(MPU6050_t *mpu6050, MPU6050BaseData_t *acc)
+MPU6050_ERROR_t MPU6050GetBaseAll(MPU6050_t *mpu6050, MPU6050BaseData_t *acc, MPU6050BaseData_t *gyro)
 {
-	uint8_t data[6] = {0};
+	uint8_t data[12] = {0};
 
-	if((NULL == mpu6050)
-		|| (NULL == mpu6050->I2CReadReg)
-	)
+	if(NULL == mpu6050->I2CReadReg)
 	{
 		return MPU6050_ERROR_t_NULL;
 	}
 
-	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 6);
+	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 12);
 
 	acc->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]);
 	acc->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]);
 	acc->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]);
+
+	gyro->X = (int16_t)((uint16_t)(data[6] << 8) | data[7]);
+	gyro->Y = (int16_t)((uint16_t)(data[8] << 8) | data[9]);
+	gyro->Z = (int16_t)((uint16_t)(data[10] << 8) | data[11]);
 
 	return MPU6050_ERROR_t_OK;
 }

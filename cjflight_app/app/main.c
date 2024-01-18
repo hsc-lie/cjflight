@@ -33,12 +33,6 @@ uint32_t heap_size1;
 uint32_t heap_size2;
 uint32_t stack_size;
 
-/*遥控数据传输队列句柄*/
-xQueueHandle RemoteDataQueue;
-
-
-/*遥控器数据接受信号句柄*/
-//xSemaphoreHandle remote_read_semaphore;
 
 void LEDTask(void * parameters)
 {
@@ -65,12 +59,14 @@ int _write (int fd, char *pBuffer, int size)
 }
 
 
-void PrintfTask(void * parameters)
+void PrintTask(void * parameters)
 {
 
 	//float baroAltitude = 0;
 	//float altitude = 0;
 	//float acc = 0;
+
+	
 	
 	for(;;)
 	{
@@ -121,6 +117,7 @@ int main(void)
 	I2CDevInit(I2C_TYPE_SENSOR);
 	USARTDevInit(USART_PRINTF);
 	USARTDevInit(USART_REMOTE);
+	TimerDevInit(TIMER_TEST);
 	TimerDevInit(TIMER_MOTOR_PWM);
 
 	/*MPU6050初始化*/
@@ -131,8 +128,9 @@ int main(void)
 	//SPL06Init(&SPL06);
 	//I2C_DevAddrTest();
 	
-	/*创建遥控数据消息队列*/
-	RemoteDataQueue = xQueueCreate(1, sizeof(RemoteData_t));
+	//创建遥控数据消息队列
+	RemoteDataToControlQueue = xQueueCreate(1, sizeof(RemoteData_t));
+	RemoteDataToPrintQueue = xQueueCreate(1, sizeof(RemoteData_t));
 
 	SensorsDataMutex = xSemaphoreCreateMutex();
 
@@ -145,8 +143,8 @@ int main(void)
 				NULL);
 
 	/*打印任务创建*/
-	xTaskCreate(PrintfTask,
-				"printf",
+	xTaskCreate(PrintTask,
+				"print",
 				256,
 				NULL,
 				1,
@@ -176,11 +174,8 @@ int main(void)
 				5,
 				NULL);
 
-	
-
 	/*启动调度器*/		
 	vTaskStartScheduler();
-
 
 	for(;;)
 	{

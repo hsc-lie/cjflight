@@ -1,12 +1,17 @@
 #include "remote.h"
 
-#include "main.h"
-
-#include "usart_dev.h"
-#include "ibus.h"
-
 #include "remote_data.h"
 
+#include "ibus.h"
+
+#include "usart_dev.h"
+#include "timer_dev.h"
+
+
+//遥控器数据到控制模块队列
+xQueueHandle RemoteDataToControlQueue;
+//遥控器数据到打印模块队列
+xQueueHandle RemoteDataToPrintQueue;
 
 static IBus_t IBus;
 
@@ -62,14 +67,26 @@ static void IBusDataUpdate()
 	uint8_t data[128];
 	uint32_t outLen = 0;
 	RemoteData_t remoteData = {0};
+
+	uint32_t startTimerCount;
+	uint32_t endTimerCount;
+	uint32_t timerDiff;
+
+	TimerDevGetCount(TIMER_TEST, &startTimerCount);
 	
 	USARTDevReadData(USART_REMOTE, data, sizeof(data), &outLen);
-
+	
 	if(TRUE == IBusAnalysisData(&IBus, data, outLen))
 	{
 		IBusDataToRemoteData(&IBus, &remoteData);
-		xQueueSend(RemoteDataQueue,&remoteData,0);
+		xQueueSend(RemoteDataToControlQueue,&remoteData,0);
+		xQueueSend(RemoteDataToPrintQueue,&remoteData,0);
 	}
+
+	TimerDevGetCount(TIMER_TEST, &endTimerCount);
+	timerDiff = endTimerCount - startTimerCount;
+	(void)timerDiff;
+
 }
 
 void RemoteTask(void * parameters)

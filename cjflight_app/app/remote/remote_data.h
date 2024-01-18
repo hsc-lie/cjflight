@@ -5,8 +5,6 @@
 #include "common.h"
 
 
-
-
 typedef enum
 {
 	REMOTE_DATA_LEFT_ROCKER_X,
@@ -15,7 +13,6 @@ typedef enum
 	REMOTE_DATA_RIGHT_ROCKER_Y,
 	REMOTE_DATA_ROCKER_TYPE_MAX
 }REMOTE_DATA_ROCKER_TYPE_t;
-
 
 
 typedef enum

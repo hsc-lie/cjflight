@@ -1,7 +1,6 @@
 #include "bsp_dma.h"
 #include "bsp_usart.h"
-#include "at32f4xx.h"
-
+#include "bsp_timer.h"
 #include "ring_queue.h"
 
 
@@ -48,16 +47,32 @@ void BSPDMA1Cannel5Init()
 void DMA1_CH5_HT_Transmission()
 {
 	uint32_t halfSize = USART2_RX_DMA_BUFFER_SIZE >> 1;
-
+#if 1
 	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer, halfSize);	
+#else
+	uint8_t *p;
+	uint8_t *pEnd = USARTRxDMABuffer + halfSize;
+	for(p = USARTRxDMABuffer;p < pEnd;p++)
+	{
+		RingQueueWriteByte(&USART2RingQueue, *p);
+	}
+#endif
 }
 
 
 void DMA1_CH5_TC_Transmission()
 {
 	uint32_t halfSize = USART2_RX_DMA_BUFFER_SIZE >> 1;
-
-	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer+halfSize, halfSize);	
+#if 1
+	RingQueueWriteData(&USART2RingQueue, USARTRxDMABuffer+halfSize, halfSize);
+#else
+	uint8_t *p;
+	uint8_t *pEnd = USARTRxDMABuffer + USART2_RX_DMA_BUFFER_SIZE;
+	for(p = USARTRxDMABuffer + halfSize;p < pEnd;p++)
+	{
+		RingQueueWriteByte(&USART2RingQueue, *p);
+	}
+#endif
 }
 
 
@@ -66,6 +81,7 @@ void DMA1_Channel7_4_IRQHandler(void)
 	//static int i = 0;
 	//static int j = 0;
 	//传输一半中断
+
 	if(DMA_GetITStatus(DMA1_INT_HT5) == SET)
 	{
 		DMA_ClearITPendingBit(DMA1_INT_HT5);

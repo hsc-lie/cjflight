@@ -64,6 +64,7 @@ typedef struct
 extern MPU6050_ERROR_t MPU6050Init(MPU6050_t * mpu6050);
 extern MPU6050_ERROR_t MPU6050GetBaseGyro(MPU6050_t * mpu6050, MPU6050BaseData_t * gyro);
 extern MPU6050_ERROR_t MPU6050GetBaseAcc(MPU6050_t * mpu6050, MPU6050BaseData_t * acc);
+extern MPU6050_ERROR_t MPU6050GetBaseAll(MPU6050_t *mpu6050, MPU6050BaseData_t *acc, MPU6050BaseData_t *gyro);
 extern MPU6050_ERROR_t MPU6050ConvertDataGyro(MPU6050_t * mpu6050, MPU6050BaseData_t * in, MPU6050ConvertData_t * out);
 extern MPU6050_ERROR_t MPU6050ConvertDataAcc(MPU6050_t * mpu6050, MPU6050BaseData_t * in, MPU6050ConvertData_t * out);
 

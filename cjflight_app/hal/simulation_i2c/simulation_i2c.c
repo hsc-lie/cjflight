@@ -6,7 +6,7 @@
  * @参  数  i2c:模拟I2C
  * @返回值
 */
-static void SimulationI2CDelay(SimulationI2C_t *i2c) 
+static inline void SimulationI2CDelay(SimulationI2C_t *i2c) 
 {
 	register uint32_t i = i2c->DelayCount;
 	while(--i);

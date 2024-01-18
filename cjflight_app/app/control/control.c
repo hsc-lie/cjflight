@@ -2,22 +2,22 @@
 
 #include <math.h>
 
-#include "motor_cfg.h"
-#include "mpu6050_cfg.h"
-#include "bmp280_cfg.h"
-#include "spl06_cfg.h"
-
+#include "main.h"
 #include "sensors.h"
-
 #include "remote.h"
 #include "remote_data.h"
-
 #include "quaternion.h"
 #include "pid.h"
 #include "common.h"
 #include "filter.h"
 
-#include "main.h"
+#include "motor_cfg.h"
+#include "mpu6050_cfg.h"
+#include "bmp280_cfg.h"
+#include "spl06_cfg.h"
+
+#include "timer_dev.h"
+
 
 static biquadFilter_t biquad_PitchDItemParam;
 static biquadFilter_t biquad_RollDItemParam;
@@ -294,6 +294,10 @@ void ControlTask(void * parameters)
 
 	SensorsData_t sensorsData;
 
+	uint32_t startTimerCount;
+	uint32_t endTimerCount;
+	uint32_t timerDiff;
+
 	ControlFilterInit();
 
 	for(;;)
@@ -307,7 +311,7 @@ void ControlTask(void * parameters)
 
 		//接收遥控器数据
 		
-		if(xQueueReceive(RemoteDataQueue,&remoteData,0) == pdFALSE)
+		if(xQueueReceive(RemoteDataToControlQueue,&remoteData,0) == pdFALSE)
 		{
 			remote_lose_count++;
 			if(remote_lose_count > 100)
@@ -362,10 +366,16 @@ void ControlTask(void * parameters)
 			}
 			last_remote_mode = remote_data.mode;*/
 
+			TimerDevGetCount(TIMER_TEST, &startTimerCount);
+
 			setAngle.Pitch = RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_RIGHT_ROCKER_Y);
 			setAngle.Roll = RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_RIGHT_ROCKER_X);
 			setAngle.Yaw = setYaw;
 			AttitudeControl(RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &sensorsData.Angle, &sensorsData.Gyro);
+
+			TimerDevGetCount(TIMER_TEST, &endTimerCount);
+			timerDiff = endTimerCount - startTimerCount;
+			(void)timerDiff;
 		}
 		
 		//vTaskDelayUntil(&taskTickCount,1);

@@ -3,9 +3,7 @@
 
 void RemoteDataSetRockerValue(RemoteData_t * remote, REMOTE_DATA_ROCKER_TYPE_t rockerType, int16_t Value)
 {
-	if((NULL == remote)
-		&& (rockerType >= REMOTE_DATA_ROCKER_TYPE_MAX)
-	)
+	if(rockerType >= REMOTE_DATA_ROCKER_TYPE_MAX)
 	{
 		return;
 	}
@@ -19,9 +17,7 @@ void RemoteDataSetRockerValue(RemoteData_t * remote, REMOTE_DATA_ROCKER_TYPE_t r
 
 int16_t RemoteDataGetRockerValue(RemoteData_t * remote, REMOTE_DATA_ROCKER_TYPE_t rockerType)
 {
-	if((NULL == remote)
-		&& (rockerType >= REMOTE_DATA_ROCKER_TYPE_MAX)
-	)
+	if(rockerType >= REMOTE_DATA_ROCKER_TYPE_MAX)
 	{
 		return 0;
 	}
@@ -35,9 +31,7 @@ int16_t RemoteDataGetRockerValue(RemoteData_t * remote, REMOTE_DATA_ROCKER_TYPE_
 
 void RemoteDataSetSWValue(RemoteData_t * remote, REMOTE_DATA_SW_TYPE_t swType, uint8_t Value)
 {
-	if((NULL == remote)
-		&& (swType >= REMOTE_DATA_SW_TYPE_MAX)
-	)
+	if(swType >= REMOTE_DATA_SW_TYPE_MAX)
 	{
 		return;
 	}
@@ -51,9 +45,7 @@ void RemoteDataSetSWValue(RemoteData_t * remote, REMOTE_DATA_SW_TYPE_t swType, u
 
 uint8_t RemoteDataGetSWValue(RemoteData_t * remote, REMOTE_DATA_SW_TYPE_t swType)
 {
-	if((NULL == remote)
-		&& (swType >= REMOTE_DATA_SW_TYPE_MAX)
-	)
+	if(swType >= REMOTE_DATA_SW_TYPE_MAX)
 	{
 		return 0;
 	}

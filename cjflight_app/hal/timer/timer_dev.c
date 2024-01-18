@@ -77,6 +77,20 @@ TIMER_DEV_ERROR_t TimerDevDeInit(TIMER_t timer)
 }
 
 /*
+ * @函数名  TimerDevGetCount
+ * @用  途  获取定时器设备的计数值
+ * @参  数  timer:定时器设备号
+ *          count:获取到的设备值
+ * @返回值  错误状态值
+*/
+TIMER_DEV_ERROR_t TimerDevGetCount(TIMER_t timer, uint32_t *count)
+{
+	TIMER_DEV_CHECK_FUNC(timer, TimerDevTable[timer]->GetCount);
+
+	return TimerDevTable[timer]->GetCount(count);
+}
+
+/*
  * @函数名  TimerDevPWMOut
  * @用  途  定时器设备PWM输出
  * @参  数  timer:定时器设备号

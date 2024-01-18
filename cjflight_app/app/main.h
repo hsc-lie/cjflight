@@ -8,7 +8,4 @@
 #include "semphr.h"
 
 
-extern xQueueHandle RemoteDataQueue;
-
-
 #endif /*__MAIN_H_*/

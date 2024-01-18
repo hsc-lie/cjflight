@@ -4,6 +4,8 @@
 
 #include "mpu6050_cfg.h"
 
+#include "timer_dev.h"
+
 
 QueueHandle_t SensorsDataMutex;
 static SensorsData_t SensorsData = {0};
@@ -200,13 +202,19 @@ static void SensorsUpdate()
 	
 	AttitudeData_t angle;
 
-    MPU6050GetBaseAcc(&MPU6050, &accBaseData);
-	MPU6050GetBaseGyro(&MPU6050, &gyroBaseData);
+	uint32_t startTimerCount;
+	uint32_t endTimerCount;
+	uint32_t timerDiff;
+
+	TimerDevGetCount(TIMER_TEST, &startTimerCount);
+
+    //MPU6050GetBaseAcc(&MPU6050, &accBaseData);
+	//MPU6050GetBaseGyro(&MPU6050, &gyroBaseData);
+	MPU6050GetBaseAll(&MPU6050, &accBaseData, &gyroBaseData);
 		
     gyroBaseData.X -= -7;
     gyroBaseData.Y -= 54;
     gyroBaseData.Z -= -6;
-
 
     MPU6050ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
     MPU6050ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
@@ -233,6 +241,10 @@ static void SensorsUpdate()
                                 &angle, 
                                 0.001);
 
+	
+	TimerDevGetCount(TIMER_TEST, &endTimerCount);
+	timerDiff = endTimerCount - startTimerCount;
+	(void)timerDiff;
 
 	xSemaphoreTake(SensorsDataMutex, portMAX_DELAY);
 
@@ -253,7 +265,6 @@ static void SensorsUpdate()
     SensorsData.Angle.Yaw = angle.Yaw;
 
 	xSemaphoreGive(SensorsDataMutex);
-	
 } 
 
 

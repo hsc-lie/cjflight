@@ -11,41 +11,44 @@
 */
 bool IBusAnalysisData(IBus_t *ibus, uint8_t *data, uint32_t len)
 {
-	uint32_t i;
+	uint8_t *p;
+	uint8_t *pEnd;
+	uint8_t i;
 	uint16_t checkSum;
 	bool getPackageFlag = FALSE;
 
-	for(i = 0;i < len;i++)
+	pEnd = data + len;
+	for(p = data;p < pEnd;++p)
 	{
 		//头
-		if((0 == ibus->NowDataIndex) && (0x20 == *data))
+		if((0 == ibus->NowDataIndex) && (0x20 == *p))
 		{
-			ibus->DataBuffer[0] = *data;
+			ibus->DataBuffer[0] = *p;
 			++ibus->NowDataIndex;
 		}
 		//头
-		else if((1 == ibus->NowDataIndex) && (0x40 == *data))
+		else if((1 == ibus->NowDataIndex) && (0x40 == *p))
 		{
-			ibus->DataBuffer[1] = *data;
+			ibus->DataBuffer[1] = *p;
 			ibus->CheckSum = 0;
 			++ibus->NowDataIndex;
 		}
 		//数据
 		else if((ibus->NowDataIndex > 1) && (ibus->NowDataIndex < 30))    //30
 		{
-			ibus->DataBuffer[ibus->NowDataIndex] = *data;
-		  	ibus->CheckSum += *data;
+			ibus->DataBuffer[ibus->NowDataIndex] = *p;
+		  	ibus->CheckSum += *p;
 		  	++ibus->NowDataIndex;
 		}
 		else if(30 == ibus->NowDataIndex)
 		{
-			ibus->DataBuffer[ibus->NowDataIndex] = *data;
+			ibus->DataBuffer[ibus->NowDataIndex] = *p;
 			++ibus->NowDataIndex;
 		}
 		//数据校验
 		else if(31 == ibus->NowDataIndex)
 		{
-			ibus->DataBuffer[ibus->NowDataIndex] = *data;
+			ibus->DataBuffer[ibus->NowDataIndex] = *p;
 			ibus->NowDataIndex = 0;
 			
 			checkSum = (((uint16_t)ibus->DataBuffer[31]) << 8) | ibus->DataBuffer[30];
@@ -69,8 +72,6 @@ bool IBusAnalysisData(IBus_t *ibus, uint8_t *data, uint32_t len)
 		{
 			ibus->NowDataIndex = 0;
 		}
-		
-		++data;
 	}
 
 	return getPackageFlag;
@@ -85,12 +86,10 @@ bool IBusAnalysisData(IBus_t *ibus, uint8_t *data, uint32_t len)
 */
 uint16_t IBusGetChannelData(IBus_t *ibus, IBUS_Channel_t channel)
 {
-	if(NULL == ibus)
+	if(channel >= IBUS_Channel_MAX)
 	{
 		return 0;
 	}
-	else
-	{
-		return ibus->ChannelData[channel];
-	}
+
+	return ibus->ChannelData[channel];
 }

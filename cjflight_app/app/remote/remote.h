@@ -3,7 +3,10 @@
 
 #include "common.h"
 
-
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 
 
 #define REMOTE_VALUE_MIN      1000
@@ -17,16 +20,14 @@
 
 
 
-#define SET_PITCH_MIN             (-45)
-#define SET_PITCH_MAX              45
+#define SET_PITCH_MIN             (-40)
+#define SET_PITCH_MAX              40
 
-#define SET_ROLL_MIN              (-45)
-#define SET_ROLL_MAX               45
+#define SET_ROLL_MIN              (-40)
+#define SET_ROLL_MAX               40
 
 #define SET_YAW_RATE_MIN           (-1.0f)
 #define SET_YAW_RATE_MAX           (1.0f)
-
-
 
 typedef enum
 {
@@ -35,7 +36,8 @@ typedef enum
     Auto_Mode,
 }flight_mode_t;
 
-
+extern xQueueHandle RemoteDataToControlQueue;
+extern xQueueHandle RemoteDataToPrintQueue;
 
 void RemoteTask(void * parameters);
 

@@ -93,7 +93,7 @@ static USART_DEV_ERROR_t USART2ReadData(uint8_t *data, uint32_t readLen, uint32_
 }
 
 
-#define SIMULATION_I2C_DELAY_COUNT            (9)
+#define SIMULATION_I2C_DELAY_COUNT            (1)
 
 static void SimulationI2C1SCLSet(uint8_t value)
 {
@@ -171,6 +171,20 @@ static TIMER_DEV_ERROR_t Timer3PWMOut(uint8_t channel, uint32_t duty)
 	return ret;
 }
 
+static TIMER_DEV_ERROR_t Timer6Init()
+{
+	BSPTimer6Init();
+
+	return TIMER_DEV_ERROR_OK;
+}
+
+static TIMER_DEV_ERROR_t Timer6GetCount(uint32_t *count)
+{
+	*count = TimerGetCount(TMR6);
+
+	return TIMER_DEV_ERROR_OK;
+}
+
 GPIODev_t GPIODev =
 {
 	.Init = BSPGPIOInitAll,
@@ -206,11 +220,19 @@ static I2CDev_t I2CDev0 =
 	.ReadData = I2C0ReadData,
 };
 
+static TimerDev_t Timer6Dev =
+{
+	.Init = Timer6Init,
+    .DeInit = NULL,
+	.GetCount = Timer6GetCount,
+	.PWMOut = NULL,
+};
 
 static TimerDev_t Timer3Dev =
 {
 	.Init = Timer3Init,
     .DeInit = NULL,
+	.GetCount = NULL,
 	.PWMOut = Timer3PWMOut,
 };
 
@@ -229,6 +251,7 @@ void BSPMain(void)
 	I2CDevRegister(I2C_TYPE_SENSOR, &I2CDev0);
 
 	TimerDevRegister(TIMER_MOTOR_PWM, &Timer3Dev);
+	TimerDevRegister(TIMER_TEST, &Timer6Dev);
 
 	main();
 }
