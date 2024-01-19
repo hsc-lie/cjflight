@@ -10,22 +10,17 @@
 #define	ACCEL_YOUT_L	                  0x3E
 #define	ACCEL_ZOUT_H	                  0x3F
 #define	ACCEL_ZOUT_L	                  0x40
+#define TEMP_OUT_H                        0x41
+#define TEMP_OUT_L                        0x42
 #define	GYRO_XOUT_H				          0x43
 #define	GYRO_XOUT_L				          0x44	
 #define	GYRO_YOUT_H				          0x45
 #define	GYRO_YOUT_L				          0x46
 #define	GYRO_ZOUT_H				          0x47
 #define	GYRO_ZOUT_L				          0x48
-#define TEMP_OUT_H                        0x41
-#define TEMP_OUT_L                        0x42
 #define POWER_MANAGEMENT1                 0x6b         //电源管理1
 #define WHO_AM_I                          0x75         //设备ID
 
-static void MPU6050Delay()
-{
-	register uint32_t i = 100000;
-	while(--i);
-}
 
 /*
  * @函数名  MPU6050Init
@@ -49,7 +44,6 @@ MPU6050_ERROR_t MPU6050Init(MPU6050_t *mpu6050)
 	//检测陀螺仪	
 	do
 	{
-		MPU6050Delay();
 		mpu6050->I2CReadReg(mpu6050->DevAddr, WHO_AM_I, &readData, 1);
 	} while (readData != 0x98);
 	
@@ -134,22 +128,22 @@ MPU6050_ERROR_t MPU6050GetBaseGyro(MPU6050_t *mpu6050, MPU6050BaseData_t *gyro)
 */
 MPU6050_ERROR_t MPU6050GetBaseAll(MPU6050_t *mpu6050, MPU6050BaseData_t *acc, MPU6050BaseData_t *gyro)
 {
-	uint8_t data[12] = {0};
+	uint8_t data[14] = {0};
 
 	if(NULL == mpu6050->I2CReadReg)
 	{
 		return MPU6050_ERROR_t_NULL;
 	}
 
-	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 12);
+	mpu6050->I2CReadReg(mpu6050->DevAddr, ACCEL_XOUT_H, data, 14);
 
 	acc->X = (int16_t)((uint16_t)(data[0] << 8) | data[1]);
 	acc->Y = (int16_t)((uint16_t)(data[2] << 8) | data[3]);
 	acc->Z = (int16_t)((uint16_t)(data[4] << 8) | data[5]);
 
-	gyro->X = (int16_t)((uint16_t)(data[6] << 8) | data[7]);
-	gyro->Y = (int16_t)((uint16_t)(data[8] << 8) | data[9]);
-	gyro->Z = (int16_t)((uint16_t)(data[10] << 8) | data[11]);
+	gyro->X = (int16_t)((uint16_t)(data[8] << 8) | data[9]) - mpu6050->GyroZero.X;
+	gyro->Y = (int16_t)((uint16_t)(data[10] << 8) | data[11]) - mpu6050->GyroZero.Y;
+	gyro->Z = (int16_t)((uint16_t)(data[12] << 8) | data[13]) - mpu6050->GyroZero.Z;
 
 	return MPU6050_ERROR_t_OK;
 }

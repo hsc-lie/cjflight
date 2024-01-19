@@ -121,6 +121,7 @@ const GPIO_Config_t SimulationI2C_GPIOConfigTable[] =
 	//软件I2C SCL
 	{
 		.GPIOx = SIMULATION_I2C_SCL_GPIO,
+		.GPIO_PinSource = SIMULATION_I2C_SCL_PIN_SOURCE,
 		.GPIO_InitType = 
 		{
 			.GPIO_Pins  = SIMULATION_I2C_SCL_GPIO_PIN,
@@ -134,6 +135,7 @@ const GPIO_Config_t SimulationI2C_GPIOConfigTable[] =
 	//软件I2C SDA
 	{
 		.GPIOx = SIMULATION_I2C_SDA_GPIO,
+		.GPIO_PinSource = SIMULATION_I2C_SDA_PIN_SOURCE,
 		.GPIO_InitType = 
 		{
 			.GPIO_Pins	= SIMULATION_I2C_SDA_GPIO_PIN,

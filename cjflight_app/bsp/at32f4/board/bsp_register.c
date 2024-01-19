@@ -36,10 +36,6 @@ static const GPIOPort_t GPIOMapping[GPIO_TYPE_MAX] =
 	{LED0_GPIO, LED0_GPIO_PIN},
 	{LED1_GPIO, LED1_GPIO_PIN},
 	{LED2_GPIO, LED2_GPIO_PIN},
-	
-	{SIMULATION_I2C_SCL_GPIO, SIMULATION_I2C_SCL_GPIO_PIN},
-	{SIMULATION_I2C_SDA_GPIO, SIMULATION_I2C_SDA_GPIO_PIN},
-
 };
 
 static void GPIOWritePinOut(GPIO_TYPE_t type, uint8_t value)
@@ -93,38 +89,54 @@ static USART_DEV_ERROR_t USART2ReadData(uint8_t *data, uint32_t readLen, uint32_
 }
 
 
-#define SIMULATION_I2C_DELAY_COUNT            (1)
+#define SIMULATION_I2C_DELAY_COUNT            (16)
 
-static void SimulationI2C1SCLSet(uint8_t value)
+
+static void SimulationI2C1SCLSet0()
 {
-	GPIODevWritePinOut(GPIO_TYPE_SIMULATION_I2C_SCL, value);
+	SIMULATION_I2C_SCL_GPIO->BRE = SIMULATION_I2C_SCL_GPIO_PIN;
 }
 
-static void SimulationI2C1SDASet(uint8_t value)
+static void SimulationI2C1SCLSet1()
 {
-	GPIODevWritePinOut(GPIO_TYPE_SIMULATION_I2C_SDA, value);
+	SIMULATION_I2C_SCL_GPIO->BSRE = SIMULATION_I2C_SCL_GPIO_PIN;
 }
 
-static void SimulationI2C1SDADirSet(SIMULATION_I2C_SDA_DIR_t dir)
+static void SimulationI2C1SDASet0()
 {
-	if(SIMULATION_I2C_SDA_RX == dir)
-	{
-		GPIODevWritePinOut(GPIO_TYPE_SIMULATION_I2C_SDA, 1);
-	}
+	SIMULATION_I2C_SDA_GPIO->BRE = SIMULATION_I2C_SDA_GPIO_PIN;
+}
+
+static void SimulationI2C1SDASet1()
+{
+	SIMULATION_I2C_SDA_GPIO->BSRE = SIMULATION_I2C_SDA_GPIO_PIN;
+}
+
+static void SimulationI2C1SDASetTX()
+{
+
+}
+
+static void SimulationI2C1SDASetRX()
+{
+	SIMULATION_I2C_SDA_GPIO->BSRE = SIMULATION_I2C_SDA_GPIO_PIN;
 }
 
 static uint8_t SimulationI2C1SDARead()
 {
-	return GPIODevReadPinIn(GPIO_TYPE_SIMULATION_I2C_SDA);
+	return (SIMULATION_I2C_SDA_GPIO->IPTDT & SIMULATION_I2C_SDA_GPIO_PIN) >> SIMULATION_I2C_SDA_PIN_SOURCE;
 }
 
 
 static SimulationI2C_t SimulationI2C1 = 
 {
 	.DelayCount = SIMULATION_I2C_DELAY_COUNT,
-	.SCLSet = SimulationI2C1SCLSet,
-	.SDASet = SimulationI2C1SDASet,
-	.SDADirSet = SimulationI2C1SDADirSet,
+	.SCLSet0 = SimulationI2C1SCLSet0,
+	.SCLSet1 = SimulationI2C1SCLSet1,
+	.SDASet0 = SimulationI2C1SDASet0,
+	.SDASet1 = SimulationI2C1SDASet1,
+	.SDASetTX = SimulationI2C1SDASetTX,
+	.SDASetRX = SimulationI2C1SDASetRX,
 	.SDARead = SimulationI2C1SDARead,
 };
 

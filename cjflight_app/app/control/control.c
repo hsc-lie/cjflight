@@ -26,42 +26,42 @@ static biquadFilter_t biquad_YawDItemParam;
 
 static PID_Base_t PID_DItemFilterPitchRate(PID_Base_t in)
 {
-	return  biquad_filter(&biquad_PitchDItemParam, in);
+	return biquad_filter(&biquad_PitchDItemParam, in);
 }
 
 static PID_Base_t PID_DItemFilterRollRate(PID_Base_t in)
 {
-	return  biquad_filter(&biquad_RollDItemParam, in);
+	return biquad_filter(&biquad_RollDItemParam, in);
 }
 
 static PID_Base_t PID_DItemFilterYawRate(PID_Base_t in)
 {
-	return  biquad_filter(&biquad_YawDItemParam, in);
+	return biquad_filter(&biquad_YawDItemParam, in);
 }
 
-#define PID_PITCH_ANGLE_P    9.0f  
+#define PID_PITCH_ANGLE_P    7.0f
 #define PID_PITCH_ANGLE_I    0.0f
 #define PID_PITCH_ANGLE_D    0.0f
 
-#define PID_PITCH_RATE_P     4.8f//3.6
+#define PID_PITCH_RATE_P     3.6f//3.6
 #define PID_PITCH_RATE_I     0.001f
-#define PID_PITCH_RATE_D     90.0f
+#define PID_PITCH_RATE_D     52.0f
 
 #define PID_ROLL_ANGLE_P     PID_PITCH_ANGLE_P
 #define PID_ROLL_ANGLE_I     PID_PITCH_ANGLE_I
 #define PID_ROLL_ANGLE_D     PID_PITCH_ANGLE_D
 
-#define PID_ROLL_RATE_P      (0.75 * PID_PITCH_RATE_P)
-#define PID_ROLL_RATE_I      (0.75 * PID_PITCH_RATE_I)
-#define PID_ROLL_RATE_D      (0.75 * PID_PITCH_RATE_D)
+#define PID_ROLL_RATE_P      PID_PITCH_RATE_P
+#define PID_ROLL_RATE_I      PID_PITCH_RATE_I
+#define PID_ROLL_RATE_D      PID_PITCH_RATE_D
 
 #define PID_YAW_ANGLE_P      PID_PITCH_ANGLE_P
 #define PID_YAW_ANGLE_I      PID_PITCH_ANGLE_I
 #define PID_YAW_ANGLE_D      PID_PITCH_ANGLE_D
 
-#define PID_YAW_RATE_P       4.8f
+#define PID_YAW_RATE_P       3.6f
 #define PID_YAW_RATE_I       0.001f
-#define PID_YAW_RATE_D       90.0f
+#define PID_YAW_RATE_D       52.0f
 
 //俯仰角角速度环PID
 PID_t PID_PitchRate = 
@@ -71,8 +71,8 @@ PID_t PID_PitchRate =
 	.D = PID_PITCH_RATE_D, 
 	.LastDeviation = 0,
 	.ISum = 0,
-	.ISumMin = -250,
-	.ISumMax = 250,
+	.ISumMin = -500,
+	.ISumMax = 500,
 	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
 	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 
@@ -103,8 +103,8 @@ PID_t PID_RollRate =
 	.D = PID_ROLL_RATE_D,
 	.ISum = 0,
 	.LastDeviation = 0,
-	.ISumMin = -250,
-	.ISumMax = 250,
+	.ISumMin = -500,
+	.ISumMax = 500,
 	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
 	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 
@@ -135,8 +135,8 @@ PID_t PID_YawRate =
 	.D = PID_YAW_RATE_D,
 	.ISum = 0,
 	.LastDeviation = 0,
-	.ISumMin = -250,
-	.ISumMax = 250,
+	.ISumMin = -500,
+	.ISumMax = 500,
 	.OutMin = -ATTITUDE_CONTROL_OUT_MAX,
 	.OutMax = ATTITUDE_CONTROL_OUT_MAX,
 
@@ -276,11 +276,9 @@ uint32_t position_control(float now_altitude, float set_altitude)
 
 void ControlTask(void * parameters)
 {
-
-	//TickType_t taskTickCount = xTaskGetTickCount();
+	TickType_t taskTickCount;
 	uint32_t timeCount = 0;
 	
-
 	//uint16_t remote_data[IBUS_Channel_MAX] = {0};
 	RemoteData_t remoteData = {0};
 	int32_t remote_lose_count = 0;
@@ -300,6 +298,7 @@ void ControlTask(void * parameters)
 
 	ControlFilterInit();
 
+	taskTickCount = xTaskGetTickCount();
 	for(;;)
 	{
 		timeCount++;
@@ -374,12 +373,12 @@ void ControlTask(void * parameters)
 			AttitudeControl(RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &sensorsData.Angle, &sensorsData.Gyro);
 
 			TimerDevGetCount(TIMER_TEST, &endTimerCount);
-			timerDiff = endTimerCount - startTimerCount;
+			timerDiff = GetTimeDiff(startTimerCount, endTimerCount, 0xFFFF);
 			(void)timerDiff;
 		}
 		
-		//vTaskDelayUntil(&taskTickCount,1);
-		vTaskDelay(1);
+		vTaskDelayUntil(&taskTickCount,1);
+		//vTaskDelay(1);
 	}
 }
 

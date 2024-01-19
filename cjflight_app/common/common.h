@@ -6,7 +6,6 @@
 
 #define ABS(x)         ((x) < 0 ? (-(x)):(x))
 
-
 #ifndef NULL
 #define NULL  ((void *)0)
 #endif
@@ -34,5 +33,7 @@ typedef unsigned long long  uint64_t;
 
 extern int IntRange(int value, int min, int max);
 extern float FloatRange(float value, float min, float max);
+
+extern uint32_t GetTimeDiff(uint32_t start, uint32_t end, uint32_t max);
 
 #endif /*__COMMON_H_*/

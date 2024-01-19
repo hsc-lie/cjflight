@@ -80,19 +80,19 @@ void DMA1_Channel7_4_IRQHandler(void)
 {
 	//static int i = 0;
 	//static int j = 0;
+	
 	//传输一半中断
-
 	if(DMA_GetITStatus(DMA1_INT_HT5) == SET)
 	{
 		DMA_ClearITPendingBit(DMA1_INT_HT5);
 		DMA1_CH5_HT_Transmission();	
-		//i++;
+		//++i;
 	}
 	//传输完成中断
 	if(DMA_GetITStatus(DMA1_INT_TC5) == SET)
 	{
 		DMA_ClearITPendingBit(DMA1_INT_TC5);
 		DMA1_CH5_TC_Transmission();	
-		//j++;
+		//++j;
 	}
 }

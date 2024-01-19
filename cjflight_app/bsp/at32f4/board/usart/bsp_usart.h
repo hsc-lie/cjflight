@@ -5,7 +5,7 @@
 #include "common.h"
 #include "ring_queue.h"
 
-#define USART2_BUFFER_SIZE        (128)
+#define USART2_BUFFER_SIZE        (192)
 
 
 extern RingQueue_t USART2RingQueue;

@@ -64,7 +64,7 @@ static void IBusDataToRemoteData(IBus_t * ibus, RemoteData_t * remote)
 
 static void IBusDataUpdate()
 {
-	uint8_t data[128];
+	static uint8_t data[194];
 	uint32_t outLen = 0;
 	RemoteData_t remoteData = {0};
 
@@ -84,7 +84,7 @@ static void IBusDataUpdate()
 	}
 
 	TimerDevGetCount(TIMER_TEST, &endTimerCount);
-	timerDiff = endTimerCount - startTimerCount;
+	timerDiff = GetTimeDiff(startTimerCount, endTimerCount, 0xFFFF);
 	(void)timerDiff;
 
 }
@@ -95,6 +95,6 @@ void RemoteTask(void * parameters)
 	{
         //xSemaphoreTake(remote_read_semaphore,portMAX_DELAY);
         IBusDataUpdate();
-		vTaskDelay(5);
+		vTaskDelay(1);
 	}
 }

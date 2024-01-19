@@ -66,8 +66,6 @@ void PrintTask(void * parameters)
 	//float altitude = 0;
 	//float acc = 0;
 
-	
-	
 	for(;;)
 	{
 		
@@ -78,8 +76,6 @@ void PrintTask(void * parameters)
 		//USART_HAL_SendData(&USART1_HAL, "hello world\n", 12);
 
 		//printf("hello world\n");
-
-
 		//stack_size = uxTaskGetStackHighWaterMark(NULL);
 		vTaskDelay(10);	
 	}
@@ -181,5 +177,4 @@ int main(void)
 	{
 		
 	}
-
 }

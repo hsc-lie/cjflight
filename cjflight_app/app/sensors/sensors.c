@@ -211,10 +211,6 @@ static void SensorsUpdate()
     //MPU6050GetBaseAcc(&MPU6050, &accBaseData);
 	//MPU6050GetBaseGyro(&MPU6050, &gyroBaseData);
 	MPU6050GetBaseAll(&MPU6050, &accBaseData, &gyroBaseData);
-		
-    gyroBaseData.X -= -7;
-    gyroBaseData.Y -= 54;
-    gyroBaseData.Z -= -6;
 
     MPU6050ConvertDataAcc(&MPU6050, &accBaseData, &accConvertData);
     MPU6050ConvertDataGyro(&MPU6050, &gyroBaseData, &gyroConvertData);
@@ -243,7 +239,7 @@ static void SensorsUpdate()
 
 	
 	TimerDevGetCount(TIMER_TEST, &endTimerCount);
-	timerDiff = endTimerCount - startTimerCount;
+	timerDiff = GetTimeDiff(startTimerCount, endTimerCount, 0xFFFF);
 	(void)timerDiff;
 
 	xSemaphoreTake(SensorsDataMutex, portMAX_DELAY);
@@ -293,17 +289,18 @@ void SensorsGetData(SensorsData_t *data)
 
 void SensorsTask(void *params)
 {
-    //TickType_t taskTickCount = xTaskGetTickCount();
+    TickType_t taskTickCount;
 
     QuaternionInit(&Quaternion);
     QuaternionPIParamsInit(&QuaternionPIParams, 0.4f, 0.000f);
     SensorsFilterInit();
+	
+	taskTickCount = xTaskGetTickCount();
 
     for(;;)
     {
 		SensorsUpdate();
-		vTaskDelay(1);
-        //vTaskDelayUntil(&taskTickCount,1);
+        vTaskDelayUntil(&taskTickCount,1);
 
 #if 0
 		if((timeCount % 10) == 0)

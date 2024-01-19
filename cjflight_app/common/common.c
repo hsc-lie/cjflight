@@ -47,3 +47,20 @@ float FloatRange(float value, float min, float max)
 		return value;
 	}
 }
+
+
+uint32_t GetTimeDiff(uint32_t start, uint32_t end, uint32_t max)
+{
+	uint32_t diff;
+	
+	if(start <= end)
+	{
+		diff = end - start;
+	}
+	else
+	{
+		diff = max - start + end;
+	}
+
+	return diff;
+}

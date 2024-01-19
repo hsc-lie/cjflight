@@ -33,13 +33,17 @@
 #if 1//四旋翼上
 #define SIMULATION_I2C_SCL_GPIO          GPIOA
 #define SIMULATION_I2C_SCL_GPIO_PIN      GPIO_Pins_10
+#define SIMULATION_I2C_SCL_PIN_SOURCE    GPIO_PinsSource10
 #define SIMULATION_I2C_SDA_GPIO          GPIOA
 #define SIMULATION_I2C_SDA_GPIO_PIN      GPIO_Pins_9
+#define SIMULATION_I2C_SDA_PIN_SOURCE    GPIO_PinsSource9
 #else//核心板上
 #define SIMULATION_I2C_SCL_GPIO          GPIOA
 #define SIMULATION_I2C_SCL_GPIO_PIN      GPIO_Pins_8
+#define SIMULATION_I2C_SCL_PIN_SOURCE    GPIO_PinsSource8
 #define SIMULATION_I2C_SDA_GPIO          GPIOB
 #define SIMULATION_I2C_SDA_GPIO_PIN      GPIO_Pins_15
+#define SIMULATION_I2C_SDA_PIN_SOURCE    GPIO_PinsSource15
 #endif
 
 extern void BSPGPIOInitAll(void);

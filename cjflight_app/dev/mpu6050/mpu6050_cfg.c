@@ -21,9 +21,9 @@ MPU6050_t MPU6050 =
 
 	.GyroZero = 
 	{
-		.X = 0,
-		.Y = 0,
-		.Z = 0,
+		.X = -7,
+		.Y = 54,
+		.Z = -1,
 	},
 
 	.I2CWriteReg = MPU6050I2CWriteReg,
