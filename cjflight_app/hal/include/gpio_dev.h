@@ -1,18 +1,15 @@
 #ifndef __GPIO_DEV_H_
 #define __GPIO_DEV_H_
 
-#include "common.h"
-
+#include "dev.h"
 
 typedef enum
 {
     GPIO_TYPE_LED0,
     GPIO_TYPE_LED1,
     GPIO_TYPE_LED2,
-
     GPIO_TYPE_MAX,
 }GPIO_TYPE_t;
-
 
 typedef struct
 {

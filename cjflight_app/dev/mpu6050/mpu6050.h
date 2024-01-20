@@ -51,10 +51,8 @@ typedef struct
 typedef struct
 {
 	uint8_t DevAddr;
-
 	MPU6050_GYRO_RANGE_t GyroRange;
 	MPU6050_ACC_RANGE_t AccRange;
-	
 	void (*I2CWriteReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
 	void (*I2CReadReg)(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len);
 

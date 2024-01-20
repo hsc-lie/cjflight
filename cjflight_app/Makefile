@@ -91,18 +91,10 @@ INCLUDE_DIRS =\
 	freeRTOS \
 	freeRTOS/include \
 	freeRTOS/port \
-	hal/gpio \
-	hal/usart \
-	hal/timer \
-	hal/i2c \
+	hal/include \
 	hal/simulation_i2c \
 	bsp/at32f4 \
-	bsp/at32f4/board/rcc \
-	bsp/at32f4/board/interrupt \
-	bsp/at32f4/board/dma \
-	bsp/at32f4/board/gpio \
-	bsp/at32f4/board/usart \
-	bsp/at32f4/board/timer \
+	bsp/at32f4/board/include \
 	bsp/at32f4/cmsis \
 	bsp/at32f4/at32f4_lib/inc \
 

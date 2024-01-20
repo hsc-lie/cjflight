@@ -206,7 +206,7 @@ static void SensorsUpdate()
 	uint32_t endTimerCount;
 	uint32_t timerDiff;
 
-	TimerDevGetCount(TIMER_TEST, &startTimerCount);
+	TimerDevGetCount(TIMER_DEV_TEST, &startTimerCount);
 
     //MPU6050GetBaseAcc(&MPU6050, &accBaseData);
 	//MPU6050GetBaseGyro(&MPU6050, &gyroBaseData);
@@ -238,7 +238,7 @@ static void SensorsUpdate()
                                 0.001);
 
 	
-	TimerDevGetCount(TIMER_TEST, &endTimerCount);
+	TimerDevGetCount(TIMER_DEV_TEST, &endTimerCount);
 	timerDiff = GetTimeDiff(startTimerCount, endTimerCount, 0xFFFF);
 	(void)timerDiff;
 

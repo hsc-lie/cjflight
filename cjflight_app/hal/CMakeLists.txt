@@ -1,18 +1,14 @@
+aux_source_directory("src" HAL_SOURCE_FILES)
+
 target_sources(${PROJECT_NAME}
     PRIVATE
-    gpio/gpio_dev.c
-    usart/usart_dev.c
-    i2c/i2c_dev.c
+    ${HAL_SOURCE_FILES}
     simulation_i2c/simulation_i2c.c
-    timer/timer_dev.c
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-    gpio
-    usart
-    i2c
+    include
     simulation_i2c
-	timer
 )
 

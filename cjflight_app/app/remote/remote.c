@@ -72,9 +72,9 @@ static void IBusDataUpdate()
 	uint32_t endTimerCount;
 	uint32_t timerDiff;
 
-	TimerDevGetCount(TIMER_TEST, &startTimerCount);
+	TimerDevGetCount(TIMER_DEV_TEST, &startTimerCount);
 	
-	USARTDevReadData(USART_REMOTE, data, sizeof(data), &outLen);
+	USARTDevReadData(USART_DEV_REMOTE, data, sizeof(data), &outLen);
 	
 	if(TRUE == IBusAnalysisData(&IBus, data, outLen))
 	{
@@ -83,7 +83,7 @@ static void IBusDataUpdate()
 		xQueueSend(RemoteDataToPrintQueue,&remoteData,0);
 	}
 
-	TimerDevGetCount(TIMER_TEST, &endTimerCount);
+	TimerDevGetCount(TIMER_DEV_TEST, &endTimerCount);
 	timerDiff = GetTimeDiff(startTimerCount, endTimerCount, 0xFFFF);
 	(void)timerDiff;
 

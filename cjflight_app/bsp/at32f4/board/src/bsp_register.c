@@ -63,14 +63,14 @@ static USART_DEV_ERROR_t USART1Init()
 {
 	BSPUSART1Init();
 
-	return USART_DEV_ERROR_OK;
+	return USART_DEV_OK;
 }
 
 static USART_DEV_ERROR_t USART1SendData(uint8_t *data, uint32_t len)
 {
 	BSPUSARTSendData(USART1, data, len);
 
-	return USART_DEV_ERROR_OK;
+	return USART_DEV_OK;
 }
 
 static USART_DEV_ERROR_t USART2Init()
@@ -78,14 +78,14 @@ static USART_DEV_ERROR_t USART2Init()
 	BSPDMA1Cannel5Init();
 	BSPUSART2Init();
 
-	return USART_DEV_ERROR_OK;
+	return USART_DEV_OK;
 }
 
 static USART_DEV_ERROR_t USART2ReadData(uint8_t *data, uint32_t readLen, uint32_t *outLen)
 {
 	*outLen = BSPUSART2ReadData(data, readLen);
 
-	return USART_DEV_ERROR_OK;
+	return USART_DEV_OK;
 }
 
 
@@ -154,12 +154,12 @@ static TIMER_DEV_ERROR_t Timer3Init()
 {
 	BSPTimer3Init();
 
-	return TIMER_DEV_ERROR_OK;
+	return TIMER_DEV_OK;
 }
 
 static TIMER_DEV_ERROR_t Timer3PWMOut(uint8_t channel, uint32_t duty)
 {
-	TIMER_DEV_ERROR_t ret = TIMER_DEV_ERROR_OK;
+	TIMER_DEV_ERROR_t ret = TIMER_DEV_OK;
 
 	switch (channel)
 	{
@@ -176,7 +176,7 @@ static TIMER_DEV_ERROR_t Timer3PWMOut(uint8_t channel, uint32_t duty)
 			TMR_SetCompare4(TMR3, duty);
 			break;
 		default:
-			ret = TIMER_DEV_ERROR_INVALID;
+			ret = TIMER_DEV_ERROR_INVALID_PARAM;
 			break;
 	}
 
@@ -187,14 +187,14 @@ static TIMER_DEV_ERROR_t Timer6Init()
 {
 	BSPTimer6Init();
 
-	return TIMER_DEV_ERROR_OK;
+	return TIMER_DEV_OK;
 }
 
 static TIMER_DEV_ERROR_t Timer6GetCount(uint32_t *count)
 {
 	*count = TimerGetCount(TMR6);
 
-	return TIMER_DEV_ERROR_OK;
+	return TIMER_DEV_OK;
 }
 
 GPIODev_t GPIODev =
@@ -252,19 +252,15 @@ static TimerDev_t Timer3Dev =
 void BSPMain(void)
 {
 	BSPInterruptInit();
-
 	BSPRCCInitAll();
 
 	GPIODevRegister(&GPIODev);
-
-	USARTDevRegister(USART_PRINTF, &USART1Dev);
-	USARTDevRegister(USART_REMOTE, &USART2Dev);
-
-	I2CDevRegister(I2C_TYPE_SENSOR, &I2CDev0);
-
-	TimerDevRegister(TIMER_MOTOR_PWM, &Timer3Dev);
-	TimerDevRegister(TIMER_TEST, &Timer6Dev);
-
+	USARTDevRegister(USART_DEV_PRINTF, &USART1Dev);
+	USARTDevRegister(USART_DEV_REMOTE, &USART2Dev);
+	I2CDevRegister(I2C_DEV_SENSOR, &I2CDev0);
+	TimerDevRegister(TIMER_DEV_TEST, &Timer6Dev);
+	TimerDevRegister(TIMER_DEV_MOTOR_PWM, &Timer3Dev);
+	
 	main();
 }
 

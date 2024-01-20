@@ -53,7 +53,7 @@ void LEDTask(void * parameters)
 
 int _write (int fd, char *pBuffer, int size)
 {
-	USARTDevSendData(USART_PRINTF, (uint8_t *)pBuffer, (uint32_t)size);
+	USARTDevSendData(USART_DEV_PRINTF, (uint8_t *)pBuffer, (uint32_t)size);
 
 	return size;
 }
@@ -110,11 +110,11 @@ void I2C_DevAddrTest()
 int main(void)
 {
 	GPIODevInit();
-	I2CDevInit(I2C_TYPE_SENSOR);
-	USARTDevInit(USART_PRINTF);
-	USARTDevInit(USART_REMOTE);
-	TimerDevInit(TIMER_TEST);
-	TimerDevInit(TIMER_MOTOR_PWM);
+	I2CDevInit(I2C_DEV_SENSOR);
+	USARTDevInit(USART_DEV_PRINTF);
+	USARTDevInit(USART_DEV_REMOTE);
+	TimerDevInit(TIMER_DEV_TEST);
+	TimerDevInit(TIMER_DEV_MOTOR_PWM);
 
 	/*MPU6050初始化*/
 	MPU6050Init(&MPU6050);

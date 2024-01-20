@@ -8,22 +8,22 @@
 
 static void Motor1Out(int32_t outValue)
 {
-	TimerDevPWMOut(TIMER_MOTOR_PWM, 1, outValue + 4000);
+	TimerDevPWMOut(TIMER_DEV_MOTOR_PWM, 1, outValue + 4000);
 }
 
 static void Motor2Out(int32_t outValue)
 {
-	TimerDevPWMOut(TIMER_MOTOR_PWM, 2, outValue + 4000);
+	TimerDevPWMOut(TIMER_DEV_MOTOR_PWM, 2, outValue + 4000);
 }
 
 static void Motor3Out(int32_t outValue)
 {
-	TimerDevPWMOut(TIMER_MOTOR_PWM, 3, outValue + 4000);
+	TimerDevPWMOut(TIMER_DEV_MOTOR_PWM, 3, outValue + 4000);
 }
 
 static void Motor4Out(int32_t outValue)
 {
-	TimerDevPWMOut(TIMER_MOTOR_PWM, 4, outValue + 4000);
+	TimerDevPWMOut(TIMER_DEV_MOTOR_PWM, 4, outValue + 4000);
 }
 
 Motor_t Motor[4] = 

@@ -365,14 +365,14 @@ void ControlTask(void * parameters)
 			}
 			last_remote_mode = remote_data.mode;*/
 
-			TimerDevGetCount(TIMER_TEST, &startTimerCount);
+			TimerDevGetCount(TIMER_DEV_TEST, &startTimerCount);
 
 			setAngle.Pitch = RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_RIGHT_ROCKER_Y);
 			setAngle.Roll = RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_RIGHT_ROCKER_X);
 			setAngle.Yaw = setYaw;
 			AttitudeControl(RemoteDataGetRockerValue(&remoteData, REMOTE_DATA_LEFT_ROCKER_Y), &setAngle, &sensorsData.Angle, &sensorsData.Gyro);
 
-			TimerDevGetCount(TIMER_TEST, &endTimerCount);
+			TimerDevGetCount(TIMER_DEV_TEST, &endTimerCount);
 			timerDiff = GetTimeDiff(startTimerCount, endTimerCount, 0xFFFF);
 			(void)timerDiff;
 		}

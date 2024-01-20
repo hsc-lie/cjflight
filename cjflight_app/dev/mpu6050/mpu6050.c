@@ -160,12 +160,7 @@ MPU6050_ERROR_t MPU6050ConvertDataGyro(MPU6050_t *mpu6050, MPU6050BaseData_t *in
 {
 	float gyroConvertBase;
 
-	if(NULL == mpu6050)
-	{
-		return MPU6050_ERROR_t_NULL;
-	}
-
-	gyroConvertBase = (float)(32768.0f / (250u << mpu6050->GyroRange));
+	gyroConvertBase = (float)32768.0f / (float)(250u << mpu6050->GyroRange);
 
 	out->X = (float)in->X/gyroConvertBase;
 	out->Y = (float)in->Y/gyroConvertBase;
@@ -186,14 +181,8 @@ MPU6050_ERROR_t MPU6050ConvertDataAcc(MPU6050_t *mpu6050, MPU6050BaseData_t *in,
 {
 	float accConvertBase;
 
-
-	if(NULL == mpu6050)
-	{
-		return MPU6050_ERROR_t_NULL;
-	}
-
-	//accConvertBase = (float)(32768u >> (mpu6050->AccRange + 1));
-	accConvertBase = 2048 / 0.98;
+	accConvertBase = (float)(32768u >> (mpu6050->AccRange + 1));
+	//accConvertBase /= 9.8;
 
 	out->X = (float)in->X/accConvertBase;
 	out->Y = (float)in->Y/accConvertBase;

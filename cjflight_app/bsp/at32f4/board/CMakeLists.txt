@@ -1,21 +1,11 @@
+aux_source_directory("src" BOARD_SOURCE_FILES)
+
 target_sources(${PROJECT_NAME}
     PRIVATE
-    bsp_register.c
-    rcc/bsp_rcc.c
-    dma/bsp_dma.c
-    gpio/bsp_gpio.c
-    usart/bsp_usart.c
-    timer/bsp_timer.c
-    interrupt/bsp_interrupt.c
+    ${BOARD_SOURCE_FILES}
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-    .
-    rcc
-    interrupt
-    dma
-    gpio
-    usart
-	timer
+    include
 )

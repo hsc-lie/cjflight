@@ -6,12 +6,12 @@
 
 static void BMP280I2CWriteReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
-	I2CDevSendData(I2C_TYPE_SENSOR, addr, &reg, 1, data, len);
+	I2CDevSendData(I2C_DEV_SENSOR, addr, &reg, 1, data, len);
 }
 
 static void BMP280I2CReadReg(uint8_t addr, uint8_t reg, uint8_t *data, uint32_t len)
 {
-	I2CDevReadData(I2C_TYPE_SENSOR, addr, &reg, 1, data, len);
+	I2CDevReadData(I2C_DEV_SENSOR, addr, &reg, 1, data, len);
 }
 
 
