@@ -88,9 +88,9 @@ INCLUDE_DIRS =\
 	dev/motor \
 	dev/mpu6050 \
 	dev/spl06 \
-	freeRTOS \
-	freeRTOS/include \
-	freeRTOS/port \
+	FreeRTOS \
+	FreeRTOS/include \
+	FreeRTOS/port \
 	hal/include \
 	hal/simulation_i2c \
 	bsp/at32f4 \
@@ -105,15 +105,15 @@ ASM_SOURCES=./bsp/at32f4/startup/startup_at32f421c8t7.s
 
 #freertos的c文件
 FREERTOS_SOURCES =\
-	./freeRTOS/port/port.c \
-	./freeRTOS/MemMang/heap_4.c \
-	./freeRTOS/croutine.c \
-	./freeRTOS/event_groups.c \
-	./freeRTOS/list.c \
-	./freeRTOS/queue.c \
-	./freeRTOS/stream_buffer.c \
-	./freeRTOS/tasks.c \
-	./freeRTOS/timers.c \
+	./FreeRTOS/port/port.c \
+	./FreeRTOS/MemMang/heap_4.c \
+	./FreeRTOS/croutine.c \
+	./FreeRTOS/event_groups.c \
+	./FreeRTOS/list.c \
+	./FreeRTOS/queue.c \
+	./FreeRTOS/stream_buffer.c \
+	./FreeRTOS/tasks.c \
+	./FreeRTOS/timers.c \
 
 #c文件
 C_SOURCES=\
